@@ -1,100 +1,174 @@
 {
-	"name": "vscode-knative",
-	"displayName": "vscode-knative",
-	"description": "Knative extension for vscode",
-	"version": "0.0.1",
-	"license": "MIT",
-	"repository": {
-		"type": "git",
-		"url": "https://github.com/talamer/vscode-knative.git"
-	},
-	"bugs": "https://github.com/talamer/vscode-knative/issues",
-	"keywords": [
-		"knative",
-		"serverless",
-		"eventing",
-		"kn",
-		"openshift",
-		"kubernetes",
-		"k8s",
-		"redhat"
-	],
-	"engines": {
-		"vscode": "^1.39.0"
-	},
-	"categories": [
-		"Other"
-	],
-	"activationEvents": [
-		"onCommand:extension.helloWorld"
-	],
-	"main": "./out/extension.js",
-	"contributes": {
-		"commands": [
-			{
-				"command": "extension.helloWorld",
-				"title": "Hello World"
-			}
-		]
-	},
-	"scripts": {
-		"vscode:prepublish": "npm run compile",
-		"compile": "tsc -p ./",
-		"watch": "tsc -watch -p ./",
-		"pretest": "npm run compile",
-		"test": "node ./out/test/runTest.js"
-	},
-	"dependencies": {
-		"@kubernetes/client-node": "^0.11.0",
-		"binary-search": "^1.3.6",
-		"byline": "^5.0.0",
-		"fs-extra": "^8.1.0",
-		"git-fetch-pack": "^0.1.1",
-		"git-transport-protocol": "^0.1.0",
-		"globby": "^10.0.1",
-		"hasha": "^5.1.0",
-		"js-yaml": "^3.13.1",
-		"mkdirp": "^0.5.1",
-		"request": "^2.88.0",
-		"request-progress": "^3.0.0",
-		"rxjs": "^6.5.3",
-		"semver": "^6.3.0",
-		"shelljs": "^0.8.3",
-		"string-format": "^2.0.0",
-		"targz": "^1.0.1",
-		"unzip-stream": "^0.3.0",
-		"validator": "^12.0.0",
-		"vscode-kubernetes-tools-api": "1.0.0"
-	},
-	"devDependencies": {
-		"@types/byline": "^4.2.31",
-		"@types/chai": "^4.2.4",
-		"@types/collections": "^5.0.0",
-		"@types/fs-extra": "^8.0.1",
-		"@types/glob": "^7.1.1",
-		"@types/js-yaml": "^3.12.1",
-		"@types/mkdirp": "^0.5.2",
-		"@types/mocha": "^5.2.7",
-		"@types/node": "^12.12.3",
-		"@types/request": "^2.48.3",
-		"@types/semver": "^6.2.0",
-		"@types/shelljs": "^0.8.5",
-		"@types/sinon": "^5.0.7",
-		"@types/sinon-chai": "^3.2.3",
-		"@types/string-format": "^2.0.0",
-		"@types/tmp": "0.1.0",
-		"@types/validator": "^10.11.3",
-		"@types/vscode": "^1.39.0",
-		"@typescript-eslint/eslint-plugin": "^2.7.0",
-		"@typescript-eslint/eslint-plugin-tslint": "^2.7.0",
-		"@typescript-eslint/parser": "^2.7.0",
-		"@typescript-eslint/typescript-estree": "^2.7.0",
-		"eslint": "^6.6.0",
-		"glob": "^7.1.5",
-		"mocha": "^6.2.2",
-		"prettier": "1.19.1",
-		"tslint": "^5.20.0",
-		"typescript": "^3.7.2",
-		"vscode-test": "^1.2.2"
-	}
+  "name": "vscode-knative",
+  "displayName": "vscode-knative",
+  "description": "Knative extension for vscode",
+  "version": "0.0.1",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/talamer/vscode-knative.git"
+  },
+  "bugs": "https://github.com/talamer/vscode-knative/issues",
+  "keywords": [
+    "knative",
+    "serverless",
+    "eventing",
+    "kn",
+    "openshift",
+    "kubernetes",
+    "k8s",
+    "redhat"
+  ],
+  "engines": {
+    "vscode": "^1.39.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "main": "./out/extension.js",
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "pretest": "npm run compile",
+    "test": "node ./out/test/runTest.js"
+  },
+  "dependencies": {
+    "@kubernetes/client-node": "^0.11.0",
+    "binary-search": "^1.3.6",
+    "byline": "^5.0.0",
+    "fs-extra": "^8.1.0",
+    "git-fetch-pack": "^0.1.1",
+    "git-transport-protocol": "^0.1.0",
+    "globby": "^10.0.1",
+    "hasha": "^5.1.0",
+    "js-yaml": "^3.13.1",
+    "mkdirp": "^0.5.1",
+    "request": "^2.88.0",
+    "request-progress": "^3.0.0",
+    "rxjs": "^6.5.3",
+    "semver": "^6.3.0",
+    "shelljs": "^0.8.3",
+    "string-format": "^2.0.0",
+    "targz": "^1.0.1",
+    "unzip-stream": "^0.3.0",
+    "validator": "^12.0.0",
+    "vscode-kubernetes-tools-api": "1.0.0"
+  },
+  "devDependencies": {
+    "@types/byline": "^4.2.31",
+    "@types/chai": "^4.2.4",
+    "@types/collections": "^5.0.0",
+    "@types/fs-extra": "^8.0.1",
+    "@types/glob": "^7.1.1",
+    "@types/js-yaml": "^3.12.1",
+    "@types/mkdirp": "^0.5.2",
+    "@types/mocha": "^5.2.7",
+    "@types/node": "^12.12.11",
+    "@types/request": "^2.48.3",
+    "@types/semver": "^6.2.0",
+    "@types/shelljs": "^0.8.5",
+    "@types/sinon": "^5.0.7",
+    "@types/sinon-chai": "^3.2.3",
+    "@types/string-format": "^2.0.0",
+    "@types/tmp": "0.1.0",
+    "@types/validator": "^10.11.3",
+    "@types/vscode": "^1.40.0",
+    "@typescript-eslint/eslint-plugin": "^2.8.0",
+    "@typescript-eslint/eslint-plugin-tslint": "^2.8.0",
+    "@typescript-eslint/parser": "^2.8.0",
+    "@typescript-eslint/typescript-estree": "^2.8.0",
+    "eslint": "^6.6.0",
+    "glob": "^7.1.6",
+    "mocha": "^6.2.2",
+    "prettier": "1.19.1",
+    "tslint": "^5.20.1",
+    "typescript": "^3.7.2",
+    "vscode-test": "^1.2.3"
+  },
+  "activationEvents": [
+    "onView:knativeProjectExplorer",
+    "onCommand:knative.service.list",
+    "onCommand:knative.explorer.reportIssue"
+  ],
+  "contributes": {
+    "commands": [
+      {
+        "command": "knative.service.list",
+        "title": "List Knative Services",
+        "category": "Knative"
+      },
+      {
+        "command": "knative.explorer.reportIssue",
+        "title": "Report Extension Issue on GitHub",
+        "category": "Knative",
+        "icon": {
+          "dark": "src/images/title/dark/icon-issue.svg",
+          "light": "src/images/title/light/icon-issue.svg"
+        }
+      }
+    ],
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "knativeView",
+          "title": "Knative",
+          "icon": "src/images/vscode-knative.svg"
+        }
+      ]
+    },
+    "views": {
+      "knativeView": [
+        {
+          "id": "knativeProjectExplorer",
+          "name": "Knative Explorer"
+        }
+      ]
+    },
+    "menus": {
+      "commandPalette": [
+        {
+          "command": "knative.service.list"
+        }
+      ],
+      "view/title": [
+        {
+          "command": "knative.explorer.reportIssue",
+          "when": "view == knativeProjectExplorer",
+          "group": "navigation@1"
+        }
+      ],
+      "view/item/context": [
+        {
+          "command": "knative.service.list",
+          "when": "view == knativeProjectExplorer",
+          "group": "c0"
+        }
+      ]
+    },
+    "configuration": {
+      "type": "object",
+      "title": "Knative",
+      "properties": {
+        "knative.disableCheckForMigration": {
+          "title": "Disable check if migration required",
+          "type": "boolean",
+          "default": false,
+          "description": "Dsable check if migration is required for resources created with previous version of the extension and mirgation request message."
+        },
+        "knative.outputVerbosityLevel": {
+          "title": "Output Verbosity Level",
+          "type": "number",
+          "default": 0,
+          "description": "Output verbosity level (value between 0 and 9) for Knative Create, Push and Watch commands in output channel and integrated terminal."
+        },
+        "knative.showChannelOnOutput": {
+          "title": "Show channel on output",
+          "type": "boolean",
+          "default": false,
+          "description": "Show Knative Connector output channel when new text added to output stream."
+        }
+      }
+    }
+  }
 }

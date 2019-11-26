@@ -5,585 +5,138 @@
 
 import * as cliInstance from "./cli";
 import {
-  ProviderResult,
   TreeItemCollapsibleState,
   window,
   Terminal,
   Uri,
   commands,
-  QuickPickItem,
   workspace,
   WorkspaceFoldersChangeEvent,
   WorkspaceFolder,
   Disposable
 } from "vscode";
-import { WindowUtil } from "./util/windowUtils";
+import { WindowUtil } from "../util/windowUtils";
 import { CliExitData } from "./cli";
 import * as path from "path";
-import { ToolsConfig } from "./tools";
-import format = require("string-format");
+import { KnCliConfig } from "./kn-cli-config";
 import { statSync } from "fs";
 import bs = require("binary-search");
-import { Platform } from "./util/platform";
-import yaml = require("js-yaml");
-import fs = require("fs");
-import * as odo from "./odo/config";
-import { ComponentSettings } from "./odo/config";
-import { GlyphChars } from "./util/constants";
+import { Platform } from "../util/platform";
+import { ComponentSettings } from "./config";
 import { Subject } from "rxjs";
-import { Progress } from "./util/progress";
+import { Progress } from "../util/progress";
 import { V1ServicePort, V1Service } from "@kubernetes/client-node";
+import {
+  ComponentType,
+  ContextType,
+  KnativeTreeObject,
+  KnativeObjectImpl
+} from "./knativeTreeObject";
+import { KnatvieTreeEvent, KnatvieTreeEventImpl } from "./knativeTreeEvent";
+import { KnativeTreeModel } from "./knativeTreeModel";
+import { KnAPI } from "./kn-api";
 
 const Collapsed = TreeItemCollapsibleState.Collapsed;
 
-export interface OpenShiftObject extends QuickPickItem {
-  getChildren(): ProviderResult<OpenShiftObject[]>;
-  getParent(): OpenShiftObject;
-  getName(): string;
-  contextValue: string;
-  compType?: string;
-  contextPath?: Uri;
-  deployed: boolean;
-  path?: string;
-}
-
-export enum ContextType {
-  CLUSTER = "cluster",
-  PROJECT = "project",
-  APPLICATION = "application",
-  COMPONENT = "component_not_pushed",
-  COMPONENT_PUSHED = "component",
-  COMPONENT_NO_CONTEXT = "component_no_context",
-  SERVICE = "service",
-  STORAGE = "storage",
-  CLUSTER_DOWN = "cluster_down",
-  LOGIN_REQUIRED = "login_required",
-  COMPONENT_ROUTE = "component_route"
-}
-
-export enum ComponentType {
-  LOCAL = "local",
-  GIT = "git",
-  BINARY = "binary"
-}
-
-function verbose(_target: any, key: string, descriptor: any) {
-  let fnKey: string | undefined;
-  let fn: Function | undefined;
-
-  if (typeof descriptor.value === "function") {
-    fnKey = "value";
-    fn = descriptor.value;
-  } else {
-    throw new Error("not supported");
-  }
-
-  descriptor[fnKey] = function(...args: any[]) {
-    const v = workspace
-      .getConfiguration("openshiftConnector")
-      .get("outputVerbosityLevel");
-    const command = fn!.apply(this, args);
-    return command + (v > 0 ? ` -v ${v}` : "");
-  };
-}
-
-export class Command {
-  static listProjects() {
-    return `odo project list -o json`;
-  }
-  @verbose
-  static listApplications(project: string) {
-    return `odo application list --project ${project} -o json`;
-  }
-  static deleteProject(name: string) {
-    return `odo project delete ${name} -o json`;
-  }
-  static waitForProjectToBeGone(project: string) {
-    return `oc wait project/${project} --for delete`;
-  }
-  @verbose
-  static createProject(name: string) {
-    return `odo project create ${name}`;
-  }
-  static listComponents(project: string, app: string) {
-    return `odo list --app ${app} --project ${project} -o json`;
-  }
-  static listCatalogComponents() {
-    return `odo catalog list components`;
-  }
-  static listCatalogComponentsJson() {
-    return `${Command.listCatalogComponents()} -o json`;
-  }
-  static listCatalogServices() {
-    return `odo catalog list services`;
-  }
-  static listCatalogServicesJson() {
-    return `${Command.listCatalogServices()} -o json`;
-  }
-  static listStorageNames() {
-    return `odo storage list -o json`;
-  }
-  static printOcVersion() {
-    return "oc version";
-  }
-  static listServiceInstances(project: string, app: string) {
-    return `odo service list -o json --project ${project} --app ${app}`;
-  }
-  static describeApplication(project: string, app: string) {
-    return `odo app describe ${app} --project ${project}`;
-  }
-  static deleteApplication(project: string, app: string) {
-    return `odo app delete ${app} --project ${project} -f`;
-  }
-  static printOdoVersion() {
-    return "odo version";
-  }
-  static printOdoVersionAndProjects() {
-    return "odo version && odo project list";
-  }
-  static odoLogout() {
-    return `odo logout`;
-  }
-  static setOpenshiftContext(context: string) {
-    return `oc config use-context ${context}`;
-  }
-  static odoLoginWithUsernamePassword(
-    clusterURL: string,
-    username: string,
-    passwd: string
-  ) {
-    return `odo login ${clusterURL} -u '${username}' -p '${passwd}' --insecure-skip-tls-verify`;
-  }
-  static odoLoginWithToken(clusterURL: string, ocToken: string) {
-    return `odo login ${clusterURL} --token=${ocToken} --insecure-skip-tls-verify`;
-  }
-  @verbose
-  static createStorage(
-    storageName: string,
-    mountPath: string,
-    storageSize: string
-  ) {
-    return `odo storage create ${storageName} --path=${mountPath} --size=${storageSize}}`;
-  }
-  static deleteStorage(storage: string) {
-    return `odo storage delete ${storage} -f`;
-  }
-  static waitForStorageToBeGone(project: string, app: string, storage: string) {
-    return `oc wait pvc/${storage}-${app}-pvc --for=delete --namespace ${project}`;
-  }
-  static undeployComponent(project: string, app: string, component: string) {
-    return `odo delete ${component} -f --app ${app} --project ${project}`;
-  }
-  static deleteComponent(project: string, app: string, component: string) {
-    return `odo delete ${component} -f --app ${app} --project ${project} --all`;
-  }
-  static describeComponent(project: string, app: string, component: string) {
-    return `odo describe ${component} --app ${app} --project ${project}`;
-  }
-  static describeComponentJson(
-    project: string,
-    app: string,
-    component: string
-  ) {
-    return `${Command.describeComponent(project, app, component)} -o json`;
-  }
-  static describeService(service: string) {
-    return `odo catalog describe service ${service}`;
-  }
-  static showLog(project: string, app: string, component: string) {
-    return `odo log ${component} --app ${app} --project ${project}`;
-  }
-  static showLogAndFollow(project: string, app: string, component: string) {
-    return `odo log ${component} -f --app ${app} --project ${project}`;
-  }
-  static listComponentPorts(project: string, app: string, component: string) {
-    return `oc get service ${component}-${app} --namespace ${project} -o jsonpath="{range .spec.ports[*]}{.port}{','}{end}"`;
-  }
-  static linkComponentTo(
-    project: string,
-    app: string,
-    component: string,
-    componentToLink: string,
-    port?: string
-  ) {
-    return `odo link ${componentToLink} --project ${project} --app ${app} --component ${component} --wait${
-      port ? " --port " + port : ""
-    }`;
-  }
-  static linkServiceTo(
-    project: string,
-    app: string,
-    component: string,
-    serviceToLink: string,
-    port?: string
-  ) {
-    return `odo link ${serviceToLink} --project ${project} --app ${app} --component ${component} --wait --wait-for-target`;
-  }
-  @verbose
-  static pushComponent() {
-    return `odo push`;
-  }
-  @verbose
-  static watchComponent(project: string, app: string, component: string) {
-    return `odo watch ${component} --app ${app} --project ${project}`;
-  }
-  @verbose
-  static createLocalComponent(
-    project: string,
-    app: string,
-    type: string,
-    version: string,
-    name: string,
-    folder: string
-  ) {
-    return `odo create ${type}:${version} ${name} --context ${folder} --app ${app} --project ${project}`;
-  }
-  @verbose
-  static createGitComponent(
-    project: string,
-    app: string,
-    type: string,
-    version: string,
-    name: string,
-    git: string,
-    ref: string
-  ) {
-    return `odo create ${type}:${version} ${name} --git ${git} --ref ${ref} --app ${app} --project ${project}`;
-  }
-  @verbose
-  static createBinaryComponent(
-    project: string,
-    app: string,
-    type: string,
-    version: string,
-    name: string,
-    binary: string,
-    context: string
-  ) {
-    return `odo create ${type}:${version} ${name} --binary ${binary} --app ${app} --project ${project} --context ${context}`;
-  }
-  @verbose
-  static createService(
-    project: string,
-    app: string,
-    template: string,
-    plan: string,
-    name: string
-  ) {
-    return `odo service create ${template} --plan ${plan} ${name} --app ${app} --project ${project} -w`;
-  }
-  static deleteService(project: string, app: string, name: string) {
-    return `odo service delete ${name} -f --project ${project} --app ${app}`;
-  }
-  static getServiceTemplate(project: string, service: string) {
-    return `oc get ServiceInstance ${service} --namespace ${project} -o jsonpath="{$.metadata.labels.app\\.kubernetes\\.io/name}"`;
-  }
-  static waitForServiceToBeGone(project: string, service: string) {
-    return `oc wait ServiceInstance/${service} --for delete --namespace ${project}`;
-  }
-  @verbose
-  static createComponentCustomUrl(name: string, port: string) {
-    return `odo url create ${name} --port ${port}`;
-  }
-  static getComponentUrl() {
-    return `odo url list -o json`;
-  }
-  static deleteComponentUrl(name: string) {
-    return `odo url delete -f ${name}`;
-  }
-  static getComponentJson(project: string, app: string, component: string) {
-    return `oc get service ${component}-${app} --namespace ${project} -o json`;
-  }
-  static unlinkComponents(
-    project: string,
-    app: string,
-    comp1: string,
-    comp2: string
-  ) {
-    return `odo unlink --project ${project} --app ${app} ${comp2} --component ${comp1}`;
-  }
-  static unlinkService(
-    project: string,
-    app: string,
-    service: string,
-    comp: string
-  ) {
-    return `odo unlink --project ${project} --app ${app} ${service} --component ${comp}`;
-  }
-  static getOpenshiftClusterRoute() {
-    return `oc get routes -n openshift-console -ojson`;
-  }
-  static getclusterVersion() {
-    return `oc get clusterversion -ojson`;
-  }
-  static showServerUrl() {
-    return `oc whoami --show-server`;
-  }
-}
-
-export class OpenShiftObjectImpl implements OpenShiftObject {
-  private readonly CONTEXT_DATA = {
-    cluster: {
-      icon: "cluster-node.png",
-      tooltip: "{name}",
-      getChildren: () => this.odo.getProjects()
-    },
-    project: {
-      icon: "project-node.png",
-      tooltip: "Project: {label}",
-      getChildren: () => this.odo.getApplications(this)
-    },
-    application: {
-      icon: "application-node.png",
-      tooltip: "Application: {label}",
-      getChildren: () => this.odo.getApplicationChildren(this)
-    },
-    component: {
-      icon: "",
-      tooltip: "Component: {label}",
-      description: "",
-      getChildren: () => this.odo.getComponentChildren(this)
-    },
-    component_not_pushed: {
-      icon: "",
-      tooltip: "Component: {label}",
-      description: "",
-      getChildren: () => this.odo.getComponentChildren(this)
-    },
-    component_no_context: {
-      icon: "",
-      tooltip: "Component: {label}",
-      description: "",
-      getChildren: () => this.odo.getComponentChildren(this)
-    },
-    service: {
-      icon: "service-node.png",
-      tooltip: "Service: {label}",
-      getChildren: () => []
-    },
-    storage: {
-      icon: "storage-node.png",
-      tooltip: "Storage: {label}",
-      getChildren: () => []
-    },
-    cluster_down: {
-      icon: "cluster-down.png",
-      tooltip: "Cannot connect to the cluster",
-      getChildren: () => []
-    },
-    login_required: {
-      icon: "cluster-down.png",
-      tooltip: "Please Log in to the cluster",
-      getChildren: () => []
-    },
-    component_route: {
-      icon: "url-node.png",
-      tooltip: "URL: {label}",
-      getChildren: () => []
-    }
-  };
-
-  private explorerPath: string;
-
-  constructor(
-    private parent: OpenShiftObject,
-    public readonly name: string,
-    public readonly contextValue: ContextType,
-    public deployed: boolean,
-    private readonly odo: Odo,
-    public readonly collapsibleState: TreeItemCollapsibleState = Collapsed,
-    public contextPath?: Uri,
-    public readonly compType?: string
-  ) {
-    OdoImpl.data.setPathToObject(this);
-  }
-
-  get path(): string {
-    if (!this.explorerPath) {
-      let parent: OpenShiftObject = this;
-      const segments: string[] = [];
-      do {
-        segments.splice(0, 0, parent.getName());
-        parent = parent.getParent();
-      } while (parent);
-      this.explorerPath = path.join(...segments);
-    }
-    return this.explorerPath;
-  }
-
-  get iconPath(): Uri {
-    if (
-      this.contextValue === ContextType.COMPONENT_PUSHED ||
-      this.contextValue === ContextType.COMPONENT ||
-      this.contextValue === ContextType.COMPONENT_NO_CONTEXT
-    ) {
-      if (this.compType === ComponentType.GIT) {
-        return Uri.file(
-          path.join(__dirname, "../../images/component", "git.png")
-        );
-      } else if (this.compType === ComponentType.LOCAL) {
-        return Uri.file(
-          path.join(__dirname, "../../images/component", "workspace.png")
-        );
-      } else if (this.compType === ComponentType.BINARY) {
-        return Uri.file(
-          path.join(__dirname, "../../images/component", "binary.png")
-        );
-      }
-    } else {
-      return Uri.file(
-        path.join(
-          __dirname,
-          "../../images/context",
-          this.CONTEXT_DATA[this.contextValue].icon
-        )
-      );
-    }
-  }
-
-  get tooltip(): string {
-    return format(this.CONTEXT_DATA[this.contextValue].tooltip, this);
-  }
-
-  get label(): string {
-    const label =
-      this.contextValue === ContextType.CLUSTER
-        ? this.name.split("//")[1]
-        : this.name;
-    return label;
-  }
-
-  get description(): string {
-    let suffix = "";
-    if (this.contextValue === ContextType.COMPONENT) {
-      suffix = `${GlyphChars.Space}${GlyphChars.NotPushed} not pushed`;
-    } else if (this.contextValue === ContextType.COMPONENT_PUSHED) {
-      suffix = `${GlyphChars.Space}${GlyphChars.Push} pushed`;
-    } else if (this.contextValue === ContextType.COMPONENT_NO_CONTEXT) {
-      suffix = `${GlyphChars.Space}${GlyphChars.NoContext} no context`;
-    }
-    return suffix;
-  }
-
-  getName(): string {
-    return this.name;
-  }
-
-  getChildren(): ProviderResult<OpenShiftObject[]> {
-    return this.CONTEXT_DATA[this.contextValue].getChildren();
-  }
-
-  getParent(): OpenShiftObject {
-    return this.parent;
-  }
-}
-
-export interface OdoEvent {
-  readonly type: "deleted" | "inserted" | "changed";
-  readonly data: OpenShiftObject;
-  readonly reveal: boolean;
-}
-
-class OdoEventImpl implements OdoEvent {
-  constructor(
-    readonly type: "deleted" | "inserted" | "changed",
-    readonly data: OpenShiftObject,
-    readonly reveal: boolean = false
-  ) {}
-}
-
-export interface Odo {
-  getClusters(): Promise<OpenShiftObject[]>;
-  getProjects(): Promise<OpenShiftObject[]>;
+export interface Kn {
+  getServices(): Promise<KnativeTreeObject[]>;
+  getClusters(): Promise<KnativeTreeObject[]>;
+  getProjects(): Promise<KnativeTreeObject[]>;
   loadWorkspaceComponents(event: WorkspaceFoldersChangeEvent): void;
   addWorkspaceComponent(
     WorkspaceFolder: WorkspaceFolder,
-    component: OpenShiftObject
+    component: KnativeTreeObject
   );
-  getApplications(project: OpenShiftObject): Promise<OpenShiftObject[]>;
+  getApplications(project: KnativeTreeObject): Promise<KnativeTreeObject[]>;
   getApplicationChildren(
-    application: OpenShiftObject
-  ): Promise<OpenShiftObject[]>;
+    application: KnativeTreeObject
+  ): Promise<KnativeTreeObject[]>;
   getComponents(
-    application: OpenShiftObject,
-    condition?: (value: OpenShiftObject) => boolean
-  ): Promise<OpenShiftObject[]>;
+    application: KnativeTreeObject,
+    condition?: (value: KnativeTreeObject) => boolean
+  ): Promise<KnativeTreeObject[]>;
   getComponentTypes(): Promise<string[]>;
-  getComponentChildren(component: OpenShiftObject): Promise<OpenShiftObject[]>;
-  getRoutes(component: OpenShiftObject): Promise<OpenShiftObject[]>;
-  getComponentPorts(component: OpenShiftObject): Promise<V1ServicePort[]>;
+  getComponentChildren(
+    component: KnativeTreeObject
+  ): Promise<KnativeTreeObject[]>;
+  getRoutes(component: KnativeTreeObject): Promise<KnativeTreeObject[]>;
+  getComponentPorts(component: KnativeTreeObject): Promise<V1ServicePort[]>;
   getComponentTypeVersions(componentName: string): Promise<string[]>;
-  getStorageNames(component: OpenShiftObject): Promise<OpenShiftObject[]>;
+  getStorageNames(component: KnativeTreeObject): Promise<KnativeTreeObject[]>;
   getServiceTemplates(): Promise<string[]>;
   getServiceTemplatePlans(svc: string): Promise<string[]>;
-  getServices(application: OpenShiftObject): Promise<OpenShiftObject[]>;
+  getOsServices(application: KnativeTreeObject): Promise<KnativeTreeObject[]>;
   execute(command: string, cwd?: string, fail?: boolean): Promise<CliExitData>;
   executeInTerminal(command: string, cwd?: string): void;
   requireLogin(): Promise<boolean>;
   clearCache?(): void;
-  createProject(name: string): Promise<OpenShiftObject>;
-  deleteProject(project: OpenShiftObject): Promise<OpenShiftObject>;
-  createApplication(application: OpenShiftObject): Promise<OpenShiftObject>;
-  deleteApplication(application: OpenShiftObject): Promise<OpenShiftObject>;
+  createProject(name: string): Promise<KnativeTreeObject>;
+  deleteProject(project: KnativeTreeObject): Promise<KnativeTreeObject>;
+  createApplication(application: KnativeTreeObject): Promise<KnativeTreeObject>;
+  deleteApplication(application: KnativeTreeObject): Promise<KnativeTreeObject>;
   createComponentFromGit(
-    application: OpenShiftObject,
+    application: KnativeTreeObject,
     type: string,
     version: string,
     name: string,
     repoUri: string,
     context: Uri,
     ref: string
-  ): Promise<OpenShiftObject>;
+  ): Promise<KnativeTreeObject>;
   createComponentFromFolder(
-    application: OpenShiftObject,
+    application: KnativeTreeObject,
     type: string,
     version: string,
     name: string,
     path: Uri
-  ): Promise<OpenShiftObject>;
+  ): Promise<KnativeTreeObject>;
   createComponentFromBinary(
-    application: OpenShiftObject,
+    application: KnativeTreeObject,
     type: string,
     version: string,
     name: string,
     path: Uri,
     context: Uri
-  ): Promise<OpenShiftObject>;
-  deleteComponent(component: OpenShiftObject): Promise<OpenShiftObject>;
-  undeployComponent(component: OpenShiftObject): Promise<OpenShiftObject>;
+  ): Promise<KnativeTreeObject>;
+  deleteComponent(component: KnativeTreeObject): Promise<KnativeTreeObject>;
+  undeployComponent(component: KnativeTreeObject): Promise<KnativeTreeObject>;
   deleteNotPushedComponent(
-    component: OpenShiftObject
-  ): Promise<OpenShiftObject>;
+    component: KnativeTreeObject
+  ): Promise<KnativeTreeObject>;
   createStorage(
-    component: OpenShiftObject,
+    component: KnativeTreeObject,
     name: string,
     mountPath: string,
     size: string
-  ): Promise<OpenShiftObject>;
-  deleteStorage(storage: OpenShiftObject): Promise<OpenShiftObject>;
-  createService(
-    application: OpenShiftObject,
+  ): Promise<KnativeTreeObject>;
+  deleteStorage(storage: KnativeTreeObject): Promise<KnativeTreeObject>;
+  createOSService(
+    application: KnativeTreeObject,
     templateName: string,
     planName: string,
     name: string
-  ): Promise<OpenShiftObject>;
-  deleteService(service: OpenShiftObject): Promise<OpenShiftObject>;
-  deleteURL(url: OpenShiftObject): Promise<OpenShiftObject>;
+  ): Promise<KnativeTreeObject>;
+  deleteService(service: KnativeTreeObject): Promise<KnativeTreeObject>;
+  deleteURL(url: KnativeTreeObject): Promise<KnativeTreeObject>;
   createComponentCustomUrl(
-    component: OpenShiftObject,
+    component: KnativeTreeObject,
     name: string,
     port: string
-  ): Promise<OpenShiftObject>;
-  readonly subject: Subject<OdoEvent>;
+  ): Promise<KnativeTreeObject>;
+  readonly subject: Subject<KnatvieTreeEvent>;
 }
 
-export function getInstance(): Odo {
-  return OdoImpl.Instance;
+export function getInstance(): Kn {
+  return KnImpl.Instance;
 }
 
-function compareNodes(a: OpenShiftObject, b: OpenShiftObject): number {
-  if (!a.contextValue) { return -1; }
-  if (!b.contextValue) { return 1; }
+function compareNodes(a: KnativeTreeObject, b: KnativeTreeObject): number {
+  if (!a.contextValue) {
+    return -1;
+  }
+  if (!b.contextValue) {
+    return 1;
+  }
   const acontext = a.contextValue.includes("_")
     ? a.contextValue.substr(0, a.contextValue.indexOf("_"))
     : a.contextValue;
@@ -594,101 +147,9 @@ function compareNodes(a: OpenShiftObject, b: OpenShiftObject): number {
   return t ? t : a.label.localeCompare(b.label);
 }
 
-class OdoModel {
-  private parentToChildren: Map<OpenShiftObject, OpenShiftObject[]> = new Map();
-  private pathToObject = new Map<string, OpenShiftObject>();
-  private contextToObject = new Map<Uri, OpenShiftObject>();
-  private contextToSettings = new Map<Uri, ComponentSettings>();
-
-  public setParentToChildren(
-    parent: OpenShiftObject,
-    children: OpenShiftObject[]
-  ): OpenShiftObject[] {
-    if (!this.parentToChildren.has(parent)) {
-      this.parentToChildren.set(parent, children);
-    }
-    return children;
-  }
-
-  public getChildrenByParent(parent: OpenShiftObject) {
-    return this.parentToChildren.get(parent);
-  }
-
-  public clearTreeData() {
-    this.parentToChildren.clear();
-    this.pathToObject.clear();
-    this.contextToObject.clear();
-    this.addContexts(
-      workspace.workspaceFolders ? workspace.workspaceFolders : []
-    );
-  }
-
-  public setPathToObject(object: OpenShiftObject) {
-    if (!this.pathToObject.get(object.path)) {
-      this.pathToObject.set(object.path, object);
-    }
-  }
-
-  public getObjectByPath(path: string): OpenShiftObject {
-    return this.pathToObject.get(path);
-  }
-
-  public setContextToObject(object: OpenShiftObject) {
-    if (object.contextPath) {
-      if (!this.contextToObject.has(object.contextPath)) {
-        this.contextToObject.set(object.contextPath, object);
-      }
-    }
-  }
-
-  public getObjectByContext(context: Uri) {
-    return this.contextToObject.get(context);
-  }
-
-  public setContextToSettings(settings: ComponentSettings) {
-    if (!this.contextToSettings.has(settings.ContextPath)) {
-      this.contextToSettings.set(settings.ContextPath, settings);
-    }
-  }
-
-  public getSettingsByContext(context: Uri) {
-    return this.contextToSettings.get(context);
-  }
-
-  public getSettings(): odo.ComponentSettings[] {
-    return Array.from(this.contextToSettings.values());
-  }
-
-  public addContexts(folders: ReadonlyArray<WorkspaceFolder>) {
-    for (const folder of folders) {
-      try {
-        const compData = yaml.safeLoad(
-          fs.readFileSync(
-            path.join(folder.uri.fsPath, ".odo", "config.yaml"),
-            "utf8"
-          )
-        ) as odo.Config;
-        compData.ComponentSettings.ContextPath = folder.uri;
-        OdoImpl.data.setContextToSettings(compData.ComponentSettings);
-      } catch (ignore) {}
-    }
-  }
-
-  public async delete(item: OpenShiftObject): Promise<void> {
-    const array = await item.getParent().getChildren();
-    array.splice(array.indexOf(item), 1);
-    this.pathToObject.delete(item.path);
-    this.contextToObject.delete(item.contextPath);
-  }
-
-  public deleteContext(context: Uri) {
-    this.contextToSettings.delete(context);
-  }
-}
-
-export class OdoImpl implements Odo {
-  public static data: OdoModel = new OdoModel();
-  public static ROOT: OpenShiftObject = new OpenShiftObjectImpl(
+export class KnImpl implements Kn {
+  public static data: KnativeTreeModel = new KnativeTreeModel();
+  public static ROOT: KnativeTreeObject = new KnativeObjectImpl(
     undefined,
     "/",
     undefined,
@@ -696,43 +157,85 @@ export class OdoImpl implements Odo {
     undefined
   );
   private static cli: cliInstance.ICli = cliInstance.Cli.getInstance();
-  private static instance: Odo;
+  private static instance: Kn;
 
-  private readonly odoLoginMessages = [
+  private readonly knLoginMessages = [
     "Please log in to the cluster",
     "the server has asked for the client to provide credentials",
     "Please login to your server",
     "Unauthorized"
   ];
 
-  private subjectInstance: Subject<OdoEvent> = new Subject<OdoEvent>();
+  private subjectInstance: Subject<KnatvieTreeEvent> = new Subject<KnatvieTreeEvent>();
 
   private constructor() {}
 
-  public static get Instance(): Odo {
-    if (!OdoImpl.instance) {
-      OdoImpl.instance = new OdoImpl();
+  public static get Instance(): Kn {
+    if (!KnImpl.instance) {
+      KnImpl.instance = new KnImpl();
     }
-    return OdoImpl.instance;
+    return KnImpl.instance;
   }
 
-  get subject(): Subject<OdoEvent> {
+  get subject(): Subject<KnatvieTreeEvent> {
     return this.subjectInstance;
   }
 
-  async getClusters(): Promise<OpenShiftObject[]> {
-    let children = OdoImpl.data.getChildrenByParent(OdoImpl.ROOT);
+  async getServices(): Promise<KnativeTreeObject[]> {
+    let children = KnImpl.data.getChildrenByParent(KnImpl.ROOT);
+    console.log('kn.kncontroller.ts : getServices()');
     if (!children) {
-      children = OdoImpl.data.setParentToChildren(
-        OdoImpl.ROOT,
+      children = KnImpl.data.setParentToChildren(
+        KnImpl.ROOT,
+        await this._getServices()
+      );
+    }
+    return children;
+  }
+
+  public async _getServices(): Promise<KnativeTreeObject[]> {
+    const result: cliInstance.CliExitData = await this.execute(
+      KnAPI.listServices()
+    );
+    let services: string[] = this.loadItems(result).map(
+      value => value.metadata.name
+    );
+    return services
+      .map<KnativeTreeObject>(
+        value =>
+          new KnativeObjectImpl(
+            null,
+            value,
+            ContextType.SERVICE,
+            false,
+            KnImpl.instance,
+            TreeItemCollapsibleState.Expanded
+          )
+      )
+      .sort(compareNodes);
+  }
+
+
+
+
+
+
+
+
+//----------Old OpenShift below this line--------
+  async getClusters(): Promise<KnativeTreeObject[]> {
+    let children = KnImpl.data.getChildrenByParent(KnImpl.ROOT);
+    if (!children) {
+      children = KnImpl.data.setParentToChildren(
+        KnImpl.ROOT,
         await this._getClusters()
       );
     }
     return children;
   }
 
-  public async _getClusters(): Promise<OpenShiftObject[]> {
-    let clusters: OpenShiftObject[] = await this.getClustersWithOdo();
+  public async _getClusters(): Promise<KnativeTreeObject[]> {
+    let clusters: KnativeTreeObject[] = await this.getClustersWithKn();
     if (clusters.length === 0) {
       clusters = await this.getClustersWithOc();
     }
@@ -743,19 +246,19 @@ export class OdoImpl implements Odo {
       // kick out migration if enabled
       if (
         !workspace
-          .getConfiguration("openshiftConnector")
+          .getConfiguration("knative")
           .get("disableCheckForMigration")
       ) {
-        this.convertObjectsFromPreviousOdoReleases();
+        this.convertObjectsFromPreviousKnReleases();
       }
     }
     return clusters;
   }
 
-  private async getClustersWithOc(): Promise<OpenShiftObject[]> {
-    let clusters: OpenShiftObject[] = [];
+  private async getClustersWithOc(): Promise<KnativeTreeObject[]> {
+    let clusters: KnativeTreeObject[] = [];
     const result: cliInstance.CliExitData = await this.execute(
-      Command.printOcVersion(),
+      KnAPI.printOcVersion(),
       process.cwd(),
       false
     );
@@ -767,55 +270,55 @@ export class OdoImpl implements Odo {
       })
       .map(value => {
         const server: string = value.substr(value.indexOf(" ") + 1).trim();
-        return new OpenShiftObjectImpl(
+        return new KnativeObjectImpl(
           null,
           server,
           ContextType.CLUSTER,
           false,
-          OdoImpl.instance,
+          KnImpl.instance,
           TreeItemCollapsibleState.Expanded
         );
       });
     return clusters;
   }
 
-  private async getClustersWithOdo(): Promise<OpenShiftObject[]> {
-    let clusters: OpenShiftObject[] = [];
+  private async getClustersWithKn(): Promise<KnativeTreeObject[]> {
+    let clusters: KnativeTreeObject[] = [];
     const result: cliInstance.CliExitData = await this.execute(
-      Command.printOdoVersionAndProjects(),
+      KnAPI.printOdoVersionAndProjects(),
       process.cwd(),
       false
     );
     if (
-      this.odoLoginMessages.some(element =>
+      this.knLoginMessages.some(element =>
         result.stderr ? result.stderr.indexOf(element) > -1 : false
       )
     ) {
       const loginErrorMsg: string = "Please log in to the cluster";
       return [
-        new OpenShiftObjectImpl(
+        new KnativeObjectImpl(
           null,
           loginErrorMsg,
           ContextType.LOGIN_REQUIRED,
           false,
-          OdoImpl.instance,
+          KnImpl.instance,
           TreeItemCollapsibleState.None
         )
       ];
     }
     if (
       result.stderr.indexOf(
-        "Unable to connect to OpenShift cluster, is it down?"
+        "Unable to connect to Knative cluster, is it down?"
       ) > -1
     ) {
-      const clusterDownMsg: string = "Please start the OpenShift cluster";
+      const clusterDownMsg: string = "Please start the Knative cluster";
       return [
-        new OpenShiftObjectImpl(
+        new KnativeObjectImpl(
           null,
           clusterDownMsg,
           ContextType.CLUSTER_DOWN,
           false,
-          OdoImpl.instance,
+          KnImpl.instance,
           TreeItemCollapsibleState.None
         )
       ];
@@ -829,23 +332,23 @@ export class OdoImpl implements Odo {
       })
       .map(value => {
         const server: string = value.substr(value.indexOf(":") + 1).trim();
-        return new OpenShiftObjectImpl(
+        return new KnativeObjectImpl(
           null,
           server,
           ContextType.CLUSTER,
           false,
-          OdoImpl.instance,
+          KnImpl.instance,
           TreeItemCollapsibleState.Expanded
         );
       });
     return clusters;
   }
 
-  async getProjects(): Promise<OpenShiftObject[]> {
+  async getProjects(): Promise<KnativeTreeObject[]> {
     const clusters = await this.getClusters();
-    let projects = OdoImpl.data.getChildrenByParent(clusters[0]);
+    let projects = KnImpl.data.getChildrenByParent(clusters[0]);
     if (!projects) {
-      projects = OdoImpl.data.setParentToChildren(
+      projects = KnImpl.data.setParentToChildren(
         clusters[0],
         await this._getProjects(clusters[0])
       );
@@ -854,24 +357,24 @@ export class OdoImpl implements Odo {
   }
 
   public async _getProjects(
-    cluster: OpenShiftObject
-  ): Promise<OpenShiftObject[]> {
-    return this.execute(Command.listProjects())
+    cluster: KnativeTreeObject
+  ): Promise<KnativeTreeObject[]> {
+    return this.execute(KnAPI.listProjects())
       .then(result => {
         const projs = this.loadItems(result).map(value => value.metadata.name);
-        return projs.map<OpenShiftObject>(
+        return projs.map<KnativeTreeObject>(
           value =>
-            new OpenShiftObjectImpl(
+            new KnativeObjectImpl(
               cluster,
               value,
               ContextType.PROJECT,
               false,
-              OdoImpl.instance
+              KnImpl.instance
             )
         );
 
         // TODO: load projects form workspace folders and add missing ones to the model even they
-        // are not created in cluster they should be visible in OpenShift Application Tree
+        // are not created in cluster they should be visible in Knative Application Tree
       })
       .catch(error => {
         window.showErrorMessage(
@@ -881,10 +384,12 @@ export class OdoImpl implements Odo {
       });
   }
 
-  async getApplications(project: OpenShiftObject): Promise<OpenShiftObject[]> {
-    let applications = OdoImpl.data.getChildrenByParent(project);
+  async getApplications(
+    project: KnativeTreeObject
+  ): Promise<KnativeTreeObject[]> {
+    let applications = KnImpl.data.getChildrenByParent(project);
     if (!applications) {
-      applications = OdoImpl.data.setParentToChildren(
+      applications = KnImpl.data.setParentToChildren(
         project,
         await this._getApplications(project)
       );
@@ -893,17 +398,17 @@ export class OdoImpl implements Odo {
   }
 
   public async _getApplications(
-    project: OpenShiftObject
-  ): Promise<OpenShiftObject[]> {
+    project: KnativeTreeObject
+  ): Promise<KnativeTreeObject[]> {
     const result: cliInstance.CliExitData = await this.execute(
-      Command.listApplications(project.getName())
+      KnAPI.listApplications(project.getName())
     );
     let apps: string[] = this.loadItems(result).map(
       value => value.metadata.name
     );
     apps = [...new Set(apps)]; // remove duplicates form array
     // extract apps from local not yet deployed components
-    OdoImpl.data.getSettings().forEach(component => {
+    KnImpl.data.getSettings().forEach(component => {
       if (
         component.Project === project.getName() &&
         !apps.find(item => item === component.Application)
@@ -912,25 +417,25 @@ export class OdoImpl implements Odo {
       }
     });
     return apps
-      .map<OpenShiftObject>(
+      .map<KnativeTreeObject>(
         value =>
-          new OpenShiftObjectImpl(
+          new KnativeObjectImpl(
             project,
             value,
             ContextType.APPLICATION,
             false,
-            OdoImpl.instance
+            KnImpl.instance
           )
       )
       .sort(compareNodes);
   }
 
   public async getApplicationChildren(
-    application: OpenShiftObject
-  ): Promise<OpenShiftObject[]> {
-    let children = OdoImpl.data.getChildrenByParent(application);
+    application: KnativeTreeObject
+  ): Promise<KnativeTreeObject[]> {
+    let children = KnImpl.data.getChildrenByParent(application);
     if (!children) {
-      children = OdoImpl.data.setParentToChildren(
+      children = KnImpl.data.setParentToChildren(
         application,
         await this._getApplicationChildren(application)
       );
@@ -939,29 +444,29 @@ export class OdoImpl implements Odo {
   }
 
   async _getApplicationChildren(
-    application: OpenShiftObject
-  ): Promise<OpenShiftObject[]> {
+    application: KnativeTreeObject
+  ): Promise<KnativeTreeObject[]> {
     return [
       ...(await this._getComponents(application)),
-      ...(await this._getServices(application))
+      ...(await this._getOsServices(application))
     ].sort(compareNodes);
   }
 
   async getComponents(
-    application: OpenShiftObject,
-    condition: (value: OpenShiftObject) => boolean = value =>
+    application: KnativeTreeObject,
+    condition: (value: KnativeTreeObject) => boolean = value =>
       value.contextValue === ContextType.COMPONENT ||
       value.contextValue === ContextType.COMPONENT_NO_CONTEXT ||
       value.contextValue === ContextType.COMPONENT_PUSHED
-  ): Promise<OpenShiftObject[]> {
+  ): Promise<KnativeTreeObject[]> {
     return (await this.getApplicationChildren(application)).filter(condition);
   }
 
   public async _getComponents(
-    application: OpenShiftObject
-  ): Promise<OpenShiftObject[]> {
+    application: KnativeTreeObject
+  ): Promise<KnativeTreeObject[]> {
     const result: cliInstance.CliExitData = await this.execute(
-      Command.listComponents(
+      KnAPI.listComponents(
         application.getParent().getName(),
         application.getName()
       ),
@@ -972,7 +477,7 @@ export class OdoImpl implements Odo {
       source: value.spec.source
     }));
 
-    const deployedComponents = componentObject.map<OpenShiftObject>(value => {
+    const deployedComponents = componentObject.map<KnativeTreeObject>(value => {
       let compSource: string = "";
       try {
         if (value.source.startsWith("https://")) {
@@ -987,7 +492,7 @@ export class OdoImpl implements Odo {
         // for not existing file or folder
         compSource = ComponentType.LOCAL;
       }
-      return new OpenShiftObjectImpl(
+      return new KnativeObjectImpl(
         application,
         value.name,
         ContextType.COMPONENT_NO_CONTEXT,
@@ -1001,7 +506,7 @@ export class OdoImpl implements Odo {
     const targetAppName = application.getName(),
       targetPrjName = application.getParent().getName();
 
-    OdoImpl.data
+    KnImpl.data
       .getSettings()
       .filter(
         comp =>
@@ -1017,7 +522,7 @@ export class OdoImpl implements Odo {
           item.contextValue = ContextType.COMPONENT_PUSHED;
         } else {
           deployedComponents.push(
-            new OpenShiftObjectImpl(
+            new KnativeObjectImpl(
               application,
               comp.Name,
               ContextType.COMPONENT,
@@ -1036,17 +541,17 @@ export class OdoImpl implements Odo {
 
   public async getComponentTypes(): Promise<string[]> {
     const result: cliInstance.CliExitData = await this.execute(
-      Command.listCatalogComponentsJson()
+      KnAPI.listCatalogComponentsJson()
     );
     return this.loadItems(result).map(value => value.metadata.name);
   }
 
   public async getComponentChildren(
-    component: OpenShiftObject
-  ): Promise<OpenShiftObject[]> {
-    let children = OdoImpl.data.getChildrenByParent(component);
+    component: KnativeTreeObject
+  ): Promise<KnativeTreeObject[]> {
+    let children = KnImpl.data.getChildrenByParent(component);
     if (!children) {
-      children = OdoImpl.data.setParentToChildren(
+      children = KnImpl.data.setParentToChildren(
         component,
         await this._getComponentChildren(component)
       );
@@ -1055,29 +560,29 @@ export class OdoImpl implements Odo {
   }
 
   async _getComponentChildren(
-    component: OpenShiftObject
-  ): Promise<OpenShiftObject[]> {
+    component: KnativeTreeObject
+  ): Promise<KnativeTreeObject[]> {
     return [
       ...(await this._getStorageNames(component)),
       ...(await this._getRoutes(component))
     ].sort(compareNodes);
   }
 
-  async getRoutes(component: OpenShiftObject): Promise<OpenShiftObject[]> {
+  async getRoutes(component: KnativeTreeObject): Promise<KnativeTreeObject[]> {
     return (await this.getComponentChildren(component)).filter(
       value => value.contextValue === ContextType.COMPONENT_ROUTE
     );
   }
 
   async getComponentPorts(
-    component: OpenShiftObject
+    component: KnativeTreeObject
   ): Promise<V1ServicePort[]> {
     let ports: V1ServicePort[] = [];
     if (component.contextValue === ContextType.COMPONENT_PUSHED) {
-      const app: OpenShiftObject = component.getParent();
-      const project: OpenShiftObject = app.getParent();
+      const app: KnativeTreeObject = component.getParent();
+      const project: KnativeTreeObject = app.getParent();
       const portsResult: CliExitData = await this.execute(
-        Command.getComponentJson(
+        KnAPI.getComponentJson(
           project.getName(),
           app.getName(),
           component.getName()
@@ -1087,7 +592,7 @@ export class OdoImpl implements Odo {
       const serviceOpj: V1Service = JSON.parse(portsResult.stdout) as V1Service;
       return serviceOpj.spec.ports;
     } else {
-      const settings: ComponentSettings = OdoImpl.data.getSettingsByContext(
+      const settings: ComponentSettings = KnImpl.data.getSettingsByContext(
         component.contextPath
       );
       if (settings) {
@@ -1105,10 +610,10 @@ export class OdoImpl implements Odo {
   }
 
   public async _getRoutes(
-    component: OpenShiftObject
-  ): Promise<OpenShiftObject[]> {
+    component: KnativeTreeObject
+  ): Promise<KnativeTreeObject[]> {
     const result: cliInstance.CliExitData = await this.execute(
-      Command.getComponentUrl(),
+      KnAPI.getComponentUrl(),
       component.contextPath
         ? component.contextPath.fsPath
         : Platform.getUserHomePath(),
@@ -1116,42 +621,42 @@ export class OdoImpl implements Odo {
     );
     return this.loadItems(result).map(
       value =>
-        new OpenShiftObjectImpl(
+        new KnativeObjectImpl(
           component,
           value.metadata.name,
           ContextType.COMPONENT_ROUTE,
           false,
-          OdoImpl.instance,
+          KnImpl.instance,
           TreeItemCollapsibleState.None
         )
     );
   }
 
   async getStorageNames(
-    component: OpenShiftObject
-  ): Promise<OpenShiftObject[]> {
+    component: KnativeTreeObject
+  ): Promise<KnativeTreeObject[]> {
     return (await this.getComponentChildren(component)).filter(
       value => value.contextValue === ContextType.STORAGE
     );
   }
 
   public async _getStorageNames(
-    component: OpenShiftObject
-  ): Promise<OpenShiftObject[]> {
+    component: KnativeTreeObject
+  ): Promise<KnativeTreeObject[]> {
     const result: cliInstance.CliExitData = await this.execute(
-      Command.listStorageNames(),
+      KnAPI.listStorageNames(),
       component.contextPath
         ? component.contextPath.fsPath
         : Platform.getUserHomePath()
     );
-    return this.loadItems(result).map<OpenShiftObject>(
+    return this.loadItems(result).map<KnativeTreeObject>(
       value =>
-        new OpenShiftObjectImpl(
+        new KnativeObjectImpl(
           component,
           value.metadata.name,
           ContextType.STORAGE,
           false,
-          OdoImpl.instance,
+          KnImpl.instance,
           TreeItemCollapsibleState.None
         )
     );
@@ -1159,7 +664,7 @@ export class OdoImpl implements Odo {
 
   public async getComponentTypeVersions(componentName: string) {
     const result: cliInstance.CliExitData = await this.execute(
-      Command.listCatalogComponentsJson()
+      KnAPI.listCatalogComponentsJson()
     );
     return this.loadItems(result).filter(
       value => value.metadata.name === componentName
@@ -1169,7 +674,7 @@ export class OdoImpl implements Odo {
   public async getServiceTemplates(): Promise<string[]> {
     let items: any[] = [];
     const result: cliInstance.CliExitData = await this.execute(
-      Command.listCatalogServicesJson(),
+      KnAPI.listCatalogOsServicesJson(),
       Platform.getUserHomePath(),
       false
     );
@@ -1183,7 +688,7 @@ export class OdoImpl implements Odo {
 
   public async getServiceTemplatePlans(svcName: string): Promise<string[]> {
     const result: cliInstance.CliExitData = await this.execute(
-      Command.listCatalogServicesJson(),
+      KnAPI.listCatalogOsServicesJson(),
       Platform.getUserHomePath()
     );
     return this.loadItems(result).filter(
@@ -1191,30 +696,32 @@ export class OdoImpl implements Odo {
     )[0].spec.planList;
   }
 
-  async getServices(application: OpenShiftObject): Promise<OpenShiftObject[]> {
+  async getOsServices(
+    application: KnativeTreeObject
+  ): Promise<KnativeTreeObject[]> {
     return (await this.getApplicationChildren(application)).filter(
       value => value.contextValue === ContextType.SERVICE
     );
   }
 
-  public async _getServices(
-    application: OpenShiftObject
-  ): Promise<OpenShiftObject[]> {
+  public async _getOsServices(
+    application: KnativeTreeObject
+  ): Promise<KnativeTreeObject[]> {
     const appName: string = application.getName();
     const projName: string = application.getParent().getName();
-    let services: OpenShiftObject[] = [];
+    let services: KnativeTreeObject[] = [];
     try {
       const result: cliInstance.CliExitData = await this.execute(
-        Command.listServiceInstances(projName, appName)
+        KnAPI.listServiceInstances(projName, appName)
       );
       services = this.loadItems(result).map(
         value =>
-          new OpenShiftObjectImpl(
+          new KnativeObjectImpl(
             application,
             value.metadata.name,
             ContextType.SERVICE,
             true,
-            OdoImpl.instance,
+            KnImpl.instance,
             TreeItemCollapsibleState.None
           )
       );
@@ -1232,10 +739,10 @@ export class OdoImpl implements Odo {
   public async executeInTerminal(
     command: string,
     cwd: string = process.cwd(),
-    name: string = "OpenShift"
+    name: string = "Knative"
   ) {
     const cmd = command.split(" ")[0];
-    let toolLocation = await ToolsConfig.detectOrDownload(cmd);
+    let toolLocation = await KnCliConfig.detectOrDownload(cmd);
     if (toolLocation) {
       toolLocation = path.dirname(toolLocation);
     }
@@ -1254,8 +761,8 @@ export class OdoImpl implements Odo {
     fail: boolean = true
   ): Promise<CliExitData> {
     const cmd = command.split(" ")[0];
-    const toolLocation = await ToolsConfig.detectOrDownload(cmd);
-    return OdoImpl.cli
+    const toolLocation = await KnCliConfig.detectOrDownload(cmd);
+    return KnImpl.cli
       .execute(
         toolLocation
           ? command
@@ -1276,28 +783,28 @@ export class OdoImpl implements Odo {
 
   public async requireLogin(): Promise<boolean> {
     const result: cliInstance.CliExitData = await this.execute(
-      Command.printOdoVersionAndProjects(),
+      KnAPI.printOdoVersionAndProjects(),
       process.cwd(),
       false
     );
-    return this.odoLoginMessages.some(msg => result.stderr.indexOf(msg) > -1);
+    return this.knLoginMessages.some(msg => result.stderr.indexOf(msg) > -1);
   }
 
   private insert(
-    array: OpenShiftObject[],
-    item: OpenShiftObject
-  ): OpenShiftObject {
+    array: KnativeTreeObject[],
+    item: KnativeTreeObject
+  ): KnativeTreeObject {
     const i = bs(array, item, compareNodes);
     array.splice(Math.abs(i) - 1, 0, item);
     return item;
   }
 
   private async insertAndReveal(
-    item: OpenShiftObject
-  ): Promise<OpenShiftObject> {
-    // await OpenShiftExplorer.getInstance().reveal(this.insert(await item.getParent().getChildren(), item));
+    item: KnativeTreeObject
+  ): Promise<KnativeTreeObject> {
+    // await KnativeExplorer.getInstance().reveal(this.insert(await item.getParent().getChildren(), item));
     this.subject.next(
-      new OdoEventImpl(
+      new KnatvieTreeEventImpl(
         "inserted",
         this.insert(await item.getParent().getChildren(), item),
         true
@@ -1307,11 +814,11 @@ export class OdoImpl implements Odo {
   }
 
   private async insertAndRefresh(
-    item: OpenShiftObject
-  ): Promise<OpenShiftObject> {
-    // await OpenShiftExplorer.getInstance().refresh(this.insert(await item.getParent().getChildren(), item).getParent());
+    item: KnativeTreeObject
+  ): Promise<KnativeTreeObject> {
+    // await KnativeExplorer.getInstance().refresh(this.insert(await item.getParent().getChildren(), item).getParent());
     this.subject.next(
-      new OdoEventImpl(
+      new KnatvieTreeEventImpl(
         "changed",
         this.insert(await item.getParent().getChildren(), item).getParent()
       )
@@ -1319,30 +826,30 @@ export class OdoImpl implements Odo {
     return item;
   }
 
-  private deleteAndRefresh(item: OpenShiftObject): OpenShiftObject {
-    OdoImpl.data.delete(item);
-    // OpenShiftExplorer.getInstance().refresh(item.getParent());
-    this.subject.next(new OdoEventImpl("changed", item.getParent()));
+  private deleteAndRefresh(item: KnativeTreeObject): KnativeTreeObject {
+    KnImpl.data.delete(item);
+    // KnativeExplorer.getInstance().refresh(item.getParent());
+    this.subject.next(new KnatvieTreeEventImpl("changed", item.getParent()));
     return item;
   }
 
   public async deleteProject(
-    project: OpenShiftObject
-  ): Promise<OpenShiftObject> {
-    await this.execute(Command.deleteProject(project.getName()));
+    project: KnativeTreeObject
+  ): Promise<KnativeTreeObject> {
+    await this.execute(KnAPI.deleteProject(project.getName()));
     await this.execute(
-      Command.waitForProjectToBeGone(project.getName()),
+      KnAPI.waitForProjectToBeGone(project.getName()),
       process.cwd(),
       false
     );
     return this.deleteAndRefresh(project);
   }
 
-  public async createProject(projectName: string): Promise<OpenShiftObject> {
-    await OdoImpl.instance.execute(Command.createProject(projectName));
+  public async createProject(projectName: string): Promise<KnativeTreeObject> {
+    await KnImpl.instance.execute(KnAPI.createProject(projectName));
     const clusters = await this.getClusters();
     return this.insertAndReveal(
-      new OpenShiftObjectImpl(
+      new KnativeObjectImpl(
         clusters[0],
         projectName,
         ContextType.PROJECT,
@@ -1353,19 +860,19 @@ export class OdoImpl implements Odo {
   }
 
   public async deleteApplication(
-    app: OpenShiftObject
-  ): Promise<OpenShiftObject> {
-    const allComps = await OdoImpl.instance.getComponents(app);
+    app: KnativeTreeObject
+  ): Promise<KnativeTreeObject> {
+    const allComps = await KnImpl.instance.getComponents(app);
     const allContexts = [];
     let callDelete = false;
     allComps.forEach(component => {
-      OdoImpl.data.delete(component); // delete component from model
+      KnImpl.data.delete(component); // delete component from model
       if (
         (!callDelete &&
           component.contextValue === ContextType.COMPONENT_PUSHED) ||
         component.contextValue === ContextType.COMPONENT_NO_CONTEXT
       ) {
-        callDelete = true; // if there is at least one component deployed in application `odo app delete` command should be called
+        callDelete = true; // if there is at least one component deployed in application `kn app delete` command should be called
       }
       if (component.contextPath) {
         // if component has context folder save it to remove from settings cache
@@ -1375,7 +882,7 @@ export class OdoImpl implements Odo {
 
     if (callDelete) {
       await this.execute(
-        Command.deleteApplication(app.getParent().getName(), app.getName())
+        KnAPI.deleteApplication(app.getParent().getName(), app.getName())
       );
     }
     // Chain workspace folder deltions, because when updateWorkspaceFoder called next call is possible only after
@@ -1398,8 +905,8 @@ export class OdoImpl implements Odo {
   }
 
   public async createApplication(
-    application: OpenShiftObject
-  ): Promise<OpenShiftObject> {
+    application: KnativeTreeObject
+  ): Promise<KnativeTreeObject> {
     const targetApplication = (
       await this.getApplications(application.getParent())
     ).find(value => value === application);
@@ -1410,14 +917,14 @@ export class OdoImpl implements Odo {
   }
 
   public async createComponentFromFolder(
-    application: OpenShiftObject,
+    application: KnativeTreeObject,
     type: string,
     version: string,
     name: string,
     location: Uri
-  ): Promise<OpenShiftObject> {
+  ): Promise<KnativeTreeObject> {
     await this.execute(
-      Command.createLocalComponent(
+      KnAPI.createLocalComponent(
         application.getParent().getName(),
         application.getName(),
         type,
@@ -1435,7 +942,7 @@ export class OdoImpl implements Odo {
         await this.insertAndReveal(application);
       }
       await this.insertAndReveal(
-        new OpenShiftObjectImpl(
+        new KnativeObjectImpl(
           application,
           name,
           ContextType.COMPONENT,
@@ -1453,7 +960,7 @@ export class OdoImpl implements Odo {
       wsFolder = workspace.getWorkspaceFolder(location);
       if (wsFolder) {
         // existing workspace folder
-        OdoImpl.data.addContexts([wsFolder]);
+        KnImpl.data.addContexts([wsFolder]);
       }
     }
     if (!workspace.workspaceFolders || !wsFolder) {
@@ -1467,16 +974,16 @@ export class OdoImpl implements Odo {
   }
 
   public async createComponentFromGit(
-    application: OpenShiftObject,
+    application: KnativeTreeObject,
     type: string,
     version: string,
     name: string,
     location: string,
     context: Uri,
     ref: string = "master"
-  ): Promise<OpenShiftObject> {
+  ): Promise<KnativeTreeObject> {
     await this.execute(
-      Command.createGitComponent(
+      KnAPI.createGitComponent(
         application.getParent().getName(),
         application.getName(),
         type,
@@ -1498,7 +1005,7 @@ export class OdoImpl implements Odo {
         await this.insertAndReveal(application);
       }
       await this.insertAndReveal(
-        new OpenShiftObjectImpl(
+        new KnativeObjectImpl(
           application,
           name,
           ContextType.COMPONENT,
@@ -1519,15 +1026,15 @@ export class OdoImpl implements Odo {
   }
 
   public async createComponentFromBinary(
-    application: OpenShiftObject,
+    application: KnativeTreeObject,
     type: string,
     version: string,
     name: string,
     location: Uri,
     context: Uri
-  ): Promise<OpenShiftObject> {
+  ): Promise<KnativeTreeObject> {
     await this.execute(
-      Command.createBinaryComponent(
+      KnAPI.createBinaryComponent(
         application.getParent().getName(),
         application.getName(),
         type,
@@ -1545,7 +1052,7 @@ export class OdoImpl implements Odo {
         await this.insertAndReveal(application);
       }
       this.insertAndReveal(
-        new OpenShiftObjectImpl(
+        new KnativeObjectImpl(
           application,
           name,
           ContextType.COMPONENT,
@@ -1566,12 +1073,12 @@ export class OdoImpl implements Odo {
   }
 
   public async deleteComponent(
-    component: OpenShiftObject
-  ): Promise<OpenShiftObject> {
+    component: KnativeTreeObject
+  ): Promise<KnativeTreeObject> {
     const app = component.getParent();
     if (component.contextValue !== ContextType.COMPONENT) {
       await this.execute(
-        Command.deleteComponent(
+        KnAPI.deleteComponent(
           app.getParent().getName(),
           app.getName(),
           component.getName()
@@ -1600,11 +1107,11 @@ export class OdoImpl implements Odo {
   }
 
   public async undeployComponent(
-    component: OpenShiftObject
-  ): Promise<OpenShiftObject> {
+    component: KnativeTreeObject
+  ): Promise<KnativeTreeObject> {
     const app = component.getParent();
     await this.execute(
-      Command.undeployComponent(
+      KnAPI.undeployComponent(
         app.getParent().getName(),
         app.getName(),
         component.getName()
@@ -1614,25 +1121,25 @@ export class OdoImpl implements Odo {
         : Platform.getUserHomePath()
     );
     component.contextValue = ContextType.COMPONENT;
-    //  OpenShiftExplorer.getInstance().refresh(component);
-    this.subject.next(new OdoEventImpl("changed", component));
+    //  KnativeExplorer.getInstance().refresh(component);
+    this.subject.next(new KnatvieTreeEventImpl("changed", component));
     return component;
   }
 
   public async deleteNotPushedComponent(
-    component: OpenShiftObject
-  ): Promise<OpenShiftObject> {
+    component: KnativeTreeObject
+  ): Promise<KnativeTreeObject> {
     return this.deleteAndRefresh(component);
   }
 
-  public async createService(
-    application: OpenShiftObject,
+  public async createOSService(
+    application: KnativeTreeObject,
     templateName: string,
     planName: string,
     name: string
-  ): Promise<OpenShiftObject> {
+  ): Promise<KnativeTreeObject> {
     await this.execute(
-      Command.createService(
+      KnAPI.createOSService(
         application.getParent().getName(),
         application.getName(),
         templateName,
@@ -1643,7 +1150,7 @@ export class OdoImpl implements Odo {
     );
     await this.createApplication(application);
     return this.insertAndReveal(
-      new OpenShiftObjectImpl(
+      new KnativeObjectImpl(
         application,
         name,
         ContextType.SERVICE,
@@ -1655,11 +1162,11 @@ export class OdoImpl implements Odo {
   }
 
   public async deleteService(
-    service: OpenShiftObject
-  ): Promise<OpenShiftObject> {
+    service: KnativeTreeObject
+  ): Promise<KnativeTreeObject> {
     const app = service.getParent();
     await this.execute(
-      Command.deleteService(
+      KnAPI.deleteService(
         app.getParent().getName(),
         app.getName(),
         service.getName()
@@ -1667,10 +1174,7 @@ export class OdoImpl implements Odo {
       Platform.getUserHomePath()
     );
     await this.execute(
-      Command.waitForServiceToBeGone(
-        app.getParent().getName(),
-        service.getName()
-      )
+      KnAPI.waitForServiceToBeGone(app.getParent().getName(), service.getName())
     );
     this.deleteAndRefresh(service);
     const children = await app.getChildren();
@@ -1681,17 +1185,17 @@ export class OdoImpl implements Odo {
   }
 
   public async createStorage(
-    component: OpenShiftObject,
+    component: KnativeTreeObject,
     name: string,
     mountPath: string,
     size: string
-  ): Promise<OpenShiftObject> {
+  ): Promise<KnativeTreeObject> {
     await this.execute(
-      Command.createStorage(name, mountPath, size),
+      KnAPI.createStorage(name, mountPath, size),
       component.contextPath.fsPath
     );
     return this.insertAndReveal(
-      new OpenShiftObjectImpl(
+      new KnativeObjectImpl(
         component,
         name,
         ContextType.STORAGE,
@@ -1703,15 +1207,15 @@ export class OdoImpl implements Odo {
   }
 
   public async deleteStorage(
-    storage: OpenShiftObject
-  ): Promise<OpenShiftObject> {
+    storage: KnativeTreeObject
+  ): Promise<KnativeTreeObject> {
     const component = storage.getParent();
     await this.execute(
-      Command.deleteStorage(storage.getName()),
+      KnAPI.deleteStorage(storage.getName()),
       component.contextPath.fsPath
     );
     await this.execute(
-      Command.waitForStorageToBeGone(
+      KnAPI.waitForStorageToBeGone(
         storage
           .getParent()
           .getParent()
@@ -1730,16 +1234,16 @@ export class OdoImpl implements Odo {
   }
 
   public async createComponentCustomUrl(
-    component: OpenShiftObject,
+    component: KnativeTreeObject,
     name: string,
     port: string
-  ): Promise<OpenShiftObject> {
+  ): Promise<KnativeTreeObject> {
     await this.execute(
-      Command.createComponentCustomUrl(name, port),
+      KnAPI.createComponentCustomUrl(name, port),
       component.contextPath.fsPath
     );
     return this.insertAndReveal(
-      new OpenShiftObjectImpl(
+      new KnativeObjectImpl(
         component,
         name,
         ContextType.COMPONENT_ROUTE,
@@ -1750,55 +1254,55 @@ export class OdoImpl implements Odo {
     );
   }
 
-  public async deleteURL(route: OpenShiftObject): Promise<OpenShiftObject> {
+  public async deleteURL(route: KnativeTreeObject): Promise<KnativeTreeObject> {
     await this.execute(
-      Command.deleteComponentUrl(route.getName()),
+      KnAPI.deleteComponentUrl(route.getName()),
       route.getParent().contextPath.fsPath
     );
     return this.deleteAndRefresh(route);
   }
 
   clearCache() {
-    OdoImpl.data.clearTreeData();
+    KnImpl.data.clearTreeData();
   }
 
-  addWorkspaceComponent(folder: WorkspaceFolder, component: OpenShiftObject) {
-    OdoImpl.data.addContexts([folder]);
-    this.subject.next(new OdoEventImpl("changed", null));
+  addWorkspaceComponent(folder: WorkspaceFolder, component: KnativeTreeObject) {
+    KnImpl.data.addContexts([folder]);
+    this.subject.next(new KnatvieTreeEventImpl("changed", null));
   }
 
   loadWorkspaceComponents(event: WorkspaceFoldersChangeEvent): void {
     if (event === null && workspace.workspaceFolders) {
-      OdoImpl.data.addContexts(workspace.workspaceFolders);
+      KnImpl.data.addContexts(workspace.workspaceFolders);
     }
 
     if (event && event.added && event.added.length > 0) {
-      OdoImpl.data.addContexts(event.added);
+      KnImpl.data.addContexts(event.added);
 
       event.added.forEach(async (folder: WorkspaceFolder) => {
-        const added: ComponentSettings = OdoImpl.data.getSettingsByContext(
+        const added: ComponentSettings = KnImpl.data.getSettingsByContext(
           folder.uri
         );
         if (added) {
           const cluster = (await this.getClusters())[0];
-          const prj = OdoImpl.data.getObjectByPath(
+          const prj = KnImpl.data.getObjectByPath(
             path.join(cluster.path, added.Project)
           );
-          if (prj && !!OdoImpl.data.getChildrenByParent(prj)) {
-            const app = OdoImpl.data.getObjectByPath(
+          if (prj && !!KnImpl.data.getChildrenByParent(prj)) {
+            const app = KnImpl.data.getObjectByPath(
               path.join(prj.path, added.Application)
             );
-            if (app && !!OdoImpl.data.getChildrenByParent(app)) {
-              const comp = OdoImpl.data.getObjectByPath(
+            if (app && !!KnImpl.data.getChildrenByParent(app)) {
+              const comp = KnImpl.data.getObjectByPath(
                 path.join(app.path, added.Name)
               );
               if (comp && !comp.contextPath) {
                 comp.contextPath = added.ContextPath;
                 comp.contextValue = ContextType.COMPONENT_PUSHED;
-                // await OpenShiftExplorer.getInstance().refresh(comp);
-                this.subject.next(new OdoEventImpl("changed", comp));
+                // await KnativeExplorer.getInstance().refresh(comp);
+                this.subject.next(new KnatvieTreeEventImpl("changed", comp));
               } else if (!comp) {
-                const newComponent = new OpenShiftObjectImpl(
+                const newComponent = new KnativeObjectImpl(
                   app,
                   added.Name,
                   ContextType.COMPONENT,
@@ -1811,7 +1315,7 @@ export class OdoImpl implements Odo {
                 await this.insertAndRefresh(newComponent);
               }
             } else if (!app) {
-              const newApp = new OpenShiftObjectImpl(
+              const newApp = new KnativeObjectImpl(
                 prj,
                 added.Application,
                 ContextType.APPLICATION,
@@ -1828,10 +1332,10 @@ export class OdoImpl implements Odo {
 
     if (event && event.removed && event.removed.length > 0) {
       event.removed.forEach(async (wsFolder: WorkspaceFolder) => {
-        const settings = OdoImpl.data.getSettingsByContext(wsFolder.uri);
+        const settings = KnImpl.data.getSettingsByContext(wsFolder.uri);
         if (settings) {
           const cluster = (await this.getClusters())[0];
-          const item = OdoImpl.data.getObjectByPath(
+          const item = KnImpl.data.getObjectByPath(
             path.join(
               cluster.path,
               settings.Project,
@@ -1844,10 +1348,10 @@ export class OdoImpl implements Odo {
           } else if (item) {
             item.contextValue = ContextType.COMPONENT_NO_CONTEXT;
             item.contextPath = undefined;
-            // OpenShiftExplorer.getInstance().refresh(item);
-            this.subject.next(new OdoEventImpl("changed", item));
+            // KnativeExplorer.getInstance().refresh(item);
+            this.subject.next(new KnatvieTreeEventImpl("changed", item));
           }
-          OdoImpl.data.deleteContext(wsFolder.uri);
+          KnImpl.data.deleteContext(wsFolder.uri);
         }
       });
     }
@@ -1857,29 +1361,31 @@ export class OdoImpl implements Odo {
     let data: any[] = [];
     try {
       const items = JSON.parse(result.stdout).items;
-      if (items) { data = items; }
+      if (items) {
+        data = items;
+      }
     } catch (ignore) {}
     return data;
   }
 
-  async convertObjectsFromPreviousOdoReleases() {
+  async convertObjectsFromPreviousKnReleases() {
     const projectsResult = await this.execute(
       `oc get project -o jsonpath="{range .items[*]}{.metadata.name}{\\"\\n\\"}{end}"`
     );
     const projects = projectsResult.stdout.split("\n");
     const projectsToMigrate: string[] = [];
-    const getPreviosOdoResourceNames = (resourceId: string, project: string) =>
+    const getPreviosKnResourceNames = (resourceId: string, project: string) =>
       `oc get ${resourceId} -l app.kubernetes.io/component-name -o jsonpath="{range .items[*]}{.metadata.name}{\\"\\n\\"}{end}" --namespace=${project}`;
 
     for (const project of projects) {
       const result1 = await this.execute(
-        getPreviosOdoResourceNames("dc", project),
+        getPreviosKnResourceNames("dc", project),
         __dirname,
         false
       );
       const dcs = result1.stdout.split("\n");
       const result2 = await this.execute(
-        getPreviosOdoResourceNames("ServiceInstance", project),
+        getPreviosKnResourceNames("ServiceInstance", project),
         __dirname,
         false
       );
@@ -1893,7 +1399,7 @@ export class OdoImpl implements Odo {
     }
     if (projectsToMigrate.length > 0) {
       const choice = await window.showWarningMessage(
-        `Some of the resources in cluster must be updated to work with latest release of OpenShift Connector Extension.`,
+        `Some of the resources in cluster must be updated to work with latest release of Knative Connector Extension.`,
         "Update",
         "Don't check again",
         "Help",
@@ -1906,15 +1412,15 @@ export class OdoImpl implements Odo {
             `https://github.com/redhat-developer/vscode-openshift-tools/wiki/Migration-to-v0.1.0`
           )
         );
-        this.subject.next(new OdoEventImpl("changed", this.getClusters()[0]));
+        this.subject.next(new KnatvieTreeEventImpl("changed", this.getClusters()[0]));
       } else if (choice === "Don't check again") {
         workspace
-          .getConfiguration("openshiftConnector")
+          .getConfiguration("knative")
           .update("disableCheckForMigration", true, true);
       } else if (choice === "Update") {
         const errors = [];
         await Progress.execFunctionWithProgress(
-          "Updating cluster resources to work with latest OpenShift Connector release",
+          "Updating cluster resources to work with latest Knative Connector release",
           async progress => {
             for (const project of projectsToMigrate) {
               for (const resourceId of [
@@ -1929,7 +1435,7 @@ export class OdoImpl implements Odo {
               ]) {
                 progress.report({ increment: 100 / 8, message: resourceId });
                 const result = await this.execute(
-                  getPreviosOdoResourceNames(resourceId, project),
+                  getPreviosKnResourceNames(resourceId, project),
                   __dirname,
                   false
                 );
@@ -1960,14 +1466,14 @@ export class OdoImpl implements Odo {
                     if (labels["app.kubernetes.io/url-name"]) {
                       command =
                         command +
-                        ` odo.openshift.io/url-name=${labels["app.kubernetes.io/url-name"]}`;
+                        ` kn.openshift.io/url-name=${labels["app.kubernetes.io/url-name"]}`;
                     }
                     await this.execute(command + ` --namespace=${project}`);
                     await this.execute(
                       `oc label ${resourceId} ${resourceName} app.kubernetes.io/component-name- --namespace=${project}`
                     );
                     await this.execute(
-                      `oc label ${resourceId} ${resourceName} odo.openshift.io/migrated=true --namespace=${project}`
+                      `oc label ${resourceId} ${resourceName} kn.openshift.io/migrated=true --namespace=${project}`
                     );
                   } catch (err) {
                     errors.push(err);
@@ -1976,13 +1482,13 @@ export class OdoImpl implements Odo {
               }
             }
             this.subject.next(
-              new OdoEventImpl("changed", this.getClusters()[0])
+              new KnatvieTreeEventImpl("changed", this.getClusters()[0])
             );
           }
         );
         if (errors.length) {
           window.showErrorMessage(
-            "Not all resources were updated, please see OpenShift output channel for details."
+            "Not all resources were updated, please see Knative output channel for details."
           );
         } else {
           window.showInformationMessage(

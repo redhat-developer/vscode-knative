@@ -6,7 +6,7 @@
  'use strict';
 
 import * as vscode from 'vscode';
-import * as odoctl from '../odo';
+import { Kn, KnImpl, getInstance } from '../kn/knController';
 
 export interface Step {
     command: string;
@@ -15,7 +15,7 @@ export interface Step {
 }
 
 export class Progress {
-    static execWithProgress(options, steps: Step[], odo: odoctl.Odo): Thenable<void> {
+    static execWithProgress(options, steps: Step[], kn: KnImpl): Thenable<void> {
         return vscode.window.withProgress(options,
             (progress: vscode.Progress<{increment: number, message: string}>, token: vscode.CancellationToken) => {
                 const calls: (()=>Promise<any>)[] = [];
@@ -24,7 +24,7 @@ export class Progress {
                     calls.push (() => {
                         return Promise.resolve()
                             .then(() => progress.report({increment: previous.increment, message: `${previous.total}%` }))
-                            .then(() => odo.execute(current.command))
+                            .then(() => kn.execute(current.command))
                             .then(() => {
                                 if (currentIndex+1 === steps.length) {
                                     progress.report({
@@ -51,7 +51,7 @@ export class Progress {
                     title
                 },
                 async (progress: vscode.Progress<{increment: number, message: string}>, token: vscode.CancellationToken) => {
-                    const result = await odoctl.getInstance().execute(cmd, process.cwd(), false);
+                    const result = await getInstance().execute(cmd, process.cwd(), false);
                     result.error ? reject(result.error) : resolve();
                 }
             );
