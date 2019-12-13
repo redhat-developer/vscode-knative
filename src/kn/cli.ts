@@ -3,87 +3,50 @@
  *  Licensed under the MIT License. See LICENSE file in the project root for license information.
  *-----------------------------------------------------------------------------------------------*/
 
-import * as childProcess from 'child_process';
-import * as vscode from 'vscode';
-import { ExecException, ExecOptions } from 'child_process';
-import { Filters } from '../util/filters';
+import { exec, ExecException, ExecOptions } from 'child_process';
+import KnChannel, { KnOutputChannel } from './knChannel';
 
 export interface CliExitData {
-    readonly error: ExecException;
-    readonly stdout: string;
-    readonly stderr: string;
+  readonly error: ExecException;
+  readonly stdout: string;
+  readonly stderr: string;
 }
-export interface ICli {
-    execute(cmd: string, opts?: ExecOptions): Promise<CliExitData>;
-}
-
-export interface KnChannel {
-    print(text: string): void;
-    show(): void;
+export interface Cli {
+  execute(cmd: string, opts?: ExecOptions): Promise<CliExitData>;
 }
 
-export class Cli implements ICli {
-    private static instance: Cli;
-    private knChannel: KnChannel = new KnChannelImpl();
+export default class KnCli implements Cli {
+  private static instance: KnCli;
 
-    private constructor() {}
+  private knOutputChannel: KnOutputChannel = new KnChannel();
 
-    static getInstance(): Cli {
-        if (!Cli.instance) {
-            Cli.instance = new Cli();
-        }
-        return Cli.instance;
+  static getInstance(): KnCli {
+    if (!KnCli.instance) {
+      KnCli.instance = new KnCli();
     }
+    return KnCli.instance;
+  }
 
-    async showOutputChannel(): Promise<void> {
-        this.knChannel.show();
-    }
+  showOutputChannel(): void {
+    this.knOutputChannel.show();
+  }
 
-    async execute(cmd: string, opts: ExecOptions = {}): Promise<CliExitData> {
-        return new Promise<CliExitData>(async (resolve, reject) => {
-            this.knChannel.print(cmd);
-            if (opts.maxBuffer === undefined) {
-                opts.maxBuffer = 2*1024*1024;
-            }
-            childProcess.exec(cmd, opts, (error: ExecException, stdout: string, stderr: string) => {
-                const stdoutFiltered = stdout.replace(/---[\s\S]*$/g, '').trim();
-                this.knChannel.print(stdoutFiltered);
-                this.knChannel.print(stderr);
-                // do not reject it here, because caller in some cases need the error and the streams
-                // to make a decision
-                // Filter update message text which starts with `---`
-                resolve({ error, stdout: stdoutFiltered, stderr });
-            });
-        });
-    }
-}
-
-class KnChannelImpl implements KnChannel {
-    private readonly channel: vscode.OutputChannel = vscode.window.createOutputChannel("Knative");
-
-    show(): void {
-        this.channel.show();
-    }
-
-    prettifyJson(str: string) {
-        let jsonData: string;
-        try {
-            jsonData = JSON.stringify(JSON.parse(str), null, 2);
-        } catch (ignore) {
-            const hidePass = Filters.filterToken(str);
-            return Filters.filterPassword(hidePass);
-        }
-        return jsonData;
-    }
-
-    print(text: string): void {
-        const textData = this.prettifyJson(text);
-        this.channel.append(textData);
-        if (textData.charAt(textData.length - 1) !== '\n') {
-            this.channel.append('\n');
-        }
-        if (vscode.workspace.getConfiguration('knative').get<boolean>('showChannelOnOutput')) {
-            this.channel.show();
-        }
-    }
+  async execute(cmd: string, opts: ExecOptions = {}): Promise<CliExitData> {
+    return new Promise<CliExitData>((resolve) => {
+      const exopt = opts;
+      this.knOutputChannel.print(cmd);
+      if (exopt.maxBuffer === undefined) {
+        exopt.maxBuffer = 2 * 1024 * 1024;
+      }
+      exec(cmd, exopt, (error: ExecException, stdout: string, stderr: string) => {
+        const stdoutFiltered = stdout.replace(/---[\s\S]*$/g, '').trim();
+        this.knOutputChannel.print(stdoutFiltered);
+        this.knOutputChannel.print(stderr);
+        // do not reject it here, because caller in some cases need the error and the streams
+        // to make a decision
+        // Filter update message text which starts with `---`
+        resolve({ error, stdout: stdoutFiltered, stderr });
+      });
+    });
+  }
 }

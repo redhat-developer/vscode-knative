@@ -3,8 +3,6 @@
  *  Licensed under the MIT License. See LICENSE file in the project root for license information.
  *-----------------------------------------------------------------------------------------------*/
 
-'use strict';
-
 import { env, ExtensionContext } from 'vscode';
 
 const keytar: any = getVscodeModule('keytar');
@@ -12,11 +10,11 @@ const keytar: any = getVscodeModule('keytar');
 export class TokenStore {
     public static extensionContext: ExtensionContext;
 
-    static async setItem(key: string, login: string, value: string): Promise<void> {
+    static setItem(key: string, login: string, value: string): Promise<void> {
         return keytar ? keytar.setPassword(key, login, value) : undefined;
     }
 
-    static async getItem(key: string, login: string): Promise<string> {
+    static getItem(key: string, login: string): Promise<string> {
         return keytar ? keytar.getPassword(key, login) : '';
     }
 

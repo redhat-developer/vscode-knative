@@ -1,3 +1,5 @@
+import { async } from "rxjs/internal/scheduler/async";
+
 /**
  * Copyright (c) Microsoft Corporation
  * Licensed under the MIT License. See LICENSE file in the project root for license information.
@@ -8,7 +10,7 @@ export function isThenable<T>(candidate: any): candidate is Thenable<T> {
     return candidate && typeof (<Thenable<any>>candidate).then === 'function';
 }
 
-export function wait(timeout: number = 2500): Promise<void> {
+export async function wait(timeout: number = 2500): Promise<void> {
 	return new Promise((res) => setTimeout(res, timeout));
 }
 
@@ -36,7 +38,7 @@ export class Delayer<T> {
 		this.task = null;
 	}
 
-	trigger(task: ITask<T | Promise<T>>, delay: number = this.defaultDelay): Promise<T> {
+  async trigger(task: ITask<T | Promise<T>>, delay: number = this.defaultDelay): Promise<T> {
 		this.task = task;
 		this.cancelTimeout();
 

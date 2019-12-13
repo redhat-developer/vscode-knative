@@ -17,7 +17,6 @@ import globby = require('globby');
 import { selectWorkspaceFolder } from '../util/workspace';
 import { KnAPI } from '../kn/kn-api';
 import { ContextType, ComponentType, KnativeTreeObject } from '../kn/knativeTreeObject';
-import { Validation } from './validation';
 
 export class Component extends KnativeItem {
     public static extensionContext: ExtensionContext;
@@ -232,7 +231,7 @@ export class Component extends KnativeItem {
         }
 
         return Progress.execFunctionWithProgress(`Link Component '${componentToLink.getName()}' with Component '${component.getName()}'`,
-            (progress) => Component.kn.execute(KnAPI.linkComponentTo(component.getParent().getParent().getName(), component.getParent().getName(), component.getName(), componentToLink.getName(), port), component.contextPath.fsPath)
+            () => Component.kn.execute(KnAPI.linkComponentTo(component.getParent().getParent().getName(), component.getParent().getName(), component.getName(), componentToLink.getName(), port), component.contextPath.fsPath)
                 .then(() => `Component '${componentToLink.getName()}' successfully linked with Component '${component.getName()}'`)
                 .catch((err) => Promise.reject(`Failed to link component with error '${err}'`))
         );
@@ -250,7 +249,7 @@ export class Component extends KnativeItem {
         if (!serviceToLink) { return null; }
 
         return Progress.execFunctionWithProgress(`Link Service '${serviceToLink.getName()}' with Component '${component.getName()}'`,
-            (progress) => Component.kn.execute(KnAPI.linkServiceTo(component.getParent().getParent().getName(), component.getParent().getName(), component.getName(), serviceToLink.getName()), component.contextPath.fsPath)
+            () => Component.kn.execute(KnAPI.linkServiceTo(component.getParent().getParent().getName(), component.getParent().getName(), component.getName(), serviceToLink.getName()), component.contextPath.fsPath)
                 .then(() => `Service '${serviceToLink.getName()}' successfully linked with Component '${component.getName()}'`)
                 .catch((err) => Promise.reject(`Failed to link Service with error '${err}'`))
         );
@@ -517,7 +516,7 @@ export class Component extends KnativeItem {
 
         const workspaceFolder = await selectWorkspaceFolder();
         if (!workspaceFolder) { return null; }
-        return await Progress.execFunctionWithProgress(`Importing component '${compName}'`, async (progress) => {
+        return await Progress.execFunctionWithProgress(`Importing component '${compName}'`, async () => {
             try {
                 // use annotations to understand what kind of component is imported
                 // metadata:
