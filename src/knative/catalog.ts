@@ -3,11 +3,11 @@
  *  Licensed under the MIT License. See LICENSE file in the project root for license information.
  *-----------------------------------------------------------------------------------------------*/
 
-import { KnAPI } from '../kn/kn-api';
+import KnAPI from '../kn/kn-api';
 import { Kn, KnImpl } from '../kn/knController';
-import { Platform } from "../util/platform";
+import Platform from "../util/platform";
 
-export class Catalog {
+export default class Catalog {
     private static kn: Kn = KnImpl.Instance;
 
     static listComponents(): void {

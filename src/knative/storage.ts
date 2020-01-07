@@ -3,13 +3,14 @@
  *  Licensed under the MIT License. See LICENSE file in the project root for license information.
  *-----------------------------------------------------------------------------------------------*/
 
-import { KnativeItem } from "./knativeItem";
 import { window } from 'vscode';
-import { Progress } from "../util/progress";
 import { isEmpty } from "validator";
-import { ContextType, KnativeTreeObject } from '../kn/knativeTreeObject';
+import KnativeItem from "./knativeItem";
+import Progress from "../util/progress";
+import { KnativeTreeObject } from '../kn/knativeTreeObject';
+import { ContextType } from '../kn/config';
 
-export class Storage extends KnativeItem {
+export default class Storage extends KnativeItem {
     static async create(context: KnativeTreeObject): Promise<string> {
         const component = await Storage.getKnativeCmdData(context,
             "In which Project you want to create a Storage",

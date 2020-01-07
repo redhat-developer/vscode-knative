@@ -4,7 +4,7 @@
  *-----------------------------------------------------------------------------------------------*/
 
 import * as vscode from 'vscode';
-import { Filters } from '../util/filters';
+import Filters from '../util/filters';
 
 function prettifyJson(str: string): string {
   let jsonData: string;
@@ -17,18 +17,37 @@ function prettifyJson(str: string): string {
   return jsonData;
 }
 
-export interface KnOutputChannel {
+/**
+ * An interface that requires the implementation of:
+ * @function print
+ * @function show
+ */
+export interface OutputChannel {
   print(text: string): void;
   show(): void;
 }
 
-export default class KnChannel implements KnOutputChannel {
+/**
+ * Write to and display information in the Knative Output window/channel.
+ * An output channel is a container for readonly textual information.
+ *
+ * @function print
+ * @function show
+ */
+export default class KnOutputChannel implements OutputChannel {
   private readonly channel: vscode.OutputChannel = vscode.window.createOutputChannel('Knative');
 
+  /**
+   * Display the output channel.
+   */
   show(): void {
     this.channel.show();
   }
 
+  /**
+   * Take JSON, clean it up, and display it in the output channel.
+   * @param text
+   */
   print(text: string): void {
     const textData: string = prettifyJson(text);
     this.channel.append(textData);

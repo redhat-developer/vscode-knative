@@ -3,23 +3,26 @@
  *  Licensed under the MIT License. See LICENSE file in the project root for license information.
  *-----------------------------------------------------------------------------------------------*/
 
-import { KnativeItem } from './knativeItem';
-import { window, commands, QuickPickItem, Uri, workspace, ExtensionContext } from 'vscode';
-import { Progress } from '../util/progress';
-import { ChildProcess } from 'child_process';
-import { CliExitData } from '../kn/cli';
 import { isURL } from 'validator';
-import { Refs, Ref, Type } from '../util/refs';
+import { ChildProcess } from 'child_process';
+import { window, commands, QuickPickItem, Uri, workspace, ExtensionContext } from 'vscode';
+import KnativeItem from './knativeItem';
+import Progress from '../util/progress';
+import { CliExitData } from '../kn/knCli';
+import Refs, { Ref, Type } from '../util/refs';
 import { Delayer } from '../util/async';
-import { Platform } from '../util/platform';
+import Platform from '../util/platform';
+import selectWorkspaceFolder from '../util/workspace';
+import KnAPI from '../kn/kn-api';
+import { KnativeTreeObject } from '../kn/knativeTreeObject';
+import { ContextType, ComponentType } from '../kn/config';
+
 import path = require('path');
 import globby = require('globby');
-import { selectWorkspaceFolder } from '../util/workspace';
-import { KnAPI } from '../kn/kn-api';
-import { ContextType, ComponentType, KnativeTreeObject } from '../kn/knativeTreeObject';
 
-export class Component extends KnativeItem {
+export default class Component extends KnativeItem {
     public static extensionContext: ExtensionContext;
+
     static async getOpenshiftData(context: KnativeTreeObject): Promise<KnativeTreeObject> {
         return await Component.getKnativeCmdData(context,
             "In which Project you want to create a Component",

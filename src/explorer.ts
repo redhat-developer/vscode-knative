@@ -19,15 +19,15 @@ import {
 } from 'vscode';
 
 import * as path from 'path';
-import { Platform } from './util/platform';
+import Platform from './util/platform';
 
 import { Kn, KnImpl } from './kn/knController';
 import { KnativeTreeObject } from './kn/knativeTreeObject';
-import { WatchUtil, FileContentChangeNotifier } from './util/watch';
+import WatchUtil, { FileContentChangeNotifier } from './util/watch';
 
 const kubeConfigFolder: string = path.join(Platform.getUserHomePath(), '.kube');
 
-export class KnativeExplorer implements TreeDataProvider<KnativeTreeObject>, Disposable {
+export default class KnativeExplorer implements TreeDataProvider<KnativeTreeObject>, Disposable {
   private static instance: KnativeExplorer;
 
   private static knctl: Kn = KnImpl.Instance;
@@ -92,8 +92,8 @@ export class KnativeExplorer implements TreeDataProvider<KnativeTreeObject>, Dis
   }
 
   static async reportIssue() {
-    let body: string = '';
-    const repoURL: string = `https://github.com/talamer/vscode-knative`;
+    let body = '';
+    const repoURL = `https://github.com/talamer/vscode-knative`;
     const template = {
       'VS Code version:': version,
       'OS:': Platform.OS,

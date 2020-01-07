@@ -3,15 +3,19 @@
  *  Licensed under the MIT License. See LICENSE file in the project root for license information.
  *-----------------------------------------------------------------------------------------------*/
 
-'use strict';
-
 import * as fs from 'fs';
 import * as fsex from 'fs-extra';
 import * as path from 'path';
 import { EventEmitter } from 'events';
+
 import byline = require('byline');
 
-export class WatchUtil {
+export interface FileContentChangeNotifier {
+  readonly watcher: fs.FSWatcher;
+  readonly emitter: EventEmitter;
+}
+
+export default class WatchUtil {
   static watchFileForContextChange(location: string, filename: string): FileContentChangeNotifier {
     const emitter: EventEmitter = new EventEmitter();
     let timer: NodeJS.Timer;
@@ -53,9 +57,4 @@ export class WatchUtil {
         .on('end', resolve);
     });
   }
-}
-
-export interface FileContentChangeNotifier {
-  readonly watcher: fs.FSWatcher;
-  readonly emitter: EventEmitter;
 }

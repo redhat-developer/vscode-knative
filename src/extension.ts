@@ -1,7 +1,7 @@
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
 import * as vscode from 'vscode';
-import { KnativeExplorer } from './explorer';
+import KnativeExplorer from './explorer';
 import Service from './knative/service';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any

@@ -5,13 +5,13 @@
 
 import { window, QuickPickItem, commands, Uri } from 'vscode';
 import { V1ServicePort } from '@kubernetes/client-node';
-import { KnativeItem } from './knativeItem';
-import { Progress } from "../util/progress";
 import { ChildProcess } from 'child_process';
-import { KnAPI } from '../kn/kn-api';
+import KnativeItem from './knativeItem';
+import Progress from "../util/progress";
+import KnAPI from '../kn/kn-api';
 import { KnativeTreeObject } from '../kn/knativeTreeObject';
 
-export class Url extends KnativeItem{
+export default class Url extends KnativeItem{
 
     static async create(context: KnativeTreeObject): Promise<string> {
         const component = await Url.getKnativeCmdData(context,

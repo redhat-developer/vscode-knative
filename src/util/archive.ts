@@ -5,10 +5,11 @@
 
 import * as fs from 'fs';
 import * as zlib from 'zlib';
+
 import targz = require('targz');
 import unzipm = require('unzip-stream');
 
-export class Archive {
+export default class Archive {
   static async unzip(zipFile: string, extractTo: string, prefix?: string): Promise<void> {
     return new Promise((resolve, reject) => {
       if (zipFile.endsWith('.tar.gz')) {

@@ -4,10 +4,10 @@
  *-----------------------------------------------------------------------------------------------*/
 
 import { window } from 'vscode';
-import { KnativeItem } from './knativeItem';
-import { Progress } from '../util/progress';
-import { Platform } from '../util/platform';
-import { KnAPI } from '../kn/kn-api';
+import KnativeItem from './knativeItem';
+import Progress from '../util/progress';
+import Platform from '../util/platform';
+import KnAPI from '../kn/kn-api';
 import { KnativeTreeObject } from '../kn/knativeTreeObject';
 
 export default class Service extends KnativeItem {
@@ -16,7 +16,7 @@ export default class Service extends KnativeItem {
   }
 
   static async create(context: KnativeTreeObject): Promise<string> {
-    const application = await Service.getKnativeCmdData(
+    const application = Service.getKnativeCmdData(
       context,
       'In which Project you want to create a Service',
       'In which Application you want to create a Service',

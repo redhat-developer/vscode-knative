@@ -18,102 +18,109 @@ import * as path from 'path';
 import { statSync } from 'fs';
 import { Subject } from 'rxjs';
 import { V1ServicePort, V1Service } from '@kubernetes/client-node';
-import { WindowUtil } from '../util/windowUtils';
-import KnCli, { Cli, CliExitData } from './cli';
-import { KnCliConfig } from './kn-cli-config';
-import { Platform } from '../util/platform';
-import { ComponentSettings } from './config';
-import { Progress } from '../util/progress';
-import {
-  ComponentType,
-  ContextType,
-  KnativeTreeObject,
-  KnativeObjectImpl,
-} from './knativeTreeObject';
-import { KnatvieTreeEvent, KnatvieTreeEventImpl } from './knativeTreeEvent';
-import { KnativeTreeModel } from './knativeTreeModel';
-import { KnAPI } from './kn-api';
+import { ComponentType, ContextType, ComponentSettings } from './config';
+import KnAPI from './kn-api';
+import KnCliConfig from './kn-cli-config';
+import KnativeObjectImpl, { KnativeTreeObject } from './knativeTreeObject';
+import { KnatvieTreeEvent } from './knativeTreeEvent';
+import KnativeTreeModel from './knativeTreeModel';
+import KnCli, { Cli, CliExitData } from './knCli';
+import Platform from '../util/platform';
+import Progress from '../util/progress';
+import WindowUtil from '../util/windowUtils';
 
 import bs = require('binary-search');
 
 const { Collapsed } = TreeItemCollapsibleState;
 
+export function loadItems(result: CliExitData): any[] {
+  let data: any[] = [];
+  try {
+    const { items } = JSON.parse(result.stdout);
+    if (items) {
+      data = items;
+    }
+  } catch (ignore) {}
+  return data;
+}
+
+
 export interface Kn {
   getServices(): Promise<KnativeTreeObject[]>;
-  getClusters(): Promise<KnativeTreeObject[]>;
-  getProjects(): Promise<KnativeTreeObject[]>;
-  loadWorkspaceComponents(event: WorkspaceFoldersChangeEvent): void;
-  addWorkspaceComponent(WorkspaceFolder: WorkspaceFolder, component: KnativeTreeObject);
-  getApplications(project: KnativeTreeObject): Promise<KnativeTreeObject[]>;
-  getApplicationChildren(application: KnativeTreeObject): Promise<KnativeTreeObject[]>;
-  getComponents(
-    application: KnativeTreeObject,
-    condition?: (value: KnativeTreeObject) => boolean,
-  ): Promise<KnativeTreeObject[]>;
-  getComponentTypes(): Promise<string[]>;
-  getComponentChildren(component: KnativeTreeObject): Promise<KnativeTreeObject[]>;
-  getRoutes(component: KnativeTreeObject): Promise<KnativeTreeObject[]>;
-  getComponentPorts(component: KnativeTreeObject): Promise<V1ServicePort[]>;
-  getComponentTypeVersions(componentName: string): Promise<string[]>;
-  getStorageNames(component: KnativeTreeObject): Promise<KnativeTreeObject[]>;
-  getServiceTemplates(): Promise<string[]>;
-  getServiceTemplatePlans(svc: string): Promise<string[]>;
-  getOsServices(application: KnativeTreeObject): Promise<KnativeTreeObject[]>;
+  // getClusters(): Promise<KnativeTreeObject[]>;
+  // getProjects(): Promise<KnativeTreeObject[]>;
+  // loadWorkspaceComponents(event: WorkspaceFoldersChangeEvent): void;
+  // addWorkspaceComponent(WorkspaceFolder: WorkspaceFolder, component: KnativeTreeObject);
+  // getApplications(project: KnativeTreeObject): Promise<KnativeTreeObject[]>;
+  // getApplicationChildren(application: KnativeTreeObject): Promise<KnativeTreeObject[]>;
+  // getComponents(
+  //   application: KnativeTreeObject,
+  //   condition?: (value: KnativeTreeObject) => boolean,
+  // ): Promise<KnativeTreeObject[]>;
+  // getComponentTypes(): Promise<string[]>;
+  // getComponentChildren(component: KnativeTreeObject): Promise<KnativeTreeObject[]>;
+  // getRoutes(component: KnativeTreeObject): Promise<KnativeTreeObject[]>;
+  // getComponentPorts(component: KnativeTreeObject): Promise<V1ServicePort[]>;
+  // getComponentTypeVersions(componentName: string): Promise<string[]>;
+  // getStorageNames(component: KnativeTreeObject): Promise<KnativeTreeObject[]>;
+  // getServiceTemplates(): Promise<string[]>;
+  // getServiceTemplatePlans(svc: string): Promise<string[]>;
+  // getOsServices(application: KnativeTreeObject): Promise<KnativeTreeObject[]>;
   execute(command: string, cwd?: string, fail?: boolean): Promise<CliExitData>;
   executeInTerminal(command: string, cwd?: string): void;
   requireLogin(): Promise<boolean>;
   clearCache?(): void;
-  createProject(name: string): Promise<KnativeTreeObject>;
-  deleteProject(project: KnativeTreeObject): Promise<KnativeTreeObject>;
-  createApplication(application: KnativeTreeObject): Promise<KnativeTreeObject>;
-  deleteApplication(application: KnativeTreeObject): Promise<KnativeTreeObject>;
-  createComponentFromGit(
-    application: KnativeTreeObject,
-    type: string,
-    version: string,
-    name: string,
-    repoUri: string,
-    context: Uri,
-    ref: string,
-  ): Promise<KnativeTreeObject>;
-  createComponentFromFolder(
-    application: KnativeTreeObject,
-    type: string,
-    version: string,
-    name: string,
-    path: Uri,
-  ): Promise<KnativeTreeObject>;
-  createComponentFromBinary(
-    application: KnativeTreeObject,
-    type: string,
-    version: string,
-    name: string,
-    path: Uri,
-    context: Uri,
-  ): Promise<KnativeTreeObject>;
-  deleteComponent(component: KnativeTreeObject): Promise<KnativeTreeObject>;
-  undeployComponent(component: KnativeTreeObject): Promise<KnativeTreeObject>;
-  deleteNotPushedComponent(component: KnativeTreeObject): Promise<KnativeTreeObject>;
-  createStorage(
-    component: KnativeTreeObject,
-    name: string,
-    mountPath: string,
-    size: string,
-  ): Promise<KnativeTreeObject>;
-  deleteStorage(storage: KnativeTreeObject): Promise<KnativeTreeObject>;
-  createOSService(
-    application: KnativeTreeObject,
-    templateName: string,
-    planName: string,
-    name: string,
-  ): Promise<KnativeTreeObject>;
-  deleteService(service: KnativeTreeObject): Promise<KnativeTreeObject>;
-  deleteURL(url: KnativeTreeObject): Promise<KnativeTreeObject>;
-  createComponentCustomUrl(
-    component: KnativeTreeObject,
-    name: string,
-    port: string,
-  ): Promise<KnativeTreeObject>;
+  // createProject(name: string): Promise<KnativeTreeObject>;
+  // deleteProject(project: KnativeTreeObject): Promise<KnativeTreeObject>;
+  // createApplication(application: KnativeTreeObject): Promise<KnativeTreeObject>;
+  // deleteApplication(application: KnativeTreeObject): Promise<KnativeTreeObject>;
+  // createComponentFromGit(
+  //   application: KnativeTreeObject,
+  //   type: string,
+  //   version: string,
+  //   name: string,
+  //   repoUri: string,
+  //   context: Uri,
+  //   ref: string,
+  // ): Promise<KnativeTreeObject>;
+  // createComponentFromFolder(
+  //   application: KnativeTreeObject,
+  //   type: string,
+  //   version: string,
+  //   name: string,
+  //   path: Uri,
+  // ): Promise<KnativeTreeObject>;
+  // createComponentFromBinary(
+  //   application: KnativeTreeObject,
+  //   type: string,
+  //   version: string,
+  //   name: string,
+  //   path: Uri,
+  //   context: Uri,
+  // ): Promise<KnativeTreeObject>;
+  // deleteComponent(component: KnativeTreeObject): Promise<KnativeTreeObject>;
+  // undeployComponent(component: KnativeTreeObject): Promise<KnativeTreeObject>;
+  // deleteNotPushedComponent(component: KnativeTreeObject): Promise<KnativeTreeObject>;
+  // createStorage(
+  //   component: KnativeTreeObject,
+  //   name: string,
+  //   mountPath: string,
+  //   size: string,
+  // ): Promise<KnativeTreeObject>;
+  // deleteStorage(storage: KnativeTreeObject): Promise<KnativeTreeObject>;
+  // createOSService(
+  //   application: KnativeTreeObject,
+  //   templateName: string,
+  //   planName: string,
+  //   name: string,
+  // ): Promise<KnativeTreeObject>;
+  // deleteService(service: KnativeTreeObject): Promise<KnativeTreeObject>;
+  // deleteURL(url: KnativeTreeObject): Promise<KnativeTreeObject>;
+  // createComponentCustomUrl(
+  //   component: KnativeTreeObject,
+  //   name: string,
+  //   port: string,
+  // ): Promise<KnativeTreeObject>;
   readonly subject: Subject<KnatvieTreeEvent>;
 }
 
@@ -144,6 +151,77 @@ export class KnImpl implements Kn {
     false,
     undefined,
   );
+
+  private readonly CONTEXT_DATA = {
+    cluster: {
+      icon: 'cluster-node.png',
+      tooltip: '{name}',
+      getChildren: (): Promise<KnativeTreeObject[]> => this.kn.getProjects(),
+    },
+    project: {
+      icon: 'project-node.png',
+      tooltip: 'Project: {label}',
+      getChildren: (): Promise<KnativeTreeObject[]> => this.kn.getApplications(this),
+    },
+    application: {
+      icon: 'application-node.png',
+      tooltip: 'Application: {label}',
+      getChildren: (): Promise<KnativeTreeObject[]> => this.kn.getApplicationChildren(this),
+    },
+    component: {
+      icon: '',
+      tooltip: 'Component: {label}',
+      description: '',
+      getChildren: (): Promise<KnativeTreeObject[]> => this.kn.getComponentChildren(this),
+    },
+    componentNotPushed: {
+      icon: '',
+      tooltip: 'Component: {label}',
+      description: '',
+      getChildren: (): Promise<KnativeTreeObject[]> => this.kn.getComponentChildren(this),
+    },
+    componentNoContext: {
+      icon: '',
+      tooltip: 'Component: {label}',
+      description: '',
+      getChildren: (): Promise<KnativeTreeObject[]> => this.kn.getComponentChildren(this),
+    },
+    revision: {
+      icon: 'service-node.png',
+      tooltip: 'Revision: {label}',
+      getChildren: (): undefined[] => [],
+    },
+    service: {
+      icon: 'service-node.png',
+      tooltip: 'Service: {label}',
+      getChildren: (): undefined[] => [],
+    },
+    osservice: {
+      icon: 'service-node.png',
+      tooltip: 'Service: {label}',
+      getChildren: (): undefined[] => [],
+    },
+    storage: {
+      icon: 'storage-node.png',
+      tooltip: 'Storage: {label}',
+      getChildren: (): undefined[] => [],
+    },
+    clusterDown: {
+      icon: 'cluster-down.png',
+      tooltip: 'Cannot connect to the cluster',
+      getChildren: (): undefined[] => [],
+    },
+    loginRequired: {
+      icon: 'cluster-down.png',
+      tooltip: 'Please Log in to the cluster',
+      getChildren: (): undefined[] => [],
+    },
+    componentRoute: {
+      icon: 'url-node.png',
+      tooltip: 'URL: {label}',
+      getChildren: (): undefined[] => [],
+    },
+  };
 
   private static cli: Cli = KnCli.getInstance();
 
@@ -181,17 +259,18 @@ export class KnImpl implements Kn {
     const result: CliExitData = await this.execute(KnAPI.listServices());
     const services: string[] = this.loadItems(result).map((value) => value.metadata.name);
     return services
-      .map<KnativeTreeObject>(
-        (value) =>
-          new KnativeObjectImpl(
-            null,
-            value,
-            ContextType.SERVICE,
-            false,
-            KnImpl.instance,
-            TreeItemCollapsibleState.Expanded,
-          ),
-      )
+      .map<KnativeTreeObject>((value) => {
+        const obj: KnativeTreeObject = new KnativeObjectImpl(
+          null,
+          value,
+          ContextType.SERVICE,
+          false,
+          this.CONTEXT_DATA,
+          TreeItemCollapsibleState.Expanded,
+        );
+        KnImpl.data.setPathToObject(obj);
+        return obj;
+      })
       .sort(compareNodes);
   }
 
@@ -220,11 +299,7 @@ export class KnImpl implements Kn {
 
   private async getClustersWithOc(): Promise<KnativeTreeObject[]> {
     let clusters: KnativeTreeObject[] = [];
-    const result: CliExitData = await this.execute(
-      KnAPI.printOcVersion(),
-      process.cwd(),
-      false,
-    );
+    const result: CliExitData = await this.execute(KnAPI.printOcVersion(), process.cwd(), false);
     clusters = result.stdout
       .trim()
       .split('\n')
@@ -233,14 +308,16 @@ export class KnImpl implements Kn {
       })
       .map((value) => {
         const server: string = value.substr(value.indexOf(' ') + 1).trim();
-        return new KnativeObjectImpl(
+        const obj: KnativeTreeObject = new KnativeObjectImpl(
           null,
           server,
           ContextType.CLUSTER,
           false,
-          KnImpl.instance,
+          this.CONTEXT_DATA,
           TreeItemCollapsibleState.Expanded,
         );
+        KnImpl.data.setPathToObject(obj);
+        return obj;
       });
     return clusters;
   }
@@ -258,29 +335,29 @@ export class KnImpl implements Kn {
       )
     ) {
       const loginErrorMsg = 'Please log in to the cluster';
-      return [
-        new KnativeObjectImpl(
-          null,
-          loginErrorMsg,
-          ContextType.LOGIN_REQUIRED,
-          false,
-          KnImpl.instance,
-          TreeItemCollapsibleState.None,
-        ),
-      ];
+      const obj: KnativeTreeObject = new KnativeObjectImpl(
+        null,
+        loginErrorMsg,
+        ContextType.LOGIN_REQUIRED,
+        false,
+        this.CONTEXT_DATA,
+        TreeItemCollapsibleState.None,
+      );
+      KnImpl.data.setPathToObject(obj);
+      return [obj];
     }
     if (result.stderr.includes('Unable to connect to OpenShift cluster, is it down?')) {
       const clusterDownMsg = 'Please start the OpenShift cluster';
-      return [
-        new KnativeObjectImpl(
-          null,
-          clusterDownMsg,
-          ContextType.CLUSTER_DOWN,
-          false,
-          KnImpl.instance,
-          TreeItemCollapsibleState.None,
-        ),
-      ];
+      const obj: KnativeTreeObject = new KnativeObjectImpl(
+        null,
+        clusterDownMsg,
+        ContextType.CLUSTER_DOWN,
+        false,
+        this.CONTEXT_DATA,
+        TreeItemCollapsibleState.None,
+      );
+      KnImpl.data.setPathToObject(obj);
+      return [obj];
     }
     commands.executeCommand('setContext', 'isLoggedIn', true);
     clusters = result.stdout
@@ -291,14 +368,16 @@ export class KnImpl implements Kn {
       })
       .map((value) => {
         const server: string = value.substr(value.indexOf(':') + 1).trim();
-        return new KnativeObjectImpl(
+        const obj: KnativeTreeObject = new KnativeObjectImpl(
           null,
           server,
           ContextType.CLUSTER,
           false,
-          KnImpl.instance,
+          this.CONTEXT_DATA,
           TreeItemCollapsibleState.Expanded,
         );
+        KnImpl.data.setPathToObject(obj);
+        return obj;
       });
     return clusters;
   }
@@ -316,10 +395,17 @@ export class KnImpl implements Kn {
     return this.execute(KnAPI.listProjects())
       .then((result) => {
         const projs = this.loadItems(result).map((value) => value.metadata.name);
-        return projs.map<KnativeTreeObject>(
-          (value) =>
-            new KnativeObjectImpl(cluster, value, ContextType.PROJECT, false, KnImpl.instance),
-        );
+        return projs.map<KnativeTreeObject>((value) => {
+          const obj: KnativeTreeObject = new KnativeObjectImpl(
+            cluster,
+            value,
+            ContextType.PROJECT,
+            false,
+            this.CONTEXT_DATA,
+          );
+          KnImpl.data.setPathToObject(obj);
+          return obj;
+        });
 
         // TODO: load projects form workspace folders and add missing ones to the model even they
         // are not created in cluster they should be visible in Knative Application Tree
@@ -339,9 +425,7 @@ export class KnImpl implements Kn {
   }
 
   public async _getApplications(project: KnativeTreeObject): Promise<KnativeTreeObject[]> {
-    const result: CliExitData = await this.execute(
-      KnAPI.listApplications(project.getName()),
-    );
+    const result: CliExitData = await this.execute(KnAPI.listApplications(project.getName()));
     let apps: string[] = this.loadItems(result).map((value) => value.metadata.name);
     apps = [...new Set(apps)]; // remove duplicates form array
     // extract apps from local not yet deployed components
@@ -354,10 +438,17 @@ export class KnImpl implements Kn {
       }
     });
     return apps
-      .map<KnativeTreeObject>(
-        (value) =>
-          new KnativeObjectImpl(project, value, ContextType.APPLICATION, false, KnImpl.instance),
-      )
+      .map<KnativeTreeObject>((value) => {
+        const obj: KnativeTreeObject = new KnativeObjectImpl(
+          project,
+          value,
+          ContextType.APPLICATION,
+          false,
+          this.CONTEXT_DATA,
+        );
+        KnImpl.data.setPathToObject(obj);
+        return obj;
+      })
       .sort(compareNodes);
   }
 
@@ -416,16 +507,18 @@ export class KnImpl implements Kn {
         // for not existing file or folder
         compSource = ComponentType.LOCAL;
       }
-      return new KnativeObjectImpl(
+      const obj: KnativeTreeObject = new KnativeObjectImpl(
         application,
         value.name,
         ContextType.COMPONENT_NO_CONTEXT,
         true,
-        this,
+        this.CONTEXT_DATA,
         Collapsed,
         undefined,
         compSource,
       );
+      KnImpl.data.setPathToObject(obj);
+      return obj;
     });
     const targetAppName = application.getName();
     const targetPrjName = application.getParent().getName();
@@ -440,18 +533,18 @@ export class KnImpl implements Kn {
           item.deployed = true;
           item.contextValue = ContextType.COMPONENT_PUSHED;
         } else {
-          deployedComponents.push(
-            new KnativeObjectImpl(
-              application,
-              comp.Name,
-              ContextType.COMPONENT,
-              false,
-              this,
-              Collapsed,
-              comp.ContextPath,
-              comp.SourceType,
-            ),
+          const obj: KnativeTreeObject = new KnativeObjectImpl(
+            application,
+            comp.Name,
+            ContextType.COMPONENT,
+            false,
+            this.CONTEXT_DATA,
+            Collapsed,
+            comp.ContextPath,
+            comp.SourceType,
           );
+          KnImpl.data.setPathToObject(obj);
+          deployedComponents.push(obj);
         }
       });
 
@@ -520,17 +613,18 @@ export class KnImpl implements Kn {
       component.contextPath ? component.contextPath.fsPath : Platform.getUserHomePath(),
       false,
     );
-    return this.loadItems(result).map(
-      (value) =>
-        new KnativeObjectImpl(
-          component,
-          value.metadata.name,
-          ContextType.COMPONENT_ROUTE,
-          false,
-          KnImpl.instance,
-          TreeItemCollapsibleState.None,
-        ),
-    );
+    return this.loadItems(result).map((value) => {
+      const obj: KnativeTreeObject = new KnativeObjectImpl(
+        component,
+        value.metadata.name,
+        ContextType.COMPONENT_ROUTE,
+        false,
+        this.CONTEXT_DATA,
+        TreeItemCollapsibleState.None,
+      );
+      KnImpl.data.setPathToObject(obj);
+      return obj;
+    });
   }
 
   async getStorageNames(component: KnativeTreeObject): Promise<KnativeTreeObject[]> {
@@ -544,17 +638,18 @@ export class KnImpl implements Kn {
       KnAPI.listStorageNames(),
       component.contextPath ? component.contextPath.fsPath : Platform.getUserHomePath(),
     );
-    return this.loadItems(result).map<KnativeTreeObject>(
-      (value) =>
-        new KnativeObjectImpl(
-          component,
-          value.metadata.name,
-          ContextType.STORAGE,
-          false,
-          KnImpl.instance,
-          TreeItemCollapsibleState.None,
-        ),
-    );
+    return this.loadItems(result).map<KnativeTreeObject>((value) => {
+      const obj: KnativeTreeObject = new KnativeObjectImpl(
+        component,
+        value.metadata.name,
+        ContextType.STORAGE,
+        false,
+        this.CONTEXT_DATA,
+        TreeItemCollapsibleState.None,
+      );
+      KnImpl.data.setPathToObject(obj);
+      return obj;
+    });
   }
 
   public async getComponentTypeVersions(componentName: string) {
@@ -598,20 +693,19 @@ export class KnImpl implements Kn {
     const projName: string = application.getParent().getName();
     let services: KnativeTreeObject[] = [];
     try {
-      const result: CliExitData = await this.execute(
-        KnAPI.listServiceInstances(projName, appName),
-      );
-      services = this.loadItems(result).map(
-        (value) =>
-          new KnativeObjectImpl(
-            application,
-            value.metadata.name,
-            ContextType.SERVICE,
-            true,
-            KnImpl.instance,
-            TreeItemCollapsibleState.None,
-          ),
-      );
+      const result: CliExitData = await this.execute(KnAPI.listServiceInstances(projName, appName));
+      services = this.loadItems(result).map((value) => {
+        const obj: KnativeTreeObject = new KnativeObjectImpl(
+          application,
+          value.metadata.name,
+          ContextType.SERVICE,
+          true,
+          this.CONTEXT_DATA,
+          TreeItemCollapsibleState.None,
+        );
+        KnImpl.data.setPathToObject(obj);
+        return obj;
+      });
     } catch (ignore) {
       // ignore error in case service catalog is not configured
     }
@@ -619,9 +713,14 @@ export class KnImpl implements Kn {
     return services;
   }
 
-  public async executeInTerminal(command: string, cwd: string = process.cwd(), name = 'Knative') {
+  // eslint-disable-next-line class-methods-use-this
+  public async executeInTerminal(
+    command: string,
+    cwd: string = process.cwd(),
+    name = 'Knative',
+  ): Promise<void> {
     const cmd = command.split(' ')[0];
-    let toolLocation = await KnCliConfig.detectOrDownload(cmd);
+    let toolLocation = KnCliConfig.detectOrDownload(cmd);
     if (toolLocation) {
       toolLocation = path.dirname(toolLocation);
     }
@@ -630,9 +729,10 @@ export class KnImpl implements Kn {
     terminal.show();
   }
 
+  // eslint-disable-next-line class-methods-use-this
   public async execute(command: string, cwd?: string, fail = true): Promise<CliExitData> {
     const cmd = command.split(' ')[0];
-    const toolLocation = await KnCliConfig.detectOrDownload(cmd);
+    const toolLocation = KnCliConfig.detectOrDownload(cmd);
     return KnImpl.cli
       .execute(
         toolLocation
@@ -702,9 +802,15 @@ export class KnImpl implements Kn {
   public async createProject(projectName: string): Promise<KnativeTreeObject> {
     await KnImpl.instance.execute(KnAPI.createProject(projectName));
     const clusters = await this.getClusters();
-    return this.insertAndReveal(
-      new KnativeObjectImpl(clusters[0], projectName, ContextType.PROJECT, false, this),
+    const obj: KnativeTreeObject = new KnativeObjectImpl(
+      clusters[0],
+      projectName,
+      ContextType.PROJECT,
+      false,
+      this.CONTEXT_DATA,
     );
+    KnImpl.data.setPathToObject(obj);
+    return this.insertAndReveal(obj);
   }
 
   public async deleteApplication(app: KnativeTreeObject): Promise<KnativeTreeObject> {
@@ -788,7 +894,7 @@ export class KnImpl implements Kn {
           name,
           ContextType.COMPONENT,
           false,
-          this,
+          this.CONTEXT_DATA,
           Collapsed,
           location,
           'local',
@@ -851,7 +957,7 @@ export class KnImpl implements Kn {
           name,
           ContextType.COMPONENT,
           false,
-          this,
+          this.CONTEXT_DATA,
           Collapsed,
           context,
           ComponentType.GIT,
@@ -898,7 +1004,7 @@ export class KnImpl implements Kn {
           name,
           ContextType.COMPONENT,
           false,
-          this,
+          this.CONTEXT_DATA,
           Collapsed,
           context,
           ComponentType.BINARY,
@@ -978,7 +1084,7 @@ export class KnImpl implements Kn {
         name,
         ContextType.SERVICE,
         false,
-        this,
+        this.CONTEXT_DATA,
         TreeItemCollapsibleState.None,
       ),
     );
@@ -1012,7 +1118,7 @@ export class KnImpl implements Kn {
         name,
         ContextType.STORAGE,
         false,
-        this,
+        this.CONTEXT_DATA,
         TreeItemCollapsibleState.None,
       ),
     );
@@ -1052,7 +1158,7 @@ export class KnImpl implements Kn {
         name,
         ContextType.COMPONENT_ROUTE,
         false,
-        this,
+        this.CONTEXT_DATA,
         TreeItemCollapsibleState.None,
       ),
     );
@@ -1103,7 +1209,7 @@ export class KnImpl implements Kn {
                   added.Name,
                   ContextType.COMPONENT,
                   false,
-                  this,
+                  this.CONTEXT_DATA,
                   Collapsed,
                   added.ContextPath,
                   added.SourceType,
@@ -1116,7 +1222,7 @@ export class KnImpl implements Kn {
                 added.Application,
                 ContextType.APPLICATION,
                 false,
-                this,
+                this.CONTEXT_DATA,
                 Collapsed,
               );
               await this.insertAndRefresh(newApp);
@@ -1148,16 +1254,6 @@ export class KnImpl implements Kn {
     }
   }
 
-  loadItems(result: CliExitData) {
-    let data: any[] = [];
-    try {
-      const { items } = JSON.parse(result.stdout);
-      if (items) {
-        data = items;
-      }
-    } catch (ignore) {}
-    return data;
-  }
 
   async convertObjectsFromPreviousKnReleases() {
     const projectsResult = await this.execute(

@@ -3,10 +3,8 @@
  *  Licensed under the MIT License. See LICENSE file in the project root for license information.
  *-----------------------------------------------------------------------------------------------*/
 
-'use strict';
-
 import * as vscode from 'vscode';
-import { Kn, KnImpl, getInstance } from '../kn/knController';
+import { KnImpl, getInstance } from '../kn/knController';
 
 export interface Step {
   command: string;
@@ -14,7 +12,7 @@ export interface Step {
   total?: number;
 }
 
-export class Progress {
+export default class Progress {
   static execWithProgress(options, steps: Step[], kn: KnImpl): Thenable<void> {
     return vscode.window.withProgress(
       options,

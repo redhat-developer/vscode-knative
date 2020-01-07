@@ -1,5 +1,3 @@
-import { async } from "rxjs/internal/scheduler/async";
-
 /**
  * Copyright (c) Microsoft Corporation
  * Licensed under the MIT License. See LICENSE file in the project root for license information.
@@ -24,10 +22,14 @@ export interface ITask<T> {
 
 export class Delayer<T> {
 
-	private timeout: any;
-	private completionPromise: Promise<any> | null;
-	private doResolve: ((value?: any | Promise<any>) => void) | null;
-	private doReject: (err: any) => void;
+  private timeout: any;
+
+  private completionPromise: Promise<any> | null;
+
+  private doResolve: ((value?: any | Promise<any>) => void) | null;
+
+  private doReject: (err: any) => void;
+
 	private task: ITask<T | Promise<T>> | null;
 
 	constructor(public defaultDelay: number) {

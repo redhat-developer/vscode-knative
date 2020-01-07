@@ -4,7 +4,7 @@
  *-----------------------------------------------------------------------------------------------*/
 
 import { exec, ExecException, ExecOptions } from 'child_process';
-import KnChannel, { KnOutputChannel } from './knChannel';
+import KnOutputChannel, { OutputChannel } from './knOutputChannel';
 
 export interface CliExitData {
   readonly error: ExecException;
@@ -18,7 +18,10 @@ export interface Cli {
 export default class KnCli implements Cli {
   private static instance: KnCli;
 
-  private knOutputChannel: KnOutputChannel = new KnChannel();
+  /**
+   * Print and Show info in the knative output channel/window.
+   */
+  private knOutputChannel: OutputChannel = new KnOutputChannel();
 
   static getInstance(): KnCli {
     if (!KnCli.instance) {
@@ -27,11 +30,20 @@ export default class KnCli implements Cli {
     return KnCli.instance;
   }
 
+  /**
+   * Display info in the Knative Output channel/window
+   */
   showOutputChannel(): void {
     this.knOutputChannel.show();
   }
 
-  async execute(cmd: string, opts: ExecOptions = {}): Promise<CliExitData> {
+  /**
+   * Spin off a child process that will execute the cli command passed in.
+   * 
+   * @param cmd
+   * @param opts
+   */
+  execute(cmd: string, opts: ExecOptions = {}): Promise<CliExitData> {
     return new Promise<CliExitData>((resolve) => {
       const exopt = opts;
       this.knOutputChannel.print(cmd);

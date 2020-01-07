@@ -11,10 +11,10 @@ export interface KnatvieTreeEvent {
   readonly reveal: boolean;
 }
 
-export class KnatvieTreeEventImpl implements KnatvieTreeEvent {
-  constructor(
-    readonly type: "deleted" | "inserted" | "changed",
-    readonly data: KnativeTreeObject,
-    readonly reveal: boolean = false
-  ) {}
+export default class KnatvieTreeEventImpl implements KnatvieTreeEvent {
+    readonly type: "deleted" | "inserted" | "changed";
+
+    readonly data: KnativeTreeObject;
+
+    readonly reveal: boolean = false;
 }

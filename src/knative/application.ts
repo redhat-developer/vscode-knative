@@ -3,13 +3,13 @@
  *  Licensed under the MIT License. See LICENSE file in the project root for license information.
  *-----------------------------------------------------------------------------------------------*/
 
-import { KnativeItem } from './knativeItem';
-import { KnAPI } from '../kn/kn-api';
-import { KnativeTreeObject } from '../kn/knativeTreeObject';
 import { window } from 'vscode';
-import { Progress } from '../util/progress';
+import KnativeItem from './knativeItem';
+import KnAPI from '../kn/kn-api';
+import { KnativeTreeObject } from '../kn/knativeTreeObject';
+import Progress from '../util/progress';
 
-export class Application extends KnativeItem {
+export default class Application extends KnativeItem {
 
     static async describe(treeItem: KnativeTreeObject): Promise<void> {
         const application = await Application.getKnativeCmdData(treeItem,

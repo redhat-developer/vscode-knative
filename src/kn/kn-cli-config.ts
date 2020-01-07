@@ -8,75 +8,212 @@ import * as fsExtra from 'fs-extra';
 import * as path from 'path';
 import * as vscode from 'vscode';
 import { which } from 'shelljs';
-import { Archive } from '../util/archive';
-import { DownloadUtil } from '../util/download';
-import { Platform } from '../util/platform';
+import KnCli, { CliExitData } from './knCli';
+import Archive from '../util/archive';
+import DownloadUtil from '../util/download';
+import Platform from '../util/platform';
 
 import hasha = require('hasha');
 import semver = require('semver');
-import configData = require('./kn-cli-config.json');
+
+const configData = './kn-cli-config.json';
+
+function loadJSON(filePath: string): Promise<KnConfig> {
+  return new Promise((resolve, reject) => {
+    fs.readFile(require.resolve(filePath), 'utf-8', (err, data) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(JSON.parse(data));
+      }
+    });
+  });
+}
+
+export interface KnConfig {
+  kn: CliConfig;
+}
+export interface CliConfig {
+  description: string;
+  vendor: string;
+  name: string;
+  version: string;
+  versionRange: string;
+  versionRangeLabel: string;
+  filePrefix: string;
+  platform?: PlatformOS;
+  url?: string;
+  sha256sum?: string;
+  dlFileName?: string;
+  cmdFileName?: string;
+}
+export interface PlatformOS {
+  win32: PlatformData;
+  darwin: PlatformData;
+  linux: PlatformData;
+}
+export interface PlatformData {
+  url: string;
+  sha256sum: string;
+  dlFileName?: string;
+  cmdFileName: string;
+}
+
+/**
+ *
+ * @param location
+ */
+export function getVersion(location: string): Promise<string> {
+  return new Promise((resolve) => {
+    let detectedVersion: string;
+    if (fs.existsSync(location)) {
+      const version = new RegExp(
+        `Version:(\\s+)v((([0-9]+)\\.([0-9]+)\\.([0-9]+)(?:-([0-9a-zA-Z-]+(?:\\.[0-9a-zA-Z-]+)*))?)(?:\\+([0-9a-zA-Z-]+(?:\\.[0-9a-zA-Z-]+)*))?).*`,
+      );
+      const result: Promise<CliExitData> = KnCli.getInstance().execute(`"${location}" version`);
+      result.then((data) => {
+        if (data.stdout) {
+          const toolVersion: string[] = data.stdout
+            .trim()
+            .split('\n')
+            .filter((value) => {
+              return version.exec(value);
+            })
+            .map((value) => version.exec(value)[2]);
+          if (toolVersion.length) {
+            [detectedVersion] = toolVersion;
+          }
+        }
+      });
+    }
+    resolve(detectedVersion);
+  });
+}
+
+/**
+ * Find which kn cli is installed.
+ *
+ * @param locations
+ * @param versionRange
+ */
+function selectTool(locations: string[], versionRange: string): Promise<string> {
+  return new Promise((resolve) => {
+    resolve(
+      locations.find((location: string): string => {
+        let versionLocation: string;
+        getVersion(location).then((value: string): void => {
+          versionLocation = value;
+        });
+        if (location && semver.satisfies(versionLocation, versionRange)) {
+          return location;
+        }
+        return undefined;
+      }),
+    );
+  });
+}
+
+/**
+ * Get the kn cli config information. Then set OS platform so we know which version of kn to us.
+ *
+ * @param requirements
+ * @param platform
+ */
+function loadMetadata(requirements: Promise<KnConfig>, platform: string): KnConfig | void {
+  // const reqs = requirements;
+  requirements
+    .then((data) => {
+      if (data.kn.platform) {
+        // move the platform that matches the users platform to the main list
+        Object.assign(data.kn, data.kn.platform[platform]);
+        // Delete the whole platfrom from the config
+        // eslint-disable-next-line no-param-reassign
+        delete data.kn.platform;
+        return data;
+      }
+      return data;
+    })
+    .catch((err) => {
+      // Error(err);
+      // eslint-disable-next-line no-console
+      console.log('Something failed loading the JSON file.', err);
+    });
+}
 
 export default class KnCliConfig {
-  static tools: object = KnCliConfig.loadMetadata(configData, Platform.OS);
+  /**
+   * This contains the knative cli config data needed to access and run the commands.
+   */
+  static tools: KnConfig | void = loadMetadata(loadJSON(configData), Platform.OS);
 
-  static loadMetadata(requirements, platform: string): object {
-    const reqs = JSON.parse(JSON.stringify(requirements));
-    for (const object in requirements) {
-      if (reqs[object].platform) {
-        if (reqs[object].platform[platform]) {
-          Object.assign(reqs[object], reqs[object].platform[platform]);
-          delete reqs[object].platform;
-        } else {
-          delete reqs[object];
-        }
-      }
-    }
-    return reqs;
-  }
-
+  /**
+   * Reset the knative cli config data
+   */
   static resetConfiguration(): void {
-    KnCliConfig.tools = KnCliConfig.loadMetadata(configData, Platform.OS);
+    KnCliConfig.tools = loadMetadata(loadJSON(configData), Platform.OS);
   }
 
-  static async detectOrDownload(cmd: string): Promise<string> {
+  /**
+   * Check for the presence of the cli `cmd` passed in.
+   * Set the cli or download the needed cli tool and set it.
+   *
+   * @param cmd
+   */
+  static detectOrDownload(cmd: string): string {
+    // If the location of the cli has been set, then read it.
     let toolLocation: string = KnCliConfig.tools[cmd].location;
 
+    // So if the tool location hasn't been set then we need to figure that out.
     if (toolLocation === undefined) {
+      // Look in [HOME]/.vs-kn/ for the kn cli executable
       const toolCacheLocation = path.resolve(
         Platform.getUserHomePath(),
         '.vs-kn',
         KnCliConfig.tools[cmd].cmdFileName,
       );
+      // If kn cli is installed, get it's install location/path
       const whichLocation = which(cmd);
+      // Get a list of locations.
       const toolLocations: string[] = [
         whichLocation ? whichLocation.stdout : null,
         toolCacheLocation,
       ];
-      toolLocation = await KnCliConfig.selectTool(
-        toolLocations,
-        KnCliConfig.tools[cmd].versionRange,
-      );
+      // Check the list of locations and see if what we need is there.
+      selectTool(toolLocations, KnCliConfig.tools[cmd].versionRange).then((value) => {
+        toolLocation = value;
+      });
 
+      // If the cli tool is still not found then we will need to install it.
       if (toolLocation === undefined) {
-        // otherwise request permission to download
+        // Set the download location for the cli executable.
         const toolDlLocation = path.resolve(
           Platform.getUserHomePath(),
           '.vs-kn',
           KnCliConfig.tools[cmd].dlFileName,
         );
+        // Message for expected version number
         const installRequest = `Download and install v${KnCliConfig.tools[cmd].version}`;
-        const response = await vscode.window.showInformationMessage(
-          `Cannot find ${KnCliConfig.tools[cmd].description} ${KnCliConfig.tools[cmd].versionRangeLabel}.`,
-          installRequest,
-          'Help',
-          'Cancel',
-        );
+        // Create a pop-up that asks to download and install.
+        let response: string;
+        vscode.window
+          .showInformationMessage(
+            `Cannot find ${KnCliConfig.tools[cmd].description} ${KnCliConfig.tools[cmd].versionRangeLabel}.`,
+            installRequest,
+            'Help',
+            'Cancel',
+          )
+          .then((value) => {
+            response = value;
+          });
+        // Ensure that the directory exists. If the directory structure does not exist, it is created.
         fsExtra.ensureDirSync(path.resolve(Platform.getUserHomePath(), '.vs-kn'));
+        // If the user selected to download and install then do this.
         if (response === installRequest) {
           let action: string;
           do {
             action = undefined;
-            await vscode.window.withProgress(
+            // Display a Progress notification while downloading
+            vscode.window.withProgress(
               {
                 cancellable: true,
                 location: vscode.ProgressLocation.Notification,
@@ -91,26 +228,36 @@ export default class KnCliConfig {
                 );
               },
             );
-            const sha256sum: string = await hasha.fromFile(toolDlLocation, { algorithm: 'sha256' });
+            // Get the hash for the downloaded file.
+            let sha256sum: string;
+            hasha.fromFile(toolDlLocation, { algorithm: 'sha256' }).then((value) => {
+              sha256sum = value;
+            });
+            // Check the hash against the one on file to make sure it downloaded. If it doesn't match tell the user,
+            // so they can download it again.
             if (sha256sum !== KnCliConfig.tools[cmd].sha256sum) {
               fsExtra.removeSync(toolDlLocation);
-              action = await vscode.window.showInformationMessage(
+              vscode.window.showInformationMessage(
                 `Checksum for downloaded ${KnCliConfig.tools[cmd].description} v${KnCliConfig.tools[cmd].version} is not correct.`,
                 'Download again',
                 'Cancel',
-              );
+              )
+              // eslint-disable-next-line no-loop-func
+              .then((value) => {
+                action = value;
+              });
             }
           } while (action === 'Download again');
 
           if (action !== 'Cancel') {
             if (toolDlLocation.endsWith('.zip') || toolDlLocation.endsWith('.tar.gz')) {
-              await Archive.unzip(
+              Archive.unzip(
                 toolDlLocation,
                 path.resolve(Platform.getUserHomePath(), '.vs-kn'),
                 KnCliConfig.tools[cmd].filePrefix,
               );
             } else if (toolDlLocation.endsWith('.gz')) {
-              await Archive.unzip(
+              Archive.unzip(
                 toolDlLocation,
                 toolCacheLocation,
                 KnCliConfig.tools[cmd].filePrefix,
@@ -136,40 +283,5 @@ export default class KnCliConfig {
       }
     }
     return toolLocation;
-  }
-
-  static async getVersion(location: string): Promise<string> {
-    let detectedVersion: string;
-    if (fs.existsSync(location)) {
-      // const version = new RegExp(`${cmd.toLocaleLowerCase()} v((([0-9]+)\\.([0-9]+)\\.([0-9]+)(?:-([0-9a-zA-Z-]+(?:\\.[0-9a-zA-Z-]+)*))?)(?:\\+([0-9a-zA-Z-]+(?:\\.[0-9a-zA-Z-]+)*))?).*`);
-      const version = new RegExp(
-        `Version:(\\s+)v((([0-9]+)\\.([0-9]+)\\.([0-9]+)(?:-([0-9a-zA-Z-]+(?:\\.[0-9a-zA-Z-]+)*))?)(?:\\+([0-9a-zA-Z-]+(?:\\.[0-9a-zA-Z-]+)*))?).*`,
-      );
-      const result = await Cli.getInstance().execute(`"${location}" version`);
-      if (result.stdout) {
-        const toolVersion: string[] = result.stdout
-          .trim()
-          .split('\n')
-          .filter((value) => {
-            return value.match(version);
-          })
-          .map((value) => version.exec(value)[2]);
-        if (toolVersion.length) {
-          detectedVersion = toolVersion[0];
-        }
-      }
-    }
-    return detectedVersion;
-  }
-
-  static async selectTool(locations: string[], versionRange: string): Promise<string> {
-    let result: string;
-    for (const location of locations) {
-      if (location && semver.satisfies(await KnCliConfig.getVersion(location), versionRange)) {
-        result = location;
-        break;
-      }
-    }
-    return result;
   }
 }

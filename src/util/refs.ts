@@ -4,8 +4,6 @@
  *-----------------------------------------------------------------------------------------------*/
 //  Inspired by https://github.com/sindresorhus/remote-git-tags
 
-'use strict';
-
 import url = require('url');
 import net = require('net');
 import gitClient = require('git-fetch-pack');
@@ -16,13 +14,13 @@ export enum Type {
     BRANCH
 }
 
-export class Ref {
+export interface Ref {
     name: string;
     type: Type;
     hash: string;
 }
 
-export class Refs {
+export default class Refs {
 
     static async fetchTag(input: string): Promise<Map<string, Ref>> {
         return new Promise((resolve, reject) => {

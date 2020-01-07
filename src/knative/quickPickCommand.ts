@@ -1,0 +1,18 @@
+/*-----------------------------------------------------------------------------------------------
+ *  Copyright (c) Red Hat, Inc. All rights reserved.
+ *  Licensed under the MIT License. See LICENSE file in the project root for license information.
+ *-----------------------------------------------------------------------------------------------*/
+
+import { QuickPickItem } from "vscode";
+
+export default class QuickPickCommand implements QuickPickItem {
+  constructor(
+    public label: string,
+    public command: () => Promise<string>,
+    public description?: string,
+    public detail?: string,
+    public picked?: boolean,
+    public alwaysShow?: boolean,
+    public getName?: () => string
+  ) {}
+}

@@ -3,12 +3,12 @@
  *  Licensed under the MIT License. See LICENSE file in the project root for license information.
  *-----------------------------------------------------------------------------------------------*/
 
-import { KnativeItem } from './knativeItem';
-import { Progress } from '../util/progress';
 import { window } from 'vscode';
+import KnativeItem from './knativeItem';
+import Progress from '../util/progress';
 import { KnativeTreeObject } from '../kn/knativeTreeObject';
 
-export class Project extends KnativeItem {
+export default class Project extends KnativeItem {
 
     static async create(): Promise<string> {
         const projectList: Array<KnativeTreeObject> = await KnativeItem.kn.getProjects();

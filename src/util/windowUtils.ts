@@ -3,12 +3,10 @@
  *  Licensed under the MIT License. See LICENSE file in the project root for license information.
  *-----------------------------------------------------------------------------------------------*/
 
-'use strict';
-
 import { window, Terminal, TerminalOptions } from 'vscode';
 import * as path from 'path';
 
-export class WindowUtil {
+export default class WindowUtil {
   static createTerminal(
     name: string,
     cwd: string,
@@ -23,8 +21,8 @@ export class WindowUtil {
       finalEnv[key] = `${toolLocation}${path.delimiter}${env[key]}`;
     }
     const options: TerminalOptions = {
-      cwd: cwd,
-      name: name,
+      cwd,
+      name,
       env: finalEnv,
       shellPath: process.platform === 'win32' ? undefined : '/bin/bash',
     };

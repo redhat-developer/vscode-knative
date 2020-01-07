@@ -1,8 +1,13 @@
+/*-----------------------------------------------------------------------------------------------
+ *  Copyright (c) Red Hat, Inc. All rights reserved.
+ *  Licensed under the MIT License. See LICENSE file in the project root for license information.
+ *-----------------------------------------------------------------------------------------------*/
+
 import { QuickPickItem } from "vscode";
 import { KubeConfig } from '@kubernetes/client-node';
 import { User, Cluster } from "@kubernetes/client-node/dist/config_types";
 
-export class KubeConfigUtils extends KubeConfig {
+export default class KubeConfigUtils extends KubeConfig {
 
     constructor() {
         super();

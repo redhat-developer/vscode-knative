@@ -1,5 +1,11 @@
+/*-----------------------------------------------------------------------------------------------
+ *  Copyright (c) Red Hat, Inc. All rights reserved.
+ *  Licensed under the MIT License. See LICENSE file in the project root for license information.
+ *-----------------------------------------------------------------------------------------------*/
+
 import { workspace, QuickPickItem, window, Uri } from 'vscode';
-import { Platform } from './platform';
+import Platform from './platform';
+
 import path = require('path');
 import fs = require('fs-extra');
 
@@ -16,7 +22,7 @@ class CreateWorkspaceItem implements QuickPickItem {
   }
 }
 
-export async function selectWorkspaceFolder(): Promise<Uri> {
+export default async function selectWorkspaceFolder(): Promise<Uri> {
   let folder: WorkspaceFolderItem[] = [];
   if (workspace.workspaceFolders && workspace.workspaceFolders.length > 0) {
     folder = workspace.workspaceFolders

@@ -3,25 +3,17 @@
  *  Licensed under the MIT License. See LICENSE file in the project root for license information.
  *-----------------------------------------------------------------------------------------------*/
 
-import { KnativeItem } from './knativeItem';
 import { window, commands, env, QuickPickItem, ExtensionContext, Uri } from 'vscode';
-import { CliExitData, Cli } from "../kn/cli";
+import KnativeItem from './knativeItem';
+import KnCli, { CliExitData } from "../kn/knCli";
 import { TokenStore } from "../util/credentialManager";
-import { KubeConfigUtils } from '../util/kubeUtils';
-import { Filters } from "../util/filters";
-import { Progress } from "../util/progress";
-import { KnAPI } from '../kn/kn-api';
-import { Validation } from './validation';
+import KubeConfigUtils from '../util/kubeUtils';
+import Filters from "../util/filters";
+import Progress from "../util/progress";
+import KnAPI from '../kn/kn-api';
+import Validation from './validation';
 
-class CreateUrlItem implements QuickPickItem {
-	get label(): string { return `$(plus) Provide new URL...`; }
-}
-
-class CreateUserItem implements QuickPickItem {
-	get label(): string { return `$(plus) Add new user...`; }
-}
-
-export class Cluster extends KnativeItem {
+export default class Cluster extends KnativeItem {
     public static extensionContext: ExtensionContext;
     static async logout(): Promise<string> {
         const value = await window.showWarningMessage(`Do you want to logout of cluster?`, 'Logout', 'Cancel');
@@ -55,7 +47,7 @@ export class Cluster extends KnativeItem {
     }
 
     static async showKnativeOutput(): Promise<void> {
-        Cli.getInstance().showOutputChannel();
+      KnCli.getInstance().showOutputChannel();
     }
 
     static async openshiftConsole(): Promise<void> {
