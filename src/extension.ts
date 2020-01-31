@@ -1,3 +1,8 @@
+/*-----------------------------------------------------------------------------------------------
+ *  Copyright (c) Red Hat, Inc. All rights reserved.
+ *  Licensed under the MIT License. See LICENSE file in the project root for license information.
+ *-----------------------------------------------------------------------------------------------*/
+
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
 import * as vscode from 'vscode';
@@ -26,7 +31,6 @@ function execute<T>(command: CommandI<T> | void, ...params: T[]): any {
     }
     const func = command as CommandI<T>;
 
-    // const res = command.call(null, ...params);
     const res = func(...params);
 
     return res.then
