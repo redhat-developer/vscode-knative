@@ -24,12 +24,12 @@ function execute<T>(command: CommandI<T> | void, ...params: T[]): any {
     if (command === undefined || command === null) {
       return undefined;
     }
-    const func =  command as CommandI<T>;
+    const func = command as CommandI<T>;
 
     // const res = command.call(null, ...params);
     const res = func(...params);
 
-    return res && res.then
+    return res.then
       ? res
           .then((result: any) => {
             displayResult(result);

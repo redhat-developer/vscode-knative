@@ -6,5 +6,7 @@
 import { QuickPickItem } from 'vscode';
 
 export default class CreateUrlItem implements QuickPickItem {
-	get label(): string { return `$(plus) Provide new URL...`; }
+  get label(): string {
+    return `$(plus) Provide new URL...`;
+  }
 }

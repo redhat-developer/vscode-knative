@@ -14,32 +14,45 @@ interface WorkspaceFolderItem extends QuickPickItem {
 }
 
 class CreateWorkspaceItem implements QuickPickItem {
-  get label(): string {
-    return `$(plus) Add new context folder.`;
+  readonly label = `$(plus) Add new context folder.`;
+
+  readonly description = 'Folder which does not have an OpenShift context';
+
+  getLabel(): string {
+    return this.label;
   }
-  get description(): string {
-    return 'Folder which does not have an OpenShift context';
+
+  getDescription(): string {
+    return this.description;
   }
 }
 
+function checkComponentFolder(folder: Uri): boolean {
+  return fs.existsSync(path.join(folder.fsPath, '.odo', 'config.yaml'));
+}
+
 export default async function selectWorkspaceFolder(): Promise<Uri> {
-  let folder: WorkspaceFolderItem[] = [];
+  let wsFolders: WorkspaceFolderItem[] = [];
   if (workspace.workspaceFolders && workspace.workspaceFolders.length > 0) {
-    folder = workspace.workspaceFolders
+    wsFolders = workspace.workspaceFolders
       .filter((value) => {
         let result = true;
         try {
           result = !fs.statSync(path.join(value.uri.fsPath, '.odo', 'config.yaml')).isFile();
-        } catch (ignore) {}
+        } catch (ignore) {
+          // ignore it
+        }
         return result;
       })
       .map((folder) => ({ label: `$(file-directory) ${folder.uri.fsPath}`, uri: folder.uri }));
   }
   const addWorkspaceFolder = new CreateWorkspaceItem();
-  const choice: any = await window.showQuickPick([addWorkspaceFolder, ...folder], {
+  const choice: any = await window.showQuickPick([addWorkspaceFolder, ...wsFolders], {
     placeHolder: 'Select context folder',
   });
-  if (!choice) return null;
+  if (!choice) {
+    return null;
+  }
 
   let workspacePath: Uri;
 
@@ -51,21 +64,18 @@ export default async function selectWorkspaceFolder(): Promise<Uri> {
       defaultUri: Uri.file(Platform.getUserHomePath()),
       openLabel: 'Add context folder for component in workspace.',
     });
-    if (!folders) return null;
-    if (await checkComponentFolder(folders[0])) {
+    if (!folders) {
+      return null;
+    }
+    if (checkComponentFolder(folders[0])) {
       window.showInformationMessage(
         'The folder selected already contains a component. Please select a different folder.',
       );
       return this.selectWorkspaceFolder();
-    } else {
-      workspacePath = folders[0];
     }
+    [workspacePath] = folders;
   } else if (choice) {
     workspacePath = choice.uri;
   }
   return workspacePath;
-}
-
-async function checkComponentFolder(folder: Uri) {
-  return fs.existsSync(path.join(folder.fsPath, '.odo', 'config.yaml'));
 }

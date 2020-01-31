@@ -36,12 +36,16 @@ export default class DownloadUtil {
       .pipe(throttleTime(250))
       .subscribe((progress: { percent: number }) => {
         const current = Math.round(progress.percent * 100);
-        if (previous && progressCb) {progressCb(current, current - previous)}
+        if (previous && progressCb) {
+          progressCb(current, current - previous);
+        }
         previous = current;
       });
     // process end event from 'got'
     const end = fromEvent(dls, 'end').subscribe(() => {
-      if (progressCb) {progressCb(100, 100 - previous)}
+      if (progressCb) {
+        progressCb(100, 100 - previous);
+      }
     });
     // Pipe url to file
     try {

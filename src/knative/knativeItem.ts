@@ -3,12 +3,11 @@
  *  Licensed under the MIT License. See LICENSE file in the project root for license information.
  *-----------------------------------------------------------------------------------------------*/
 
-import { window, QuickPickItem, TreeItemCollapsibleState } from 'vscode';
-import { KnativeExplorer } from '../explorer';
+import { window, QuickPickItem } from 'vscode';
+import KnativeExplorer from '../explorer';
 import QuickPickCommand from './quickPickCommand';
-import { Validation } from './validation';
-import { ContextType } from '../kn/config';
-import KnativeObjectImpl, { KnativeTreeObject } from '../kn/knativeTreeObject';
+import Validation from './validation';
+import { KnativeTreeObject } from '../kn/knativeTreeObject';
 import { Kn, KnImpl } from '../kn/knController';
 
 const errorMessage = {
@@ -28,6 +27,7 @@ const errorMessage = {
 };
 
 function isCommand(item: QuickPickItem | QuickPickCommand): item is QuickPickCommand {
+  // eslint-disable-next-line dot-notation
   return item['command'];
 }
 
@@ -77,122 +77,5 @@ export default abstract class KnativeItem {
       throw Error(errorMessage.Project);
     }
     return serviceList;
-  }
-
-  static async getProjectNames(): Promise<KnativeTreeObject[]> {
-    const projectList: Array<KnativeTreeObject> = await KnativeItem.kn.getProjects();
-    if (projectList.length === 0) {
-      throw Error(errorMessage.Project);
-    }
-    return projectList;
-  }
-
-  static async getApplicationNames(
-    project: KnativeTreeObject,
-    createCommand = false,
-  ): Promise<Array<KnativeTreeObject | QuickPickCommand>> {
-    const applicationList: Array<KnativeTreeObject> = await KnativeItem.kn.getApplications(project);
-    if (applicationList.length === 0 && !createCommand) {
-      throw Error(errorMessage.Component);
-    }
-    return createCommand
-      ? [
-          new QuickPickCommand(`$(plus) Create new Application...`, async () => {
-            return await KnativeItem.getName('Application name', applicationList);
-          }),
-          ...applicationList,
-        ]
-      : applicationList;
-  }
-
-  static async getComponentNames(
-    application: KnativeTreeObject,
-    condition?: (value: KnativeTreeObject) => boolean,
-  ): Promise<KnativeTreeObject[]> {
-    const applicationList: Array<KnativeTreeObject> = await KnativeItem.kn.getComponents(
-      application,
-      condition,
-    );
-    if (applicationList.length === 0) {
-      throw Error(errorMessage.Component);
-    }
-    return applicationList;
-  }
-
-  static async getOsServiceNames(application: KnativeTreeObject): Promise<KnativeTreeObject[]> {
-    const osServiceList: Array<KnativeTreeObject> = await KnativeItem.kn.getOsServices(application);
-    if (osServiceList.length === 0) {
-      throw Error(errorMessage.OsService);
-    }
-    return osServiceList;
-  }
-
-  static async getStorageNames(component: KnativeTreeObject): Promise<KnativeTreeObject[]> {
-    const storageList: Array<KnativeTreeObject> = await KnativeItem.kn.getStorageNames(component);
-    if (storageList.length === 0) {
-      throw Error(errorMessage.Storage);
-    }
-    return storageList;
-  }
-
-  static async getRoutes(component: KnativeTreeObject): Promise<KnativeTreeObject[]> {
-    const urlList: Array<KnativeTreeObject> = await KnativeItem.kn.getRoutes(component);
-    if (urlList.length === 0) {
-      throw Error(errorMessage.Route);
-    }
-    return urlList;
-  }
-
-  static async getKnativeCmdData(
-    treeItem: KnativeTreeObject,
-    projectPlaceholder: string,
-    appPlaceholder?: string,
-    compPlaceholder?: string,
-    condition?: (value: KnativeTreeObject) => boolean,
-  ): KnativeTreeObject {
-    let context: KnativeTreeObject | QuickPickCommand = treeItem;
-    let project: KnativeTreeObject;
-    if (!context) {
-      context = await window.showQuickPick(KnativeItem.getProjectNames(), {
-        placeHolder: projectPlaceholder,
-      });
-    }
-    if (context && context.contextValue === ContextType.PROJECT && appPlaceholder) {
-      project = context;
-      context = await window.showQuickPick<KnativeTreeObject | QuickPickCommand>(
-        KnativeItem.getApplicationNames(
-          project,
-          appPlaceholder.includes('create') && compPlaceholder === undefined,
-        ),
-        { placeHolder: appPlaceholder },
-      );
-      if (context && isCommand(context)) {
-        const newAppName = await context.command();
-        if (newAppName) {
-          context = new KnativeObjectImpl(
-            project,
-            newAppName,
-            ContextType.APPLICATION,
-            false,
-            KnImpl.Instance,
-            TreeItemCollapsibleState.Collapsed,
-          );
-        } else {
-          context = null;
-        }
-      }
-    }
-    if (
-      context &&
-      !isCommand(context) &&
-      context.contextValue === ContextType.APPLICATION &&
-      compPlaceholder
-    ) {
-      context = await window.showQuickPick(
-        KnativeItem.getComponentNames(context, condition),
-        { placeHolder: compPlaceholder },
-      );
-    }
-    return context as KnativeTreeObject;
   }
 }

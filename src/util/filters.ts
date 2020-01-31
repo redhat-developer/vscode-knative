@@ -4,15 +4,15 @@
  *-----------------------------------------------------------------------------------------------*/
 
 export default class Filters {
-    static readonly tokenRegex = /--token=[^\s]*/;
+  static readonly tokenRegex = /--token=[^\s]*/;
 
-    static filterToken(value: string): string {
-        return value ? value.replace(Filters.tokenRegex, '--token **********') : value;
-    }
+  static filterToken(value: string): string {
+    return value ? value.replace(Filters.tokenRegex, '--token **********') : value;
+  }
 
-    static readonly passwordRegex = /-p\s+'([^']+)'/;
+  static readonly passwordRegex = /-p\s+'([^']+)'/;
 
-    static filterPassword(value: string): string {
-        return value? value.replace(Filters.passwordRegex, '-p **********') : value;
-    }
+  static filterPassword(value: string): string {
+    return value ? value.replace(Filters.passwordRegex, '-p **********') : value;
+  }
 }

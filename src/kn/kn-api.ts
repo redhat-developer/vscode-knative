@@ -14,11 +14,10 @@ export interface CreateService {
   namespace?: string;
 }
 
- /**
-  * A series of commands for the knative cli `kn`.
-  */
+/**
+ * A series of commands for the knative cli `kn`.
+ */
 export default class KnAPI {
-
   /**
    *
    * #### Create a service 'mysvc' using image at dev.local/ns/image:latest
@@ -85,4 +84,15 @@ export default class KnAPI {
     return `kn service list -o json`;
   }
 
+  static printKnVersion(): string {
+    return 'kn version';
+  }
+
+  static printKnVersionAndProjects(): string {
+    return 'kn version && kn service list';
+  }
+
+  static knLogout(): string {
+    return `kn logout`;
+  }
 }

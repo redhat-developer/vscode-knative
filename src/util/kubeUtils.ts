@@ -14,7 +14,7 @@ export default class KubeConfigUtils extends KubeConfig {
         this.loadFromDefault();
     }
 
-    async getServers(): Promise<QuickPickItem[]> {
+    getServers(): QuickPickItem[] {
         const currentCluster = this.getCurrentCluster();
         const clusters = this.clusters || [];
         return clusters.map((c: any) => ({
@@ -23,11 +23,11 @@ export default class KubeConfigUtils extends KubeConfig {
         }));
     }
 
-    async getClusterUsers(clusterServer: string): Promise<QuickPickItem[]> {
+    getClusterUsers(clusterServer: string): QuickPickItem[] {
         const currentUser = this.getCurrentUser();
         const cluster = this.findCluster(clusterServer);
         const users = this.getUsers();
-        const clusterUsers = users.filter((item) => cluster && item.name.indexOf(cluster.name) > -1);
+        const clusterUsers = users.filter((item) => cluster && item.name.includes(cluster.name));
         return clusterUsers.map((u: User) => ({
             label: u.name.split('/')[0],
             description: u === currentUser ? 'Current Context' : ''

@@ -122,21 +122,20 @@ function selectTool(locations: string[], versionRange: string): Promise<string> 
 function loadMetadata(requirements: Promise<KnConfig>, platform: string): KnConfig | void {
   // const reqs = requirements;
   requirements
-    .then((data) => {
+    .then((config) => {
+      const data = config;
       if (data.kn.platform) {
         // move the platform that matches the users platform to the main list
         Object.assign(data.kn, data.kn.platform[platform]);
         // Delete the whole platfrom from the config
-        // eslint-disable-next-line no-param-reassign
         delete data.kn.platform;
         return data;
       }
       return data;
     })
     .catch((err) => {
-      // Error(err);
       // eslint-disable-next-line no-console
-      console.log('Something failed loading the JSON file.', err);
+      console.log(new Error('Something failed loading the JSON file.'), err);
     });
 }
 
@@ -158,8 +157,9 @@ export default class KnCliConfig {
    * Set the cli or download the needed cli tool and set it.
    *
    * @param cmd
+   * @returns toolLocation
    */
-  static detectOrDownload(cmd: string): string {
+  static async detectOrDownload(cmd: string): Promise<string> {
     // If the location of the cli has been set, then read it.
     let toolLocation: string = KnCliConfig.tools[cmd].location;
 
@@ -179,7 +179,7 @@ export default class KnCliConfig {
         toolCacheLocation,
       ];
       // Check the list of locations and see if what we need is there.
-      selectTool(toolLocations, KnCliConfig.tools[cmd].versionRange).then((value) => {
+      await selectTool(toolLocations, KnCliConfig.tools[cmd].versionRange).then((value) => {
         toolLocation = value;
       });
 
@@ -195,7 +195,7 @@ export default class KnCliConfig {
         const installRequest = `Download and install v${KnCliConfig.tools[cmd].version}`;
         // Create a pop-up that asks to download and install.
         let response: string;
-        vscode.window
+        await vscode.window
           .showInformationMessage(
             `Cannot find ${KnCliConfig.tools[cmd].description} ${KnCliConfig.tools[cmd].versionRangeLabel}.`,
             installRequest,
@@ -205,7 +205,7 @@ export default class KnCliConfig {
           .then((value) => {
             response = value;
           });
-        // Ensure that the directory exists. If the directory structure does not exist, it is created.
+        // Ensure that the directory exists. If the directory structure does not exist, then create it.
         fsExtra.ensureDirSync(path.resolve(Platform.getUserHomePath(), '.vs-kn'));
         // If the user selected to download and install then do this.
         if (response === installRequest) {
@@ -237,27 +237,28 @@ export default class KnCliConfig {
             // so they can download it again.
             if (sha256sum !== KnCliConfig.tools[cmd].sha256sum) {
               fsExtra.removeSync(toolDlLocation);
-              vscode.window.showInformationMessage(
-                `Checksum for downloaded ${KnCliConfig.tools[cmd].description} v${KnCliConfig.tools[cmd].version} is not correct.`,
-                'Download again',
-                'Cancel',
-              )
-              // eslint-disable-next-line no-loop-func
-              .then((value) => {
-                action = value;
-              });
+              vscode.window
+                .showInformationMessage(
+                  `Checksum for downloaded ${KnCliConfig.tools[cmd].description} v${KnCliConfig.tools[cmd].version} is not correct.`,
+                  'Download again',
+                  'Cancel',
+                )
+                // eslint-disable-next-line no-loop-func
+                .then((value) => {
+                  action = value;
+                });
             }
           } while (action === 'Download again');
 
           if (action !== 'Cancel') {
             if (toolDlLocation.endsWith('.zip') || toolDlLocation.endsWith('.tar.gz')) {
-              Archive.unzip(
+              await Archive.unzip(
                 toolDlLocation,
                 path.resolve(Platform.getUserHomePath(), '.vs-kn'),
                 KnCliConfig.tools[cmd].filePrefix,
               );
             } else if (toolDlLocation.endsWith('.gz')) {
-              Archive.unzip(
+              await Archive.unzip(
                 toolDlLocation,
                 toolCacheLocation,
                 KnCliConfig.tools[cmd].filePrefix,
@@ -267,6 +268,7 @@ export default class KnCliConfig {
             if (Platform.OS !== 'win32') {
               fs.chmodSync(toolCacheLocation, 0o765);
             }
+            // eslint-disable-next-line require-atomic-updates
             toolLocation = toolCacheLocation;
           }
         } else if (response === `Help`) {
@@ -279,6 +281,7 @@ export default class KnCliConfig {
         }
       }
       if (toolLocation) {
+        // eslint-disable-next-line require-atomic-updates
         KnCliConfig.tools[cmd].location = toolLocation;
       }
     }

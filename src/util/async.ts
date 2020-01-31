@@ -5,14 +5,14 @@
  */
 
 export function isThenable<T>(candidate: any): candidate is Thenable<T> {
-    return candidate && typeof (<Thenable<any>>candidate).then === 'function';
+    return candidate && typeof (candidate as Thenable<any>).then === 'function';
 }
 
-export async function wait(timeout: number = 2500): Promise<void> {
+export async function wait(timeout = 2500): Promise<void> {
 	return new Promise((res) => setTimeout(res, timeout));
 }
 
-export interface ITask<T> {
+export interface Task<T> {
 	(): T;
 }
 
@@ -30,37 +30,36 @@ export class Delayer<T> {
 
   private doReject: (err: any) => void;
 
-	private task: ITask<T | Promise<T>> | null;
+	private task: Task<T | Promise<T>> | null;
 
 	constructor(public defaultDelay: number) {
 		this.timeout = null;
 		this.completionPromise = null;
 		this.doResolve = null;
-		this.doReject;
 		this.task = null;
 	}
 
-  async trigger(task: ITask<T | Promise<T>>, delay: number = this.defaultDelay): Promise<T> {
+  async trigger(task: Task<T | Promise<T>>, delay: number = this.defaultDelay): Promise<T> {
 		this.task = task;
 		this.cancelTimeout();
 
-		if (!this.completionPromise) {
+		if (this.completionPromise instanceof null ) {
 			this.completionPromise = new Promise((c, e) => {
 				this.doResolve = c;
 				this.doReject = e;
 			}).then(() => {
 				this.completionPromise = null;
 				this.doResolve = null;
-				const task = this.task!;
+				const completionTask = task;
 				this.task = null;
 
-				return task();
+				return completionTask();
 			});
 		}
 
 		this.timeout = setTimeout(() => {
 			this.timeout = null;
-			this.doResolve!(null);
+			this.doResolve(null);
 		}, delay);
 
 		return this.completionPromise;

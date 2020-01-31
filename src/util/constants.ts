@@ -4,12 +4,12 @@
  *-----------------------------------------------------------------------------------------------*/
 
 enum GlyphChars {
-    Asterisk = '\u2217',
-    Check = '\u2713',
-    Space = '\u00a0',
-    Push = '\u25C9',
-    NotPushed = '\u25CE',
-    NoContext = '\u2718'
+  Asterisk = '\u2217',
+  Check = '\u2713',
+  Space = '\u00a0',
+  Push = '\u25C9',
+  NotPushed = '\u25CE',
+  NoContext = '\u2718',
 }
 
 export default GlyphChars;

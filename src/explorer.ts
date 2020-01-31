@@ -47,6 +47,7 @@ export default class KnativeExplorer implements TreeDataProvider<KnativeTreeObje
     this.fsw = WatchUtil.watchFileForContextChange(kubeConfigFolder, 'config');
     this.fsw.emitter.on('file-changed', this.refresh.bind(this));
     this.treeView = window.createTreeView('knativeProjectExplorer', { treeDataProvider: this });
+    // eslint-disable-next-line @typescript-eslint/no-misused-promises
     KnativeExplorer.knctl.subject.subscribe((event) =>
       event.reveal ? this.reveal(event.data) : this.refresh(event.data),
     );
@@ -59,14 +60,17 @@ export default class KnativeExplorer implements TreeDataProvider<KnativeTreeObje
     return KnativeExplorer.instance;
   }
 
+  // eslint-disable-next-line class-methods-use-this
   getTreeItem(element: KnativeTreeObject): TreeItem | Thenable<TreeItem> {
     return element;
   }
 
+  // eslint-disable-next-line class-methods-use-this
   getChildren(element?: KnativeTreeObject): ProviderResult<KnativeTreeObject[]> {
     return element ? element.getChildren() : KnativeExplorer.knctl.getServices();
   }
 
+  // eslint-disable-next-line class-methods-use-this
   getParent?(element: KnativeTreeObject): KnativeTreeObject {
     return element.getParent();
   }
@@ -91,7 +95,7 @@ export default class KnativeExplorer implements TreeDataProvider<KnativeTreeObje
     this.treeView.reveal(item);
   }
 
-  static async reportIssue() {
+  static async reportIssue(): Promise<any> {
     let body = '';
     const repoURL = `https://github.com/talamer/vscode-knative`;
     const template = {
@@ -99,6 +103,7 @@ export default class KnativeExplorer implements TreeDataProvider<KnativeTreeObje
       'OS:': Platform.OS,
       'Extension version:': extensions.getExtension('vscode-knative').packageJSON.version,
     };
+    // eslint-disable-next-line no-restricted-syntax
     for (const [key, value] of Object.entries(template)) {
       body = `${body}${key} ${value}\n`;
     }

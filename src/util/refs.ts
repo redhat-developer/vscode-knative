@@ -10,49 +10,48 @@ import gitClient = require('git-fetch-pack');
 import transport = require('git-transport-protocol');
 
 export enum Type {
-    TAG,
-    BRANCH
+  TAG,
+  BRANCH,
 }
 
 export interface Ref {
-    name: string;
-    type: Type;
-    hash: string;
+  name: string;
+  type: Type;
+  hash: string;
 }
 
 export default class Refs {
+  static async fetchTag(input: string): Promise<Map<string, Ref>> {
+    return new Promise((resolve, reject) => {
+      const inputTag: string = input.replace(/^(?!(?:https|git):\/\/)/, 'https://');
 
-    static async fetchTag(input: string): Promise<Map<string, Ref>> {
-        return new Promise((resolve, reject) => {
-            input = input.replace(/^(?!(?:https|git):\/\/)/, 'https://');
+      const tcp = net.connect({
+        host: url.parse(inputTag).host,
+        port: 9418,
+      });
+      const client = gitClient(inputTag);
+      const tags = new Map<string, Ref>();
 
-            const tcp = net.connect({
-                host: url.parse(input).host,
-                port: 9418
-            });
-            const client = gitClient(input);
-            const tags = new Map<string, Ref>();
+      client.refs.on('data', (ref: { name: string; hash: string }) => {
+        if (!ref.name.includes('/')) {
+          tags.set(ref.name, { name: ref.name, type: Type.BRANCH, hash: ref.hash.substr(0, 7) });
+          return;
+        }
+        const name = ref.name.split('/')[2].replace(/\^\{\}$/, '');
+        if (ref.name.startsWith("refs/heads")) {
+          tags.set(name, { name, type: Type.BRANCH, hash: ref.hash.substr(0, 7) });
+        }
 
-            client.refs.on('data', (ref: { name: string; hash: string; }) => {
-                if (ref.name.indexOf('/') < 0) {
-                    tags.set(ref.name, { name: ref.name, type: Type.BRANCH, hash: ref.hash.substr(0, 7) });
-                    return;
-                }
-                const name = ref.name.split('/')[2].replace(/\^\{\}$/, '');
-                if (/^refs\/heads/.test(ref.name)) {
-                   tags.set(name, { name, type: Type.BRANCH, hash: ref.hash.substr(0, 7) });
-                }
-
-                if (/^refs\/tags/.test(ref.name)) {
-                    tags.set(name, { name, type: Type.TAG, hash: ref.hash.substr(0, 7) });
-                }
-            });
-            client
-                .pipe(transport(tcp))
-                .on('error', reject)
-                .pipe(client)
-                .on('error', reject)
-                .once('end', () => resolve(tags));
-        });
-    }
+        if (ref.name.startsWith("refs/tags")) {
+          tags.set(name, { name, type: Type.TAG, hash: ref.hash.substr(0, 7) });
+        }
+      });
+      client
+        .pipe(transport(tcp))
+        .on('error', reject)
+        .pipe(client)
+        .on('error', reject)
+        .once('end', () => resolve(tags));
+    });
+  }
 }

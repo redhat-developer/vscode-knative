@@ -18,16 +18,21 @@ export default class Archive {
             src: zipFile,
             dest: extractTo,
             tar: {
-              map: (header) => {
-                prefix && header.name.startsWith(prefix)
-                  ? (header.name = header.name.substring(prefix.length))
-                  : header;
+              map: (header: { name: string }): { name: string } => {
+                const top: { name: string } = header;
+                if (prefix && header.name.startsWith(prefix)) {
+                  top.name = header.name.substring(prefix.length);
+                }
                 return header;
               },
             },
           },
           (err) => {
-            err ? reject(err) : resolve();
+            if (err) {
+              reject(err);
+            } else {
+              resolve();
+            }
           },
         );
       } else if (zipFile.endsWith('.gz')) {
@@ -40,7 +45,7 @@ export default class Archive {
           .on('error', reject)
           .on('close', resolve);
       } else {
-        reject(`Unsupported extension for '${zipFile}'`);
+        reject(new Error(`Unsupported extension for '${zipFile}'`));
       }
     });
   }
