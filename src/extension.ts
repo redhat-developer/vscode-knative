@@ -49,13 +49,15 @@ function execute<T>(command: CommandI<T> | void, ...params: T[]): any {
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
-export function activate(context: vscode.ExtensionContext): void {
+export function activate(extensionContext: vscode.ExtensionContext): void {
   // The command has been defined in the package.json file
   // Now provide the implementation of the command with registerCommand
   // The commandId parameter must match the command field in package.json
   const disposable = [
     // vscode.commands.registerCommand('knative.service.list', () => Service.list()),
-    vscode.commands.registerCommand('knative.service.list', Service.list()),
+    vscode.commands.registerCommand('knative.service.list', async (context) =>
+      execute(await Service.list(), context),
+    ),
     vscode.commands.registerCommand('knative.explorer.reportIssue', () =>
       KnativeExplorer.reportIssue(),
     ),
@@ -63,8 +65,8 @@ export function activate(context: vscode.ExtensionContext): void {
     KnativeExplorer.getInstance(),
   ];
 
-  // context.subscriptions.push(disposable);
-  disposable.forEach((value) => context.subscriptions.push(value));
+  // extensionContext.subscriptions.push(disposable);
+  disposable.forEach((value) => extensionContext.subscriptions.push(value));
 }
 
 // this method is called when your extension is deactivated
