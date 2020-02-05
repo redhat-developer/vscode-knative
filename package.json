@@ -22,15 +22,24 @@
   "engines": {
     "vscode": "^1.39.0"
   },
+  "extensionDependencies": [
+    "ms-kubernetes-tools.vscode-kubernetes-tools"
+  ],
   "categories": [
     "Other"
   ],
   "main": "./out/extension.js",
   "scripts": {
+    "build": "npm run clean && eslint . --ext .js,.ts && npm run compile",
+    "clean": "rm -rf out || rmdir out /s /q",
     "compile": "tsc -p ./",
+    "coverage:upload": "codecov -f coverage/coverage-final.json",
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
+    "lint:fix": "eslint . --ext .js,.jsx,.ts,.tsx --fix",
     "pretest": "npm run compile",
-    "test": "node ./out/test/runTest.js",
+    "test": "npm run clean && npm run compile && npm run verify && node ./out/build/install-vscode.js && node ./out/build/unit-tests.js",
+    "update-deps": "node_modules/.bin/ncu --upgrade --loglevel verbose --packageFile package.json && npm update",
+    "verify": "node ./out/build/verify-tools.js",
     "vscode:prepublish": "npm run compile",
     "watch": "tsc -watch -p ./"
   },

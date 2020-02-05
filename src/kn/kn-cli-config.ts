@@ -8,27 +8,15 @@ import * as fsExtra from 'fs-extra';
 import * as path from 'path';
 import * as vscode from 'vscode';
 import { which } from 'shelljs';
+import { fromFile } from 'hasha';
+import { satisfies } from 'semver';
 import KnCli, { CliExitData } from './knCli';
 import Archive from '../util/archive';
 import DownloadUtil from '../util/download';
+import loadJSON from '../util/parse';
 import Platform from '../util/platform';
 
-import hasha = require('hasha');
-import semver = require('semver');
-
 const configData = './kn-cli-config.json';
-
-function loadJSON(filePath: string): Promise<KnConfig> {
-  return new Promise((resolve, reject) => {
-    fs.readFile(require.resolve(filePath), 'utf-8', (err, data) => {
-      if (err) {
-        reject(err);
-      } else {
-        resolve(JSON.parse(data));
-      }
-    });
-  });
-}
 
 export interface KnConfig {
   kn: CliConfig;
@@ -104,7 +92,7 @@ function selectTool(locations: string[], versionRange: string): Promise<string> 
         getVersion(location).then((value: string): void => {
           versionLocation = value;
         });
-        if (location && semver.satisfies(versionLocation, versionRange)) {
+        if (location && satisfies(versionLocation, versionRange)) {
           return location;
         }
         return undefined;
@@ -143,13 +131,13 @@ export default class KnCliConfig {
   /**
    * This contains the knative cli config data needed to access and run the commands.
    */
-  static tools: KnConfig | void = loadMetadata(loadJSON(configData), Platform.OS);
+  static tools: KnConfig | void = loadMetadata(loadJSON<KnConfig>(configData), Platform.OS);
 
   /**
    * Reset the knative cli config data
    */
   static resetConfiguration(): void {
-    KnCliConfig.tools = loadMetadata(loadJSON(configData), Platform.OS);
+    KnCliConfig.tools = loadMetadata(loadJSON<KnConfig>(configData), Platform.OS);
   }
 
   /**
@@ -230,7 +218,7 @@ export default class KnCliConfig {
             );
             // Get the hash for the downloaded file.
             let sha256sum: string;
-            hasha.fromFile(toolDlLocation, { algorithm: 'sha256' }).then((value) => {
+            fromFile(toolDlLocation, { algorithm: 'sha256' }).then((value) => {
               sha256sum = value;
             });
             // Check the hash against the one on file to make sure it downloaded. If it doesn't match tell the user,

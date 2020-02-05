@@ -23,24 +23,19 @@
   },
   "plugins": ["@typescript-eslint", "prettier"],
   "settings": {
-    "import/core-modules": [ "vscode" ],
+    "import/core-modules": ["vscode"],
     "import/parsers": {
       "@typescript-eslint/parser": [".ts", ".tsx"]
     },
     "import/resolver": {
       "typescript": {},
       "node": {
-        "extensions": [
-          ".js",
-          ".jsx"
-        ]
+        "extensions": [".js", ".jsx"]
       }
     },
-    "import/extensions": [
-      ".js",
-      ".jsx"
-    ]
-  },  "rules": {
+    "import/extensions": [".js", ".jsx"]
+  },
+  "rules": {
     "camelcase": 2,
     "consistent-return": 0,
     "consistent-this": [1, "that"],
