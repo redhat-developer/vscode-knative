@@ -1,16 +1,17 @@
 {
 	"compilerOptions": {
 		"downlevelIteration": true,
-		"experimentalDecorators": true,
+    "experimentalDecorators": true,
+    "": "",
 		"lib": [ "es6" ],
 		"module": "commonjs",
-		"noImplicitReturns": true, /* Report error when not all code paths in function return a value. */
-		"noFallthroughCasesInSwitch": true, /* Report errors for fallthrough cases in switch statement. */
-		"noUnusedParameters": true,  /* Report errors on unused parameters. */
+		// "noImplicitReturns": true, /* Report error when not all code paths in function return a value. */
+		// "noFallthroughCasesInSwitch": true, /* Report errors for fallthrough cases in switch statement. */
+		// "noUnusedParameters": true,  /* Report errors on unused parameters. */
 		"noUnusedLocals": true,
 		"outDir": "out",
 		"resolveJsonModule": true,
-		"rootDir": "src",
+		"rootDir": ".",
 		"sourceMap": true,
 		"strict": false,   /* enable all strict type-checking options */
 		"target": "es6",

@@ -28,30 +28,30 @@ export class Delayer<T> {
 
   private doResolve: ((value?: any | Promise<any>) => void) | null;
 
-  private doReject: (err: any) => void;
+  // private doReject: (err: any) => void;
 
-	private task: Task<T | Promise<T>> | null;
+	// private task: Task<T | Promise<T>> | null;
 
 	constructor(public defaultDelay: number) {
 		this.timeout = null;
 		this.completionPromise = null;
 		this.doResolve = null;
-		this.task = null;
+		// this.task = null;
 	}
 
   async trigger(task: Task<T | Promise<T>>, delay: number = this.defaultDelay): Promise<T> {
-		this.task = task;
+		// this.task = task;
 		this.cancelTimeout();
 
 		if (this.completionPromise instanceof null ) {
 			this.completionPromise = new Promise((c, e) => {
 				this.doResolve = c;
-				this.doReject = e;
+				// this.doReject = e;
 			}).then(() => {
 				this.completionPromise = null;
 				this.doResolve = null;
 				const completionTask = task;
-				this.task = null;
+				// this.task = null;
 
 				return completionTask();
 			});

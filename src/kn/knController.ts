@@ -8,14 +8,12 @@ import { Subject } from 'rxjs';
 import { ContextType } from './config';
 import KnAPI from './kn-api';
 import KnativeObjectImpl, { KnativeTreeObject } from './knativeTreeObject';
-import KnatvieTreeEventImpl, { KnatvieTreeEvent } from './knativeTreeEvent';
+import { KnatvieTreeEvent } from './knativeTreeEvent';
 import KnativeTreeModel from './knativeTreeModel';
 import { execute } from './knExecute';
-import KnCli, { Cli, CliExitData } from './knCli';
+import { CliExitData } from './knCli';
 
-import bs = require('binary-search');
-
-const { Collapsed } = TreeItemCollapsibleState;
+// import bs = require('binary-search');
 
 export function loadItems(result: CliExitData): any[] {
   let data: any[] = [];
@@ -88,8 +86,6 @@ export class KnImpl implements Kn {
     },
   };
 
-  private static cli: Cli = KnCli.getInstance();
-
   private static instance: Kn;
 
   private readonly knLoginMessages = [
@@ -149,41 +145,41 @@ export class KnImpl implements Kn {
   }
 
   // eslint-disable-next-line class-methods-use-this
-  private insert(array: KnativeTreeObject[], item: KnativeTreeObject): KnativeTreeObject {
-    const i = bs(array, item, compareNodes);
-    array.splice(Math.abs(i) - 1, 0, item);
-    return item;
-  }
+  // private insert(array: KnativeTreeObject[], item: KnativeTreeObject): KnativeTreeObject {
+  //   const i = bs(array, item, compareNodes);
+  //   array.splice(Math.abs(i) - 1, 0, item);
+  //   return item;
+  // }
 
-  private async insertAndReveal(item: KnativeTreeObject): Promise<KnativeTreeObject> {
-    // await KnativeExplorer.getInstance().reveal(this.insert(await item.getParent().getChildren(), item));
-    this.subject.next(
-      new KnatvieTreeEventImpl(
-        'inserted',
-        this.insert(await item.getParent().getChildren(), item),
-        true,
-      ),
-    );
-    return item;
-  }
+  // private async insertAndReveal(item: KnativeTreeObject): Promise<KnativeTreeObject> {
+  //   // await KnativeExplorer.getInstance().reveal(this.insert(await item.getParent().getChildren(), item));
+  //   this.subject.next(
+  //     new KnatvieTreeEventImpl(
+  //       'inserted',
+  //       this.insert(await item.getParent().getChildren(), item),
+  //       true,
+  //     ),
+  //   );
+  //   return item;
+  // }
 
-  private async insertAndRefresh(item: KnativeTreeObject): Promise<KnativeTreeObject> {
-    // await KnativeExplorer.getInstance().refresh(this.insert(await item.getParent().getChildren(), item).getParent());
-    this.subject.next(
-      new KnatvieTreeEventImpl(
-        'changed',
-        this.insert(await item.getParent().getChildren(), item).getParent(),
-      ),
-    );
-    return item;
-  }
+  // private async insertAndRefresh(item: KnativeTreeObject): Promise<KnativeTreeObject> {
+  //   // await KnativeExplorer.getInstance().refresh(this.insert(await item.getParent().getChildren(), item).getParent());
+  //   this.subject.next(
+  //     new KnatvieTreeEventImpl(
+  //       'changed',
+  //       this.insert(await item.getParent().getChildren(), item).getParent(),
+  //     ),
+  //   );
+  //   return item;
+  // }
 
-  private deleteAndRefresh(item: KnativeTreeObject): KnativeTreeObject {
-    KnImpl.data.delete(item);
-    // KnativeExplorer.getInstance().refresh(item.getParent());
-    this.subject.next(new KnatvieTreeEventImpl('changed', item.getParent()));
-    return item;
-  }
+  // private deleteAndRefresh(item: KnativeTreeObject): KnativeTreeObject {
+  //   KnImpl.data.delete(item);
+  //   // KnativeExplorer.getInstance().refresh(item.getParent());
+  //   this.subject.next(new KnatvieTreeEventImpl('changed', item.getParent()));
+  //   return item;
+  // }
 
   // eslint-disable-next-line class-methods-use-this
   clearCache(): void {

@@ -1,6 +1,7 @@
 .vscode/**
 .vscode-test/**
 out/test/**
+out/**/*.map
 src/**
 .gitignore
 vsc-extension-quickstart.md
@@ -8,3 +9,12 @@ vsc-extension-quickstart.md
 **/tslint.json
 **/*.map
 **/*.ts
+tslint.json
+*.vsix
+test/**
+coverage/**
+coverconfig.json
+Jenkinsfile
+.gitattributes
+.travis.yml
+CONTRIBUTING.md

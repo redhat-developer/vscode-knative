@@ -9,7 +9,6 @@ import * as vscode from 'vscode';
 import KnativeExplorer from './explorer';
 import Service from './knative/service';
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function displayResult(result?: any): void {
   if (result && typeof result === 'string') {
     vscode.window.showInformationMessage(result);

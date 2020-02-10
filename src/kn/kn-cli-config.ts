@@ -13,10 +13,12 @@ import { satisfies } from 'semver';
 import KnCli, { CliExitData } from './knCli';
 import Archive from '../util/archive';
 import DownloadUtil from '../util/download';
-import loadJSON from '../util/parse';
+// import loadJSON from '../util/parse';
 import Platform from '../util/platform';
 
-const configData = './kn-cli-config.json';
+import configData = require('./kn-cli-config.json');
+
+// const configData = './kn-cli-config.json'; loadJSON2
 
 export interface KnConfig {
   kn: CliConfig;
@@ -47,35 +49,47 @@ export interface PlatformData {
   cmdFileName: string;
 }
 
+function result(location: string): Promise<CliExitData> {
+  return KnCli.getInstance().execute(`"${location}" version`);
+}
+
+function existsAsync(location: string): Promise<boolean> {
+  return new Promise((resolve) => {
+    if (fs.existsSync(location)) {
+      resolve(true);
+    } else {
+      resolve(false);
+    }
+  });
+}
 /**
  *
  * @param location
  */
 export function getVersion(location: string): Promise<string> {
-  return new Promise((resolve) => {
-    let detectedVersion: string;
-    if (fs.existsSync(location)) {
+  return existsAsync(location)
+    .then((foundLocation) => {
+      return foundLocation ? result(location) : undefined;
+    })
+    .then((data) => {
+      let detectedVersion: string;
       const version = new RegExp(
         `Version:(\\s+)v((([0-9]+)\\.([0-9]+)\\.([0-9]+)(?:-([0-9a-zA-Z-]+(?:\\.[0-9a-zA-Z-]+)*))?)(?:\\+([0-9a-zA-Z-]+(?:\\.[0-9a-zA-Z-]+)*))?).*`,
       );
-      const result: Promise<CliExitData> = KnCli.getInstance().execute(`"${location}" version`);
-      result.then((data) => {
-        if (data.stdout) {
-          const toolVersion: string[] = data.stdout
-            .trim()
-            .split('\n')
-            .filter((value) => {
-              return version.exec(value);
-            })
-            .map((value) => version.exec(value)[2]);
-          if (toolVersion.length) {
-            [detectedVersion] = toolVersion;
-          }
+      if (data.stdout) {
+        const toolVersion: string[] = data.stdout
+          .trim()
+          .split('\n')
+          // Find the line of text that has the version.
+          .filter((value) => version.exec(value))
+          // Pull out just the version from the line from above.
+          .map((value) => version.exec(value)[2]);
+        if (toolVersion.length) {
+          [detectedVersion] = toolVersion;
         }
-      });
-    }
-    resolve(detectedVersion);
-  });
+      }
+      return detectedVersion;
+    });
 }
 
 /**
@@ -107,37 +121,65 @@ function selectTool(locations: string[], versionRange: string): Promise<string> 
  * @param requirements
  * @param platform
  */
-function loadMetadata(requirements: Promise<KnConfig>, platform: string): KnConfig | void {
-  // const reqs = requirements;
-  requirements
-    .then((config) => {
-      const data = config;
-      if (data.kn.platform) {
-        // move the platform that matches the users platform to the main list
-        Object.assign(data.kn, data.kn.platform[platform]);
-        // Delete the whole platfrom from the config
-        delete data.kn.platform;
-        return data;
-      }
-      return data;
-    })
-    .catch((err) => {
-      // eslint-disable-next-line no-console
-      console.log(new Error('Something failed loading the JSON file.'), err);
-    });
-}
+// function loadMetadata2(requirements: Promise<KnConfig>, platform: string): KnConfig | void {
+//   // const reqs = requirements;
+//   requirements
+//     .then((config) => {
+//       const data = config;
+//       if (data.kn.platform) {
+//         // move the platform that matches the users platform to the main list
+//         Object.assign(data.kn, data.kn.platform[platform]);
+//         // Delete the whole platfrom from the config
+//         delete data.kn.platform;
+//         return data;
+//       }
+//       return data;
+//     })
+//     .catch((err) => {
+//       // eslint-disable-next-line no-console
+//       console.log(new Error('Something failed loading the JSON file.'), err);
+//     });
+// }
+
+// function loadJSON2<T>(filePath: string): Promise<T> {
+//   return new Promise((resolve, reject) => {
+//     fs.readFile(require.resolve(filePath), 'utf-8', (err, data) => {
+//       if (err) {
+//         reject(err);
+//       } else {
+//         resolve(JSON.parse(data));
+//       }
+//     });
+//   });
+// }
 
 export default class KnCliConfig {
+  public static loadMetadata(requirements, platform): KnConfig | void {
+    const reqs = JSON.parse(JSON.stringify(requirements));
+    // eslint-disable-next-line no-restricted-syntax
+    for (const object in requirements) {
+      if (reqs[object].platform) {
+        if (reqs[object].platform[platform]) {
+          Object.assign(reqs[object], reqs[object].platform[platform]);
+          delete reqs[object].platform;
+        } else {
+          delete reqs[object];
+        }
+      }
+    }
+    return reqs;
+  }
+
   /**
    * This contains the knative cli config data needed to access and run the commands.
    */
-  static tools: KnConfig | void = loadMetadata(loadJSON<KnConfig>(configData), Platform.OS);
+  static tools: KnConfig | void = KnCliConfig.loadMetadata(configData, Platform.OS);
 
   /**
    * Reset the knative cli config data
    */
   static resetConfiguration(): void {
-    KnCliConfig.tools = loadMetadata(loadJSON<KnConfig>(configData), Platform.OS);
+    KnCliConfig.tools = KnCliConfig.loadMetadata(configData, Platform.OS);
   }
 
   /**

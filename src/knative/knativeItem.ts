@@ -3,9 +3,9 @@
  *  Licensed under the MIT License. See LICENSE file in the project root for license information.
  *-----------------------------------------------------------------------------------------------*/
 
-import { window, QuickPickItem } from 'vscode';
+import { window } from 'vscode';
 import KnativeExplorer from '../explorer';
-import QuickPickCommand from './quickPickCommand';
+// import QuickPickCommand from './quickPickCommand';
 import Validation from './validation';
 import { KnativeTreeObject } from '../kn/knativeTreeObject';
 import { Kn, KnImpl } from '../kn/knController';
@@ -26,10 +26,10 @@ const errorMessage = {
   Route: 'You need to add one URL to the component. Please create a new URL and try again.',
 };
 
-function isCommand(item: QuickPickItem | QuickPickCommand): item is QuickPickCommand {
-  // eslint-disable-next-line dot-notation
-  return item['command'];
-}
+// function isCommand(item: QuickPickItem | QuickPickCommand): item is QuickPickCommand {
+//   // eslint-disable-next-line dot-notation
+//   return item['command'];
+// }
 
 export default abstract class KnativeItem {
   protected static readonly kn: Kn = KnImpl.Instance;

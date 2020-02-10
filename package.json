@@ -28,7 +28,7 @@
   "categories": [
     "Other"
   ],
-  "main": "./out/extension.js",
+  "main": "./out/src/extension",
   "scripts": {
     "build": "npm run clean && eslint . --ext .js,.ts && npm run compile",
     "clean": "rm -rf out || rmdir out /s /q",

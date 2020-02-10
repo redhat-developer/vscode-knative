@@ -3,7 +3,8 @@
   "env": {
     "browser": true,
     "es6": true,
-    "jasmine": true
+    "jasmine": true,
+    "node": true
   },
   "extends": [
     "airbnb-base",
@@ -16,25 +17,12 @@
   ],
   "parser": "@typescript-eslint/parser",
   "parserOptions": {
-    "ecmaVersion": 2018,
+    "ecmaVersion": 2020,
     "comment": true,
     "project": "./tsconfig.json",
     "sourceType": "module"
   },
   "plugins": ["@typescript-eslint", "prettier"],
-  "settings": {
-    "import/core-modules": ["vscode"],
-    "import/parsers": {
-      "@typescript-eslint/parser": [".ts", ".tsx"]
-    },
-    "import/resolver": {
-      "typescript": {},
-      "node": {
-        "extensions": [".js", ".jsx"]
-      }
-    },
-    "import/extensions": [".js", ".jsx"]
-  },
   "rules": {
     "camelcase": 2,
     "consistent-return": 0,
@@ -65,5 +53,18 @@
     "prefer-const": ["error", { "destructuring": "all" }],
     "prefer-template": 2,
     "radix": 2
+  },
+  "settings": {
+    "import/core-modules": ["vscode"],
+    "import/parsers": {
+      "@typescript-eslint/parser": [".ts", ".tsx"]
+    },
+    "import/resolver": {
+      "typescript": {},
+      "node": {
+        "extensions": [".js", ".jsx"]
+      }
+    },
+    "import/extensions": [".js", ".jsx"]
   }
 }

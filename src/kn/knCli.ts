@@ -39,7 +39,7 @@ export default class KnCli implements Cli {
 
   /**
    * Spin off a child process that will execute the cli command passed in.
-   * 
+   *
    * @param cmd
    * @param opts
    */

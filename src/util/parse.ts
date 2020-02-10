@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See LICENSE file in the project root for license information.
  *-----------------------------------------------------------------------------------------------*/
 
-import * as fs from 'fs';
+import { readFile } from 'fs';
 
 /**
  * Promisify fs.readFile to parse JSON from a file.
@@ -13,7 +13,7 @@ import * as fs from 'fs';
  */
 export default function loadJSON<T>(filePath: string): Promise<T> {
   return new Promise((resolve, reject) => {
-    fs.readFile(require.resolve(filePath), 'utf-8', (err, data) => {
+    readFile(require.resolve(filePath), 'utf-8', (err, data) => {
       if (err) {
         reject(err);
       } else {
