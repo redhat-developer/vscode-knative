@@ -13,12 +13,12 @@ import { satisfies } from 'semver';
 import KnCli, { CliExitData } from './knCli';
 import Archive from '../util/archive';
 import DownloadUtil from '../util/download';
-// import loadJSON from '../util/parse';
 import Platform from '../util/platform';
 
+// import loadJSON from '../util/parse';
+// import * as configData from './kn-cli-config.json';
 import configData = require('./kn-cli-config.json');
-
-// const configData = './kn-cli-config.json'; loadJSON2
+// const configData = './kn-cli-config.json';
 
 export interface KnConfig {
   kn: CliConfig;
@@ -121,7 +121,7 @@ function selectTool(locations: string[], versionRange: string): Promise<string> 
  * @param requirements
  * @param platform
  */
-// function loadMetadata2(requirements: Promise<KnConfig>, platform: string): KnConfig | void {
+// function loadMetadata(requirements: Promise<KnConfig>, platform: string): KnConfig | void {
 //   // const reqs = requirements;
 //   requirements
 //     .then((config) => {
@@ -141,11 +141,12 @@ function selectTool(locations: string[], versionRange: string): Promise<string> 
 //     });
 // }
 
-// function loadJSON2<T>(filePath: string): Promise<T> {
+// function loadJSON<T>(filePath: string): Promise<T> {
 //   return new Promise((resolve, reject) => {
-//     fs.readFile(require.resolve(filePath), 'utf-8', (err, data) => {
+//    fs.readFile(filePath, 'utf-8', (err, data) => {
 //       if (err) {
-//         reject(err);
+//         console.log(`cwd = ${  process.cwd()}`);
+//          reject(err);
 //       } else {
 //         resolve(JSON.parse(data));
 //       }
@@ -154,7 +155,7 @@ function selectTool(locations: string[], versionRange: string): Promise<string> 
 // }
 
 export default class KnCliConfig {
-  public static loadMetadata(requirements, platform): KnConfig | void {
+  public static loadMetadata(requirements, platform: string): KnConfig | void {
     const reqs = JSON.parse(JSON.stringify(requirements));
     // eslint-disable-next-line no-restricted-syntax
     for (const object in requirements) {
@@ -173,12 +174,14 @@ export default class KnCliConfig {
   /**
    * This contains the knative cli config data needed to access and run the commands.
    */
+  // static tools: KnConfig | void = loadMetadata(loadJSON(configData), Platform.OS);
   static tools: KnConfig | void = KnCliConfig.loadMetadata(configData, Platform.OS);
 
   /**
    * Reset the knative cli config data
    */
   static resetConfiguration(): void {
+    // KnCliConfig.tools = loadMetadata(loadJSON(configData), Platform.OS);
     KnCliConfig.tools = KnCliConfig.loadMetadata(configData, Platform.OS);
   }
 

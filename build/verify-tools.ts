@@ -10,11 +10,12 @@ import { fromFile } from 'hasha';
 import { sync } from 'mkdirp';
 import { tmpdir } from 'os';
 import { join, resolve } from 'path';
-import { KnConfig } from '../src/kn/kn-cli-config';
+// import { KnConfig } from '../src/kn/kn-cli-config';
 import DownloadUtil from '../src/util/download';
-import loadJSON from '../src/util/parse';
+// import loadJSON from '../src/util/parse';
 
-const configData = '../src/kn/kn-cli-config.json';
+// const configData = '../src/kn/kn-cli-config.json';
+import configData = require('../src/kn/kn-cli-config.json');
 
 async function downloadFileAndCreateSha256(
   targetFolder: string,
@@ -37,20 +38,33 @@ async function downloadFileAndCreateSha256(
 }
 
 function verifyTools(): void {
-  loadJSON<KnConfig>(configData).then((data: KnConfig): void => {
-    Object.keys(data).forEach((key) => {
-      Object.keys(data[key].platform).forEach((OS) => {
-        const targetFolder = resolve(tmpdir(), OS);
-        downloadFileAndCreateSha256(
-          targetFolder,
-          data[key].platform[OS].dlFileName,
-          data[key].platform[OS].url,
-          data[key].platform[OS].sha256sum,
-        );
-      });
+  Object.keys(configData).forEach((key) => {
+    Object.keys(configData[key].platform).forEach((OS) => {
+      const targetFolder = resolve(tmpdir(), OS);
+      downloadFileAndCreateSha256(
+        targetFolder,
+        configData[key].platform[OS].dlFileName,
+        configData[key].platform[OS].url,
+        configData[key].platform[OS].sha256sum,
+      );
     });
   });
 }
+// function verifyTools(): void {
+//   loadJSON<KnConfig>(configData).then((data: KnConfig): void => {
+//     Object.keys(data).forEach((key) => {
+//       Object.keys(data[key].platform).forEach((OS) => {
+//         const targetFolder = resolve(tmpdir(), OS);
+//         downloadFileAndCreateSha256(
+//           targetFolder,
+//           data[key].platform[OS].dlFileName,
+//           data[key].platform[OS].url,
+//           data[key].platform[OS].sha256sum,
+//         );
+//       });
+//     });
+//   });
+// }
 
 const fileCheckRegex = /\w*tools.json/;
 
