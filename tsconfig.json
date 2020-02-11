@@ -2,7 +2,6 @@
 	"compilerOptions": {
 		"downlevelIteration": true,
     "experimentalDecorators": true,
-    "": "",
 		"lib": [ "es6" ],
 		"module": "commonjs",
 		// "noImplicitReturns": true, /* Report error when not all code paths in function return a value. */
@@ -15,7 +14,12 @@
 		"sourceMap": true,
 		"strict": false,   /* enable all strict type-checking options */
 		"target": "es6",
-	},
+  },
+  "include": [
+    "src/**/*",
+    "build/*",
+    "src/**/*.json"
+  ],
 	"exclude": [
 		"node_modules",
 		".vscode-test"
