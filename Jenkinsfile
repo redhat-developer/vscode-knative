@@ -3,7 +3,7 @@
 node('rhel7'){
   stage('Checkout repo') {
     deleteDir()
-    git url: 'https://github.com/redhat-developer/vscode-openshift-tools.git',
+    git url: 'https://github.com/talamer/vscode-knative.git',
       branch: "${BRANCH}"
   }
 
@@ -31,22 +31,22 @@ node('rhel7'){
     def packageJson = readJSON file: 'package.json'
     packageJson.extensionDependencies = ["ms-kubernetes-tools.vscode-kubernetes-tools"]
     writeJSON file: 'package.json', json: packageJson, pretty: 4
-    sh "vsce package -o openshift-connector-${packageJson.version}-${env.BUILD_NUMBER}.vsix"
-    sh "sha256sum *.vsix > openshift-connector-${packageJson.version}-${env.BUILD_NUMBER}.vsix.sha256"
-    sh "npm pack && mv vscode-openshift-connector-${packageJson.version}.tgz openshift-connector-${packageJson.version}-${env.BUILD_NUMBER}.tgz"
-    sh "sha256sum *.tgz > openshift-connector-${packageJson.version}-${env.BUILD_NUMBER}.tgz.sha256"
+    sh "vsce package -o knative-${packageJson.version}-${env.BUILD_NUMBER}.vsix"
+    sh "sha256sum *.vsix > knative-${packageJson.version}-${env.BUILD_NUMBER}.vsix.sha256"
+    sh "npm pack && mv vscode-knative-${packageJson.version}.tgz knative-${packageJson.version}-${env.BUILD_NUMBER}.tgz"
+    sh "sha256sum *.tgz > knative-${packageJson.version}-${env.BUILD_NUMBER}.tgz.sha256"
   }
 
   if(params.UPLOAD_LOCATION) {
     stage('Snapshot') {
       def filesToPush = findFiles(glob: '**.vsix')
-      sh "rsync -Pzrlt --rsh=ssh --protocol=28 *.vsix* ${UPLOAD_LOCATION}/snapshots/vscode-openshift-tools/"
+      sh "rsync -Pzrlt --rsh=ssh --protocol=28 *.vsix* ${UPLOAD_LOCATION}/snapshots/vscode-knative/"
     }
   }
 
   if(publishToMarketPlace.equals('true')){
     timeout(time:5, unit:'DAYS') {
-      input message:'Approve deployment?', submitter: 'msuman,degolovi'
+      input message:'Approve deployment?', submitter: 'joshuawilson'
     }
 
     stage("Publish to Marketplace") {
@@ -57,8 +57,8 @@ node('rhel7'){
       archive includes:"**.vsix*","**.tgz*"
 
       stage "Promote the build to stable"
-      sh "rsync -Pzrlt --rsh=ssh --protocol=28 *.vsix* ${UPLOAD_LOCATION}/stable/vscode-openshift-tools/"
-      sh "rsync -Pzrlt --rsh=ssh --protocol=28 *.tgz* ${UPLOAD_LOCATION}/stable/vscode-openshift-tools/"
+      sh "rsync -Pzrlt --rsh=ssh --protocol=28 *.vsix* ${UPLOAD_LOCATION}/stable/vscode-knative/"
+      sh "rsync -Pzrlt --rsh=ssh --protocol=28 *.tgz* ${UPLOAD_LOCATION}/stable/vscode-knative/"
     }
   }
 }
