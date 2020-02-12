@@ -1,9 +1,10 @@
 {
   "name": "vscode-knative",
-  "displayName": "vscode-knative",
+  "displayName": "Knative",
   "description": "Knative extension for vscode",
   "version": "0.1.0",
   "license": "MIT",
+  "publisher": "redhat",
   "repository": {
     "type": "git",
     "url": "https://github.com/talamer/vscode-knative.git"
@@ -21,7 +22,7 @@
   ],
   "icon": "images/knative-logo.png",
   "engines": {
-    "vscode": "^1.39.0"
+    "vscode": "^1.40.0"
   },
   "extensionDependencies": [
     "ms-kubernetes-tools.vscode-kubernetes-tools"
