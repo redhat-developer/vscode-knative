@@ -7,7 +7,7 @@
 
 on Kubernetes clusters.
 
-This extension for Knative provides a complete developer experience when working with a Kubernetes cluster. Using this extension, developers can view and deploy their applications in a serverless way.
+This extension for Knative provides the app developer the tools and experience needed when working with Knative on a Kubernetes cluster. Using this extension, developers can view and deploy their applications in a serverless way.
 
 <!-- ## Features
 

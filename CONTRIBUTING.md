@@ -8,9 +8,9 @@ There are only a few guidelines that we need contributors to follow.
 ## First Time Setup
 1. Install prerequisites:
    * latest [Visual Studio Code](https://code.visualstudio.com/)
-   * [Node.js](https://nodejs.org/) v4.0.0 or higher
+   * [Node.js](https://nodejs.org/) v12.0.0 or higher
 2. Fork and clone the repository
-3. `cd vscode-openshift-tools`
+3. `cd vscode-knative`
 4. Install the dependencies:
 
 	```bash
@@ -28,11 +28,9 @@ There are only a few guidelines that we need contributors to follow.
     ```bash
     $ vsce package
     ```
-3. `openshift-connector-<version>.vsix` file is created. Install it by following the instructions [here](https://code.visualstudio.com/docs/editor/extension-gallery#_install-from-a-vsix).
+3. `vscode-knative-<version>.vsix` file is created. Install it by following the instructions [here](https://code.visualstudio.com/docs/editor/extension-gallery#_install-from-a-vsix).
 
 
-4. Once the extension is installed and reloaded, there will be an OpenShift Icon on the View Container, on the lines of snap mentioned below.
-
-![View Container OpenShift](https://github.com/redhat-developer/vscode-openshift-tools/blob/master/images/view-container-icon.png)
+4. Once the extension is installed and reloaded, there will be an Knative Icon on the View Container. 
 
 > If you have any questions or run into any problems, please post an issue - we'll be very happy to help.
