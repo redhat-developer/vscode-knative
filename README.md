@@ -2,8 +2,8 @@
 
 [Knative](https://knative.tips/intro/knative/) (pronounced kay-native) is a set of open source components for Kubernetes that implements functionality to:
 
-  - run stateless workloads such as microservices
-  - event subscription, delivery and handling
+  * run stateless workloads such as microservices
+  * event subscription, delivery and handling
 
 on Kubernetes clusters.
 
@@ -21,22 +21,18 @@ For example if there is an image subfolder under your extension project workspac
 
 ## Requirements
 
-Logging in to a Kubernetes cluster is done via the [Kubernetes extension](https://marketplace.visualstudio.com/items?itemName=ms-kubernetes-tools.vscode-kubernetes-tools) (ms-kubernetes-tools.vscode-kubernetes-tools), VSCode should ask you to install it if you don't already have it. 
+  * Logging in to a Kubernetes cluster is done via the [Kubernetes extension](https://marketplace.visualstudio.com/items?itemName=ms-kubernetes-tools.vscode-kubernetes-tools) (ms-kubernetes-tools.vscode-kubernetes-tools), VSCode should ask you to install it if you don't already have it. 
 
-> NOTE: You will need to have the kubeconfig for the cluster that you are accessing stored locally.
+  > NOTE: You will need to have the kubeconfig for the cluster that you are accessing stored locally.
 
-Knative is run on the [kn cli](https://github.com/knative/client). The extension will offer to download and install it if it can't find it.
+*  Knative is run on the [kn cli](https://github.com/knative/client). The extension will offer to download and install it if it can't find it.
 
 ## Extension Settings
 
-Include if your extension adds any VS Code settings through the `contributes.configuration` extension point.
-
-For example:
-
 This extension contributes the following settings:
 
-* `myExtension.enable`: enable/disable this extension
-* `myExtension.thing`: set to `blah` to do something
+* `knative.service.list`: list the Knative services for the current namespace
+* `knative.explorer.reportIssue`: Report Extension Issue on GitHub
 
 ## Known Issues
 
