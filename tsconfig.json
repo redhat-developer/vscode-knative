@@ -15,13 +15,9 @@
 		"strict": false,   /* enable all strict type-checking options */
 		"target": "es6",
   },
-  "include": [
-    "src/**/*",
-    "build/*",
-    "src/**/*.json"
-  ],
 	"exclude": [
 		"node_modules",
-		".vscode-test"
+    ".vscode-test",
+    "out"
 	]
 }
