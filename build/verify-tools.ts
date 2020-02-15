@@ -66,7 +66,7 @@ function verifyTools(): void {
 //   });
 // }
 
-const fileCheckRegex = /\w*tools.json/;
+const fileCheckRegex = /\w*kn-cli-config.json/;
 
 exec('git diff --name-only origin/master -- .', (error, stdout) => {
   if (error) {
