@@ -49,28 +49,25 @@ export interface PlatformData {
   cmdFileName: string;
 }
 
+// function existsAsync(location: string): Promise<boolean> {
+//   return new Promise((resolve) => {
+//     if (fs.existsSync(location)) {
+//       resolve(true);
+//     }
+//     resolve(false);
+//   });
+// }
+
 function result(location: string): Promise<CliExitData> {
   return KnCli.getInstance().execute(`"${location}" version`);
 }
 
-function existsAsync(location: string): Promise<boolean> {
-  return new Promise((resolve) => {
-    if (fs.existsSync(location)) {
-      resolve(true);
-    } else {
-      resolve(false);
-    }
-  });
-}
 /**
  *
  * @param location
  */
 export function getVersion(location: string): Promise<string> {
-  return existsAsync(location)
-    .then((foundLocation) => {
-      return foundLocation ? result(location) : undefined;
-    })
+  return result(location)
     .then((data) => {
       let detectedVersion: string;
       const version = new RegExp(
@@ -89,29 +86,32 @@ export function getVersion(location: string): Promise<string> {
         }
       }
       return detectedVersion;
+    })
+    .catch(() => {
+      return undefined;
     });
 }
 
 /**
- * Find which kn cli is installed.
+ * Find which kn cli is installed and ensure it is the correct version.
  *
  * @param locations
  * @param versionRange
  */
 function selectTool(locations: string[], versionRange: string): Promise<string> {
-  return new Promise((resolve) => {
-    resolve(
-      locations.find((location: string): string => {
-        let versionLocation: string;
-        getVersion(location).then((value: string): void => {
-          versionLocation = value;
-        });
-        if (location && satisfies(versionLocation, versionRange)) {
-          return location;
-        }
-        return undefined;
-      }),
-    );
+  // Find the first location, in a list of locations, that actually exists.
+  // This couldn't be done asyncronously because it would return a Promise, which
+  // can not be evaluated as a boolean. Therefor the syncronous method is used.
+  const foundLocation: string = locations.find((location: string): boolean =>
+    fs.existsSync(location),
+  );
+
+  // Check the version of the cli to make sure it matches what we coded against.
+  return getVersion(foundLocation).then((value: string): string => {
+    if (foundLocation && satisfies(value, versionRange)) {
+      return foundLocation;
+    }
+    return undefined;
   });
 }
 
@@ -193,131 +193,135 @@ export default class KnCliConfig {
    * @returns toolLocation
    */
   static async detectOrDownload(cmd: string): Promise<string> {
-    // If the location of the cli has been set, then read it.
-    let toolLocation: string = KnCliConfig.tools[cmd].location;
+    try {
+      // If the location of the cli has been set, then read it.
+      let toolLocation: string = KnCliConfig.tools[cmd].location;
 
-    // So if the tool location hasn't been set then we need to figure that out.
-    if (toolLocation === undefined) {
-      // Look in [HOME]/.vs-kn/ for the kn cli executable
-      const toolCacheLocation = path.resolve(
-        Platform.getUserHomePath(),
-        '.vs-kn',
-        KnCliConfig.tools[cmd].cmdFileName,
-      );
-      // If kn cli is installed, get it's install location/path
-      const whichLocation = which(cmd);
-      // Get a list of locations.
-      const toolLocations: string[] = [
-        whichLocation ? whichLocation.stdout : null,
-        toolCacheLocation,
-      ];
-      // Check the list of locations and see if what we need is there.
-      await selectTool(toolLocations, KnCliConfig.tools[cmd].versionRange).then((value) => {
-        toolLocation = value;
-      });
-
-      // If the cli tool is still not found then we will need to install it.
+      // So if the tool location hasn't been set then we need to figure that out.
       if (toolLocation === undefined) {
-        // Set the download location for the cli executable.
-        const toolDlLocation = path.resolve(
+        // Look in [HOME]/.vs-kn/ for the kn cli executable
+        const toolCacheLocation = path.resolve(
           Platform.getUserHomePath(),
           '.vs-kn',
-          KnCliConfig.tools[cmd].dlFileName,
+          KnCliConfig.tools[cmd].cmdFileName,
         );
-        // Message for expected version number
-        const installRequest = `Download and install v${KnCliConfig.tools[cmd].version}`;
-        // Create a pop-up that asks to download and install.
-        let response: string;
-        await vscode.window
-          .showInformationMessage(
-            `Cannot find ${KnCliConfig.tools[cmd].description} ${KnCliConfig.tools[cmd].versionRangeLabel}.`,
-            installRequest,
-            'Help',
-            'Cancel',
-          )
-          .then((value) => {
-            response = value;
-          });
-        // Ensure that the directory exists. If the directory structure does not exist, then create it.
-        fsExtra.ensureDirSync(path.resolve(Platform.getUserHomePath(), '.vs-kn'));
-        // If the user selected to download and install then do this.
-        if (response === installRequest) {
-          let action: string;
-          do {
-            action = undefined;
-            // Display a Progress notification while downloading
-            vscode.window.withProgress(
-              {
-                cancellable: true,
-                location: vscode.ProgressLocation.Notification,
-                title: `Downloading ${KnCliConfig.tools[cmd].description}`,
-              },
-              (progress: vscode.Progress<{ increment: number; message: string }>) => {
-                return DownloadUtil.downloadFile(
-                  KnCliConfig.tools[cmd].url,
-                  toolDlLocation,
-                  (dlProgress, increment) =>
-                    progress.report({ increment, message: `${dlProgress}%` }),
-                );
-              },
-            );
-            // Get the hash for the downloaded file.
-            let sha256sum: string;
-            fromFile(toolDlLocation, { algorithm: 'sha256' }).then((value) => {
-              sha256sum = value;
-            });
-            // Check the hash against the one on file to make sure it downloaded. If it doesn't match tell the user,
-            // so they can download it again.
-            if (sha256sum !== KnCliConfig.tools[cmd].sha256sum) {
-              fsExtra.removeSync(toolDlLocation);
-              vscode.window
-                .showInformationMessage(
-                  `Checksum for downloaded ${KnCliConfig.tools[cmd].description} v${KnCliConfig.tools[cmd].version} is not correct.`,
-                  'Download again',
-                  'Cancel',
-                )
-                // eslint-disable-next-line no-loop-func
-                .then((value) => {
-                  action = value;
-                });
-            }
-          } while (action === 'Download again');
+        // If kn cli is installed, get it's install location/path
+        const whichLocation = which(cmd);
+        // Get a list of locations.
+        const toolLocations: string[] = [
+          whichLocation ? whichLocation.stdout : null,
+          toolCacheLocation,
+        ];
+        // Check the list of locations and see if what we need is there.
+        await selectTool(toolLocations, KnCliConfig.tools[cmd].versionRange).then((value) => {
+          toolLocation = value;
+        });
 
-          if (action !== 'Cancel') {
-            if (toolDlLocation.endsWith('.zip') || toolDlLocation.endsWith('.tar.gz')) {
-              await Archive.unzip(
-                toolDlLocation,
-                path.resolve(Platform.getUserHomePath(), '.vs-kn'),
-                KnCliConfig.tools[cmd].filePrefix,
-              );
-            } else if (toolDlLocation.endsWith('.gz')) {
-              await Archive.unzip(
-                toolDlLocation,
-                toolCacheLocation,
-                KnCliConfig.tools[cmd].filePrefix,
-              );
-            }
-            fsExtra.removeSync(toolDlLocation);
-            if (Platform.OS !== 'win32') {
-              fs.chmodSync(toolCacheLocation, 0o765);
-            }
-            // eslint-disable-next-line require-atomic-updates
-            toolLocation = toolCacheLocation;
-          }
-        } else if (response === `Help`) {
-          vscode.commands.executeCommand(
-            'vscode.open',
-            vscode.Uri.parse(
-              `https://github.com/talamer/vscode-knative/blob/master/README.md#requirements`,
-            ),
+        // If the cli tool is still not found then we will need to install it.
+        if (toolLocation === undefined) {
+          // Set the download location for the cli executable.
+          const toolDlLocation = path.resolve(
+            Platform.getUserHomePath(),
+            '.vs-kn',
+            KnCliConfig.tools[cmd].dlFileName,
           );
+          // Message for expected version number
+          const installRequest = `Download and install v${KnCliConfig.tools[cmd].version}`;
+          // Create a pop-up that asks to download and install.
+          let response: string;
+          await vscode.window
+            .showInformationMessage(
+              `Cannot find ${KnCliConfig.tools[cmd].description} ${KnCliConfig.tools[cmd].versionRangeLabel}.`,
+              installRequest,
+              'Help',
+              'Cancel',
+            )
+            .then((value) => {
+              response = value;
+            });
+          // Ensure that the directory exists. If the directory structure does not exist, then create it.
+          fsExtra.ensureDirSync(path.resolve(Platform.getUserHomePath(), '.vs-kn'));
+          // If the user selected to download and install then do this.
+          if (response === installRequest) {
+            let action: string;
+            do {
+              action = undefined;
+              // Display a Progress notification while downloading
+              vscode.window.withProgress(
+                {
+                  cancellable: true,
+                  location: vscode.ProgressLocation.Notification,
+                  title: `Downloading ${KnCliConfig.tools[cmd].description}`,
+                },
+                (progress: vscode.Progress<{ increment: number; message: string }>) => {
+                  return DownloadUtil.downloadFile(
+                    KnCliConfig.tools[cmd].url,
+                    toolDlLocation,
+                    (dlProgress, increment) =>
+                      progress.report({ increment, message: `${dlProgress}%` }),
+                  );
+                },
+              );
+              // Get the hash for the downloaded file.
+              let sha256sum: string;
+              fromFile(toolDlLocation, { algorithm: 'sha256' }).then((value) => {
+                sha256sum = value;
+              });
+              // Check the hash against the one on file to make sure it downloaded. If it doesn't match tell the user,
+              // so they can download it again.
+              if (sha256sum !== KnCliConfig.tools[cmd].sha256sum) {
+                fsExtra.removeSync(toolDlLocation);
+                vscode.window
+                  .showInformationMessage(
+                    `Checksum for downloaded ${KnCliConfig.tools[cmd].description} v${KnCliConfig.tools[cmd].version} is not correct.`,
+                    'Download again',
+                    'Cancel',
+                  )
+                  // eslint-disable-next-line no-loop-func
+                  .then((value) => {
+                    action = value;
+                  });
+              }
+            } while (action === 'Download again');
+
+            if (action !== 'Cancel') {
+              if (toolDlLocation.endsWith('.zip') || toolDlLocation.endsWith('.tar.gz')) {
+                await Archive.unzip(
+                  toolDlLocation,
+                  path.resolve(Platform.getUserHomePath(), '.vs-kn'),
+                  KnCliConfig.tools[cmd].filePrefix,
+                );
+              } else if (toolDlLocation.endsWith('.gz')) {
+                await Archive.unzip(
+                  toolDlLocation,
+                  toolCacheLocation,
+                  KnCliConfig.tools[cmd].filePrefix,
+                );
+              }
+              fsExtra.removeSync(toolDlLocation);
+              if (Platform.OS !== 'win32') {
+                fs.chmodSync(toolCacheLocation, 0o765);
+              }
+              // eslint-disable-next-line require-atomic-updates
+              toolLocation = toolCacheLocation;
+            }
+          } else if (response === `Help`) {
+            vscode.commands.executeCommand(
+              'vscode.open',
+              vscode.Uri.parse(
+                `https://github.com/talamer/vscode-knative/blob/master/README.md#requirements`,
+              ),
+            );
+          }
+        }
+        if (toolLocation) {
+          // eslint-disable-next-line require-atomic-updates
+          KnCliConfig.tools[cmd].location = toolLocation;
         }
       }
-      if (toolLocation) {
-        // eslint-disable-next-line require-atomic-updates
-        KnCliConfig.tools[cmd].location = toolLocation;
-      }
+      return toolLocation;
+    } catch (err) {
+      return Promise.reject(err);
     }
-    return toolLocation;
   }
 }
