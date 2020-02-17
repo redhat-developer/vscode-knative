@@ -6,7 +6,7 @@
 import * as fs from 'fs-extra';
 import { throttleTime } from 'rxjs/operators';
 import { fromEvent } from 'rxjs';
-import { stream } from 'got';
+import got from 'got';
 import { promisify } from 'util';
 import { Stream } from 'stream';
 
@@ -29,7 +29,7 @@ export default class DownloadUtil {
     toFile: string,
     progressCb?: (current: number, increment: number) => void,
   ): Promise<void> {
-    const dls = stream(fromUrl);
+    const dls = got.stream(fromUrl);
     let previous = 0;
     // Process progress event from 'got'
     const processProgress = fromEvent(dls, 'downloadProgress')
