@@ -12,6 +12,8 @@ async function main(): Promise<void> {
     const extensionTestsPath = path.resolve(__dirname, './suite/index');
 
     // Download VS Code, unzip it and run the integration test
+    // eslint-disable-next-line no-console
+    console.log(extensionDevelopmentPath, extensionTestsPath);
     await runTests({ extensionDevelopmentPath, extensionTestsPath });
   } catch (err) {
     // eslint-disable-next-line no-console
