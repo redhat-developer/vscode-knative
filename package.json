@@ -142,7 +142,7 @@
         {
           "id": "knativeView",
           "title": "Knative",
-          "icon": "src/images/vscode-knative.svg"
+          "icon": "images/vscode-knative.svg"
         }
       ]
     },
