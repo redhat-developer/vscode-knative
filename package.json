@@ -5,6 +5,7 @@
   "version": "0.1.2",
   "license": "MIT",
   "publisher": "redhat",
+  "preview": true,
   "repository": {
     "type": "git",
     "url": "https://github.com/talamer/vscode-knative.git"
