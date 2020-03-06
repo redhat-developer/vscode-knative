@@ -137,7 +137,7 @@ export class KnImpl implements Kn {
 
   public async requireLogin(): Promise<boolean> {
     const result: CliExitData = await execute(
-      KnAPI.printKnVersionAndProjects(),
+      KnAPI.printKnVersion(),
       process.cwd(),
       false,
     );

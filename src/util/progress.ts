@@ -5,9 +5,10 @@
 
 import * as vscode from 'vscode';
 import { execute } from '../kn/knExecute';
+import { CliCommand, createCliCommand } from '../kn/knCli';
 
 export interface Step {
-  command: string;
+  command: CliCommand;
   increment: number;
   total?: number;
 }
@@ -38,7 +39,7 @@ export default class Progress {
             });
             return _current;
           },
-          { increment: 0, command: '', total: 0 },
+          { increment: 0, command: createCliCommand(''), total: 0 },
         );
 
         return calls.reduce<Promise<any>>((previous: Promise<any>, current: () => Promise<any>) => {
@@ -48,7 +49,7 @@ export default class Progress {
     );
   }
 
-  static async execCmdWithProgress(title: string, cmd: string): Promise<any> {
+  static async execCmdWithProgress(title: string, cmd: CliCommand): Promise<any> {
     return new Promise((resolve, reject) => {
       vscode.window.withProgress(
         {

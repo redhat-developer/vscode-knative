@@ -4,6 +4,7 @@
  *-----------------------------------------------------------------------------------------------*/
 /* eslint-disable no-console */
 
+// import { CancellationToken } from 'vscode';
 import { exec } from 'child_process';
 import { existsSync } from 'fs-extra';
 import { fromFile } from 'hasha';
@@ -28,6 +29,7 @@ async function downloadFileAndCreateSha256(
   }
   const currentFile = join(targetFolder, fileName);
   console.log(`${currentFile} download started from ${reqURL}`);
+  // const token: CancellationToken = null;
   await DownloadUtil.downloadFile(reqURL, currentFile, (current) => console.log(`${current}%`));
   const currentSHA256 = await fromFile(currentFile, { algorithm: 'sha256' });
   if (currentSHA256 === sha256sum) {

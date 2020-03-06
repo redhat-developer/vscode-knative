@@ -3,6 +3,8 @@
  *  Licensed under the MIT License. See LICENSE file in the project root for license information.
  *-----------------------------------------------------------------------------------------------*/
 
+import { CliCommand, createCliCommand } from "./knCli";
+
 export interface CreateService {
   name: string;
   image: string;
@@ -13,6 +15,14 @@ export interface CreateService {
   label?: Map<string, string>;
   namespace?: string;
 }
+
+function newKnCommand(...knArguments: string[]): CliCommand {
+  return createCliCommand('kn', ...knArguments);
+}
+
+// function newOcCommand(...ocArguments: string[]): CliCommand {
+//   return createCliCommand('oc', ...ocArguments);
+// }
 
 /**
  * A series of commands for the knative cli `kn`.
@@ -80,19 +90,19 @@ export default class KnAPI {
   /**
    * Return the list of Knative Services in JSON format.
    */
-  static listServices(): string {
-    return `kn service list -o json`;
+  static listServices(): CliCommand {
+    return newKnCommand(`service`, `list`, `-o`, `json`);
   }
 
-  static printKnVersion(): string {
-    return 'kn version';
+  static printKnVersion(): CliCommand {
+    return newKnCommand(`version`);
   }
 
-  static printKnVersionAndProjects(): string {
-    return 'kn version && kn service list';
-  }
+  // static printKnVersionAndProjects(): CliCommand {
+  //   return newKnCommand(`version`, `&&`, `kn`, `service`, `list`);
+  // }
 
-  static knLogout(): string {
-    return `kn logout`;
+  static knLogout(): CliCommand {
+    return newKnCommand(`logout`);
   }
 }
