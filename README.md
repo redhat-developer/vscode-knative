@@ -1,4 +1,4 @@
-# Knative Servering & Eventing for Visual Studio Code
+# Knative Servring & Eventing for Visual Studio Code
 
 [Knative](https://knative.tips/intro/knative/) (pronounced kay-native) is a set of open source components for Kubernetes that implements functionality to:
 
