@@ -55,7 +55,7 @@ export interface PlatformData {
  */
 async function getVersion(location: string): Promise<string> {
   const version = new RegExp(
-    `Version:(\\s+)v((([0-9]+)\\.([0-9]+)\\.([0-9]+)(?:-([0-9a-zA-Z-]+(?:\\.[0-9a-zA-Z-]+)*))?)(?:\\+([0-9a-zA-Z-]+(?:\\.[0-9a-zA-Z-]+)*))?).*`,
+    `Version:\\s+v(((([0-9]+)\\.([0-9]+)\\.([0-9]+)|(([0-9]+)-([0-9a-zA-Z]+)-([0-9a-zA-Z]+)))(?:-([0-9a-zA-Z-]+(?:\\.[0-9a-zA-Z-]+)*))?)(?:\\+([0-9a-zA-Z-]+(?:\\.[0-9a-zA-Z-]+)*))?).*`,
   );
   let detectedVersion: string;
 
@@ -69,7 +69,15 @@ async function getVersion(location: string): Promise<string> {
         // Find the line of text that has the version.
         .filter((value1) => version.exec(value1))
         // Pull out just the version from the line from above.
-        .map((value2) => version.exec(value2)[2]);
+        .map((value2) => {
+          const regexResult = version.exec(value2);
+          if (regexResult[8]) {
+            // if the version is a local build then we will find more regex value and we need to pull the 8th in the array
+            return regexResult[8]
+          }
+          // if it is a released version then just get it
+          return regexResult[1]
+        });
       if (toolVersion.length) {
         [detectedVersion] = toolVersion;
       }
@@ -88,7 +96,7 @@ async function getVersion(location: string): Promise<string> {
  * @param locations
  * @param versionRange
  */
-async function selectTool(locations: string[], versionRange: string): Promise<string> {
+async function selectTool(locations: string[], versionRange: string, versionLocalBuildRange: number): Promise<string> {
   let foundLocation: string;
   // Check the version of the cli to make sure it matches what we coded against.
   try {
@@ -99,11 +107,12 @@ async function selectTool(locations: string[], versionRange: string): Promise<st
       // can not be evaluated as a boolean. Therefor the syncronous method is used.
       if (fs.existsSync(location)) {
         // eslint-disable-next-line no-await-in-loop
-        const versionLocation: string = await getVersion(location);
+        const locationsVersion: string = await getVersion(location);
 
+        // Check if the version is a local build after a certain date or matches the given vesion range for releases version.
         if (
-          (location && versionLocation > versionRange) ||
-          satisfies(versionLocation, versionRange)
+          Number(locationsVersion) > versionLocalBuildRange ||
+          satisfies(locationsVersion, versionRange)
         ) {
           foundLocation = location;
           break;
@@ -180,6 +189,7 @@ export default class KnCliConfig {
         let foundToolLocation: string = await selectTool(
           toolLocations,
           KnCliConfig.tools[cmd].versionRange,
+          KnCliConfig.tools[cmd].versionLocalBuildRange,
         );
         // If the cli tool is still not found then we will need to install it.
         if (foundToolLocation === undefined || foundToolLocation === null) {
