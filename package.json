@@ -182,12 +182,12 @@
         {
           "command": "knative.explorer.refresh",
           "when": "view == knativeProjectExplorer",
-          "group": "navigation@1"
+          "group": "navigation@0"
         },
         {
           "command": "knative.explorer.reportIssue",
           "when": "view == knativeProjectExplorer",
-          "group": "navigation@2"
+          "group": "navigation@1"
         }
       ],
       "view/item/context": [

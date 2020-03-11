@@ -61,25 +61,6 @@ export default class KnCli implements Cli {
    * @param cmd
    * @param opts
    */
-  execute2(cmd: string, opts: ExecOptions = {}): Promise<CliExitData> {
-    return new Promise<CliExitData>((resolve) => {
-      const exopt = opts;
-      this.knOutputChannel.print(cmd);
-      if (exopt.maxBuffer === undefined) {
-        exopt.maxBuffer = 2 * 1024 * 1024;
-      }
-      exec(cmd, exopt, (error: ExecException, stdout: string, stderr: string) => {
-        const stdoutFiltered = stdout.replace(/---[\s\S]*$/g, '').trim();
-        this.knOutputChannel.print(stdoutFiltered);
-        this.knOutputChannel.print(stderr);
-        // do not reject it here, because caller in some cases need the error and the streams
-        // to make a decision
-        // Filter update message text which starts with `---`
-        resolve({ error, stdout: stdoutFiltered, stderr });
-      });
-    });
-  }
-
   execute(cmd: CliCommand, opts: SpawnOptions = {}): Promise<CliExitData> {
     return new Promise<CliExitData>((resolve) => {
       this.knOutputChannel.print(cliCommandToString(cmd));

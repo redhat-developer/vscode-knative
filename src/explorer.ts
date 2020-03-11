@@ -96,23 +96,17 @@ export default class KnativeExplorer implements TreeDataProvider<KnativeTreeObje
     this.treeView.reveal(item);
   }
 
-  static async reportIssue(): Promise<any> {
-    let body = '';
-    const repoURL = `https://github.com/talamer/vscode-knative`;
-    const template = {
-      'VS Code version:': version,
-      'OS:': Platform.OS,
-      'Extension version:': extensions.getExtension('vscode-knative').packageJSON.version,
-    };
-    // eslint-disable-next-line no-restricted-syntax
-    for (const [key, value] of Object.entries(template)) {
-      body = `${body}${key} ${value}\n`;
-    }
-    return commands.executeCommand(
-      'vscode.open',
-      Uri.parse(
-        `${repoURL}/issues/new?labels=kind/bug&title=Issue&body=**Environment**\n${body}\n**Description**`,
-      ),
-    );
+  static async reportIssue(): Promise<unknown> {
+    return commands.executeCommand('vscode.open', Uri.parse(KnativeExplorer.issueUrl()));
+  }
+
+  static issueUrl(): string {
+    const { packageJSON } = extensions.getExtension('redhat.vscode-knative');
+    const body = [
+      `VS Code version: ${version}`,
+      `OS: ${Platform.OS}`,
+      `Extension version: ${packageJSON.version}`,
+    ].join('\n');
+    return `${packageJSON.bugs}/new?labels=kind/bug&title=&body=**Environment**\n${body}\n**Description**`;
   }
 }
