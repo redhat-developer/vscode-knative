@@ -57,6 +57,9 @@ export function activate(extensionContext: vscode.ExtensionContext): void {
     vscode.commands.registerCommand('knative.service.list', async (context) =>
       execute(await Service.list(), context),
     ),
+    vscode.commands.registerCommand('knative.explorer.refresh', (context) =>
+      execute(Service.refresh(), context),
+    ),
     vscode.commands.registerCommand('knative.explorer.reportIssue', () =>
       KnativeExplorer.reportIssue(),
     ),

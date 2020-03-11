@@ -78,6 +78,7 @@ export default class KnativeExplorer implements TreeDataProvider<KnativeTreeObje
   refresh(target?: KnativeTreeObject): void {
     if (!target) {
       KnativeExplorer.knctl.clearCache();
+      KnativeExplorer.knctl.getServices();
     }
     this.onDidChangeTreeDataEmitter.fire(target);
   }
