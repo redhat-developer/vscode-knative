@@ -54,11 +54,11 @@ node('rhel7'){
           def vsix = findFiles(glob: '**.vsix')
           sh 'vsce publish -p ${TOKEN} --packagePath' + " ${vsix[0].path}"
       }
-      archive includes:"**.vsix*","**.tgz*"
 
       stage "Promote the build to stable"
       sh "rsync -Pzrlt --rsh=ssh --protocol=28 *.vsix* ${UPLOAD_LOCATION}/stable/vscode-knative/"
       sh "rsync -Pzrlt --rsh=ssh --protocol=28 *.tgz* ${UPLOAD_LOCATION}/stable/vscode-knative/"
+      archive includes:"**.vsix*","**.tgz*"
     }
   }
 }
