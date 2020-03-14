@@ -7,8 +7,8 @@ import { TreeItemCollapsibleState } from 'vscode';
 import { Subject } from 'rxjs';
 import { ContextType } from './config';
 import KnAPI from './kn-api';
-import KnativeObjectImpl, { KnativeTreeObject } from './knativeTreeObject';
-import { KnatvieTreeEvent } from './knativeTreeEvent';
+import KnativeTreeObject, { KnativeObject } from './knativeTreeObject';
+import { KnatvieEvent } from './knativeTreeEvent';
 import KnativeTreeModel from './knativeTreeModel';
 import { execute } from './knExecute';
 import { CliExitData } from './knCli';
@@ -28,14 +28,7 @@ export function loadItems(result: CliExitData): any[] {
   return data;
 }
 
-export interface Kn {
-  getServices(): Promise<KnativeTreeObject[]>;
-  requireLogin(): Promise<boolean>;
-  clearCache?(): void;
-  readonly subject: Subject<KnatvieTreeEvent>;
-}
-
-function compareNodes(a: KnativeTreeObject, b: KnativeTreeObject): number {
+function compareNodes(a: KnativeObject, b: KnativeObject): number {
   if (!a.contextValue) {
     return -1;
   }
@@ -52,10 +45,17 @@ function compareNodes(a: KnativeTreeObject, b: KnativeTreeObject): number {
   return t || a.label.localeCompare(b.label);
 }
 
-export class KnImpl implements Kn {
+export interface Kn {
+  getServices(): Promise<KnativeObject[]>;
+  requireLogin(): Promise<boolean>;
+  clearCache?(): void;
+  readonly subject: Subject<KnatvieEvent>;
+}
+
+export class KnController implements Kn {
   public static data: KnativeTreeModel = new KnativeTreeModel();
 
-  public static ROOT: KnativeTreeObject = new KnativeObjectImpl(
+  public static ROOT: KnativeObject = new KnativeTreeObject(
     undefined,
     '/',
     undefined,
@@ -95,33 +95,33 @@ export class KnImpl implements Kn {
     'Unauthorized',
   ];
 
-  private subjectInstance: Subject<KnatvieTreeEvent> = new Subject<KnatvieTreeEvent>();
+  private subjectInstance: Subject<KnatvieEvent> = new Subject<KnatvieEvent>();
 
   public static get Instance(): Kn {
-    if (!KnImpl.instance) {
-      KnImpl.instance = new KnImpl();
+    if (!KnController.instance) {
+      KnController.instance = new KnController();
     }
-    return KnImpl.instance;
+    return KnController.instance;
   }
 
-  get subject(): Subject<KnatvieTreeEvent> {
+  get subject(): Subject<KnatvieEvent> {
     return this.subjectInstance;
   }
 
-  async getServices(): Promise<KnativeTreeObject[]> {
-    let children = KnImpl.data.getChildrenByParent(KnImpl.ROOT);
+  async getServices(): Promise<KnativeObject[]> {
+    let children = KnController.data.getChildrenByParent(KnController.ROOT);
     if (!children) {
-      children = KnImpl.data.setParentToChildren(KnImpl.ROOT, await this._getServices());
+      children = KnController.data.setParentToChildren(KnController.ROOT, await this._getServices());
     }
     return children;
   }
 
-  public async _getServices(): Promise<KnativeTreeObject[]> {
+  public async _getServices(): Promise<KnativeObject[]> {
     const result: CliExitData = await execute(KnAPI.listServices());
     const services: string[] = loadItems(result).map((value) => value.metadata.name);
     return services
-      .map<KnativeTreeObject>((value) => {
-        const obj: KnativeTreeObject = new KnativeObjectImpl(
+      .map<KnativeObject>((value) => {
+        const obj: KnativeObject = new KnativeTreeObject(
           null,
           value,
           ContextType.SERVICE,
@@ -129,7 +129,7 @@ export class KnImpl implements Kn {
           this.CONTEXT_DATA,
           TreeItemCollapsibleState.Expanded,
         );
-        KnImpl.data.setPathToObject(obj);
+        KnController.data.setPathToObject(obj);
         return obj;
       })
       .sort(compareNodes);
@@ -145,16 +145,16 @@ export class KnImpl implements Kn {
   }
 
   // eslint-disable-next-line class-methods-use-this
-  // private insert(array: KnativeTreeObject[], item: KnativeTreeObject): KnativeTreeObject {
+  // private insert(array: KnativeObject[], item: KnativeObject): KnativeObject {
   //   const i = bs(array, item, compareNodes);
   //   array.splice(Math.abs(i) - 1, 0, item);
   //   return item;
   // }
 
-  // private async insertAndReveal(item: KnativeTreeObject): Promise<KnativeTreeObject> {
+  // private async insertAndReveal(item: KnativeObject): Promise<KnativeObject> {
   //   // await KnativeExplorer.getInstance().reveal(this.insert(await item.getParent().getChildren(), item));
   //   this.subject.next(
-  //     new KnatvieTreeEventImpl(
+  //     new KnatvieTreeEvent(
   //       'inserted',
   //       this.insert(await item.getParent().getChildren(), item),
   //       true,
@@ -163,10 +163,10 @@ export class KnImpl implements Kn {
   //   return item;
   // }
 
-  // private async insertAndRefresh(item: KnativeTreeObject): Promise<KnativeTreeObject> {
+  // private async insertAndRefresh(item: KnativeObject): Promise<KnativeObject> {
   //   // await KnativeExplorer.getInstance().refresh(this.insert(await item.getParent().getChildren(), item).getParent());
   //   this.subject.next(
-  //     new KnatvieTreeEventImpl(
+  //     new KnatvieTreeEvent(
   //       'changed',
   //       this.insert(await item.getParent().getChildren(), item).getParent(),
   //     ),
@@ -174,19 +174,19 @@ export class KnImpl implements Kn {
   //   return item;
   // }
 
-  // private deleteAndRefresh(item: KnativeTreeObject): KnativeTreeObject {
-  //   KnImpl.data.delete(item);
+  // private deleteAndRefresh(item: KnativeObject): KnativeObject {
+  //   KnController.data.delete(item);
   //   // KnativeExplorer.getInstance().refresh(item.getParent());
-  //   this.subject.next(new KnatvieTreeEventImpl('changed', item.getParent()));
+  //   this.subject.next(new KnatvieTreeEvent('changed', item.getParent()));
   //   return item;
   // }
 
   // eslint-disable-next-line class-methods-use-this
   clearCache(): void {
-    KnImpl.data.clearTreeData();
+    KnController.data.clearTreeData();
   }
 }
 
 export function getInstance(): Kn {
-  return KnImpl.Instance;
+  return KnController.Instance;
 }

@@ -155,27 +155,17 @@
         "mac": "ctrl+shift+r"
       }
     ],
-    "viewsContainers": {
-      "activitybar": [
-        {
-          "id": "knativeView",
-          "title": "Knative",
-          "icon": "images/vscode-knative.svg"
-        }
-      ]
-    },
-    "views": {
-      "knativeView": [
-        {
-          "id": "knativeProjectExplorer",
-          "name": "Knative Explorer"
-        }
-      ]
-    },
     "menus": {
       "commandPalette": [
         {
           "command": "knative.service.list"
+        }
+      ],
+      "view/item/context": [
+        {
+          "command": "knative.service.list",
+          "when": "view == knativeProjectExplorer",
+          "group": "c0"
         }
       ],
       "view/title": [
@@ -189,12 +179,22 @@
           "when": "view == knativeProjectExplorer",
           "group": "navigation@1"
         }
-      ],
-      "view/item/context": [
+      ]
+    },
+    "viewsContainers": {
+      "activitybar": [
         {
-          "command": "knative.service.list",
-          "when": "view == knativeProjectExplorer",
-          "group": "c0"
+          "id": "knative-explorer",
+          "title": "Knative",
+          "icon": "images/vscode-knative.svg"
+        }
+      ]
+    },
+    "views": {
+      "knative-explorer": [
+        {
+          "id": "knativeProjectExplorer",
+          "name": "Knative Explorer"
         }
       ]
     },

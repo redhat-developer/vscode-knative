@@ -4,7 +4,7 @@
  *-----------------------------------------------------------------------------------------------*/
 
 // import * as vscode from 'vscode';
-import { exec, ExecException, ExecOptions, SpawnOptions, spawn } from 'child_process';
+import { SpawnOptions, spawn } from 'child_process';
 import KnOutputChannel, { OutputChannel } from './knOutputChannel';
 
 export interface CliExitData {

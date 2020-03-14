@@ -12,9 +12,9 @@ import format = require('string-format');
 
 const { Collapsed } = TreeItemCollapsibleState;
 
-export interface KnativeTreeObject extends QuickPickItem {
-  getChildren(): ProviderResult<KnativeTreeObject[]>;
-  getParent(): KnativeTreeObject;
+export interface KnativeObject extends QuickPickItem {
+  getChildren(): ProviderResult<KnativeObject[]>;
+  getParent(): KnativeObject;
   getName(): string;
   contextValue: string;
   compType?: string;
@@ -23,10 +23,10 @@ export interface KnativeTreeObject extends QuickPickItem {
   path?: string;
 }
 
-export default class KnativeObjectImpl implements KnativeTreeObject {
+export default class KnativeTreeObject implements KnativeObject {
   // eslint-disable-next-line no-useless-constructor
   constructor(
-    private parent: KnativeTreeObject,
+    private parent: KnativeObject,
     public readonly name: string,
     public readonly contextValue: ContextType,
     public deployed: boolean,
@@ -40,7 +40,7 @@ export default class KnativeObjectImpl implements KnativeTreeObject {
 
   get path(): string {
     if (!this.explorerPath) {
-      let parent: KnativeTreeObject;
+      let parent: KnativeObject;
       const segments: string[] = [];
       do {
         segments.splice(0, 0, this.getName());
@@ -97,11 +97,11 @@ export default class KnativeObjectImpl implements KnativeTreeObject {
     return this.name;
   }
 
-  getChildren(): ProviderResult<KnativeTreeObject[]> {
+  getChildren(): ProviderResult<KnativeObject[]> {
     return this.contextData[this.contextValue].getChildren();
   }
 
-  getParent(): KnativeTreeObject {
+  getParent(): KnativeObject {
     return this.parent;
   }
 }

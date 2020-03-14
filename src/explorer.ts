@@ -21,26 +21,26 @@ import {
 import * as path from 'path';
 import Platform from './util/platform';
 
-import { Kn, KnImpl } from './kn/knController';
-import { KnativeTreeObject } from './kn/knativeTreeObject';
+import { Kn, KnController } from './kn/knController';
+import { KnativeObject } from './kn/knativeTreeObject';
 import WatchUtil, { FileContentChangeNotifier } from './util/watch';
 
 const kubeConfigFolder: string = path.join(Platform.getUserHomePath(), '.kube');
 
-export default class KnativeExplorer implements TreeDataProvider<KnativeTreeObject>, Disposable {
+export default class KnativeExplorer implements TreeDataProvider<KnativeObject>, Disposable {
   private static instance: KnativeExplorer;
 
-  private static knctl: Kn = KnImpl.Instance;
+  private static knctl: Kn = KnController.Instance;
 
-  private treeView: TreeView<KnativeTreeObject>;
+  private treeView: TreeView<KnativeObject>;
 
   private fsw: FileContentChangeNotifier;
 
   private onDidChangeTreeDataEmitter: EventEmitter<
-    KnativeTreeObject | undefined
-  > = new EventEmitter<KnativeTreeObject | undefined>();
+    KnativeObject | undefined
+  > = new EventEmitter<KnativeObject | undefined>();
 
-  readonly onDidChangeTreeData: Event<KnativeTreeObject | undefined> = this
+  readonly onDidChangeTreeData: Event<KnativeObject | undefined> = this
     .onDidChangeTreeDataEmitter.event;
 
   private constructor() {
@@ -61,21 +61,21 @@ export default class KnativeExplorer implements TreeDataProvider<KnativeTreeObje
   }
 
   // eslint-disable-next-line class-methods-use-this
-  getTreeItem(element: KnativeTreeObject): TreeItem | Thenable<TreeItem> {
+  getTreeItem(element: KnativeObject): TreeItem | Thenable<TreeItem> {
     return element;
   }
 
   // eslint-disable-next-line class-methods-use-this
-  getChildren(element?: KnativeTreeObject): ProviderResult<KnativeTreeObject[]> {
+  getChildren(element?: KnativeObject): ProviderResult<KnativeObject[]> {
     return element ? element.getChildren() : KnativeExplorer.knctl.getServices();
   }
 
   // eslint-disable-next-line class-methods-use-this
-  getParent?(element: KnativeTreeObject): KnativeTreeObject {
+  getParent?(element: KnativeObject): KnativeObject {
     return element.getParent();
   }
 
-  refresh(target?: KnativeTreeObject): void {
+  refresh(target?: KnativeObject): void {
     if (!target) {
       KnativeExplorer.knctl.clearCache();
       KnativeExplorer.knctl.getServices();
@@ -88,7 +88,7 @@ export default class KnativeExplorer implements TreeDataProvider<KnativeTreeObje
     this.treeView.dispose();
   }
 
-  async reveal(item: KnativeTreeObject): Promise<void> {
+  async reveal(item: KnativeObject): Promise<void> {
     this.refresh(item.getParent());
     // double call of reveal is workaround for possible upstream issue
     // https://github.com/redhat-developer/vscode-openshift-tools/issues/762

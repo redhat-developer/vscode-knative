@@ -7,8 +7,8 @@ import { window } from 'vscode';
 import KnativeExplorer from '../explorer';
 // import QuickPickCommand from './quickPickCommand';
 import Validation from './validation';
-import { KnativeTreeObject } from '../kn/knativeTreeObject';
-import { Kn, KnImpl } from '../kn/knController';
+import { KnativeObject } from '../kn/knativeTreeObject';
+import { Kn, KnController } from '../kn/knController';
 
 const errorMessage = {
   Project:
@@ -32,18 +32,18 @@ const errorMessage = {
 // }
 
 export default abstract class KnativeItem {
-  protected static readonly kn: Kn = KnImpl.Instance;
+  protected static readonly kn: Kn = KnController.Instance;
 
   protected static readonly explorer: KnativeExplorer = KnativeExplorer.getInstance();
 
-  static validateUniqueName(data: Array<KnativeTreeObject>, value: string): undefined | string {
+  static validateUniqueName(data: Array<KnativeObject>, value: string): undefined | string {
     const knativeObject = data.find(() => knativeObject.getName() === value);
     return knativeObject && `This name is already used, please enter different name.`;
   }
 
   static async getName(
     message: string,
-    data: Array<KnativeTreeObject>,
+    data: Array<KnativeObject>,
     offset?: string,
   ): Promise<string> {
     return window.showInputBox({
@@ -71,8 +71,8 @@ export default abstract class KnativeItem {
     });
   }
 
-  static async getServiceNames(): Promise<KnativeTreeObject[]> {
-    const serviceList: Array<KnativeTreeObject> = await KnativeItem.kn.getServices();
+  static async getServiceNames(): Promise<KnativeObject[]> {
+    const serviceList: Array<KnativeObject> = await KnativeItem.kn.getServices();
     if (serviceList.length === 0) {
       throw Error(errorMessage.Project);
     }
