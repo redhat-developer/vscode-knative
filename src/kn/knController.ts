@@ -119,6 +119,7 @@ export class KnController implements Kn {
   public async _getServices(): Promise<KnativeObject[]> {
     const result: CliExitData = await execute(KnAPI.listServices());
     const services: string[] = loadItems(result).map((value) => value.metadata.name);
+    if (services.length === 0) {services[0] = 'No Service found'}
     return services
       .map<KnativeObject>((value) => {
         const obj: KnativeObject = new KnativeTreeObject(
