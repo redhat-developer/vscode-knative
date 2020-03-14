@@ -5,6 +5,13 @@ All notable changes to the "vscode-knative" extension will be documented in this
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 0.1.4 (2020/03/13)
+
+- Patch to allow locally built versions of the `kn` cli tool.
+- Patch to add a `Refresh` button the explorer.
+- Patch to fix the `Report Issue` button in the exporer.
+- Patch to add a default value when no Service is found.
+
 ## 0.1.3 (2020/03/08)
 
 - Patch to update the kn cli tool to v0.11.0.
