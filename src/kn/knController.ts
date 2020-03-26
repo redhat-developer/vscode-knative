@@ -8,7 +8,7 @@ import { Subject } from 'rxjs';
 import { ContextType } from './config';
 import KnAPI from './kn-api';
 import KnativeTreeObject, { KnativeObject } from './knativeTreeObject';
-import { KnatvieEvent } from './knativeTreeEvent';
+import { KnativeEvent } from './knativeTreeEvent';
 import KnativeTreeModel from './knativeTreeModel';
 import { execute } from './knExecute';
 import { CliExitData } from './knCli';
@@ -49,7 +49,7 @@ export interface Kn {
   getServices(): Promise<KnativeObject[]>;
   requireLogin(): Promise<boolean>;
   clearCache?(): void;
-  readonly subject: Subject<KnatvieEvent>;
+  readonly subject: Subject<KnativeEvent>;
 }
 
 export class KnController implements Kn {
@@ -95,7 +95,7 @@ export class KnController implements Kn {
     'Unauthorized',
   ];
 
-  private subjectInstance: Subject<KnatvieEvent> = new Subject<KnatvieEvent>();
+  private subjectInstance: Subject<KnativeEvent> = new Subject<KnativeEvent>();
 
   public static get Instance(): Kn {
     if (!KnController.instance) {
@@ -104,7 +104,7 @@ export class KnController implements Kn {
     return KnController.instance;
   }
 
-  get subject(): Subject<KnatvieEvent> {
+  get subject(): Subject<KnativeEvent> {
     return this.subjectInstance;
   }
 

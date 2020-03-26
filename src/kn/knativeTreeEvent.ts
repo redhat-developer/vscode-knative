@@ -5,13 +5,13 @@
 
 import { KnativeObject } from './knativeTreeObject';
 
-export interface KnatvieEvent {
+export interface KnativeEvent {
   readonly type: 'deleted' | 'inserted' | 'changed';
   readonly data: KnativeObject;
   readonly reveal: boolean;
 }
 
-export default class KnatvieTreeEvent implements KnatvieEvent {
+export default class KnativeTreeEvent implements KnativeEvent {
   // eslint-disable-next-line no-useless-constructor
   constructor(
     readonly type: 'deleted' | 'inserted' | 'changed',
