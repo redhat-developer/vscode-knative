@@ -11,7 +11,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [macos-latest, linux, windows-latest]
+        os: [macos-latest, ubuntu-latest, windows-latest]
         node: [10]
 
     steps:
@@ -20,5 +20,5 @@ jobs:
       uses: actions/setup-node@v1
       with:
         node-version: ${{ matrix.node }}
-    - run: npm build
-    - run: npm test
+    - run: npm run build
+    - run: npm run test
