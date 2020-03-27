@@ -16,7 +16,6 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-    - name: Run a one-line script
     - name: Setup node
       uses: actions/setup-node@v1
       with:
