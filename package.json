@@ -23,7 +23,7 @@
   ],
   "icon": "images/knative-logo.png",
   "engines": {
-    "vscode": "^1.42.0"
+    "vscode": "^1.43.0"
   },
   "extensionDependencies": [
     "ms-kubernetes-tools.vscode-kubernetes-tools"
@@ -125,6 +125,11 @@
   "contributes": {
     "commands": [
       {
+        "command": "knative.service.create",
+        "title": "Add",
+        "category": "Knative"
+      },
+      {
         "command": "knative.service.list",
         "title": "List Knative Services",
         "category": "Knative"
@@ -170,14 +175,19 @@
       ],
       "view/title": [
         {
-          "command": "knative.explorer.refresh",
+          "command": "knative.service.create",
           "when": "view == knativeProjectExplorer",
           "group": "navigation@0"
         },
         {
-          "command": "knative.explorer.reportIssue",
+          "command": "knative.explorer.refresh",
           "when": "view == knativeProjectExplorer",
           "group": "navigation@1"
+        },
+        {
+          "command": "knative.explorer.reportIssue",
+          "when": "view == knativeProjectExplorer",
+          "group": "navigation@2"
         }
       ]
     },

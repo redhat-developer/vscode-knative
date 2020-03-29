@@ -8,6 +8,7 @@
 import * as vscode from 'vscode';
 import KnativeExplorer from './explorer';
 import Service from './knative/service';
+import { Kn, KnController } from './kn/knController';
 
 function displayResult(result?: any): void {
   if (result && typeof result === 'string') {
@@ -49,21 +50,27 @@ function execute<T>(command: CommandI<T> | void, ...params: T[]): any {
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
 export function activate(extensionContext: vscode.ExtensionContext): void {
+  const knctl: Kn = KnController.Instance;
   // The command has been defined in the package.json file
   // Now provide the implementation of the command with registerCommand
   // The commandId parameter must match the command field in package.json
   const disposable = [
-    // vscode.commands.registerCommand('knative.service.list', () => Service.list()),
-    vscode.commands.registerCommand('knative.service.list', async (context) =>
-      execute(await Service.list(), context),
-    ),
+    vscode.commands.registerCommand('knative.service.list', () => Service.list()),
+    vscode.commands.registerCommand('knative.service.create', () => knctl.addService()),
+    // vscode.commands.registerCommand('knative.service.create', () => Service.create()),
+
+    // vscode.commands.registerCommand('knative.service.list', async (context) =>
+    //   execute(await Service.list(), context),
+    // ),
+    // vscode.commands.registerCommand('knative.service.create', async (context) =>
+    //   execute(await knctl.addService(`foo1`, `invinciblejai/tag-portal-v1`) , context),
+    // ),
     vscode.commands.registerCommand('knative.explorer.refresh', (context) =>
       execute(Service.refresh(), context),
     ),
     vscode.commands.registerCommand('knative.explorer.reportIssue', () =>
       KnativeExplorer.reportIssue(),
     ),
-    // vscode.commands.registerCommand('knative.service.create', (context) => execute(Project.create, context)),
     KnativeExplorer.getInstance(),
   ];
 

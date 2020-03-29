@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See LICENSE file in the project root for license information.
  *-----------------------------------------------------------------------------------------------*/
 
-import { CliCommand, createCliCommand } from "./knCli";
+import { CliCommand, createCliCommand } from './knCli';
 
 export interface CreateService {
   name: string;
@@ -16,7 +16,7 @@ export interface CreateService {
   namespace?: string;
 }
 
-function newKnCommand(...knArguments: string[]): CliCommand {
+function newKnCommand(knArguments: string[]): CliCommand {
   return createCliCommand('kn', ...knArguments);
 }
 
@@ -29,6 +29,8 @@ function newKnCommand(...knArguments: string[]): CliCommand {
  */
 export default class KnAPI {
   /**
+   *
+   * @param createServiceObj - a CreateService object that requires name and URL.
    *
    * #### Create a service 'mysvc' using image at dev.local/ns/image:latest
    * `kn service create mysvc --image dev.local/ns/image:latest`
@@ -55,54 +57,77 @@ export default class KnAPI {
    * #### Create a service with annotation
    * `kn service create s1 --image dev.local/ns/image:v3 --annotation sidecar.istio.io/inject=false`
    */
-  static createService(createServiceObj: CreateService): string {
-    let annotationString = '';
-    if (createServiceObj.annotation) {
-      createServiceObj.annotation.forEach((value, key) => {
-        annotationString += ` --annotation ${key}=${value}`;
-      });
+  static createService(createServiceObj: CreateService): CliCommand {
+    // Set up the initial values for the command.
+    const commandArguments: string[] = [`service`, `create`];
+    // check if --force was set
+    if (createServiceObj.force) {commandArguments.push('--force');}
+    // It should always have a name value.
+    commandArguments.push(createServiceObj.name);
+    // If the port was set, use it.
+    if (createServiceObj.port) {
+      commandArguments.push(`--port`);
+      commandArguments.push(`${createServiceObj.port}`);
     }
-    let labelString = '';
-    if (createServiceObj.label) {
-      createServiceObj.label.forEach((value, key) => {
-        labelString += ` --label ${key}=${value}`;
-      });
-    }
-    let envString = '';
+    // If ENV variables were included, add them all.
     if (createServiceObj.env) {
       createServiceObj.env.forEach((value, key) => {
-        envString += ` --env ${key.toUpperCase()}=${value.toUpperCase()}`;
+        commandArguments.push(`--env`);
+        commandArguments.push(`${key.toUpperCase()}=${value.toUpperCase()}`);
       });
     }
-    const commandString = `
-      kn service create
-      ${createServiceObj.force ? '--force ' : ''}
-      ${createServiceObj.name}
-      ${createServiceObj.port ? ` --port ${createServiceObj.port}` : ''}
-      ${envString} --image ${createServiceObj.image}
-      ${createServiceObj.namespace ? ` -n ${createServiceObj.namespace}` : ''}
-      ${annotationString}
-      ${labelString}`;
+    // It should always have an image value.
+    commandArguments.push(`--image`);
+    commandArguments.push(`${createServiceObj.image}`);
+    // If a namespace is listed, use it.
+    if (createServiceObj.namespace) {
+      commandArguments.push(`-n`);
+      commandArguments.push(`${createServiceObj.namespace}`);
+    }
+    // If annotations were added then include them all.
+    if (createServiceObj.annotation) {
+      createServiceObj.annotation.forEach((value, key) => {
+        commandArguments.push(`--annotation`);
+        commandArguments.push(`${key}=${value}`);
+      });
+    }
+    // If labels were added then include them all.
+    if (createServiceObj.label) {
+      createServiceObj.label.forEach((value, key) => {
+        commandArguments.push(`--label`);
+        commandArguments.push(`${key}=${value}`);
+      });
+    }
 
-    return commandString;
+    return newKnCommand(commandArguments);
   }
 
   /**
    * Return the list of Knative Services in JSON format.
    */
   static listServices(): CliCommand {
-    return newKnCommand(`service`, `list`, `-o`, `json`);
+    const a = [`service`, `list`, `-o`, `json`];
+    return newKnCommand(a);
+  }
+
+  /**
+   * Delete a Knative Services.
+   *
+   * @param name - the Name of the Service to be deleted.
+   */
+  static deleteServices(name: string): CliCommand {
+    return newKnCommand([`service`, `delete`, name]);
   }
 
   static printKnVersion(): CliCommand {
-    return newKnCommand(`version`);
+    return newKnCommand([`version`]);
   }
 
-  // static printKnVersionAndProjects(): CliCommand {
-  //   return newKnCommand(`version`, `&&`, `kn`, `service`, `list`);
-  // }
+  static printKnVersionAndProjects(): CliCommand {
+    return newKnCommand([`version`, `&&`, `kn`, `service`, `list`]);
+  }
 
   static knLogout(): CliCommand {
-    return newKnCommand(`logout`);
+    return newKnCommand([`logout`]);
   }
 }

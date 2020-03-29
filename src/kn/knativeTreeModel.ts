@@ -12,14 +12,23 @@ import yaml = require('js-yaml');
 import fs = require('fs');
 
 export default class KnativeTreeModel {
+  /**
+   * A map of a parent in the tree to it's child objects.
+   */
   private parentToChildren: Map<KnativeObject, KnativeObject[]> = new Map();
 
+  /**
+   * A map of the path from one object to the next for each object.
+   */
   private pathToObject = new Map<string, KnativeObject>();
 
   private contextToObject = new Map<Uri, KnativeObject>();
 
   private contextToSettings = new Map<Uri, ComponentSettings>();
 
+  /**
+   * Remove all the tree data.
+   */
   public clearTreeData(): void {
     this.parentToChildren.clear();
     this.pathToObject.clear();
@@ -27,6 +36,13 @@ export default class KnativeTreeModel {
     this.addContexts(workspace.workspaceFolders ? workspace.workspaceFolders : []);
   }
 
+  /**
+   * Assigns children to the parent object and stores it in a map.
+   *
+   * @param parent
+   * @param children
+   * @returns children
+   */
   public setParentToChildren(
     parent: KnativeObject,
     children: KnativeObject[],
@@ -37,6 +53,11 @@ export default class KnativeTreeModel {
     return children;
   }
 
+/**
+ * Gets the children in the tree that are under a parent object.
+ * @param parent
+ * @returns children
+ */
   public getChildrenByParent(parent: KnativeObject): KnativeObject[] {
     return this.parentToChildren.get(parent);
   }
@@ -77,7 +98,6 @@ export default class KnativeTreeModel {
     return Array.from(this.contextToSettings.values());
   }
 
-  // eslint-disable-next-line class-methods-use-this
   public addContexts(folders: ReadonlyArray<WorkspaceFolder>): void {
     folders.forEach((folder: WorkspaceFolder): void => {
       try {
