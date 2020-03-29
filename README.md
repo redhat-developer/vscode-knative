@@ -34,6 +34,7 @@ For example if there is an image subfolder under your extension project workspac
 This extension contributes the following settings:
 
 * `knative.service.list`: list the Knative services for the current namespace
+* `knative.service.create`: Create a new Knative service in the current namespace
 * `knative.explorer.refresh`: Refresh the Explorer tree view
 * `knative.explorer.reportIssue`: Report Extension Issue on GitHub
 

@@ -5,6 +5,11 @@ All notable changes to the "vscode-knative" extension will be documented in this
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 0.2.0 (2020/03/28)
+
+- Feature added to allow you to create a new knative service.
+  - This initial release is limited to just making a service with the name and image url.
+
 ## 0.1.4 (2020/03/13)
 
 - Patch to allow locally built versions of the `kn` cli tool.
