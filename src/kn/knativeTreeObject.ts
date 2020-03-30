@@ -12,6 +12,29 @@ import format = require('string-format');
 
 const { Collapsed } = TreeItemCollapsibleState;
 
+const CONTEXT_DATA = {
+  revision: {
+    icon: 'service-node.png',
+    tooltip: 'Revision: {label}',
+    getChildren: (): undefined[] => [],
+  },
+  service: {
+    icon: 'service-node.png',
+    tooltip: 'Service: {label}',
+    getChildren: (): undefined[] => [],
+  },
+  clusterDown: {
+    icon: 'cluster-down.png',
+    tooltip: 'Cannot connect to the cluster',
+    getChildren: (): undefined[] => [],
+  },
+  loginRequired: {
+    icon: 'cluster-down.png',
+    tooltip: 'Please Log in to the cluster',
+    getChildren: (): undefined[] => [],
+  },
+};
+
 export interface KnativeObject extends QuickPickItem {
   getChildren(): ProviderResult<KnativeObject[]>;
   getParent(): KnativeObject;
@@ -30,7 +53,6 @@ export default class KnativeTreeObject implements KnativeObject {
     public readonly name: string,
     public readonly contextValue: ContextType,
     public deployed: boolean,
-    private readonly contextData: object,
     public readonly collapsibleState: TreeItemCollapsibleState = Collapsed,
     public contextPath?: Uri,
     public readonly compType?: string,
@@ -68,12 +90,12 @@ export default class KnativeTreeObject implements KnativeObject {
       }
     }
     return Uri.file(
-      path.join(__dirname, '../images/context', this.contextData[this.contextValue].icon),
+      path.join(__dirname, '../images/context', CONTEXT_DATA[this.contextValue].icon),
     );
   }
 
   get tooltip(): string {
-    return format(this.contextData[this.contextValue].tooltip, this);
+    return format(CONTEXT_DATA[this.contextValue].tooltip, this);
   }
 
   get label(): string {
@@ -98,7 +120,7 @@ export default class KnativeTreeObject implements KnativeObject {
   }
 
   getChildren(): ProviderResult<KnativeObject[]> {
-    return this.contextData[this.contextValue].getChildren();
+    return CONTEXT_DATA[this.contextValue].getChildren();
   }
 
   getParent(): KnativeObject {

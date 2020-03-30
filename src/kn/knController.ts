@@ -84,28 +84,6 @@ export class KnController implements Kn {
     undefined,
   );
 
-  private readonly CONTEXT_DATA = {
-    revision: {
-      icon: 'service-node.png',
-      tooltip: 'Revision: {label}',
-      getChildren: (): undefined[] => [],
-    },
-    service: {
-      icon: 'service-node.png',
-      tooltip: 'Service: {label}',
-      getChildren: (): undefined[] => [],
-    },
-    clusterDown: {
-      icon: 'cluster-down.png',
-      tooltip: 'Cannot connect to the cluster',
-      getChildren: (): undefined[] => [],
-    },
-    loginRequired: {
-      icon: 'cluster-down.png',
-      tooltip: 'Please Log in to the cluster',
-      getChildren: (): undefined[] => [],
-    },
-  };
 
   private static instance: Kn;
 
@@ -147,6 +125,7 @@ export class KnController implements Kn {
     return children;
   }
 
+  // eslint-disable-next-line class-methods-use-this
   private async _getServices(): Promise<KnativeObject[]> {
     // Get the raw data from the cli call.
     const result: CliExitData = await execute(KnAPI.listServices());
@@ -164,8 +143,8 @@ export class KnController implements Kn {
           value,
           ContextType.SERVICE,
           false,
-          this.CONTEXT_DATA,
           TreeItemCollapsibleState.Collapsed,
+          null, null
         );
         KnController.data.setPathToObject(obj);
         return obj;
