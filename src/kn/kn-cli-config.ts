@@ -11,7 +11,6 @@ import { which } from 'shelljs';
 import { fromFileSync } from 'hasha';
 import { satisfies } from 'semver';
 import KnCli, { createCliCommand } from './knCli';
-import Archive from '../util/archive';
 import DownloadUtil from '../util/download';
 import Platform from '../util/platform';
 
@@ -73,10 +72,10 @@ async function getVersion(location: string): Promise<string> {
           const regexResult = version.exec(value2);
           if (regexResult[8]) {
             // if the version is a local build then we will find more regex value and we need to pull the 8th in the array
-            return regexResult[8]
+            return regexResult[8];
           }
           // if it is a released version then just get it
-          return regexResult[1]
+          return regexResult[1];
         });
       if (toolVersion.length) {
         [detectedVersion] = toolVersion;
@@ -96,7 +95,11 @@ async function getVersion(location: string): Promise<string> {
  * @param locations
  * @param versionRange
  */
-async function selectTool(locations: string[], versionRange: string, versionLocalBuildRange: number): Promise<string> {
+async function selectTool(
+  locations: string[],
+  versionRange: string,
+  versionLocalBuildRange: number,
+): Promise<string> {
   let foundLocation: string;
   // Check the version of the cli to make sure it matches what we coded against.
   try {
@@ -253,27 +256,8 @@ export default class KnCliConfig {
                   // If the download failed and we need to start it over, recursively call it.
                   KnCliConfig.detectOrDownload(cmd);
                 } else if (action !== 'Cancel') {
-                  // extract the cli tool type downloaded
-                  if (toolDlLocation.endsWith('.zip') || toolDlLocation.endsWith('.tar.gz')) {
-                    Archive.unzip(
-                      toolDlLocation,
-                      path.resolve(Platform.getUserHomePath(), '.vs-kn'),
-                      KnCliConfig.tools[cmd].filePrefix,
-                    );
-                    // delete the downloaded file
-                    removeSync(toolDlLocation);
-                  } else if (toolDlLocation.endsWith('.gz')) {
-                    Archive.unzip(
-                      toolDlLocation,
-                      toolCacheLocation,
-                      KnCliConfig.tools[cmd].filePrefix,
-                    );
-                    // delete the downloaded file
-                    removeSync(toolDlLocation);
-                  } else {
-                    // If the downloaded file is the executable then we need to rename it to `kn`
-                    fs.renameSync(toolDlLocation, toolCacheLocation,);
-                  }
+                  // The downloaded file is an executable and we need to rename it to `kn`
+                  fs.renameSync(toolDlLocation, toolCacheLocation);
                   // Change the file permissions if on Linux or Mac
                   if (Platform.OS !== 'win32') {
                     fs.chmodSync(toolCacheLocation, 0o765);
