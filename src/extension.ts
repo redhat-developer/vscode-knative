@@ -9,43 +9,7 @@ import * as vscode from 'vscode';
 import KnativeExplorer from './explorer';
 import Service from './knative/service';
 import { Kn, KnController } from './kn/knController';
-
-function displayResult(result?: any): void {
-  if (result && typeof result === 'string') {
-    vscode.window.showInformationMessage(result);
-  }
-}
-
-interface CommandI<T> {
-  (...args: T[]): Promise<string>;
-}
-/**
- *
- * @param command with a type that is either "a function that returns a promise" or undefined/null
- * @param params
- */
-function execute<T>(command: CommandI<T> | void, ...params: T[]): any {
-  try {
-    if (command === undefined || command === null) {
-      return undefined;
-    }
-    const func = command as CommandI<T>;
-
-    const res = func(...params);
-
-    return res.then
-      ? res
-          .then((result: any) => {
-            displayResult(result);
-          })
-          .catch((err: any) => {
-            vscode.window.showErrorMessage(err.message ? err.message : err);
-          })
-      : undefined;
-  } catch (err) {
-    vscode.window.showErrorMessage(err);
-  }
-}
+import { KnativeObject } from './kn/knativeTreeObject';
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
@@ -55,22 +19,22 @@ export function activate(extensionContext: vscode.ExtensionContext): void {
   // Now provide the implementation of the command with registerCommand
   // The commandId parameter must match the command field in package.json
   const disposable = [
-    vscode.commands.registerCommand('knative.service.list', () => Service.list()),
     vscode.commands.registerCommand('knative.service.create', () => knctl.addService()),
     // vscode.commands.registerCommand('knative.service.create', () => Service.create()),
 
-    // vscode.commands.registerCommand('knative.service.list', async (context) =>
-    //   execute(await Service.list(), context),
-    // ),
     // vscode.commands.registerCommand('knative.service.create', async (context) =>
     //   execute(await knctl.addService(`foo1`, `invinciblejai/tag-portal-v1`) , context),
     // ),
-    vscode.commands.registerCommand('knative.explorer.refresh', (context) =>
-      execute(Service.refresh(), context),
+    vscode.commands.registerCommand('knative.explorer.refresh', () =>
+      KnativeExplorer.getInstance().refresh()
     ),
     vscode.commands.registerCommand('knative.explorer.reportIssue', () =>
       KnativeExplorer.reportIssue(),
     ),
+    vscode.commands.registerCommand('knative.service.open-in-browser', (context:KnativeObject)=>{
+     const service  = context.getKnativeItem() as Service;
+     vscode.commands.executeCommand('vscode.open', vscode.Uri.parse(service.url));
+    }),
     KnativeExplorer.getInstance(),
   ];
 

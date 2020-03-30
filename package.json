@@ -128,11 +128,6 @@
         "category": "Knative"
       },
       {
-        "command": "knative.service.list",
-        "title": "List Knative Services",
-        "category": "Knative"
-      },
-      {
         "command": "knative.explorer.refresh",
         "title": "Refresh View",
         "category": "Knative",
@@ -149,7 +144,13 @@
           "dark": "images/title/dark/icon-issue.svg",
           "light": "images/title/light/icon-issue.svg"
         }
+      },
+      {
+        "command": "knative.service.open-in-browser",
+        "title": "Open in Browser",
+        "category": "Knative"
       }
+
     ],
     "keybindings": [
       {
@@ -160,15 +161,13 @@
     ],
     "menus": {
       "commandPalette": [
-        {
-          "command": "knative.service.list"
-        }
+
       ],
       "view/item/context": [
         {
-          "command": "knative.service.list",
-          "when": "view == knativeProjectExplorer",
-          "group": "c0"
+          "command": "knative.service.open-in-browser",
+          "when": "view == knativeProjectExplorer && viewItem == service",
+          "group": "c1"
         }
       ],
       "view/title": [

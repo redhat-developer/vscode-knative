@@ -19,21 +19,9 @@ import KnativeTreeEvent, { KnativeEvent } from './knativeTreeEvent';
 import KnativeTreeModel from './knativeTreeModel';
 import { execute } from './knExecute';
 import { CliExitData } from './knCli';
+import Service from '../knative/service';
 
 // import bs = require('binary-search');
-
-export function loadItems(result: CliExitData): any[] {
-  let data: any[] = [];
-  try {
-    const { items } = JSON.parse(result.stdout);
-    if (items) {
-      data = items;
-    }
-  } catch (ignore) {
-    // do nothing
-  }
-  return data;
-}
 
 function compareNodes(a: KnativeObject, b: KnativeObject): number {
   if (!a.contextValue) {
@@ -77,6 +65,7 @@ export class KnController implements Kn {
   public static data: KnativeTreeModel = new KnativeTreeModel();
 
   public static ROOT: KnativeObject = new KnativeTreeObject(
+    undefined,
     undefined,
     '/',
     undefined,
@@ -128,12 +117,19 @@ export class KnController implements Kn {
   // eslint-disable-next-line class-methods-use-this
   private async _getServices(): Promise<KnativeObject[]> {
     // Get the raw data from the cli call.
-    const result: CliExitData = await execute(KnAPI.listServices());
+    const services = await Service.list();
     // Pull out the name of the service from the raw data.
-    const services: string[] = loadItems(result).map((value) => value.metadata.name);
     // Create an empty state message when there is no Service.
     if (services.length === 0) {
-      services[0] = 'No Service found';
+      return [new KnativeTreeObject(
+        null,
+        null,
+        'No Service Found',
+        ContextType.SERVICE,
+        false,
+        TreeItemCollapsibleState.Expanded,
+        null, null
+      )];
     }
     // Create the Service tree item for each one found.
     return services
@@ -141,6 +137,7 @@ export class KnController implements Kn {
         const obj: KnativeObject = new KnativeTreeObject(
           null,
           value,
+          value.name,
           ContextType.SERVICE,
           false,
           TreeItemCollapsibleState.Collapsed,
@@ -223,10 +220,10 @@ export class KnController implements Kn {
     const knObj = (value: string): KnativeObject => {
       const obj: KnativeObject = new KnativeTreeObject(
         null,
+        null,
         value,
         ContextType.SERVICE,
         false,
-        this.CONTEXT_DATA,
         TreeItemCollapsibleState.Collapsed,
       );
       KnController.data.setPathToObject(obj);

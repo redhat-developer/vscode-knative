@@ -7,6 +7,7 @@ import { ProviderResult, TreeItemCollapsibleState, Uri, QuickPickItem } from 'vs
 import * as path from 'path';
 import { ContextType, ComponentType } from './config';
 import GlyphChars from '../util/constants';
+import KnativeItem from '../knative/knativeItem';
 
 import format = require('string-format');
 
@@ -38,6 +39,7 @@ const CONTEXT_DATA = {
 export interface KnativeObject extends QuickPickItem {
   getChildren(): ProviderResult<KnativeObject[]>;
   getParent(): KnativeObject;
+  getKnativeItem(): KnativeItem
   getName(): string;
   contextValue: string;
   compType?: string;
@@ -50,6 +52,7 @@ export default class KnativeTreeObject implements KnativeObject {
   // eslint-disable-next-line no-useless-constructor
   constructor(
     private parent: KnativeObject,
+    public readonly item: KnativeItem,
     public readonly name: string,
     public readonly contextValue: ContextType,
     public deployed: boolean,
@@ -57,6 +60,12 @@ export default class KnativeTreeObject implements KnativeObject {
     public contextPath?: Uri,
     public readonly compType?: string,
   ) {}
+
+  detail?: string;
+
+  picked?: boolean;
+
+  alwaysShow?: boolean;
 
   private explorerPath: string;
 
@@ -125,5 +134,9 @@ export default class KnativeTreeObject implements KnativeObject {
 
   getParent(): KnativeObject {
     return this.parent;
+  }
+
+  getKnativeItem(): KnativeItem {
+    return this.item;
   }
 }

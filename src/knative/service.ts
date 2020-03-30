@@ -2,12 +2,12 @@
  *  Copyright (c) Red Hat, Inc. All rights reserved.
  *  Licensed under the MIT License. See LICENSE file in the project root for license information.
  *-----------------------------------------------------------------------------------------------*/
-
-import { ExtensionContext, InputBoxOptions, window } from 'vscode';
-import KnativeItem from './knativeItem';
+import { InputBoxOptions, window } from 'vscode';
 import Platform from '../util/platform';
-import KnAPI, { CreateService } from '../kn/kn-api';
-import { executeInTerminal } from '../kn/knExecute';
+import { CliExitData } from '../kn/knCli';
+import { execute, loadItems, executeInTerminal } from '../kn/knExecute';
+import KnativeItem from './knativeItem';
+import KnAPI, {CreateService} from '../kn/kn-api';
 
 // function askUserForValue(prompt: string, placeHolder: string): Promise<string> {
 //   const options: InputBoxOptions = {
@@ -22,10 +22,14 @@ import { executeInTerminal } from '../kn/knExecute';
 // }
 
 export default class Service extends KnativeItem {
-  public static extensionContext: ExtensionContext;
+  public name : string;
 
-  static list(): Promise<void> {
-    return executeInTerminal(KnAPI.listServices(), Platform.getUserHomePath());
+  public url : string ;
+
+
+  static async list(): Promise<Service[]> {
+    const result: CliExitData = await execute(KnAPI.listServices());
+    return loadItems(result).map((value) => this.toService(value));
   }
 
   static async create(): Promise<void> {
@@ -52,12 +56,11 @@ export default class Service extends KnativeItem {
     return executeInTerminal(KnAPI.createService(servObj), Platform.getUserHomePath());
   }
 
-  static refresh(): void {
-    Service.explorer.refresh();
-}
+  private static toService(value: any): Service{
+    const service = new Service();
+    service.name = value.metadata.name;
+    service.url = value.status.url;
+    return service;
 
-static async about(): Promise<void> {
-    await executeInTerminal(KnAPI.printKnVersion());
-}
-
+  }
 }
