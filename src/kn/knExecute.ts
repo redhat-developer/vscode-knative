@@ -45,3 +45,16 @@ export async function execute(command: CliCommand, cwd?: string, fail = true): P
       fail ? Promise.reject(err) : Promise.resolve({ error: null, stdout: '', stderr: '' }),
     );
 }
+
+export function loadItems(result: CliExitData): any[] {
+  let data: any[] = [];
+  try {
+    const { items } = JSON.parse(result.stdout);
+    if (items) {
+      data = items;
+    }
+  } catch (ignore) {
+    // do nothing
+  }
+  return data;
+}
