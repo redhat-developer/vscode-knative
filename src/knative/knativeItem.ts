@@ -4,6 +4,6 @@
  *-----------------------------------------------------------------------------------------------*/
 
 
-export default abstract class KnativeItem {
+export default class KnativeItem {
 
- }
+}

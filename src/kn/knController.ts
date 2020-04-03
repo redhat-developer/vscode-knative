@@ -5,40 +5,27 @@
 
 import {
   TreeItemCollapsibleState,
-  InputBoxOptions,
-  window
+  // InputBoxOptions,
+  window,
+  QuickPickItem,
+  // env,
   // WorkspaceFoldersChangeEvent,
   // WorkspaceFolder,
   // workspace,
 } from 'vscode';
 import { Subject } from 'rxjs';
+import * as validator from 'validator';
 import { ContextType } from './config';
-import KnAPI, { CreateService } from './kn-api';
-import KnativeTreeObject, { KnativeObject } from './knativeTreeObject';
+import KnAPI from './kn-api';
+import KnativeServices from '../knative/knativeServices';
+import KnativeTreeObject, { TreeObject, compareNodes } from './knativeTreeObject';
 import KnativeTreeEvent, { KnativeEvent } from './knativeTreeEvent';
 import KnativeTreeModel from './knativeTreeModel';
-import { execute } from './knExecute';
+import { execute, loadItems } from './knExecute';
 import { CliExitData } from './knCli';
-import Service from '../knative/service';
+import Service, { CreateService } from '../knative/service';
 
 // import bs = require('binary-search');
-
-function compareNodes(a: KnativeObject, b: KnativeObject): number {
-  if (!a.contextValue) {
-    return -1;
-  }
-  if (!b.contextValue) {
-    return 1;
-  }
-  const acontext = a.contextValue.includes('_')
-    ? a.contextValue.substr(0, a.contextValue.indexOf('_'))
-    : a.contextValue;
-  const bcontext = b.contextValue.includes('_')
-    ? b.contextValue.substr(0, b.contextValue.indexOf('_'))
-    : b.contextValue;
-  const t = acontext.localeCompare(bcontext);
-  return t || a.label.localeCompare(b.label);
-}
 
 /**
  * Insert a knative object into the array of knative objects.
@@ -53,37 +40,35 @@ function compareNodes(a: KnativeObject, b: KnativeObject): number {
 //   return item;
 // }
 
+// function askUserForValue(prompt: string, placeHolder?: string): Thenable<string> {
+//   const options: InputBoxOptions = {
+//       prompt,
+//       placeHolder
+//   }
+
+//   const input: Thenable<string> = window.showInputBox(options).then((value) => {
+//     if (!value) {return;}
+//     return value;
+//   })
+
+//   return input
+// }
+
 export interface Kn {
-  getServices(): Promise<KnativeObject[]>;
-  addService(): Promise<KnativeObject>;
+  getServices(): Promise<TreeObject[]>;
+  addService(): Promise<TreeObject>;
   requireLogin(): Promise<boolean>;
   clearCache?(): void;
   readonly subject: Subject<KnativeEvent>;
 }
 
 export class KnController implements Kn {
-  public static data: KnativeTreeModel = new KnativeTreeModel();
-
-  public static ROOT: KnativeObject = new KnativeTreeObject(
-    undefined,
-    undefined,
-    '/',
-    undefined,
-    false,
-    undefined,
-  );
-
-
   private static instance: Kn;
 
-  private readonly knLoginMessages = [
-    'Please log in to the cluster',
-    'the server has asked for the client to provide credentials',
-    'Please login to your server',
-    'Unauthorized',
-  ];
-
-  private subjectInstance: Subject<KnativeEvent> = new Subject<KnativeEvent>();
+  // eslint-disable-next-line no-useless-constructor
+  private constructor() {
+    // do something if needed, but this is private for the singleton
+  }
 
   public static get Instance(): Kn {
     if (!KnController.instance) {
@@ -92,6 +77,28 @@ export class KnController implements Kn {
     return KnController.instance;
   }
 
+  private static ksvc: KnativeServices = KnativeServices.Instance;
+
+  private subjectInstance: Subject<KnativeEvent> = new Subject<KnativeEvent>();
+
+  private readonly knLoginMessages = [
+    'Please log in to the cluster',
+    'the server has asked for the client to provide credentials',
+    'Please login to your server',
+    'Unauthorized',
+  ];
+
+  public static data: KnativeTreeModel = new KnativeTreeModel();
+
+  public static ROOT: TreeObject = new KnativeTreeObject(
+    undefined,
+    undefined,
+    '/',
+    undefined,
+    false,
+    undefined,
+  );
+
   get subject(): Subject<KnativeEvent> {
     return this.subjectInstance;
   }
@@ -99,7 +106,7 @@ export class KnController implements Kn {
   /**
    * The Service is the root level of the tree for Knative. This method sets it as the root if not already done.
    */
-  public async getServices(): Promise<KnativeObject[]> {
+  public async getServices(): Promise<TreeObject[]> {
     // If the ROOT has already been set then return it.
     // If not then the initial undefined version is returned.
     let children = KnController.data.getChildrenByParent(KnController.ROOT);
@@ -115,33 +122,40 @@ export class KnController implements Kn {
   }
 
   // eslint-disable-next-line class-methods-use-this
-  private async _getServices(): Promise<KnativeObject[]> {
+  private async _getServices(): Promise<TreeObject[]> {
     // Get the raw data from the cli call.
-    const services = await Service.list();
+    const result: CliExitData = await execute(KnAPI.listServices());
+    const services: Service[] = KnativeServices.Instance.addServices(
+      loadItems(result).map((value) => Service.toService(value)),
+    );
     // Pull out the name of the service from the raw data.
     // Create an empty state message when there is no Service.
     if (services.length === 0) {
-      return [new KnativeTreeObject(
-        null,
-        null,
-        'No Service Found',
-        ContextType.SERVICE,
-        false,
-        TreeItemCollapsibleState.Expanded,
-        null, null
-      )];
+      return [
+        new KnativeTreeObject(
+          null,
+          null,
+          'No Service Found',
+          ContextType.SERVICE,
+          false,
+          TreeItemCollapsibleState.Expanded,
+          null,
+          null,
+        ),
+      ];
     }
     // Create the Service tree item for each one found.
     return services
-      .map<KnativeObject>((value) => {
-        const obj: KnativeObject = new KnativeTreeObject(
+      .map<TreeObject>((value) => {
+        const obj: TreeObject = new KnativeTreeObject(
           null,
           value,
           value.name,
           ContextType.SERVICE,
           false,
           TreeItemCollapsibleState.Collapsed,
-          null, null
+          null,
+          null,
         );
         KnController.data.setPathToObject(obj);
         return obj;
@@ -157,7 +171,7 @@ export class KnController implements Kn {
   //   return item;
   // }
 
-  private insertAndRevealService(item: KnativeObject): KnativeObject {
+  private insertAndRevealService(item: TreeObject): TreeObject {
     // await OpenShiftExplorer.getInstance().reveal(this.insert(await item.getParent().getChildren(), item));
     this.subject.next(new KnativeTreeEvent('inserted', item, true));
     return item;
@@ -174,51 +188,107 @@ export class KnController implements Kn {
   //   return item;
   // }
 
-  private async deleteAndRefresh(item: KnativeObject): Promise<KnativeObject> {
+  private async deleteAndRefresh(item: TreeObject): Promise<TreeObject> {
     await KnController.data.delete(item);
     // OpenShiftExplorer.getInstance().refresh(item.getParent());
     this.subject.next(new KnativeTreeEvent('changed', item.getParent()));
     return item;
   }
 
-  public async deleteService(service: KnativeObject): Promise<KnativeObject> {
+  public async deleteService(service: TreeObject): Promise<TreeObject> {
     await execute(KnAPI.deleteServices(service.getName()));
     return this.deleteAndRefresh(service);
   }
 
-  public async addService(): Promise<KnativeObject> {
-    const options: InputBoxOptions = {
-      prompt: 'New Service Name:',
-      // placeHolder: '(placeholder)'
-    };
-    const urlOptions: InputBoxOptions = {
-      prompt: 'Service Image URL:',
-      // placeHolder: '(placeholder)'
-    };
+  static validateUrl(message: string, value: string): string | null {
+    return validator.default.isURL(value) ? null : message;
+  }
 
-    let name: string;
-    let image: string;
-    await window.showInputBox(options).then((value) => {
-      if (!value) {
-        return;
-      }
-      name = value;
+  static async getUrl(): Promise<string | null> {
+    // const createUrl: QuickPickItem = { label: `$(plus) Provide new URL...` };
+    // const clusterItems: QuickPickItem[] = [{ label: 'invinciblejai/tag-portal-v1' }];
+    // const choice = await window.showQuickPick([createUrl, ...clusterItems], {
+    //   placeHolder: 'Provide Image URL to connect',
+    //   ignoreFocusOut: true,
+    // });
+    // if (!choice) {
+    //   return null;
+    // }
+    // return choice.label === createUrl.label
+    //   ? window.showInputBox({
+    //       ignoreFocusOut: true,
+    //       prompt: 'Enter an Image URL',
+    //       validateInput: (value: string) => KnController.validateUrl('Invalid URL provided', value),
+    //     })
+    //   : choice.label;
+    return window.showInputBox({
+      ignoreFocusOut: true,
+      prompt: 'Enter an Image URL',
+      // validateInput: (value: string) => KnController.validateUrl('Invalid URL provided', value),
     });
-    await window.showInputBox(urlOptions).then((value) => {
-      if (!value) {
-        return;
-      }
-      image = value;
+  }
+
+  static async getName(image: string): Promise<CreateService | null> {
+    const imageSplit: string[] = image.split('/');
+    const imageName: string = imageSplit[imageSplit.length - 1];
+    let force = false;
+
+    const name: string = await window.showInputBox({
+      value: imageName,
+      ignoreFocusOut: true,
+      prompt: 'Enter a Name for the Service',
+      validateInput: async (nameUsed: string) => {
+        const found: Service = KnativeServices.Instance.findServices(nameUsed);
+        if (found) {
+          const response = await window.showInformationMessage(
+            `That name has already been used. Do you want to overwrite the Service?`,
+            {modal: true},
+            'Yes',
+            'No',
+          );
+          if (response === 'Yes') {
+            force = true;
+            return null;
+          }
+          return 'Please use a unique name.';
+        }
+        return null;
+      },
     });
-    const servObj: CreateService = { name, image };
+    if (!name) {
+      return null;
+    }
+    if (name === imageName && !force) {
+      return null;
+    }
+    const service: CreateService = { name, image, force };
+    return service;
+  }
+
+  public async addService(): Promise<TreeObject> {
+    const image: string = await KnController.getUrl();
+
+    if (!image) {
+      return null;
+    }
+
+    const servObj: CreateService = await KnController.getName(image);
+
+    if (!servObj.name) {
+      return null;
+    }
+
+    KnativeServices.Instance.addService(servObj);
+
     // Get the raw data from the cli call.
     const result: CliExitData = await execute(KnAPI.createService(servObj));
+
     if (result.error) {
       // TODO: handle the error
       // check the kind of errors we can get back
     }
-    const knObj = (value: string): KnativeObject => {
-      const obj: KnativeObject = new KnativeTreeObject(
+    const knObj = (value: string): TreeObject => {
+      const obj: TreeObject = new KnativeTreeObject(
         null,
         null,
         value,
@@ -229,7 +299,7 @@ export class KnController implements Kn {
       KnController.data.setPathToObject(obj);
       return obj;
     };
-    return this.insertAndRevealService(knObj(name));
+    return this.insertAndRevealService(knObj(servObj.name));
   }
 
   public async requireLogin(): Promise<boolean> {

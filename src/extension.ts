@@ -9,7 +9,7 @@ import * as vscode from 'vscode';
 import KnativeExplorer from './explorer';
 import Service from './knative/service';
 import { Kn, KnController } from './kn/knController';
-import { KnativeObject } from './kn/knativeTreeObject';
+import { TreeObject } from './kn/knativeTreeObject';
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
@@ -31,9 +31,9 @@ export function activate(extensionContext: vscode.ExtensionContext): void {
     vscode.commands.registerCommand('knative.explorer.reportIssue', () =>
       KnativeExplorer.reportIssue(),
     ),
-    vscode.commands.registerCommand('knative.service.open-in-browser', (context:KnativeObject)=>{
+    vscode.commands.registerCommand('knative.service.open-in-browser', (context:TreeObject)=>{
      const service  = context.getKnativeItem() as Service;
-     vscode.commands.executeCommand('vscode.open', vscode.Uri.parse(service.url));
+     vscode.commands.executeCommand('vscode.open', vscode.Uri.parse(service.image));
     }),
     KnativeExplorer.getInstance(),
   ];

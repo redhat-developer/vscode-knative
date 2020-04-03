@@ -36,9 +36,26 @@ const CONTEXT_DATA = {
   },
 };
 
-export interface KnativeObject extends QuickPickItem {
-  getChildren(): ProviderResult<KnativeObject[]>;
-  getParent(): KnativeObject;
+export function compareNodes(a: TreeObject, b: TreeObject): number {
+  if (!a.contextValue) {
+    return -1;
+  }
+  if (!b.contextValue) {
+    return 1;
+  }
+  const acontext = a.contextValue.includes('_')
+    ? a.contextValue.substr(0, a.contextValue.indexOf('_'))
+    : a.contextValue;
+  const bcontext = b.contextValue.includes('_')
+    ? b.contextValue.substr(0, b.contextValue.indexOf('_'))
+    : b.contextValue;
+  const t = acontext.localeCompare(bcontext);
+  return t || a.label.localeCompare(b.label);
+}
+
+export interface TreeObject extends QuickPickItem {
+  getChildren(): ProviderResult<TreeObject[]>;
+  getParent(): TreeObject;
   getKnativeItem(): KnativeItem
   getName(): string;
   contextValue: string;
@@ -48,10 +65,10 @@ export interface KnativeObject extends QuickPickItem {
   path?: string;
 }
 
-export default class KnativeTreeObject implements KnativeObject {
+export default class KnativeTreeObject implements TreeObject {
   // eslint-disable-next-line no-useless-constructor
   constructor(
-    private parent: KnativeObject,
+    private parent: TreeObject,
     public readonly item: KnativeItem,
     public readonly name: string,
     public readonly contextValue: ContextType,
@@ -71,7 +88,7 @@ export default class KnativeTreeObject implements KnativeObject {
 
   get path(): string {
     if (!this.explorerPath) {
-      let parent: KnativeObject;
+      let parent: TreeObject;
       const segments: string[] = [];
       do {
         segments.splice(0, 0, this.getName());
@@ -128,11 +145,11 @@ export default class KnativeTreeObject implements KnativeObject {
     return this.name;
   }
 
-  getChildren(): ProviderResult<KnativeObject[]> {
+  getChildren(): ProviderResult<TreeObject[]> {
     return CONTEXT_DATA[this.contextValue].getChildren();
   }
 
-  getParent(): KnativeObject {
+  getParent(): TreeObject {
     return this.parent;
   }
 

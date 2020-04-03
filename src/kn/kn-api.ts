@@ -4,17 +4,7 @@
  *-----------------------------------------------------------------------------------------------*/
 
 import { CliCommand, createCliCommand } from './knCli';
-
-export interface CreateService {
-  name: string;
-  image: string;
-  env?: Map<string, string>;
-  port?: number;
-  force?: boolean;
-  annotation?: Map<string, boolean>;
-  label?: Map<string, string>;
-  namespace?: string;
-}
+import Service, { CreateService } from '../knative/service';
 
 function newKnCommand(knArguments: string[]): CliCommand {
   return createCliCommand('kn', ...knArguments);
@@ -123,9 +113,9 @@ export default class KnAPI {
     return newKnCommand([`version`]);
   }
 
-  static printKnVersionAndProjects(): CliCommand {
-    return newKnCommand([`version`, `&&`, `kn`, `service`, `list`]);
-  }
+  // static printKnVersionAndProjects(): CliCommand {
+  //   return newKnCommand([`version`, `&&`, `kn`, `service`, `list`]);
+  // }
 
   static knLogout(): CliCommand {
     return newKnCommand([`logout`]);

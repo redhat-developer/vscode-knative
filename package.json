@@ -150,7 +150,6 @@
         "title": "Open in Browser",
         "category": "Knative"
       }
-
     ],
     "keybindings": [
       {
@@ -160,9 +159,7 @@
       }
     ],
     "menus": {
-      "commandPalette": [
-
-      ],
+      "commandPalette": [],
       "view/item/context": [
         {
           "command": "knative.service.open-in-browser",

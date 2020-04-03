@@ -6,7 +6,7 @@
 import { Uri, workspace, WorkspaceFolder } from 'vscode';
 import * as path from 'path';
 import { ComponentSettings, Config } from './config';
-import { KnativeObject } from './knativeTreeObject';
+import { TreeObject } from './knativeTreeObject';
 
 import yaml = require('js-yaml');
 import fs = require('fs');
@@ -15,14 +15,14 @@ export default class KnativeTreeModel {
   /**
    * A map of a parent in the tree to it's child objects.
    */
-  private parentToChildren: Map<KnativeObject, KnativeObject[]> = new Map();
+  private parentToChildren: Map<TreeObject, TreeObject[]> = new Map();
 
   /**
    * A map of the path from one object to the next for each object.
    */
-  private pathToObject = new Map<string, KnativeObject>();
+  private pathToObject = new Map<string, TreeObject>();
 
-  private contextToObject = new Map<Uri, KnativeObject>();
+  private contextToObject = new Map<Uri, TreeObject>();
 
   private contextToSettings = new Map<Uri, ComponentSettings>();
 
@@ -44,9 +44,9 @@ export default class KnativeTreeModel {
    * @returns children
    */
   public setParentToChildren(
-    parent: KnativeObject,
-    children: KnativeObject[],
-  ): KnativeObject[] {
+    parent: TreeObject,
+    children: TreeObject[],
+  ): TreeObject[] {
     if (!this.parentToChildren.has(parent)) {
       this.parentToChildren.set(parent, children);
     }
@@ -58,21 +58,21 @@ export default class KnativeTreeModel {
  * @param parent
  * @returns children
  */
-  public getChildrenByParent(parent: KnativeObject): KnativeObject[] {
+  public getChildrenByParent(parent: TreeObject): TreeObject[] {
     return this.parentToChildren.get(parent);
   }
 
-  public setPathToObject(object: KnativeObject): void {
+  public setPathToObject(object: TreeObject): void {
     if (!this.pathToObject.get(object.path)) {
       this.pathToObject.set(object.path, object);
     }
   }
 
-  public getObjectByPath(objPath: string): KnativeObject {
+  public getObjectByPath(objPath: string): TreeObject {
     return this.pathToObject.get(objPath);
   }
 
-  public setContextToObject(object: KnativeObject): void {
+  public setContextToObject(object: TreeObject): void {
     if (object.contextPath) {
       if (!this.contextToObject.has(object.contextPath)) {
         this.contextToObject.set(object.contextPath, object);
@@ -80,7 +80,7 @@ export default class KnativeTreeModel {
     }
   }
 
-  public getObjectByContext(context: Uri): KnativeObject {
+  public getObjectByContext(context: Uri): TreeObject {
     return this.contextToObject.get(context);
   }
 
@@ -112,7 +112,7 @@ export default class KnativeTreeModel {
     })
   }
 
-  public async delete(item: KnativeObject): Promise<void> {
+  public async delete(item: TreeObject): Promise<void> {
     const array = await item.getParent().getChildren();
     array.splice(array.indexOf(item), 1);
     this.pathToObject.delete(item.path);

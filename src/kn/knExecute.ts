@@ -17,7 +17,7 @@ export async function executeInTerminal(
   name = 'Knative',
 ): Promise<void> {
   // Get the first word in the command string sent.
-  const cmd = command.cliCommand.split(' ')[0];
+  const cmd = command.cliCommand;
   // Get the location of the installed cli tool.
   let toolLocation = await KnCliConfig.detectOrDownload(cmd);
   if (toolLocation) {
@@ -28,18 +28,19 @@ export async function executeInTerminal(
   terminal.show();
 }
 
-export async function execute(command: CliCommand, cwd?: string, fail = true): Promise<CliExitData> {
-  const cmd = command.cliCommand.split(' ')[0];
-  const toolLocation = await KnCliConfig.detectOrDownload(cmd);
+export async function execute(
+  command: CliCommand,
+  cwd?: string,
+  fail = true,
+): Promise<CliExitData> {
+  const cmd = command;
+  const cmdProgram = command.cliCommand;
+  const toolLocation = await KnCliConfig.detectOrDownload(cmdProgram);
   if (toolLocation) {
-    // eslint-disable-next-line no-param-reassign
-    command.cliCommand = command.cliCommand
-      .replace(cmd, `${toolLocation}`)
-      .replace(new RegExp(`&& ${cmd}`, `g`), `&& ${toolLocation}`);
+    cmd.cliCommand = toolLocation;
   }
   return cli
-    .execute(command, cwd ? { cwd } : {},
-    )
+    .execute(cmd, cwd ? { cwd } : {})
     .then(async (result) => (result.error && fail ? Promise.reject(result.error) : result))
     .catch((err) =>
       fail ? Promise.reject(err) : Promise.resolve({ error: null, stdout: '', stderr: '' }),

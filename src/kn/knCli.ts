@@ -81,7 +81,7 @@ export default class KnCli implements Cli {
       kn.stderr.on('data', (data) => {
         error += data;
       });
-      kn.on('error', err => {
+      kn.on('error', (err) => {
         // do not reject it here, because caller in some cases need the error and the streams
         // to make a decision
         // eslint-disable-next-line no-console
