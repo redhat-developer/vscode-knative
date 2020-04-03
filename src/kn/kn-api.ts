@@ -4,7 +4,7 @@
  *-----------------------------------------------------------------------------------------------*/
 
 import { CliCommand, createCliCommand } from './knCli';
-import Service, { CreateService } from '../knative/service';
+import { CreateService } from '../knative/service';
 
 function newKnCommand(knArguments: string[]): CliCommand {
   return createCliCommand('kn', ...knArguments);

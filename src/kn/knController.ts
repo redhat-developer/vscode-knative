@@ -7,7 +7,7 @@ import {
   TreeItemCollapsibleState,
   // InputBoxOptions,
   window,
-  QuickPickItem,
+  // QuickPickItem,
   // env,
   // WorkspaceFoldersChangeEvent,
   // WorkspaceFolder,
@@ -125,7 +125,7 @@ export class KnController implements Kn {
   private async _getServices(): Promise<TreeObject[]> {
     // Get the raw data from the cli call.
     const result: CliExitData = await execute(KnAPI.listServices());
-    const services: Service[] = KnativeServices.Instance.addServices(
+    const services: Service[] = KnController.ksvc.addServices(
       loadItems(result).map((value) => Service.toService(value)),
     );
     // Pull out the name of the service from the raw data.
@@ -238,7 +238,7 @@ export class KnController implements Kn {
       ignoreFocusOut: true,
       prompt: 'Enter a Name for the Service',
       validateInput: async (nameUsed: string) => {
-        const found: Service = KnativeServices.Instance.findServices(nameUsed);
+        const found: Service = KnController.ksvc.findServices(nameUsed);
         if (found) {
           const response = await window.showInformationMessage(
             `That name has already been used. Do you want to overwrite the Service?`,
@@ -278,7 +278,7 @@ export class KnController implements Kn {
       return null;
     }
 
-    KnativeServices.Instance.addService(servObj);
+    KnController.ksvc.addService(servObj);
 
     // Get the raw data from the cli call.
     const result: CliExitData = await execute(KnAPI.createService(servObj));
