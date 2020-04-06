@@ -77,7 +77,7 @@ export class KnController implements Kn {
     return KnController.instance;
   }
 
-  private static ksvc: KnativeServices = KnativeServices.Instance;
+  private ksvc: KnativeServices = KnativeServices.Instance;
 
   private subjectInstance: Subject<KnativeEvent> = new Subject<KnativeEvent>();
 
@@ -125,7 +125,7 @@ export class KnController implements Kn {
   private async _getServices(): Promise<TreeObject[]> {
     // Get the raw data from the cli call.
     const result: CliExitData = await execute(KnAPI.listServices());
-    const services: Service[] = KnController.ksvc.addServices(
+    const services: Service[] = this.ksvc.addServices(
       loadItems(result).map((value) => Service.toService(value)),
     );
     // Pull out the name of the service from the raw data.
@@ -200,11 +200,13 @@ export class KnController implements Kn {
     return this.deleteAndRefresh(service);
   }
 
-  static validateUrl(message: string, value: string): string | null {
+  // eslint-disable-next-line class-methods-use-this
+  validateUrl(message: string, value: string): string | null {
     return validator.default.isURL(value) ? null : message;
   }
 
-  static async getUrl(): Promise<string | null> {
+  // eslint-disable-next-line class-methods-use-this
+  async getUrl(): Promise<string | null> {
     // const createUrl: QuickPickItem = { label: `$(plus) Provide new URL...` };
     // const clusterItems: QuickPickItem[] = [{ label: 'invinciblejai/tag-portal-v1' }];
     // const choice = await window.showQuickPick([createUrl, ...clusterItems], {
@@ -228,7 +230,8 @@ export class KnController implements Kn {
     });
   }
 
-  static async getName(image: string): Promise<CreateService | null> {
+  // eslint-disable-next-line class-methods-use-this
+  async getName(image: string): Promise<CreateService | null> {
     const imageSplit: string[] = image.split('/');
     const imageName: string = imageSplit[imageSplit.length - 1];
     let force = false;
@@ -238,7 +241,7 @@ export class KnController implements Kn {
       ignoreFocusOut: true,
       prompt: 'Enter a Name for the Container Image',
       validateInput: async (nameUsed: string) => {
-        const found: Service = KnController.ksvc.findServices(nameUsed);
+        const found: Service = this.ksvc.findServices(nameUsed);
         if (found) {
           const response = await window.showInformationMessage(
             `That name has already been used. Do you want to overwrite the Service?`,
@@ -266,19 +269,19 @@ export class KnController implements Kn {
   }
 
   public async addService(): Promise<TreeObject> {
-    const image: string = await KnController.getUrl();
+    const image: string = await this.getUrl();
 
     if (!image) {
       return null;
     }
 
-    const servObj: CreateService = await KnController.getName(image);
+    const servObj: CreateService = await this.getName(image);
 
     if (!servObj.name) {
       return null;
     }
 
-    KnController.ksvc.addService(servObj);
+    this.ksvc.addService(servObj);
 
     // Get the raw data from the cli call.
     const result: CliExitData = await execute(KnAPI.createService(servObj));
