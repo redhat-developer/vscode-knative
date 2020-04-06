@@ -225,7 +225,7 @@ export class KnController implements Kn {
     //   : choice.label;
     return window.showInputBox({
       ignoreFocusOut: true,
-      prompt: 'Enter an Container Image URL',
+      prompt: 'Enter an Image URL',
       // validateInput: (value: string) => KnController.validateUrl('Invalid URL provided', value),
     });
   }
@@ -239,7 +239,7 @@ export class KnController implements Kn {
     const name: string = await window.showInputBox({
       value: imageName,
       ignoreFocusOut: true,
-      prompt: 'Enter a Name for the Container Image',
+      prompt: 'Enter a Name for the Service',
       validateInput: async (nameUsed: string) => {
         const found: Service = this.ksvc.findServices(nameUsed);
         if (found) {

@@ -124,7 +124,7 @@
     "commands": [
       {
         "command": "knative.service.create",
-        "title": "Deploy Container Image",
+        "title": "Add Service",
         "category": "Knative",
         "icon": "$(plus)"
       },
