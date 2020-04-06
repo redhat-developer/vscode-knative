@@ -1,4 +1,4 @@
-![CI](https://github.com/talamer/vscode-knative/workflows/CI/badge.svg)
+<!-- ![CI](https://github.com/talamer/vscode-knative/workflows/CI/badge.svg) -->
 
 # Knative Serving & Eventing for Visual Studio Code
 
