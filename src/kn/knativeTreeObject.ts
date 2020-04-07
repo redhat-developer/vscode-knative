@@ -99,27 +99,6 @@ export default class KnativeTreeObject implements TreeObject {
     return this.explorerPath;
   }
 
-  get iconPath(): Uri {
-    if (
-      this.contextValue === ContextType.COMPONENT_PUSHED ||
-      this.contextValue === ContextType.COMPONENT ||
-      this.contextValue === ContextType.COMPONENT_NO_CONTEXT
-    ) {
-      if (this.compType === ComponentType.GIT) {
-        return Uri.file(path.join(__dirname, '../images/component', 'git.png'));
-      }
-      if (this.compType === ComponentType.LOCAL) {
-        return Uri.file(path.join(__dirname, '../images/component', 'workspace.png'));
-      }
-      if (this.compType === ComponentType.BINARY) {
-        return Uri.file(path.join(__dirname, '../images/component', 'binary.png'));
-      }
-    }
-    return Uri.file(
-      path.join(__dirname, '../images/context', CONTEXT_DATA[this.contextValue].icon),
-    );
-  }
-
   get tooltip(): string {
     return format(CONTEXT_DATA[this.contextValue].tooltip, this);
   }
