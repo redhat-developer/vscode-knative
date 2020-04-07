@@ -33,10 +33,10 @@ For example if there is an image subfolder under your extension project workspac
 
 This extension contributes the following settings:
 
-* `knative.service.list`: list the Knative services for the current namespace
 * `knative.service.create`: Create a new Knative service in the current namespace
 * `knative.explorer.refresh`: Refresh the Explorer tree view
 * `knative.explorer.reportIssue`: Report Extension Issue on GitHub
+* `knative.service.open-in-browser`: Open the list of Services in the browser
 
 ## Known Issues
 
@@ -49,4 +49,9 @@ This extension contributes the following settings:
 
 ### 0.1.0
 
-Initial release of the Knative extension
+- Initial release of the Knative extension
+- Display a list of Services
+
+### 0.2.0
+
+- Create Service (Deploy Container Image)
