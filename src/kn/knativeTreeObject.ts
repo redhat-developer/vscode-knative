@@ -5,7 +5,7 @@
 
 import { ProviderResult, TreeItemCollapsibleState, Uri, QuickPickItem } from 'vscode';
 import * as path from 'path';
-import { ContextType, ComponentType } from './config';
+import { ContextType } from './config';
 import GlyphChars from '../util/constants';
 import KnativeItem from '../knative/knativeItem';
 
@@ -15,23 +15,23 @@ const { Collapsed } = TreeItemCollapsibleState;
 
 const CONTEXT_DATA = {
   revision: {
-    icon: 'service-node.png',
+    icon: 'REV',
     tooltip: 'Revision: {label}',
     getChildren: (): undefined[] => [],
   },
   service: {
-    icon: 'service-node.png',
+    icon: 'SVC.svg',
     tooltip: 'Service: {label}',
     getChildren: (): undefined[] => [],
   },
-  clusterDown: {
-    icon: 'cluster-down.png',
-    tooltip: 'Cannot connect to the cluster',
+  route: {
+    icon: 'RTE.svg',
+    tooltip: 'Route: {label}',
     getChildren: (): undefined[] => [],
   },
-  loginRequired: {
-    icon: 'cluster-down.png',
-    tooltip: 'Please Log in to the cluster',
+  event: {
+    icon: 'EVT.svg',
+    tooltip: 'Event: {label}',
     getChildren: (): undefined[] => [],
   },
 };
@@ -56,7 +56,7 @@ export function compareNodes(a: TreeObject, b: TreeObject): number {
 export interface TreeObject extends QuickPickItem {
   getChildren(): ProviderResult<TreeObject[]>;
   getParent(): TreeObject;
-  getKnativeItem(): KnativeItem
+  getKnativeItem(): KnativeItem;
   getName(): string;
   contextValue: string;
   compType?: string;
@@ -97,6 +97,15 @@ export default class KnativeTreeObject implements TreeObject {
       this.explorerPath = path.join(...segments);
     }
     return this.explorerPath;
+  }
+
+  get iconPath(): Uri {
+    const icon: Uri = Uri.file(
+      path.join(__dirname, '../../../images/context', CONTEXT_DATA[this.contextValue].icon),
+      );
+      // eslint-disable-next-line no-console
+      console.log(`knativeTreeObject.iconPath URI: ${icon}`);
+    return icon;
   }
 
   get tooltip(): string {

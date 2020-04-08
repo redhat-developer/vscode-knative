@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="50mm"
+   height="50mm"
+   viewBox="0 0 50 50"
+   version="1.1"
+   id="svg8"
+   inkscape:version="1.0beta2 (unknown)"
+   sodipodi:docname="SVC.svg">
+  <defs
+     id="defs2">
+    <rect
+       x="32.117455"
+       y="188.09023"
+       width="18.082136"
+       height="47.504669"
+       id="rect875" />
+    <rect
+       x="29.804012"
+       y="187.90234"
+       width="0.77902222"
+       height="27.263008"
+       id="rect869" />
+    <rect
+       x="32.571655"
+       y="178.43918"
+       width="28.803003"
+       height="12.745059"
+       id="rect863" />
+  </defs>
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="1"
+     inkscape:pageopacity="1"
+     inkscape:pageshadow="2"
+     inkscape:zoom="3.959798"
+     inkscape:cx="105.36277"
+     inkscape:cy="89.529407"
+     inkscape:document-units="mm"
+     inkscape:current-layer="layer1"
+     inkscape:document-rotation="0"
+     showgrid="false"
+     inkscape:window-width="1737"
+     inkscape:window-height="1048"
+     inkscape:window-x="2077"
+     inkscape:window-y="212"
+     inkscape:window-maximized="0"
+     inkscape:showpageshadow="true"
+     showborder="true"
+     inkscape:pagecheckerboard="true" />
+  <metadata
+     id="metadata5">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <rect
+       style="opacity:1;fill:#005f60;fill-opacity:1;stroke-width:0.138298;stroke-miterlimit:4;stroke-dasharray:none"
+       id="rect833"
+       width="50.143799"
+       height="50.226574"
+       x="0.050209917"
+       y="-0.052953143"
+       ry="0.10560614" />
+    <text
+       xml:space="preserve"
+       id="text861"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:10.5833px;line-height:1.25;font-family:Cantarell;-inkscape-font-specification:'Cantarell Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;letter-spacing:0px;word-spacing:0px;white-space:pre;shape-inside:url(#rect863);fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.0435446;stroke-miterlimit:4;stroke-dasharray:none;"
+       transform="matrix(2.4245843,0,0,2.7377508,-77.9615,-480.06169)"><tspan
+         sodipodi:role="line"
+         x="32.572266"
+         y="187.94339"><tspan>SVC</tspan></tspan></text>
+    <text
+       xml:space="preserve"
+       id="text867"
+       style="font-style:normal;font-weight:normal;font-size:10.5833px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;white-space:pre;shape-inside:url(#rect869);fill:#000000;fill-opacity:1;stroke:none;" />
+    <text
+       xml:space="preserve"
+       id="text873"
+       style="font-style:normal;font-weight:normal;font-size:10.5833px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;white-space:pre;shape-inside:url(#rect875);fill:#000000;fill-opacity:1;stroke:none;" />
+  </g>
+</svg>
