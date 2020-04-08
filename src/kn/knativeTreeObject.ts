@@ -100,12 +100,9 @@ export default class KnativeTreeObject implements TreeObject {
   }
 
   get iconPath(): Uri {
-    const icon: Uri = Uri.file(
+    return Uri.file(
       path.join(__dirname, '../../../images/context', CONTEXT_DATA[this.contextValue].icon),
-      );
-      // eslint-disable-next-line no-console
-      console.log(`knativeTreeObject.iconPath URI: ${icon}`);
-    return icon;
+    );
   }
 
   get tooltip(): string {
