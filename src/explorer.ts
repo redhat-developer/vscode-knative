@@ -4,18 +4,18 @@
  *-----------------------------------------------------------------------------------------------*/
 
 import {
-  TreeDataProvider,
-  TreeItem,
+  commands,
+  Disposable,
   Event,
   ProviderResult,
   EventEmitter,
-  Disposable,
-  TreeView,
-  window,
   extensions,
-  version,
-  commands,
+  TreeDataProvider,
+  TreeItem,
+  TreeView,
   Uri,
+  version,
+  window,
 } from 'vscode';
 import * as path from 'path';
 import Platform from './util/platform';
@@ -62,18 +62,39 @@ export default class KnativeExplorer implements TreeDataProvider<TreeObject>, Di
     return KnativeExplorer.instance;
   }
 
+  /**
+   * Get the UI representation of the TreeObject.
+   *
+   * Required to fulfill the `TreeDataProvider` API.
+   * @param element TreeObject
+   */
   // eslint-disable-next-line class-methods-use-this
   getTreeItem(element: TreeObject): TreeItem | Thenable<TreeItem> {
     return element;
   }
 
   /**
-   * Called when the user opens the view, it populates the view.
-   * @param element
+   * When the user opens the Tree View, the getChildren method will be called without
+   * an element. From there, your TreeDataProvider should return your top-level tree
+   * items. getChildren is then called for each of your top-level tree items, so that
+   * you can provide the children of those items.
+   *
+   * Get the children of the TreeObject passed in or get the root if none is passed in.
+   *
+   * Required to fulfill the `TreeDataProvider` API.
+   *
+   * @param element TreeObject
    */
   // eslint-disable-next-line class-methods-use-this
   getChildren(element?: TreeObject): ProviderResult<TreeObject[]> {
-    return element ? element.getChildren() : KnativeExplorer.knctl.getServices();
+    let children: ProviderResult<TreeObject[]>;
+    if (element) {
+      children = element.getChildren();
+    } else {
+      // children = KnativeExplorer.ROOT;
+      children = KnativeExplorer.knctl.getServices() as ProviderResult<TreeObject[]>;
+    }
+    return children;
   }
 
   // eslint-disable-next-line class-methods-use-this

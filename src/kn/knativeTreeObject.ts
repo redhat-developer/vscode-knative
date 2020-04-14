@@ -36,6 +36,12 @@ const CONTEXT_DATA = {
   },
 };
 
+/**
+ * Compare the context type first, then compare the label.
+ *
+ * @param a TreeObject
+ * @param b TreeObject
+ */
 export function compareNodes(a: TreeObject, b: TreeObject): number {
   if (!a.contextValue) {
     return -1;
