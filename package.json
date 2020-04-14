@@ -115,7 +115,7 @@
     "walker": "^1.0.7"
   },
   "activationEvents": [
-    "onView:knativeProjectExplorer",
+    "onView:knativeProjectExplorerServices",
     "onCommand:knative.service.list",
     "onCommand:knative.explorer.refresh",
     "onCommand:knative.explorer.reportIssue"
@@ -158,24 +158,24 @@
       "view/item/context": [
         {
           "command": "knative.service.open-in-browser",
-          "when": "view == knativeProjectExplorer && viewItem == service",
+          "when": "view == knativeProjectExplorerServices && viewItem == service",
           "group": "c1"
         }
       ],
       "view/title": [
         {
           "command": "knative.service.create",
-          "when": "view == knativeProjectExplorer",
+          "when": "view == knativeProjectExplorerServices",
           "group": "navigation@0"
         },
         {
           "command": "knative.explorer.refresh",
-          "when": "view == knativeProjectExplorer",
+          "when": "view == knativeProjectExplorerServices",
           "group": "navigation@1"
         },
         {
           "command": "knative.explorer.reportIssue",
-          "when": "view == knativeProjectExplorer",
+          "when": "view == knativeProjectExplorerServices",
           "group": "navigation@2"
         }
       ]
@@ -192,8 +192,12 @@
     "views": {
       "knative-explorer": [
         {
-          "id": "knativeProjectExplorer",
-          "name": "Knative Explorer"
+          "id": "knativeProjectExplorerServices",
+          "name": "Services"
+        },
+        {
+          "id": "knativeProjectExplorerEvents",
+          "name": "Events"
         }
       ]
     },

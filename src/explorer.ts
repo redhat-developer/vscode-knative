@@ -45,7 +45,7 @@ export default class KnativeExplorer implements TreeDataProvider<TreeObject>, Di
     this.fsw = WatchUtil.watchFileForContextChange(kubeConfigFolder, 'config');
     this.fsw.emitter.on('file-changed', this.refresh.bind(this));
     // Initialize the tree/explorer view by linking the refernece in the package.json to this class.
-    this.treeView = window.createTreeView('knativeProjectExplorer', { treeDataProvider: this });
+    this.treeView = window.createTreeView('knativeProjectExplorerServices', { treeDataProvider: this });
     KnativeExplorer.knctl.subject.subscribe((event) => {
       if (event.reveal) {
         this.reveal(event.data);
