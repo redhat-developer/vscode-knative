@@ -88,7 +88,7 @@ export class KnController implements Kn {
     'Unauthorized',
   ];
 
-  public static data: KnativeTreeModel = new KnativeTreeModel();
+  public data: KnativeTreeModel = new KnativeTreeModel();
 
   public static ROOT: TreeObject = new KnativeTreeObject(
     undefined,
@@ -109,13 +109,10 @@ export class KnController implements Kn {
   public async getServices(): Promise<TreeObject[]> {
     // If the ROOT has already been set then return it.
     // If not then the initial undefined version is returned.
-    let children = KnController.data.getChildrenByParent(KnController.ROOT);
+    let children = this.data.getChildrenByParent(KnController.ROOT);
     // IF there is no ROOT then get the services and make them the ROOT.
     if (!children) {
-      children = KnController.data.setParentToChildren(
-        KnController.ROOT,
-        await this._getServices(),
-      );
+      children = this.data.setParentToChildren(KnController.ROOT, await this._getServices());
     }
     // this.addService(`foo1`, `invinciblejai/tag-portal-v1`);
     return children;
@@ -157,7 +154,7 @@ export class KnController implements Kn {
           null,
           null,
         );
-        KnController.data.setPathToObject(obj);
+        this.data.setPathToObject(obj);
         return obj;
       })
       .sort(compareNodes);
@@ -189,7 +186,7 @@ export class KnController implements Kn {
   // }
 
   private async deleteAndRefresh(item: TreeObject): Promise<TreeObject> {
-    await KnController.data.delete(item);
+    await this.data.delete(item);
     // OpenShiftExplorer.getInstance().refresh(item.getParent());
     this.subject.next(new KnativeTreeEvent('changed', item.getParent()));
     return item;
@@ -299,7 +296,7 @@ export class KnController implements Kn {
         false,
         TreeItemCollapsibleState.Collapsed,
       );
-      KnController.data.setPathToObject(obj);
+      this.data.setPathToObject(obj);
       return obj;
     };
     return this.insertAndRevealService(knObj(servObj.name));
@@ -312,7 +309,7 @@ export class KnController implements Kn {
 
   // eslint-disable-next-line class-methods-use-this
   clearCache(): void {
-    KnController.data.clearTreeData();
+    this.data.clearTreeData();
   }
 }
 
