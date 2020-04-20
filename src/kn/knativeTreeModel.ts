@@ -53,6 +53,22 @@ export default class KnativeTreeModel {
     return children;
   }
 
+  /**
+   * Add one TreeObject child to the array of children associated with a given parent TreeObject
+   *
+   * @param child
+   * @param parent
+   */
+  public addChildToParent(child: TreeObject, parent: TreeObject): TreeObject {
+    // get the children from the parent or set an empty array
+    const children: TreeObject[] = this.parentToChildren.has(parent) ? this.getChildrenByParent(parent) : [];
+    // add the child to the children array
+    children.push(child);
+    // replace the children array with the updated one
+    this.parentToChildren.set(parent, children);
+    return parent;
+  }
+
 /**
  * Gets the children in the tree that are under a parent object.
  * @param parent
