@@ -8,13 +8,13 @@
 import * as vscode from 'vscode';
 import KnativeExplorer from './explorer';
 import Service from './knative/service';
-import { Kn, KnController } from './kn/knController';
+import { KnController } from './kn/knController';
 import { TreeObject } from './kn/knativeTreeObject';
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
 export function activate(extensionContext: vscode.ExtensionContext): void {
-  const knctl: Kn = KnController.Instance;
+  const knctl: KnController = KnController.Instance;
   // The command has been defined in the package.json file
   // Now provide the implementation of the command with registerCommand
   // The commandId parameter must match the command field in package.json

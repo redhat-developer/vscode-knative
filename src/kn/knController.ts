@@ -54,23 +54,15 @@ import Service, { CreateService } from '../knative/service';
 //   return input
 // }
 
-export interface Kn {
-  getServices(): Promise<TreeObject[]>;
-  addService(): Promise<TreeObject>;
-  requireLogin(): Promise<boolean>;
-  clearCache?(): void;
-  readonly subject: Subject<KnativeEvent>;
-}
-
-export class KnController implements Kn {
-  private static instance: Kn;
+export class KnController {
+  private static instance: KnController;
 
   // eslint-disable-next-line no-useless-constructor
   private constructor() {
     // do something if needed, but this is private for the singleton
   }
 
-  public static get Instance(): Kn {
+  public static get Instance(): KnController {
     if (!KnController.instance) {
       KnController.instance = new KnController();
     }
@@ -313,6 +305,6 @@ export class KnController implements Kn {
   }
 }
 
-export function getInstance(): Kn {
+export function getInstance(): KnController {
   return KnController.Instance;
 }

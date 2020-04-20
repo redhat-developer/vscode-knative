@@ -19,7 +19,7 @@ import {
 } from 'vscode';
 import * as path from 'path';
 import Platform from './util/platform';
-import { Kn, KnController } from './kn/knController';
+import { KnController } from './kn/knController';
 import { TreeObject } from './kn/knativeTreeObject';
 import WatchUtil, { FileContentChangeNotifier } from './util/watch';
 
@@ -28,7 +28,7 @@ const kubeConfigFolder: string = path.join(Platform.getUserHomePath(), '.kube');
 export default class KnativeExplorer implements TreeDataProvider<TreeObject>, Disposable {
   private static instance: KnativeExplorer;
 
-  private static knctl: Kn = KnController.Instance;
+  private static knctl: KnController = KnController.Instance;
 
   private treeView: TreeView<TreeObject>;
 
