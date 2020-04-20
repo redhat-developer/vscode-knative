@@ -24,6 +24,7 @@ import KnativeTreeModel from './knativeTreeModel';
 import { execute, loadItems } from './knExecute';
 import { CliExitData } from './knCli';
 import Service, { CreateService } from '../knative/service';
+import Revision from '../knative/revision';
 
 // import bs = require('binary-search');
 
@@ -96,7 +97,70 @@ export class KnController {
   }
 
   /**
-   * The Service is the root level of the tree for Knative. This method sets it as the root if not already done.
+   * The Revision is a child of Service. Every update makes a new Revision.
+   * Fetch the Revisions and associate them with their parent Services.
+   */
+  public async getRevisions(parentServices: TreeObject[]): Promise<TreeObject[]> {
+    // const services: Service[] = this.ksvc.getServices();
+
+    // get all the revisions for this namespace
+    const revisionTreeObjects: TreeObject[] = await this._getRevisions(parentServices);
+    // iterate through the revisions and add them to their parents
+    parentServices.forEach((parentTreeObject) => {
+      const childTreeObjects: TreeObject[] = [];
+      revisionTreeObjects.forEach((value) => {
+        // pull the Revision from the TreeObject
+        const revision: Revision = value.getKnativeItem() as Revision;
+
+        if (parentTreeObject.getName() === revision.service) {
+          childTreeObjects.push(value);
+        }
+      });
+
+      this.data.setParentToChildren(parentTreeObject, childTreeObjects);
+    });
+
+    return revisionTreeObjects;
+  }
+
+  private async _getRevisions(parentServices: TreeObject[]): Promise<TreeObject[]> {
+    // Get the raw data from the cli call.
+    const result: CliExitData = await execute(KnAPI.listRevisions());
+    const revisions: Revision[] = this.ksvc.addRevisions(
+      loadItems(result).map((value) => Revision.toRevision(value)),
+    );
+
+    if (revisions.length === 0) {
+      // If there are no Revisions then there is either no Service or an error.
+      return;
+    }
+
+    // Create the Service tree item for each one found.
+    const revisionTreeObjects: TreeObject[] = revisions
+      .map<TreeObject>((value) => {
+        const parent: TreeObject = parentServices.find((svc): boolean => {
+          return svc.getName() === value.service;
+        });
+        const obj: TreeObject = new KnativeTreeObject(
+          parent,
+          value,
+          value.name,
+          ContextType.REVISION,
+          false,
+          TreeItemCollapsibleState.Collapsed,
+          null,
+          null,
+        );
+        // this.data.setPathToObject(obj);
+        return obj;
+      })
+      .sort(compareNodes);
+
+    return revisionTreeObjects;
+  }
+
+  /**
+   * The Service is the highest level of the tree for Knative. This method sets it at the root if not already done.
    */
   public async getServices(): Promise<TreeObject[]> {
     // If the ROOT has already been set then return it.
@@ -106,11 +170,10 @@ export class KnController {
     if (!children) {
       children = this.data.setParentToChildren(KnController.ROOT, await this._getServices());
     }
-    // this.addService(`foo1`, `invinciblejai/tag-portal-v1`);
+    await this.getRevisions(children);
     return children;
   }
 
-  // eslint-disable-next-line class-methods-use-this
   private async _getServices(): Promise<TreeObject[]> {
     // Get the raw data from the cli call.
     const result: CliExitData = await execute(KnAPI.listServices());
@@ -127,7 +190,7 @@ export class KnController {
           'No Service Found',
           ContextType.SERVICE,
           false,
-          TreeItemCollapsibleState.Expanded,
+          TreeItemCollapsibleState.Collapsed,
           null,
           null,
         ),
@@ -142,7 +205,7 @@ export class KnController {
           value.name,
           ContextType.SERVICE,
           false,
-          TreeItemCollapsibleState.Collapsed,
+          TreeItemCollapsibleState.Expanded,
           null,
           null,
         );
@@ -234,7 +297,7 @@ export class KnController {
         if (found) {
           const response = await window.showInformationMessage(
             `That name has already been used. Do you want to overwrite the Service?`,
-            {modal: true},
+            { modal: true },
             'Yes',
             'No',
           );

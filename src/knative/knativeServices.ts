@@ -4,6 +4,7 @@
  *-----------------------------------------------------------------------------------------------*/
 
 import Service from './service';
+import Revision from './revision';
 // import { compareNodes } from '../kn/knativeTreeObject';
 
 export default class KnativeServices {
@@ -22,6 +23,8 @@ export default class KnativeServices {
   }
 
   private services: Service[];
+
+  private revisions: Revision[];
 
   // eslint-disable-next-line class-methods-use-this
   private updateTree(): void {
@@ -49,6 +52,13 @@ export default class KnativeServices {
     // this.services.sort(compareNodes);
     this.updateTree();
     return this.services;
+  }
+
+  public addRevisions(revisions: Revision[]): Revision[] {
+    this.revisions = revisions;
+    // this.revisions.sort(compareNodes);
+    this.updateTree();
+    return this.revisions;
   }
 
   public updateService(service: Service): Service[] {

@@ -4,12 +4,11 @@
  *-----------------------------------------------------------------------------------------------*/
 
 import KnativeItem from './knativeItem';
-import Service from './service';
 
 export default class Revision extends KnativeItem {
   name: string;
 
-  service: Service;
+  service: string;
 
   status: boolean;
 
@@ -18,7 +17,7 @@ export default class Revision extends KnativeItem {
   static toRevision(value: any): Revision {
     const revision = new Revision();
     revision.name = value.metadata.name;
-    revision.service = value.status.serviceName;
+    revision.service = value.metadata.ownerReferences[0].name;
     return revision;
   }
 }

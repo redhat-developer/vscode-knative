@@ -45,7 +45,9 @@ export default class KnativeExplorer implements TreeDataProvider<TreeObject>, Di
     this.fsw = WatchUtil.watchFileForContextChange(kubeConfigFolder, 'config');
     this.fsw.emitter.on('file-changed', this.refresh.bind(this));
     // Initialize the tree/explorer view by linking the refernece in the package.json to this class.
-    this.treeView = window.createTreeView('knativeProjectExplorerServices', { treeDataProvider: this });
+    this.treeView = window.createTreeView('knativeProjectExplorerServices', {
+      treeDataProvider: this,
+    });
     KnativeExplorer.knctl.subject.subscribe((event) => {
       if (event.reveal) {
         this.reveal(event.data);
@@ -88,10 +90,14 @@ export default class KnativeExplorer implements TreeDataProvider<TreeObject>, Di
   // eslint-disable-next-line class-methods-use-this
   getChildren(element?: TreeObject): ProviderResult<TreeObject[]> {
     let children: ProviderResult<TreeObject[]>;
+    // const ktm: KnativeTreeModel = new KnativeTreeModel();
     if (element) {
-      children = element.getChildren();
+      if (element.contextValue === 'service') {
+        children = KnativeExplorer.knctl.data.getChildrenByParent(element);
+      } else {
+        children = element.getChildren();
+      }
     } else {
-      // children = KnativeExplorer.ROOT;
       children = KnativeExplorer.knctl.getServices() as ProviderResult<TreeObject[]>;
     }
     return children;
