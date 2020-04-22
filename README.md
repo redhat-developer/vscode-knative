@@ -55,3 +55,7 @@ This extension contributes the following settings:
 ### 0.2.0
 
 - Create Service (Deploy Container Image)
+
+### 0.3.0
+
+- Display Revisions for each Service
