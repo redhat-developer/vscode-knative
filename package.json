@@ -193,11 +193,7 @@
       "knative-explorer": [
         {
           "id": "knativeProjectExplorerServices",
-          "name": "Services"
-        },
-        {
-          "id": "knativeProjectExplorerEvents",
-          "name": "Events"
+          "name": "Knative"
         }
       ]
     },
