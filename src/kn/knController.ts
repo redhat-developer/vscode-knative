@@ -170,9 +170,10 @@ export class KnController {
     if (!children) {
       children = this.data.setParentToChildren(KnController.ROOT, await this._getServices());
     }
-    if (children.length === 1 && children[0].label !== 'No Service Found') {
-      await this.getRevisions(children);
+    if (children.length === 1 && children[0].label === 'No Service Found') {
+      return children;
     }
+    await this.getRevisions(children);
     return children;
   }
 
