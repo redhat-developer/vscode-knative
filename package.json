@@ -25,9 +25,6 @@
   "engines": {
     "vscode": "^1.43.0"
   },
-  "extensionDependencies": [
-    "ms-kubernetes-tools.vscode-kubernetes-tools"
-  ],
   "categories": [
     "Other"
   ],
@@ -40,7 +37,7 @@
     "lint": "eslint . --ext .ts",
     "lint:fix": "eslint . --ext .ts --fix",
     "pretest": "npm run clean && npm run compile && npm run lint",
-    "test": "node ./out/src/test/runTest.js",
+    "test": "node ./out/test/runTest.js",
     "install-test": "npm run clean && npm run compile && npm run verify && node ./out/build/install-vscode.js && node ./out/build/unit-tests.js",
     "update-deps": "node_modules/.bin/ncu --upgrade --loglevel verbose --packageFile package.json && npm update",
     "verify": "node ./out/build/verify-tools.js",

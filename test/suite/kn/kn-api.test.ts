@@ -1,6 +1,6 @@
 import * as assert from 'assert';
-import KnAPI from '../../../kn/kn-api';
-import { CliCommand } from '../../../kn/knCli';
+import KnAPI from '../../../src/kn/kn-api';
+import { CliCommand } from '../../../src/kn/knCli';
 
 suite('KN API commands that will', () => {
   suite('Create a Service', () => {
