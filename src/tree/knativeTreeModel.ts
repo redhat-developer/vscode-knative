@@ -5,8 +5,8 @@
 
 import { Uri, workspace, WorkspaceFolder } from 'vscode';
 import * as path from 'path';
-import { ComponentSettings, Config } from './config';
 import { TreeObject } from './knativeTreeObject';
+import { ComponentSettings, Config } from '../kn/config';
 
 import yaml = require('js-yaml');
 import fs = require('fs');

@@ -15,14 +15,14 @@ import {
 } from 'vscode';
 import { Subject } from 'rxjs';
 import * as validator from 'validator';
-import { ContextType } from './config';
-import KnAPI from './kn-api';
-import KnativeServices from '../knative/knativeServices';
-import KnativeTreeObject, { TreeObject, compareNodes } from './knativeTreeObject';
 import KnativeTreeEvent, { KnativeEvent } from './knativeTreeEvent';
 import KnativeTreeModel from './knativeTreeModel';
-import { execute, loadItems } from './knExecute';
-import { CliExitData } from './knCli';
+import KnativeTreeObject, { TreeObject, compareNodes } from './knativeTreeObject';
+import { ContextType } from '../kn/config';
+import KnAPI from '../kn/kn-api';
+import KnativeServices from '../knative/knativeServices';
+import { execute, loadItems } from '../kn/knExecute';
+import { CliExitData } from '../kn/knCli';
 import Service, { CreateService } from '../knative/service';
 import Revision from '../knative/revision';
 

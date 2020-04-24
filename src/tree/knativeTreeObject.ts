@@ -5,9 +5,9 @@
 
 import { ProviderResult, TreeItemCollapsibleState, Uri, QuickPickItem } from 'vscode';
 import * as path from 'path';
-import { ContextType } from './config';
-import GlyphChars from '../util/constants';
+import { ContextType } from '../kn/config';
 import KnativeItem from '../knative/knativeItem';
+import GlyphChars from '../util/constants';
 
 import format = require('string-format');
 

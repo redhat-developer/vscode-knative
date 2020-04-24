@@ -6,10 +6,10 @@
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
 import * as vscode from 'vscode';
-import KnativeExplorer from './explorer';
 import Service from './knative/service';
-import { KnController } from './kn/knController';
-import { TreeObject } from './kn/knativeTreeObject';
+import KnativeExplorer from './tree/explorer';
+import { KnController } from './tree/knController';
+import { TreeObject } from './tree/knativeTreeObject';
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed

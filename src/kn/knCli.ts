@@ -5,7 +5,7 @@
 
 // import * as vscode from 'vscode';
 import { SpawnOptions, spawn } from 'child_process';
-import KnOutputChannel, { OutputChannel } from './knOutputChannel';
+import KnOutputChannel, { OutputChannel } from '../output/knOutputChannel';
 
 export interface CliExitData {
   readonly error: string | Error;

@@ -18,10 +18,10 @@ import {
   window,
 } from 'vscode';
 import * as path from 'path';
-import Platform from './util/platform';
-import { KnController } from './kn/knController';
-import { TreeObject } from './kn/knativeTreeObject';
-import WatchUtil, { FileContentChangeNotifier } from './util/watch';
+import Platform from '../util/platform';
+import { KnController } from './knController';
+import { TreeObject } from './knativeTreeObject';
+import WatchUtil, { FileContentChangeNotifier } from '../util/watch';
 
 const kubeConfigFolder: string = path.join(Platform.getUserHomePath(), '.kube');
 
