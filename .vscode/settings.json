@@ -1,6 +1,10 @@
 // Place your settings in this file to overwrite default and user settings.
 {
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": true
+  },
   "editor.minimap.size": "fill",
+  "eslint.validate": ["javascript", "typescript"],
   "files.exclude": {
     "out": false,
     "**/.classpath": true,
@@ -18,12 +22,5 @@
   "[typescript]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode",
     "editor.formatOnSave": false
-  },
-  "eslint.validate": [
-    "javascript",
-    "typescript"
-  ],
-  "editor.codeActionsOnSave": {
-    "source.fixAll.eslint": true
   }
 }
