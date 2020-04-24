@@ -17,7 +17,7 @@ function newKnCommand(knArguments: string[]): CliCommand {
 /**
  * A series of commands for the knative cli `kn`.
  */
-export default class KnAPI {
+export class KnAPI {
   /**
    *
    * @param createServiceObj - a CreateService object that requires name and URL.

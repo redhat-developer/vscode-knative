@@ -15,7 +15,7 @@ export interface FileContentChangeNotifier {
   readonly emitter: EventEmitter;
 }
 
-export default class WatchUtil {
+export class WatchUtil {
   static watchFileForContextChange(location: string, filename: string): FileContentChangeNotifier {
     const emitter: EventEmitter = new EventEmitter();
     let timer: NodeJS.Timer;

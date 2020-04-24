@@ -5,7 +5,7 @@
 
 // import * as vscode from 'vscode';
 import { SpawnOptions, spawn } from 'child_process';
-import KnOutputChannel, { OutputChannel } from '../output/knOutputChannel';
+import { KnOutputChannel, OutputChannel } from '../output/knOutputChannel';
 
 export interface CliExitData {
   readonly error: string | Error;
@@ -33,7 +33,7 @@ export function cliCommandToString(command: CliCommand): string {
   return `${command.cliCommand} ${command.cliArguments.join(' ')}`;
 }
 
-export default class KnCli implements Cli {
+export class KnCli implements Cli {
   private static instance: KnCli;
 
   /**

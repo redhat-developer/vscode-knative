@@ -3,11 +3,11 @@
  *  Licensed under the MIT License. See LICENSE file in the project root for license information.
  *-----------------------------------------------------------------------------------------------*/
 
-import Service from './service';
-import Revision from './revision';
+import { Service } from './service';
+import { Revision } from './revision';
 // import { compareNodes } from '../kn/knativeTreeObject';
 
-export default class KnativeServices {
+export class KnativeServices {
   private static instance: KnativeServices;
 
   // eslint-disable-next-line no-useless-constructor
@@ -37,7 +37,7 @@ export default class KnativeServices {
   }
 
   public findServices(name: string): Service {
-    return this.services[this.services.findIndex((s)=> s.name === name)];
+    return this.services[this.services.findIndex((s) => s.name === name)];
   }
 
   public addService(service: Service): Service[] {
@@ -62,7 +62,7 @@ export default class KnativeServices {
   }
 
   public updateService(service: Service): Service[] {
-    const updated: Service[] = this.services.map((s)=> {
+    const updated: Service[] = this.services.map((s) => {
       if (s.name === service.name) {
         return service;
       }
@@ -75,7 +75,7 @@ export default class KnativeServices {
 
   public removeService(service: Service): Service[] {
     // find the index of the service passed in.
-    const servicdIndex: number = this.services.findIndex((s)=> s.name === service.name)
+    const servicdIndex: number = this.services.findIndex((s) => s.name === service.name);
     // remove the service
     this.services.splice(servicdIndex, 1);
     this.updateTree();

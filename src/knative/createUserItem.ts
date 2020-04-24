@@ -5,7 +5,7 @@
 
 import { QuickPickItem } from 'vscode';
 
-export default class CreateUserItem implements QuickPickItem {
+export class CreateUserItem implements QuickPickItem {
 	// eslint-disable-next-line class-methods-use-this
 	get label(): string { return `$(plus) Add new user...`; }
 }

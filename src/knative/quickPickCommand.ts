@@ -5,7 +5,7 @@
 
 import { QuickPickItem } from "vscode";
 
-export default class QuickPickCommand implements QuickPickItem {
+export class QuickPickCommand implements QuickPickItem {
   // eslint-disable-next-line no-useless-constructor
   constructor(
     public label: string,

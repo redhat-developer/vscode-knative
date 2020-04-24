@@ -18,14 +18,14 @@ import {
   window,
 } from 'vscode';
 import * as path from 'path';
-import Platform from '../util/platform';
+import { Platform } from '../util/platform';
 import { KnController } from './knController';
 import { TreeObject } from './knativeTreeObject';
-import WatchUtil, { FileContentChangeNotifier } from '../util/watch';
+import { WatchUtil, FileContentChangeNotifier } from '../util/watch';
 
 const kubeConfigFolder: string = path.join(Platform.getUserHomePath(), '.kube');
 
-export default class KnativeExplorer implements TreeDataProvider<TreeObject>, Disposable {
+export class KnativeExplorer implements TreeDataProvider<TreeObject>, Disposable {
   private static instance: KnativeExplorer;
 
   private static knctl: KnController = KnController.Instance;

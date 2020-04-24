@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See LICENSE file in the project root for license information.
  *-----------------------------------------------------------------------------------------------*/
 
-enum GlyphChars {
+export enum GlyphChars {
   Asterisk = '\u2217',
   Check = '\u2713',
   Space = '\u00a0',
@@ -11,5 +11,3 @@ enum GlyphChars {
   NotPushed = '\u25CE',
   NoContext = '\u2718',
 }
-
-export default GlyphChars;

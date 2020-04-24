@@ -4,7 +4,7 @@
  *-----------------------------------------------------------------------------------------------*/
 
 import * as vscode from 'vscode';
-import Filters from '../util/filters';
+import { Filters } from '../util/filters';
 
 function prettifyJson(str: string): string {
   let jsonData: string;
@@ -34,7 +34,7 @@ export interface OutputChannel {
  * @function print
  * @function show
  */
-export default class KnOutputChannel implements OutputChannel {
+export class KnOutputChannel implements OutputChannel {
   private readonly channel: vscode.OutputChannel = vscode.window.createOutputChannel('Knative');
 
   /**

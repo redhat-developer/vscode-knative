@@ -5,7 +5,7 @@
 
 import validator from 'validator';
 
-export default abstract class Validation {
+export abstract class Validation {
   static emptyName(message: string, value: string): string {
     return validator.isEmpty(value) ? message : null;
   }

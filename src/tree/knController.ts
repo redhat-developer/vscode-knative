@@ -15,16 +15,16 @@ import {
 } from 'vscode';
 import { Subject } from 'rxjs';
 import * as validator from 'validator';
-import KnativeTreeEvent, { KnativeEvent } from './knativeTreeEvent';
-import KnativeTreeModel from './knativeTreeModel';
-import KnativeTreeObject, { TreeObject, compareNodes } from './knativeTreeObject';
+import { KnativeTreeEvent, KnativeEvent } from './knativeTreeEvent';
+import { KnativeTreeModel } from './knativeTreeModel';
+import { KnativeTreeObject, compareNodes, TreeObject } from './knativeTreeObject';
 import { ContextType } from '../kn/config';
-import KnAPI from '../kn/kn-api';
-import KnativeServices from '../knative/knativeServices';
+import { KnAPI } from '../kn/kn-api';
+import { KnativeServices } from '../knative/knativeServices';
 import { execute, loadItems } from '../kn/knExecute';
 import { CliExitData } from '../kn/knCli';
-import Service, { CreateService } from '../knative/service';
-import Revision from '../knative/revision';
+import { Service, CreateService } from '../knative/service';
+import { Revision } from '../knative/revision';
 
 // import bs = require('binary-search');
 

@@ -1,5 +1,5 @@
 import * as assert from 'assert';
-import KnAPI from '../../../src/kn/kn-api';
+import { KnAPI } from '../../../src/kn/kn-api';
 import { CliCommand } from '../../../src/kn/knCli';
 
 suite('KN API commands that will', () => {
@@ -23,7 +23,7 @@ suite('KN API commands that will', () => {
       // const command = 'kn service create mysvc --image dev.local/ns/image:latest';
       const command: CliCommand = {
         cliArguments: ['service', 'create', 'mysvc', '--image', 'dev.local/ns/image:latest'],
-        cliCommand: 'kn'
+        cliCommand: 'kn',
       };
       const commandAPI = KnAPI.createService({ name: 'mysvc', image: 'dev.local/ns/image:latest' });
       assert.deepEqual(command.cliArguments, commandAPI.cliArguments);
@@ -31,8 +31,16 @@ suite('KN API commands that will', () => {
     test('should create a service with name, image, and namespace', () => {
       // const command = 'kn service create mysvc --image dev.local/ns/image:latest -n myns';
       const command: CliCommand = {
-        cliArguments: ['service', 'create', 'mysvc', '--image', 'dev.local/ns/image:latest', '-n', 'myns'],
-        cliCommand: 'kn'
+        cliArguments: [
+          'service',
+          'create',
+          'mysvc',
+          '--image',
+          'dev.local/ns/image:latest',
+          '-n',
+          'myns',
+        ],
+        cliCommand: 'kn',
       };
       const commandAPI = KnAPI.createService({
         name: 'mysvc',
@@ -44,8 +52,15 @@ suite('KN API commands that will', () => {
     test('should create a service with image using --force flag', () => {
       // const command = 'kn service create --force mysvc --image dev.local/ns/image:latest';
       const command: CliCommand = {
-        cliArguments: ['service', 'create', '--force', 'mysvc', '--image', 'dev.local/ns/image:latest'],
-        cliCommand: 'kn'
+        cliArguments: [
+          'service',
+          'create',
+          '--force',
+          'mysvc',
+          '--image',
+          'dev.local/ns/image:latest',
+        ],
+        cliCommand: 'kn',
       };
       const commandAPI = KnAPI.createService({
         name: 'mysvc',
@@ -58,8 +73,18 @@ suite('KN API commands that will', () => {
       // const command =
       //   'kn service create mysvc --env KEY1=NEW_VALUE1 --env NEW_KEY2=NEW_VALUE2 --image dev.local/ns/image:latest';
       const command: CliCommand = {
-        cliArguments: ['service', 'create', 'mysvc', '--env', 'KEY1=NEW_VALUE1', '--env', 'NEW_KEY2=NEW_VALUE2', '--image', 'dev.local/ns/image:latest'],
-        cliCommand: 'kn'
+        cliArguments: [
+          'service',
+          'create',
+          'mysvc',
+          '--env',
+          'KEY1=NEW_VALUE1',
+          '--env',
+          'NEW_KEY2=NEW_VALUE2',
+          '--image',
+          'dev.local/ns/image:latest',
+        ],
+        cliCommand: 'kn',
       };
       const commandAPI = KnAPI.createService({
         name: 'mysvc',
@@ -72,8 +97,19 @@ suite('KN API commands that will', () => {
       // const command =
       //   'kn service create --force mysvc --env KEY1=NEW_VALUE1 --env NEW_KEY2=NEW_VALUE2 --image dev.local/ns/image:latest';
       const command: CliCommand = {
-        cliArguments: ['service', 'create', '--force', 'mysvc', '--env', 'KEY1=NEW_VALUE1', '--env', 'NEW_KEY2=NEW_VALUE2', '--image', 'dev.local/ns/image:latest'],
-        cliCommand: 'kn'
+        cliArguments: [
+          'service',
+          'create',
+          '--force',
+          'mysvc',
+          '--env',
+          'KEY1=NEW_VALUE1',
+          '--env',
+          'NEW_KEY2=NEW_VALUE2',
+          '--image',
+          'dev.local/ns/image:latest',
+        ],
+        cliCommand: 'kn',
       };
       const commandAPI = KnAPI.createService({
         name: 'mysvc',
@@ -86,8 +122,16 @@ suite('KN API commands that will', () => {
     test('should create a service with a port', () => {
       // const command = 'kn service create mysvc --port 80 --image dev.local/ns/image:latest';
       const command: CliCommand = {
-        cliArguments: ['service', 'create', 'mysvc', '--port', '80', '--image', 'dev.local/ns/image:latest'],
-        cliCommand: 'kn'
+        cliArguments: [
+          'service',
+          'create',
+          'mysvc',
+          '--port',
+          '80',
+          '--image',
+          'dev.local/ns/image:latest',
+        ],
+        cliCommand: 'kn',
       };
       const commandAPI = KnAPI.createService({
         name: 'mysvc',
@@ -100,8 +144,18 @@ suite('KN API commands that will', () => {
       // const command =
       //   'kn service create mysvc --image dev.local/ns/image:latest --annotation sidecar.istio.io/inject=false --annotation sidecar.istio.io/list=true';
       const command: CliCommand = {
-        cliArguments: ['service', 'create', 'mysvc', '--image', 'dev.local/ns/image:latest', '--annotation', 'sidecar.istio.io/inject=false', '--annotation', 'sidecar.istio.io/list=true',],
-        cliCommand: 'kn'
+        cliArguments: [
+          'service',
+          'create',
+          'mysvc',
+          '--image',
+          'dev.local/ns/image:latest',
+          '--annotation',
+          'sidecar.istio.io/inject=false',
+          '--annotation',
+          'sidecar.istio.io/list=true',
+        ],
+        cliCommand: 'kn',
       };
       const commandAPI = KnAPI.createService({
         name: 'mysvc',
@@ -114,8 +168,18 @@ suite('KN API commands that will', () => {
       // const command =
       //   'kn service create mysvc --image dev.local/ns/image:latest --label key1=label1 --label key2=LABEL2';
       const command: CliCommand = {
-        cliArguments: ['service', 'create', 'mysvc', '--image', 'dev.local/ns/image:latest', '--label', 'key1=label1', '--label', 'key2=LABEL2',],
-        cliCommand: 'kn'
+        cliArguments: [
+          'service',
+          'create',
+          'mysvc',
+          '--image',
+          'dev.local/ns/image:latest',
+          '--label',
+          'key1=label1',
+          '--label',
+          'key2=LABEL2',
+        ],
+        cliCommand: 'kn',
       };
       const commandAPI = KnAPI.createService({
         name: 'mysvc',
@@ -129,7 +193,7 @@ suite('KN API commands that will', () => {
     test('should list all services in the current namespace', () => {
       const command: CliCommand = {
         cliArguments: ['service', 'list', '-o', 'json'],
-        cliCommand: 'kn'
+        cliCommand: 'kn',
       };
       const commandAPI = KnAPI.listServices();
       assert.deepEqual(command.cliArguments, commandAPI.cliArguments);

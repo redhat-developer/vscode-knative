@@ -11,7 +11,7 @@ import { readFile } from 'fs';
  * @param filePath Takes the path to a JSON file.
  * @returns Promise<any>
  */
-export default function loadJSON<T>(filePath: string): Promise<T> {
+export function loadJSON<T>(filePath: string): Promise<T> {
   return new Promise((resolve, reject) => {
     readFile(require.resolve(filePath), 'utf-8', (err, data) => {
       if (err) {

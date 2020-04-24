@@ -10,9 +10,9 @@ import { commands, Progress, ProgressLocation, Uri, window } from 'vscode';
 import { which } from 'shelljs';
 import { fromFileSync } from 'hasha';
 import { satisfies } from 'semver';
-import KnCli, { createCliCommand } from './knCli';
-import DownloadUtil from '../util/download';
-import Platform from '../util/platform';
+import { KnCli, createCliCommand } from './knCli';
+import { DownloadUtil } from '../util/download';
+import { Platform } from '../util/platform';
 
 // import loadJSON from '../util/parse';
 // import * as configData from './kn-cli-config.json';
@@ -130,7 +130,7 @@ async function selectTool(
   }
 }
 
-export default class KnCliConfig {
+export class KnCliConfig {
   public static loadMetadata(requirements, platform: string): KnConfig | void {
     const reqs = JSON.parse(JSON.stringify(requirements));
     // eslint-disable-next-line no-restricted-syntax

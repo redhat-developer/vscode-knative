@@ -3,9 +3,9 @@
  *  Licensed under the MIT License. See LICENSE file in the project root for license information.
  *-----------------------------------------------------------------------------------------------*/
 
-import KnativeItem from './knativeItem';
+import { KnativeItem } from './knativeItem';
 
-export default class Revision extends KnativeItem {
+export class Revision extends KnativeItem {
   name: string;
 
   service: string;

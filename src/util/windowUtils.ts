@@ -9,7 +9,7 @@ import * as path from 'path';
 /**
  * Utility for VSCode windows.
  */
-export default class WindowUtil {
+export class WindowUtil {
   /**
    * Create a new Terminal in VSCode with the CLI tool location on the PATH.
    *

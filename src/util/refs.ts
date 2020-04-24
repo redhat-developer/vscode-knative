@@ -20,7 +20,7 @@ export interface Ref {
   hash: string;
 }
 
-export default class Refs {
+export class Refs {
   static async fetchTag(input: string): Promise<Map<string, Ref>> {
     return new Promise((resolve, reject) => {
       const inputTag: string = input.replace(/^(?!(?:https|git):\/\/)/, 'https://');

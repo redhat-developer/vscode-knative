@@ -6,8 +6,8 @@
 import { ProviderResult, TreeItemCollapsibleState, Uri, QuickPickItem } from 'vscode';
 import * as path from 'path';
 import { ContextType } from '../kn/config';
-import KnativeItem from '../knative/knativeItem';
-import GlyphChars from '../util/constants';
+import { KnativeItem } from '../knative/knativeItem';
+import { GlyphChars } from '../util/constants';
 
 import format = require('string-format');
 
@@ -71,7 +71,7 @@ export interface TreeObject extends QuickPickItem {
   path?: string;
 }
 
-export default class KnativeTreeObject implements TreeObject {
+export class KnativeTreeObject implements TreeObject {
   // eslint-disable-next-line no-useless-constructor
   constructor(
     private parent: TreeObject,

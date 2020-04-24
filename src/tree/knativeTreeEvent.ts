@@ -11,7 +11,7 @@ export interface KnativeEvent {
   readonly reveal: boolean;
 }
 
-export default class KnativeTreeEvent implements KnativeEvent {
+export class KnativeTreeEvent implements KnativeEvent {
   // eslint-disable-next-line no-useless-constructor
   constructor(
     readonly type: 'deleted' | 'inserted' | 'changed',

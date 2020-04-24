@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See LICENSE file in the project root for license information.
  *-----------------------------------------------------------------------------------------------*/
 
-import KnativeItem from './knativeItem';
+import { KnativeItem } from './knativeItem';
 
 export interface CreateService {
   name: string;
@@ -16,7 +16,7 @@ export interface CreateService {
   namespace?: string;
 }
 
-export default class Service extends KnativeItem {
+export class Service extends KnativeItem {
   name: string;
 
   image: string;

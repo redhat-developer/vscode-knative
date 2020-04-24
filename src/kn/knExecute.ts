@@ -5,9 +5,9 @@
 
 import { Terminal } from 'vscode';
 import * as path from 'path';
-import KnCliConfig from './kn-cli-config';
-import KnCli, { Cli, CliCommand, CliExitData, cliCommandToString } from './knCli';
-import WindowUtil from '../util/windowUtils';
+import { KnCliConfig } from './kn-cli-config';
+import { KnCli, Cli, CliCommand, CliExitData, cliCommandToString } from './knCli';
+import { WindowUtil } from '../util/windowUtils';
 
 const cli: Cli = KnCli.getInstance();
 

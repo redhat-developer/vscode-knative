@@ -12,7 +12,7 @@ import { sync } from 'mkdirp';
 import { tmpdir } from 'os';
 import { join, resolve } from 'path';
 // import { KnConfig } from '../src/kn/kn-cli-config';
-import DownloadUtil from '../src/util/download';
+import { DownloadUtil } from '../src/util/download';
 // import loadJSON from '../src/util/parse';
 
 // const configData = '../src/kn/kn-cli-config.json';

@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See LICENSE file in the project root for license information.
  *-----------------------------------------------------------------------------------------------*/
 
-export default class Platform {
+export class Platform {
 
     static identify(map): any | undefined {
         if (map[Platform.OS]) {

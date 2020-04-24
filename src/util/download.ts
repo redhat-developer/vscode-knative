@@ -8,7 +8,7 @@ import * as fs from 'fs-extra';
 import request = require('request');
 import progress = require('request-progress');
 
-export default class DownloadUtil {
+export class DownloadUtil {
   static downloadFile(
     fromUrl: string,
     toFile: string,

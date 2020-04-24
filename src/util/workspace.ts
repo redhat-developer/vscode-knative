@@ -4,7 +4,7 @@
  *-----------------------------------------------------------------------------------------------*/
 
 import { workspace, QuickPickItem, window, Uri } from 'vscode';
-import Platform from './platform';
+import { Platform } from './platform';
 
 import path = require('path');
 import fs = require('fs-extra');
@@ -31,7 +31,7 @@ function checkComponentFolder(folder: Uri): boolean {
   return fs.existsSync(path.join(folder.fsPath, '.odo', 'config.yaml'));
 }
 
-export default async function selectWorkspaceFolder(): Promise<Uri> {
+export async function selectWorkspaceFolder(): Promise<Uri> {
   let wsFolders: WorkspaceFolderItem[] = [];
   if (workspace.workspaceFolders && workspace.workspaceFolders.length > 0) {
     wsFolders = workspace.workspaceFolders

@@ -6,8 +6,8 @@
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
 import * as vscode from 'vscode';
-import Service from './knative/service';
-import KnativeExplorer from './tree/explorer';
+import { Service } from './knative/service';
+import { KnativeExplorer } from './tree/explorer';
 import { KnController } from './tree/knController';
 import { TreeObject } from './tree/knativeTreeObject';
 
@@ -26,14 +26,14 @@ export function activate(extensionContext: vscode.ExtensionContext): void {
     //   execute(await knctl.addService(`foo1`, `invinciblejai/tag-portal-v1`) , context),
     // ),
     vscode.commands.registerCommand('knative.explorer.refresh', () =>
-      KnativeExplorer.getInstance().refresh()
+      KnativeExplorer.getInstance().refresh(),
     ),
     vscode.commands.registerCommand('knative.explorer.reportIssue', () =>
       KnativeExplorer.reportIssue(),
     ),
-    vscode.commands.registerCommand('knative.service.open-in-browser', (context:TreeObject)=>{
-     const service  = context.getKnativeItem() as Service;
-     vscode.commands.executeCommand('vscode.open', vscode.Uri.parse(service.image));
+    vscode.commands.registerCommand('knative.service.open-in-browser', (context: TreeObject) => {
+      const service = context.getKnativeItem() as Service;
+      vscode.commands.executeCommand('vscode.open', vscode.Uri.parse(service.image));
     }),
     KnativeExplorer.getInstance(),
   ];

@@ -13,7 +13,7 @@ export interface Step {
   total?: number;
 }
 
-export default class Progress {
+export class Progress {
   static execWithProgress(
     options: vscode.ProgressOptions,
     steps: Step[],

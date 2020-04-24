@@ -11,7 +11,7 @@ import { ComponentSettings, Config } from '../kn/config';
 import yaml = require('js-yaml');
 import fs = require('fs');
 
-export default class KnativeTreeModel {
+export class KnativeTreeModel {
   /**
    * A map of a parent in the tree to it's child objects.
    */
