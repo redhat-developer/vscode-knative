@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See LICENSE file in the project root for license information.
  *-----------------------------------------------------------------------------------------------*/
 
-import { ProviderResult, TreeItemCollapsibleState, Uri, QuickPickItem, TreeItem } from 'vscode';
+import { ProviderResult, TreeItemCollapsibleState, Uri, TreeItem } from 'vscode';
 import * as path from 'path';
 import { ContextType } from '../kn/config';
 import { KnativeItem } from '../knative/knativeItem';
@@ -49,12 +49,8 @@ export function compareNodes(a: TreeObject, b: TreeObject): number {
   if (!b.contextValue) {
     return 1;
   }
-  const acontext = a.contextValue.includes('_')
-    ? a.contextValue.substr(0, a.contextValue.indexOf('_'))
-    : a.contextValue;
-  const bcontext = b.contextValue.includes('_')
-    ? b.contextValue.substr(0, b.contextValue.indexOf('_'))
-    : b.contextValue;
+  const acontext = a.contextValue.includes('_') ? a.contextValue.substr(0, a.contextValue.indexOf('_')) : a.contextValue;
+  const bcontext = b.contextValue.includes('_') ? b.contextValue.substr(0, b.contextValue.indexOf('_')) : b.contextValue;
   const t = acontext.localeCompare(bcontext);
   return t || a.label.localeCompare(b.label);
 }
@@ -106,9 +102,7 @@ export class KnativeTreeObject implements TreeObject {
   }
 
   get iconPath(): Uri {
-    return Uri.file(
-      path.join(__dirname, '../../../images/context', CONTEXT_DATA[this.contextValue].icon),
-    );
+    return Uri.file(path.join(__dirname, '../../../images/context', CONTEXT_DATA[this.contextValue].icon));
   }
 
   get tooltip(): string {
