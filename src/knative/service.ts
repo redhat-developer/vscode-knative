@@ -16,17 +16,17 @@ export interface CreateService {
   namespace?: string;
 }
 
-export class Service extends KnativeItem {
-  name: string;
-
-  image: string;
+export class Service extends KnativeItem implements CreateService {
+  constructor(public name: string, public image: string) {
+    super();
+  }
 
   static services: Service[];
 
   static toService(value: any): Service {
-    const service = new Service();
-    service.name = value.metadata.name;
-    service.image = value.status.url;
+    const service = new Service(value.metadata.name, value.status.url);
+    // service.name = value.metadata.name;
+    // service.image = value.status.url;
     return service;
   }
 }

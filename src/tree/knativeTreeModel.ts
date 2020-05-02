@@ -43,11 +43,12 @@ export class KnativeTreeModel {
    * @param children
    * @returns children
    */
-  public setParentToChildren(
-    parent: TreeObject,
-    children: TreeObject[],
-  ): TreeObject[] {
+  public setParentToChildren(parent: TreeObject, children: TreeObject[]): TreeObject[] {
+    // eslint-disable-next-line no-console
+    console.log(`knativeTreeModel.setParentToChildren parent.Name = ${parent.getName()}`);
     if (!this.parentToChildren.has(parent)) {
+      // eslint-disable-next-line no-console
+      console.log(`knativeTreeModel.setParentToChildren child.Name = ${children.forEach((v) => v.getName())}`);
       this.parentToChildren.set(parent, children);
     }
     return children;
@@ -59,21 +60,30 @@ export class KnativeTreeModel {
    * @param child
    * @param parent
    */
-  public addChildToParent(child: TreeObject, parent: TreeObject): TreeObject {
+  public addChildToParent(child: TreeObject, parent: TreeObject): TreeObject[] {
     // get the children from the parent or set an empty array
     const children: TreeObject[] = this.parentToChildren.has(parent) ? this.getChildrenByParent(parent) : [];
-    // add the child to the children array
-    children.push(child);
+
+    // look in the array of children for the child we are adding
+    const foundChild = children.find((value) => value.getName() === child.getName())
+    if (foundChild) {
+      // Since this child already exists we need to replace it.
+      const i = children.findIndex((value) => value.getName() === child.getName());
+      children[i] = child;
+    } else {
+      // add the child to the children array
+      children.push(child);
+    }
     // replace the children array with the updated one
     this.parentToChildren.set(parent, children);
-    return parent;
+    return children;
   }
 
-/**
- * Gets the children in the tree that are under a parent object.
- * @param parent
- * @returns children
- */
+  /**
+   * Gets the children in the tree that are under a parent object.
+   * @param parent
+   * @returns children
+   */
   public getChildrenByParent(parent: TreeObject): TreeObject[] {
     return this.parentToChildren.get(parent);
   }
@@ -125,7 +135,7 @@ export class KnativeTreeModel {
       } catch (ignore) {
         // do nothing
       }
-    })
+    });
   }
 
   public async delete(item: TreeObject): Promise<void> {

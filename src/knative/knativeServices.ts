@@ -40,11 +40,11 @@ export class KnativeServices {
     return this.services[this.services.findIndex((s) => s.name === name)];
   }
 
-  public addService(service: Service): Service[] {
+  public addService(service: Service): Service {
     this.services.push(service);
     // this.services.sort(compareNodes);
     this.updateTree();
-    return this.services;
+    return service;
   }
 
   public addServices(services: Service[]): Service[] {

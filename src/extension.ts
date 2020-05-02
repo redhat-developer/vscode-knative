@@ -7,35 +7,30 @@
 // Import the module and reference it with the alias vscode in your code below
 import * as vscode from 'vscode';
 import { Service } from './knative/service';
-import { KnativeExplorer } from './tree/explorer';
+// import { ServiceDataProvider } from './tree/serviceDataProvicer';
+import { ServiceExplorer } from './tree/serviceExplorer';
 import { KnController } from './tree/knController';
 import { TreeObject } from './tree/knativeTreeObject';
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function activate(extensionContext: vscode.ExtensionContext): void {
   const knctl: KnController = KnController.Instance;
+  // const serviceDataProvider = new ServiceDataProvider();
+
   // The command has been defined in the package.json file
   // Now provide the implementation of the command with registerCommand
   // The commandId parameter must match the command field in package.json
   const disposable = [
     vscode.commands.registerCommand('knative.service.create', () => knctl.addService()),
-    // vscode.commands.registerCommand('knative.service.create', () => Service.create()),
-
-    // vscode.commands.registerCommand('knative.service.create', async (context) =>
-    //   execute(await knctl.addService(`foo1`, `invinciblejai/tag-portal-v1`) , context),
-    // ),
-    vscode.commands.registerCommand('knative.explorer.refresh', () =>
-      KnativeExplorer.getInstance().refresh(),
-    ),
-    vscode.commands.registerCommand('knative.explorer.reportIssue', () =>
-      KnativeExplorer.reportIssue(),
-    ),
+    vscode.commands.registerCommand('knative.explorer.reportIssue', () => ServiceExplorer.reportIssue()),
     vscode.commands.registerCommand('knative.service.open-in-browser', (context: TreeObject) => {
       const service = context.getKnativeItem() as Service;
       vscode.commands.executeCommand('vscode.open', vscode.Uri.parse(service.image));
     }),
-    KnativeExplorer.getInstance(),
+    // eslint-disable-next-line no-new
+    new ServiceExplorer(),
   ];
 
   // extensionContext.subscriptions.push(disposable);

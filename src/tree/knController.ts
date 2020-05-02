@@ -3,16 +3,7 @@
  *  Licensed under the MIT License. See LICENSE file in the project root for license information.
  *-----------------------------------------------------------------------------------------------*/
 
-import {
-  TreeItemCollapsibleState,
-  // InputBoxOptions,
-  window,
-  // QuickPickItem,
-  // env,
-  // WorkspaceFoldersChangeEvent,
-  // WorkspaceFolder,
-  // workspace,
-} from 'vscode';
+import { TreeItemCollapsibleState, window } from 'vscode';
 import { Subject } from 'rxjs';
 import * as validator from 'validator';
 import { KnativeTreeEvent, KnativeEvent } from './knativeTreeEvent';
@@ -64,6 +55,8 @@ export class KnController {
   }
 
   public static get Instance(): KnController {
+    // eslint-disable-next-line no-console
+    console.log(`knController.Instance`);
     if (!KnController.instance) {
       KnController.instance = new KnController();
     }
@@ -83,16 +76,11 @@ export class KnController {
 
   public data: KnativeTreeModel = new KnativeTreeModel();
 
-  public static ROOT: TreeObject = new KnativeTreeObject(
-    undefined,
-    undefined,
-    '/',
-    undefined,
-    false,
-    undefined,
-  );
+  public static ROOT: TreeObject = new KnativeTreeObject(undefined, undefined, '/', undefined, false, undefined);
 
   get subject(): Subject<KnativeEvent> {
+    // eslint-disable-next-line no-console
+    console.log(`knController.subject`);
     return this.subjectInstance;
   }
 
@@ -102,6 +90,8 @@ export class KnController {
    */
   public async getRevisions(parentServices: TreeObject[]): Promise<TreeObject[]> {
     // const services: Service[] = this.ksvc.getServices();
+    // eslint-disable-next-line no-console
+    console.log(`knController.getRevisions start`);
 
     // get all the revisions for this namespace
     const revisionTreeObjects: TreeObject[] = await this._getRevisions(parentServices);
@@ -119,16 +109,18 @@ export class KnController {
 
       this.data.setParentToChildren(parentTreeObject, childTreeObjects);
     });
+    // eslint-disable-next-line no-console
+    console.log(`knController.getRevisions end`);
 
     return revisionTreeObjects;
   }
 
   private async _getRevisions(parentServices: TreeObject[]): Promise<TreeObject[]> {
+    // eslint-disable-next-line no-console
+    console.log(`knController._getRevisions start`);
     // Get the raw data from the cli call.
     const result: CliExitData = await execute(KnAPI.listRevisions());
-    const revisions: Revision[] = this.ksvc.addRevisions(
-      loadItems(result).map((value) => Revision.toRevision(value)),
-    );
+    const revisions: Revision[] = this.ksvc.addRevisions(loadItems(result).map((value) => Revision.toRevision(value)));
 
     if (revisions.length === 0) {
       // If there are no Revisions then there is either no Service or an error.
@@ -138,6 +130,8 @@ export class KnController {
     // Create the Service tree item for each one found.
     const revisionTreeObjects: TreeObject[] = revisions
       .map<TreeObject>((value) => {
+        // eslint-disable-next-line no-console
+        console.log(`knController._getRevisions value.name ${value.name}`);
         const parent: TreeObject = parentServices.find((svc): boolean => {
           return svc.getName() === value.service;
         });
@@ -155,6 +149,8 @@ export class KnController {
         return obj;
       })
       .sort(compareNodes);
+    // eslint-disable-next-line no-console
+    console.log(`knController._getRevisions end`);
 
     return revisionTreeObjects;
   }
@@ -163,6 +159,8 @@ export class KnController {
    * The Service is the highest level of the tree for Knative. This method sets it at the root if not already done.
    */
   public async getServices(): Promise<TreeObject[]> {
+    // eslint-disable-next-line no-console
+    console.log(`knController.getServices start`);
     // If the ROOT has already been set then return it.
     // If not then the initial undefined version is returned.
     let children = this.data.getChildrenByParent(KnController.ROOT);
@@ -170,22 +168,29 @@ export class KnController {
     if (!children) {
       children = this.data.setParentToChildren(KnController.ROOT, await this._getServices());
     }
+    // TODO: to use the above, we need to update the data in the modle completely, when things are updated or added
+    // const children = this.data.setParentToChildren(KnController.ROOT, await this._getServices());
+
     if (children.length === 1 && children[0].label === 'No Service Found') {
       return children;
     }
     await this.getRevisions(children);
+    // eslint-disable-next-line no-console
+    console.log(`knController.getServices end`);
     return children;
   }
 
   private async _getServices(): Promise<TreeObject[]> {
+    // eslint-disable-next-line no-console
+    console.log(`knController._getServices start`);
     // Get the raw data from the cli call.
     const result: CliExitData = await execute(KnAPI.listServices());
-    const services: Service[] = this.ksvc.addServices(
-      loadItems(result).map((value) => Service.toService(value)),
-    );
+    const services: Service[] = this.ksvc.addServices(loadItems(result).map((value) => Service.toService(value)));
     // Pull out the name of the service from the raw data.
     // Create an empty state message when there is no Service.
     if (services.length === 0) {
+      // eslint-disable-next-line no-console
+      console.log(`knController._getServices services.length = ${services.length}`);
       return [
         new KnativeTreeObject(
           null,
@@ -202,6 +207,8 @@ export class KnController {
     // Create the Service tree item for each one found.
     return services
       .map<TreeObject>((value) => {
+        // eslint-disable-next-line no-console
+        console.log(`knController._getServices value.name = ${value.name}`);
         const obj: TreeObject = new KnativeTreeObject(
           null,
           value,
@@ -212,7 +219,11 @@ export class KnController {
           null,
           null,
         );
+        // eslint-disable-next-line no-console
+        console.log(`knController._getServices obj.name = ${obj.getName()}`);
         this.data.setPathToObject(obj);
+        // eslint-disable-next-line no-console
+        console.log(`knController._getServices end`);
         return obj;
       })
       .sort(compareNodes);
@@ -226,11 +237,11 @@ export class KnController {
   //   return item;
   // }
 
-  private insertAndRevealService(item: TreeObject): TreeObject {
-    // await OpenShiftExplorer.getInstance().reveal(this.insert(await item.getParent().getChildren(), item));
-    this.subject.next(new KnativeTreeEvent('inserted', item, true));
-    return item;
-  }
+  // eslint-disable-next-line class-methods-use-this
+  // private async insertAndRevealService(item: TreeObject): Promise<TreeObject> {
+  //   await ServiceExplorer.reveal(item);
+  //   return item;
+  // }
 
   // private async insertAndRefresh(item: KnativeObject): Promise<KnativeObject> {
   //   // await OpenShiftExplorer.getInstance().refresh(this.insert(await item.getParent().getChildren(), item).getParent());
@@ -323,7 +334,7 @@ export class KnController {
     return service;
   }
 
-  public async addService(): Promise<TreeObject> {
+  public async addService(): Promise<TreeObject[]> {
     const image: string = await this.getUrl();
 
     if (!image) {
@@ -336,28 +347,34 @@ export class KnController {
       return null;
     }
 
-    this.ksvc.addService(servObj);
-
     // Get the raw data from the cli call.
     const result: CliExitData = await execute(KnAPI.createService(servObj));
+    const service: Service = new Service(servObj.name, servObj.image);
+
+    this.ksvc.addService(service);
 
     if (result.error) {
       // TODO: handle the error
       // check the kind of errors we can get back
     }
-    const knObj = (value: string): TreeObject => {
+    const createKnObj = (value: Service): TreeObject => {
       const obj: TreeObject = new KnativeTreeObject(
         null,
-        null,
         value,
+        value.name,
         ContextType.SERVICE,
         false,
-        TreeItemCollapsibleState.Collapsed,
+        TreeItemCollapsibleState.Expanded,
       );
+      // eslint-disable-next-line no-console
+      console.log(`knController.addService obj.name = ${obj.getName()}`);
       this.data.setPathToObject(obj);
       return obj;
     };
-    return this.insertAndRevealService(knObj(servObj.name));
+    const child: TreeObject = createKnObj(service);
+    const parent = this.data.addChildToParent(child, KnController.ROOT);
+    return parent;
+    // return this.insertAndRevealService(createKnObj(servObj.name));
   }
 
   public async requireLogin(): Promise<boolean> {

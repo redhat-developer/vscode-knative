@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See LICENSE file in the project root for license information.
  *-----------------------------------------------------------------------------------------------*/
 
-import { ProviderResult, TreeItemCollapsibleState, Uri, QuickPickItem } from 'vscode';
+import { ProviderResult, TreeItemCollapsibleState, Uri, QuickPickItem, TreeItem } from 'vscode';
 import * as path from 'path';
 import { ContextType } from '../kn/config';
 import { KnativeItem } from '../knative/knativeItem';
@@ -59,7 +59,7 @@ export function compareNodes(a: TreeObject, b: TreeObject): number {
   return t || a.label.localeCompare(b.label);
 }
 
-export interface TreeObject extends QuickPickItem {
+export interface TreeObject extends TreeItem {
   getChildren(): ProviderResult<TreeObject[]>;
   getParent(): TreeObject;
   getKnativeItem(): KnativeItem;
