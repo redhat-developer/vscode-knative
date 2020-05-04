@@ -15,7 +15,7 @@ export class KnativeTreeModel {
   /**
    * A map of a parent in the tree to it's child objects.
    */
-  private parentToChildren: Map<TreeObject, TreeObject[]> = new Map();
+  private parentToChildren: Map<TreeObject, TreeObject[]> = new Map<TreeObject, TreeObject[]>();
 
   /**
    * A map of the path from one object to the next for each object.

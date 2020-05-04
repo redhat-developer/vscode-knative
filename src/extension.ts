@@ -9,21 +9,18 @@ import * as vscode from 'vscode';
 import { Service } from './knative/service';
 // import { ServiceDataProvider } from './tree/serviceDataProvicer';
 import { ServiceExplorer } from './tree/serviceExplorer';
-import { KnController } from './tree/knController';
+// import { KnController } from './tree/knController';
 import { TreeObject } from './tree/knativeTreeObject';
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function activate(extensionContext: vscode.ExtensionContext): void {
-  const knctl: KnController = KnController.Instance;
-  // const serviceDataProvider = new ServiceDataProvider();
 
   // The command has been defined in the package.json file
   // Now provide the implementation of the command with registerCommand
   // The commandId parameter must match the command field in package.json
   const disposable = [
-    vscode.commands.registerCommand('knative.service.create', () => knctl.addService()),
     vscode.commands.registerCommand('knative.explorer.reportIssue', () => ServiceExplorer.reportIssue()),
     vscode.commands.registerCommand('knative.service.open-in-browser', (context: TreeObject) => {
       const service = context.getKnativeItem() as Service;

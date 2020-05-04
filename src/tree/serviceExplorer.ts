@@ -33,6 +33,7 @@ export class ServiceExplorer implements Disposable {
     console.log(`serviceExplorer.constructor: before create tree`);
     // Initialize the tree/explorer view by linking the refernece in the package.json to this class.
     this.treeView = window.createTreeView('knativeProjectExplorerServices', { treeDataProvider });
+    commands.registerCommand('knative.service.create', () => treeDataProvider.addService());
     commands.registerCommand('knative.explorer.refresh', () => treeDataProvider.refresh());
 
     // eslint-disable-next-line no-console
