@@ -109,7 +109,7 @@ export class ServiceDataProvider implements TreeDataProvider<TreeObject> {
 
   public treeModel: KnativeTreeModel = new KnativeTreeModel();
 
-  public ROOT: TreeObject = new KnativeTreeObject(undefined, undefined, '/', undefined, false, undefined);
+  public ROOT: TreeObject = new KnativeTreeObject(undefined, undefined, '/', undefined, undefined);
 
   /**
    * The Revision is a child of Service. Every update makes a new Revision.
@@ -167,8 +167,7 @@ export class ServiceDataProvider implements TreeDataProvider<TreeObject> {
           value,
           value.name,
           ContextType.REVISION,
-          false,
-          TreeItemCollapsibleState.Collapsed,
+          TreeItemCollapsibleState.None,
           null,
           null,
         );
@@ -224,7 +223,6 @@ export class ServiceDataProvider implements TreeDataProvider<TreeObject> {
           null,
           'No Service Found',
           ContextType.SERVICE,
-          false,
           TreeItemCollapsibleState.Collapsed,
           null,
           null,
@@ -241,7 +239,6 @@ export class ServiceDataProvider implements TreeDataProvider<TreeObject> {
           value,
           value.name,
           ContextType.SERVICE,
-          false,
           TreeItemCollapsibleState.Expanded,
           null,
           null,
@@ -365,7 +362,6 @@ export class ServiceDataProvider implements TreeDataProvider<TreeObject> {
         value,
         value.name,
         ContextType.SERVICE,
-        false,
         TreeItemCollapsibleState.Expanded,
       );
       // eslint-disable-next-line no-console

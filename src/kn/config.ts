@@ -10,19 +10,9 @@ export const enum Kind {
 }
 
 export enum ContextType {
-  CLUSTER = 'cluster',
-  PROJECT = 'project',
-  APPLICATION = 'application',
-  COMPONENT = 'component_not_pushed',
-  COMPONENT_PUSHED = 'component',
-  COMPONENT_NO_CONTEXT = 'component_no_context',
   REVISION = 'revision',
   SERVICE = 'service',
-  OSSERVICE = 'osservice',
-  STORAGE = 'storage',
-  CLUSTER_DOWN = 'cluster_down',
   LOGIN_REQUIRED = 'login_required',
-  COMPONENT_ROUTE = 'component_route',
 }
 
 export enum ComponentType {

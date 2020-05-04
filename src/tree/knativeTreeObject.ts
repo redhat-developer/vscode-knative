@@ -3,11 +3,10 @@
  *  Licensed under the MIT License. See LICENSE file in the project root for license information.
  *-----------------------------------------------------------------------------------------------*/
 
-import { ProviderResult, TreeItemCollapsibleState, Uri, TreeItem } from 'vscode';
+import { ProviderResult, TreeItemCollapsibleState, Uri, TreeItem, Command } from 'vscode';
 import * as path from 'path';
 import { ContextType } from '../kn/config';
 import { KnativeItem } from '../knative/knativeItem';
-import { GlyphChars } from '../util/constants';
 
 import format = require('string-format');
 
@@ -63,7 +62,6 @@ export interface TreeObject extends TreeItem {
   contextValue: string;
   compType?: string;
   contextPath?: Uri;
-  deployed: boolean;
   path?: string;
 }
 
@@ -74,17 +72,10 @@ export class KnativeTreeObject implements TreeObject {
     public readonly item: KnativeItem,
     public readonly name: string,
     public readonly contextValue: ContextType,
-    public deployed: boolean,
     public readonly collapsibleState: TreeItemCollapsibleState = Collapsed,
     public contextPath?: Uri,
     public readonly compType?: string,
   ) {}
-
-  detail?: string;
-
-  picked?: boolean;
-
-  alwaysShow?: boolean;
 
   private explorerPath: string;
 
@@ -110,20 +101,12 @@ export class KnativeTreeObject implements TreeObject {
   }
 
   get label(): string {
-    const label = this.contextValue === ContextType.CLUSTER ? this.name.split('//')[1] : this.name;
+    const label = this.name;
     return label;
   }
 
   get description(): string {
-    let suffix = '';
-    if (this.contextValue === ContextType.COMPONENT) {
-      suffix = `${GlyphChars.Space}${GlyphChars.NotPushed} not pushed`;
-    } else if (this.contextValue === ContextType.COMPONENT_PUSHED) {
-      suffix = `${GlyphChars.Space}${GlyphChars.Push} pushed`;
-    } else if (this.contextValue === ContextType.COMPONENT_NO_CONTEXT) {
-      suffix = `${GlyphChars.Space}${GlyphChars.NoContext} no context`;
-    }
-    return suffix;
+    return this.name;
   }
 
   getName(): string {
