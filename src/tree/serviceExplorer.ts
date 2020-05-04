@@ -33,8 +33,10 @@ export class ServiceExplorer implements Disposable {
     console.log(`serviceExplorer.constructor: before create tree`);
     // Initialize the tree/explorer view by linking the refernece in the package.json to this class.
     this.treeView = window.createTreeView('knativeProjectExplorerServices', { treeDataProvider });
-    commands.registerCommand('knative.service.create', () => treeDataProvider.addService());
-    commands.registerCommand('knative.explorer.refresh', () => treeDataProvider.refresh());
+    commands.registerCommand('service.explorer.create', () => treeDataProvider.addService());
+    commands.registerCommand('service.explorer.refresh', () => treeDataProvider.refresh());
+    commands.registerCommand('service.explorer.reportIssue', () => this.reportIssue());
+
 
     // eslint-disable-next-line no-console
     console.log(`serviceExplorer.constructor end`);
@@ -53,7 +55,8 @@ export class ServiceExplorer implements Disposable {
     await this.treeView.reveal(item);
   }
 
-  public static async reportIssue(): Promise<unknown> {
+  // eslint-disable-next-line class-methods-use-this
+  public async reportIssue(): Promise<unknown> {
     return commands.executeCommand('vscode.open', Uri.parse(issueUrl()));
   }
 }

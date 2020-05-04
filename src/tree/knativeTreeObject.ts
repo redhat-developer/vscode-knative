@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See LICENSE file in the project root for license information.
  *-----------------------------------------------------------------------------------------------*/
 
-import { ProviderResult, TreeItemCollapsibleState, Uri, TreeItem, Command } from 'vscode';
+import { ProviderResult, TreeItemCollapsibleState, Uri, TreeItem } from 'vscode';
 import * as path from 'path';
 import { ContextType } from '../kn/config';
 import { KnativeItem } from '../knative/knativeItem';

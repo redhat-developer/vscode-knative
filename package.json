@@ -114,38 +114,42 @@
   "activationEvents": [
     "onView:knativeProjectExplorerServices",
     "onCommand:knative.service.list",
-    "onCommand:knative.explorer.refresh",
-    "onCommand:knative.explorer.reportIssue"
+    "onCommand:service.explorer.refresh",
+    "onCommand:service.explorer.reportIssue"
   ],
   "contributes": {
     "commands": [
       {
-        "command": "knative.service.create",
+        "command": "service.explorer.create",
         "title": "Add Service",
         "category": "Knative",
         "icon": "$(plus)"
       },
       {
-        "command": "knative.explorer.refresh",
+        "command": "knative.service.open-in-browser",
+        "title": "Open in Browser",
+        "category": "Knative"
+      },
+      {
+        "command": "service.explorer.openFile",
+        "title": "Open File"
+      },
+      {
+        "command": "service.explorer.refresh",
         "title": "Refresh View",
         "category": "Knative",
         "icon": "$(refresh)"
       },
       {
-        "command": "knative.explorer.reportIssue",
+        "command": "service.explorer.reportIssue",
         "title": "Report Extension Issue on GitHub",
         "category": "Knative",
         "icon": "$(issues)"
-      },
-      {
-        "command": "knative.service.open-in-browser",
-        "title": "Open in Browser",
-        "category": "Knative"
       }
     ],
     "keybindings": [
       {
-        "command": "knative.explorer.refresh",
+        "command": "service.explorer.refresh",
         "key": "alt+shift+r",
         "mac": "ctrl+shift+r"
       }
@@ -161,17 +165,17 @@
       ],
       "view/title": [
         {
-          "command": "knative.service.create",
+          "command": "service.explorer.create",
           "when": "view == knativeProjectExplorerServices",
           "group": "navigation@0"
         },
         {
-          "command": "knative.explorer.refresh",
+          "command": "service.explorer.refresh",
           "when": "view == knativeProjectExplorerServices",
           "group": "navigation@1"
         },
         {
-          "command": "knative.explorer.reportIssue",
+          "command": "service.explorer.reportIssue",
           "when": "view == knativeProjectExplorerServices",
           "group": "navigation@2"
         }

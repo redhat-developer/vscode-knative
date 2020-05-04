@@ -21,7 +21,6 @@ export function activate(extensionContext: vscode.ExtensionContext): void {
   // Now provide the implementation of the command with registerCommand
   // The commandId parameter must match the command field in package.json
   const disposable = [
-    vscode.commands.registerCommand('knative.explorer.reportIssue', () => ServiceExplorer.reportIssue()),
     vscode.commands.registerCommand('knative.service.open-in-browser', (context: TreeObject) => {
       const service = context.getKnativeItem() as Service;
       vscode.commands.executeCommand('vscode.open', vscode.Uri.parse(service.image));
