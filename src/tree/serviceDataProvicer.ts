@@ -375,6 +375,7 @@ export class ServiceDataProvider implements TreeDataProvider<TreeObject> {
     };
     const child: TreeObject = createKnObj(service);
     const parent = this.treeModel.addChildToParent(child, this.ROOT);
+    this.refresh();
     return parent;
     // return this.insertAndRevealService(createKnObj(servObj.name));
   }
