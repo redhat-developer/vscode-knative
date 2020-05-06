@@ -9,9 +9,11 @@ import { KnCliConfig } from './kn-cli-config';
 import { KnCli, Cli, CliCommand, CliExitData, cliCommandToString } from './knCli';
 import { WindowUtil } from '../util/windowUtils';
 
-const cli: Cli = KnCli.getInstance();
+export class KnExecute {
+  private cli: Cli = KnCli.getInstance();
 
-export async function executeInTerminal(
+// eslint-disable-next-line class-methods-use-this
+public async executeInTerminal(
   command: CliCommand,
   cwd: string = process.cwd(),
   name = 'Knative',
@@ -28,7 +30,7 @@ export async function executeInTerminal(
   terminal.show();
 }
 
-export async function execute(
+public async execute(
   command: CliCommand,
   cwd?: string,
   fail = true,
@@ -39,12 +41,15 @@ export async function execute(
   if (toolLocation) {
     cmd.cliCommand = toolLocation;
   }
-  return cli
+  return this.cli
     .execute(cmd, cwd ? { cwd } : {})
     .then(async (result) => (result.error && fail ? Promise.reject(result.error) : result))
     .catch((err) =>
       fail ? Promise.reject(err) : Promise.resolve({ error: null, stdout: '', stderr: '' }),
     );
+}
+
+
 }
 
 export function loadItems(result: CliExitData): any[] {
