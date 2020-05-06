@@ -7,7 +7,7 @@ import { commands, Disposable, extensions, TreeView, Uri, version, window } from
 import * as path from 'path';
 import { Platform } from '../util/platform';
 import { TreeObject } from './knativeTreeObject';
-import { ServiceDataProvider } from './serviceDataProvicer';
+import { ServiceDataProvider } from './serviceDataProvider';
 import { WatchUtil, FileContentChangeNotifier } from '../util/watch';
 
 const kubeConfigFolder: string = path.join(Platform.getUserHomePath(), '.kube');

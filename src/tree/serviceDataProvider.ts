@@ -6,7 +6,7 @@
 import { Event, ProviderResult, EventEmitter, TreeDataProvider, TreeItem, TreeItemCollapsibleState, window } from 'vscode';
 import * as validator from 'validator';
 import { TreeObject, KnativeTreeObject, compareNodes } from './knativeTreeObject';
-import { execute, loadItems } from '../kn/knExecute';
+import { KnExecute, loadItems } from '../kn/knExecute';
 import { CliExitData } from '../kn/knCli';
 import { KnAPI } from '../kn/kn-api';
 import { ContextType } from '../kn/config';
@@ -16,6 +16,8 @@ import { KnativeTreeModel } from './knativeTreeModel';
 import { KnativeServices } from '../knative/knativeServices';
 
 export class ServiceDataProvider implements TreeDataProvider<TreeObject> {
+
+  public knExecutor = new KnExecute();
 
   private onDidChangeTreeDataEmitter: EventEmitter<TreeObject | undefined | null> = new EventEmitter<
     TreeObject | undefined | null
@@ -146,7 +148,8 @@ export class ServiceDataProvider implements TreeDataProvider<TreeObject> {
     // eslint-disable-next-line no-console
     console.log(`serviceDataProvider._getRevisions start`);
     // Get the raw data from the cli call.
-    const result: CliExitData = await execute(KnAPI.listRevisions());
+
+    const result: CliExitData = await this.knExecutor.execute(KnAPI.listRevisions());
     const revisions: Revision[] = this.ksvc.addRevisions(loadItems(result).map((value) => Revision.toRevision(value)));
 
     if (revisions.length === 0) {
@@ -210,7 +213,7 @@ export class ServiceDataProvider implements TreeDataProvider<TreeObject> {
     // eslint-disable-next-line no-console
     console.log(`serviceDataProvider._getServices start`);
     // Get the raw data from the cli call.
-    const result: CliExitData = await execute(KnAPI.listServices());
+    const result: CliExitData = await this.knExecutor.execute(KnAPI.listServices());
     const services: Service[] = this.ksvc.addServices(loadItems(result).map((value) => Service.toService(value)));
     // Pull out the name of the service from the raw data.
     // Create an empty state message when there is no Service.
@@ -261,7 +264,7 @@ export class ServiceDataProvider implements TreeDataProvider<TreeObject> {
   }
 
   public async deleteService(service: TreeObject): Promise<TreeObject> {
-    await execute(KnAPI.deleteServices(service.getName()));
+    await this.knExecutor.execute(KnAPI.deleteServices(service.getName()));
     return this.deleteAndRefresh(service);
   }
 
@@ -347,7 +350,7 @@ export class ServiceDataProvider implements TreeDataProvider<TreeObject> {
     }
 
     // Get the raw data from the cli call.
-    const result: CliExitData = await execute(KnAPI.createService(servObj));
+    const result: CliExitData = await this.knExecutor.execute(KnAPI.createService(servObj));
     const service: Service = new Service(servObj.name, servObj.image);
 
     this.ksvc.addService(service);
@@ -377,7 +380,7 @@ export class ServiceDataProvider implements TreeDataProvider<TreeObject> {
   }
 
   public async requireLogin(): Promise<boolean> {
-    const result: CliExitData = await execute(KnAPI.printKnVersion(), process.cwd(), false);
+    const result: CliExitData = await this.knExecutor.execute(KnAPI.printKnVersion(), process.cwd(), false);
     return this.knLoginMessages.some((msg) => result.stderr.includes(msg));
   }
 
