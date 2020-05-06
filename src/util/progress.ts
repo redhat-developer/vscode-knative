@@ -4,8 +4,10 @@
  *-----------------------------------------------------------------------------------------------*/
 
 import * as vscode from 'vscode';
-import { execute } from '../kn/knExecute';
+import { KnExecute } from '../kn/knExecute';
 import { CliCommand, createCliCommand } from '../kn/knCli';
+
+const executor = new KnExecute();
 
 export interface Step {
   command: CliCommand;
@@ -29,7 +31,7 @@ export class Progress {
             calls.push(async () => {
               await Promise.resolve();
               progress.report({ increment: previous.increment, message: `${previous.total}%` });
-              await execute(_current.command);
+              await executor.execute(_current.command);
               if (currentIndex + 1 === innerSteps.length) {
                 progress.report({
                   increment: _current.increment,
@@ -58,7 +60,7 @@ export class Progress {
           title,
         },
         async () => {
-          const result = await execute(cmd, process.cwd(), false);
+          const result = await executor.execute(cmd, process.cwd(), false);
           if (result.error) {
             reject(result.error);
           } else {
