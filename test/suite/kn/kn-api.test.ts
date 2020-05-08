@@ -199,4 +199,23 @@ suite('KN API commands that will', () => {
       assert.deepEqual(command.cliArguments, commandAPI.cliArguments);
     });
   });
+
+  suite('List revisions', () => {
+    test('should return command for listing all revisions', () => {
+      const command: CliCommand = {
+        cliArguments: ['revision', 'list','-o','json'],
+        cliCommand: 'kn'
+      }
+      assert.deepEqual(command.cliArguments, KnAPI.listRevisions().cliArguments);
+     });
+     test('should return command for listing revisions for a service', () => {
+      const sname ='myservice'
+      const command: CliCommand = {
+        cliArguments: ['revision', 'list','-o','json', '-s', sname],
+        cliCommand: 'kn'
+      }
+      assert.deepEqual(command.cliArguments, KnAPI.listRevisionsForService(sname).cliArguments);
+     });
+  });
+
 });
