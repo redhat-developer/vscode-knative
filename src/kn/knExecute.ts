@@ -12,44 +12,32 @@ import { WindowUtil } from '../util/windowUtils';
 export class KnExecute {
   private cli: Cli = KnCli.getInstance();
 
-// eslint-disable-next-line class-methods-use-this
-public async executeInTerminal(
-  command: CliCommand,
-  cwd: string = process.cwd(),
-  name = 'Knative',
-): Promise<void> {
-  // Get the first word in the command string sent.
-  const cmd = command.cliCommand;
-  // Get the location of the installed cli tool.
-  let toolLocation = await KnCliConfig.detectOrDownload(cmd);
-  if (toolLocation) {
-    toolLocation = path.dirname(toolLocation);
+  // eslint-disable-next-line class-methods-use-this
+  public async executeInTerminal(command: CliCommand, cwd: string = process.cwd(), name = 'Knative'): Promise<void> {
+    // Get the first word in the command string sent.
+    const cmd = command.cliCommand;
+    // Get the location of the installed cli tool.
+    let toolLocation = await KnCliConfig.detectOrDownload(cmd);
+    if (toolLocation) {
+      toolLocation = path.dirname(toolLocation);
+    }
+    const terminal: Terminal = WindowUtil.createTerminal(name, cwd, toolLocation);
+    terminal.sendText(cliCommandToString(command), true);
+    terminal.show();
   }
-  const terminal: Terminal = WindowUtil.createTerminal(name, cwd, toolLocation);
-  terminal.sendText(cliCommandToString(command), true);
-  terminal.show();
-}
 
-public async execute(
-  command: CliCommand,
-  cwd?: string,
-  fail = true,
-): Promise<CliExitData> {
-  const cmd = command;
-  const cmdProgram = command.cliCommand;
-  const toolLocation = await KnCliConfig.detectOrDownload(cmdProgram);
-  if (toolLocation) {
-    cmd.cliCommand = toolLocation;
+  public async execute(command: CliCommand, cwd?: string, fail = true): Promise<CliExitData> {
+    const cmd = command;
+    const cmdProgram = command.cliCommand;
+    const toolLocation = await KnCliConfig.detectOrDownload(cmdProgram);
+    if (toolLocation) {
+      cmd.cliCommand = toolLocation;
+    }
+    return this.cli
+      .execute(cmd, cwd ? { cwd } : {})
+      .then(async (result) => (result.error && fail ? Promise.reject(result.error) : result))
+      .catch((err) => (fail ? Promise.reject(err) : Promise.resolve({ error: null, stdout: '', stderr: '' })));
   }
-  return this.cli
-    .execute(cmd, cwd ? { cwd } : {})
-    .then(async (result) => (result.error && fail ? Promise.reject(result.error) : result))
-    .catch((err) =>
-      fail ? Promise.reject(err) : Promise.resolve({ error: null, stdout: '', stderr: '' }),
-    );
-}
-
-
 }
 
 export function loadItems(result: CliExitData): any[] {

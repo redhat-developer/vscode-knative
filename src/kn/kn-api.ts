@@ -101,6 +101,19 @@ export class KnAPI {
   }
 
   /**
+   * Describe the Knative feature in the `outputFormat`, if provided, for the `name` given.
+   *
+   * @param feature - This should be `service`, `revision`, etc
+   */
+  static describeFeature(feature: string, name: string, outputFormat?: string): CliCommand {
+    const a = [feature, `describe`, name];
+    if (outputFormat) {
+      a.push(...['-o', outputFormat]);
+    }
+    return newKnCommand(a);
+  }
+
+  /**
    * Delete a Knative Services.
    *
    * @param name - the Name of the Service to be deleted.

@@ -3,7 +3,9 @@
  *  Licensed under the MIT License. See LICENSE file in the project root for license information.
  *-----------------------------------------------------------------------------------------------*/
 
-import { Uri } from 'vscode';
+import { Uri, workspace } from 'vscode';
+
+const EXTENSION_CONFIG_KEY = "vs-knative";
 
 export const enum Kind {
   LocalConfig,
@@ -43,4 +45,8 @@ export interface ComponentSettings {
   Name: string;
   ContextPath?: Uri;
   Ports: string[];
+}
+
+export function getOutputFormat(): string {
+  return workspace.getConfiguration(EXTENSION_CONFIG_KEY)['vs-knative.outputFormat'];
 }

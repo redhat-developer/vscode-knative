@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See LICENSE file in the project root for license information.
  *-----------------------------------------------------------------------------------------------*/
 
-import { ProviderResult, TreeItemCollapsibleState, Uri, TreeItem } from 'vscode';
+import { ProviderResult, TreeItemCollapsibleState, Uri, TreeItem, Command } from 'vscode';
 import * as path from 'path';
 import { ContextType } from '../kn/config';
 import { KnativeItem } from '../knative/knativeItem';
@@ -107,6 +107,15 @@ export class KnativeTreeObject implements TreeObject {
 
   get description(): string {
     return this.name;
+  }
+
+  get command(): Command {
+    const c: Command = {
+      command: 'service.explorer.openFile',
+      title: 'Load',
+      arguments: [this],
+    };
+    return c;
   }
 
   getName(): string {

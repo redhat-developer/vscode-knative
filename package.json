@@ -114,6 +114,7 @@
   "activationEvents": [
     "onView:knativeProjectExplorerServices",
     "onCommand:knative.service.list",
+    "onCommand:service.explorer.openFile",
     "onCommand:service.explorer.refresh",
     "onCommand:service.explorer.reportIssue"
   ],
@@ -132,7 +133,8 @@
       },
       {
         "command": "service.explorer.openFile",
-        "title": "Open File"
+        "title": "Open File",
+        "category": "Knative"
       },
       {
         "command": "service.explorer.refresh",
@@ -159,6 +161,11 @@
       "view/item/context": [
         {
           "command": "knative.service.open-in-browser",
+          "when": "view == knativeProjectExplorerServices && viewItem == service",
+          "group": "c1"
+        },
+        {
+          "command": "service.explorer.openFile",
           "when": "view == knativeProjectExplorerServices && viewItem == service",
           "group": "c1"
         }
@@ -219,6 +226,23 @@
           "type": "boolean",
           "default": false,
           "description": "Show Knative Connector output channel when new text added to output stream."
+        },
+        "vs-knative": {
+          "type": "object",
+          "description": "knative configuration",
+          "properties": {
+            "vs-knative.outputFormat": {
+              "enum": [
+                "json",
+                "yaml"
+              ],
+              "type": "string",
+              "description": "Output format for knative specs. One of 'json' or 'yaml' (default)."
+            }
+          },
+          "default": {
+            "vs-knative.outputFormat": "yaml"
+          }
         }
       }
     }
