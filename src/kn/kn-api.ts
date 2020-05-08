@@ -117,6 +117,16 @@ export class KnAPI {
     return newKnCommand(a);
   }
 
+
+  /**
+   * Return the list of all Knative Revisions in JSON format in the current namespace.
+   */
+  static listRevisionsForService(service: string ): CliCommand {
+    const a = ['revision', 'list', '-o', 'json', '-s', service];
+    return newKnCommand(a);
+  }
+
+
   static printKnVersion(): CliCommand {
     return newKnCommand([`version`]);
   }
