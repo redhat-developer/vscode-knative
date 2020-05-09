@@ -114,6 +114,7 @@
   "activationEvents": [
     "onView:knativeProjectExplorerServices",
     "onCommand:knative.service.list",
+    "onCommand:service.explorer.delete",
     "onCommand:service.explorer.openFile",
     "onCommand:service.explorer.refresh",
     "onCommand:service.explorer.reportIssue"
@@ -129,6 +130,11 @@
       {
         "command": "knative.service.open-in-browser",
         "title": "Open in Browser",
+        "category": "Knative"
+      },
+      {
+        "command": "service.explorer.delete",
+        "title": "Delete",
         "category": "Knative"
       },
       {
@@ -166,6 +172,11 @@
         },
         {
           "command": "service.explorer.openFile",
+          "when": "view == knativeProjectExplorerServices && viewItem == service",
+          "group": "c1"
+        },
+        {
+          "command": "service.explorer.delete",
           "when": "view == knativeProjectExplorerServices && viewItem == service",
           "group": "c1"
         }
