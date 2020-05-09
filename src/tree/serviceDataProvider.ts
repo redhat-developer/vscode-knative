@@ -5,7 +5,7 @@
 
 import { Event, ProviderResult, EventEmitter, TreeDataProvider, TreeItem, TreeItemCollapsibleState, window } from 'vscode';
 import * as validator from 'validator';
-import { TreeObject, KnativeTreeObject, compareNodes } from './knativeTreeObject';
+import { KnativeTreeItem, KnativeTreeItemObject, compareNodes } from './knativeTreeItem';
 import { KnExecute, loadItems } from '../kn/knExecute';
 import { CliExitData } from '../kn/knCli';
 import { KnAPI } from '../kn/kn-api';
@@ -14,22 +14,16 @@ import { Service, CreateService } from '../knative/service';
 import { Revision } from '../knative/revision';
 import { KnativeServices } from '../knative/knativeServices';
 
-export class ServiceDataProvider implements TreeDataProvider<TreeObject> {
-
+export class ServiceDataProvider implements TreeDataProvider<KnativeTreeItem> {
   public knExecutor = new KnExecute();
 
-  private onDidChangeTreeDataEmitter: EventEmitter<TreeObject | undefined | null> = new EventEmitter<
-    TreeObject | undefined | null
+  private onDidChangeTreeDataEmitter: EventEmitter<KnativeTreeItem | undefined | null> = new EventEmitter<
+    KnativeTreeItem | undefined | null
   >();
 
-  readonly onDidChangeTreeData: Event<TreeObject | undefined | null> = this.onDidChangeTreeDataEmitter.event;
+  readonly onDidChangeTreeData: Event<KnativeTreeItem | undefined | null> = this.onDidChangeTreeDataEmitter.event;
 
-  // eslint-disable-next-line no-useless-constructor
-  public constructor() {
-    // do something if needed, but this is private for the singleton
-  }
-
-  refresh(target?: TreeObject): void {
+  refresh(target?: KnativeTreeItem): void {
     this.onDidChangeTreeDataEmitter.fire(target);
   }
 
@@ -40,7 +34,7 @@ export class ServiceDataProvider implements TreeDataProvider<TreeObject> {
    * @param element TreeObject
    */
   // eslint-disable-next-line class-methods-use-this
-  getTreeItem(element: TreeObject): TreeItem | Thenable<TreeItem> {
+  getTreeItem(element: KnativeTreeItem): TreeItem | Thenable<TreeItem> {
     return element;
   }
 
@@ -56,8 +50,8 @@ export class ServiceDataProvider implements TreeDataProvider<TreeObject> {
    *
    * @param element TreeObject
    */
-  getChildren(element?: TreeObject): ProviderResult<TreeObject[]> {
-    let children: ProviderResult<TreeObject[]>;
+  getChildren(element?: KnativeTreeItem): ProviderResult<KnativeTreeItem[]> {
+    let children: ProviderResult<KnativeTreeItem[]>;
     if (element) {
       if (element.contextValue === 'service') {
         children = this.getRevisions(element);
@@ -65,17 +59,15 @@ export class ServiceDataProvider implements TreeDataProvider<TreeObject> {
         children = element.getChildren();
       }
     } else {
-      children = this.getServices() as ProviderResult<TreeObject[]>;
+      children = this.getServices() as ProviderResult<KnativeTreeItem[]>;
     }
-    // eslint-disable-next-line no-console
     return children;
   }
 
   // eslint-disable-next-line class-methods-use-this
-  getParent?(element: TreeObject): TreeObject {
+  getParent?(element: KnativeTreeItem): KnativeTreeItem {
     return element.getParent();
   }
-
 
   private ksvc: KnativeServices = KnativeServices.Instance;
 
@@ -86,31 +78,25 @@ export class ServiceDataProvider implements TreeDataProvider<TreeObject> {
     'Unauthorized',
   ];
 
-
-  public ROOT: TreeObject = new KnativeTreeObject(undefined, undefined, '/', undefined, undefined);
-
   /**
-   * The Revision is a child of Service. Every update makes a new Revision.
+   * The Revision is a child of Service. Every update makes a new Revision.  
    * Fetch the Revisions and associate them with their parent Services.
+   *
+   * @param parentService
    */
-  public async getRevisions(parentService: TreeObject): Promise<TreeObject[]> {
-    const revisionTreeObjects: TreeObject[] = await this._getRevisions(parentService);
-    return revisionTreeObjects;
-  }
-
-  private async _getRevisions(parentService: TreeObject): Promise<TreeObject[]> {
+  public async getRevisions(parentService: KnativeTreeItem): Promise<KnativeTreeItem[]> {
     const result: CliExitData = await this.knExecutor.execute(KnAPI.listRevisionsForService(parentService.getName()));
     const revisions: Revision[] = this.ksvc.addRevisions(loadItems(result).map((value) => Revision.toRevision(value)));
 
+    // If there are no Revisions then there is either no Service or an error.
     if (revisions.length === 0) {
-      // If there are no Revisions then there is either no Service or an error.
       return;
     }
 
-    // Create the Service tree item for each one found.
-    const revisionTreeObjects: TreeObject[] = revisions
-      .map<TreeObject>((value) => {
-        const obj: TreeObject = new KnativeTreeObject(
+    // Create the Revision tree item for each one found.
+    const revisionTreeObjects: KnativeTreeItem[] = revisions
+      .map<KnativeTreeItem>((value) => {
+        const obj: KnativeTreeItem = new KnativeTreeItemObject(
           parentService,
           value,
           value.name,
@@ -129,15 +115,7 @@ export class ServiceDataProvider implements TreeDataProvider<TreeObject> {
   /**
    * The Service is the highest level of the tree for Knative. This method sets it at the root if not already done.
    */
-  public async getServices(): Promise<TreeObject[]> {
-    const children = await this._getServices();
-    if (children.length === 1 && children[0].label === 'No Service Found') {
-      return children;
-    }
-    return children;
-  }
-
-  private async _getServices(): Promise<TreeObject[]> {
+  public async getServices(): Promise<KnativeTreeItem[]> {
     // Get the raw data from the cli call.
     const result: CliExitData = await this.knExecutor.execute(KnAPI.listServices());
     const services: Service[] = this.ksvc.addServices(loadItems(result).map((value) => Service.toService(value)));
@@ -145,7 +123,7 @@ export class ServiceDataProvider implements TreeDataProvider<TreeObject> {
     // Create an empty state message when there is no Service.
     if (services.length === 0) {
       return [
-        new KnativeTreeObject(
+        new KnativeTreeItemObject(
           null,
           null,
           'No Service Found',
@@ -156,10 +134,10 @@ export class ServiceDataProvider implements TreeDataProvider<TreeObject> {
         ),
       ];
     }
-    // Create the Service tree item for each one found.
-    return services
-      .map<TreeObject>((value) => {
-        const obj: TreeObject = new KnativeTreeObject(
+    // Convert the fetch Services into TreeItems
+    const children = services
+      .map<KnativeTreeItem>((value) => {
+        const obj: KnativeTreeItem = new KnativeTreeItemObject(
           null,
           value,
           value.name,
@@ -171,10 +149,14 @@ export class ServiceDataProvider implements TreeDataProvider<TreeObject> {
         return obj;
       })
       .sort(compareNodes);
+
+    if (children.length === 1 && children[0].label === 'No Service Found') {
+      return children;
+    }
+    return children;
   }
 
-
-  public async deleteService(service: TreeObject): Promise<void>{
+  public async deleteService(service: KnativeTreeItem): Promise<void> {
     await this.knExecutor.execute(KnAPI.deleteServices(service.getName()));
     this.refresh();
   }
@@ -247,7 +229,7 @@ export class ServiceDataProvider implements TreeDataProvider<TreeObject> {
     return service;
   }
 
-  public async addService(): Promise<TreeObject[]> {
+  public async addService(): Promise<KnativeTreeItem[]> {
     const image: string = await this.getUrl();
 
     if (!image) {
@@ -278,5 +260,4 @@ export class ServiceDataProvider implements TreeDataProvider<TreeObject> {
     const result: CliExitData = await this.knExecutor.execute(KnAPI.printKnVersion(), process.cwd(), false);
     return this.knLoginMessages.some((msg) => result.stderr.includes(msg));
   }
-
 }

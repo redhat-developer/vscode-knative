@@ -109,16 +109,6 @@ export class KnativeResourceVirtualFileSystemProvider implements FileSystemProvi
 
     const er = eer.result;
 
-    // if (ExecResult.failed(er)) {
-    //   const message = ExecResult.failureMessage(er, { whatFailed: 'Get command failed' });
-    //   if (er.resultKind === 'exec-bin-not-found') {
-    //     // this.kubectl.promptInstallDependencies(er, message); // It doesn't matter which bincontext we go through for this  // TODO: have a shared exec context with the host, shell and fs members
-    //   } else {
-    //     this.host.showErrorMessage(message);
-    //   }
-    //   throw message;
-    // }
-
     return er.stdout;
   }
 

@@ -41,7 +41,7 @@ const CONTEXT_DATA = {
  * @param a TreeObject
  * @param b TreeObject
  */
-export function compareNodes(a: TreeObject, b: TreeObject): number {
+export function compareNodes(a: KnativeTreeItem, b: KnativeTreeItem): number {
   if (!a.contextValue) {
     return -1;
   }
@@ -54,9 +54,9 @@ export function compareNodes(a: TreeObject, b: TreeObject): number {
   return t || a.label.localeCompare(b.label);
 }
 
-export interface TreeObject extends TreeItem {
-  getChildren(): ProviderResult<TreeObject[]>;
-  getParent(): TreeObject;
+export interface KnativeTreeItem extends TreeItem {
+  getChildren(): ProviderResult<KnativeTreeItem[]>;
+  getParent(): KnativeTreeItem;
   getKnativeItem(): KnativeItem;
   getName(): string;
   contextValue: string;
@@ -65,10 +65,10 @@ export interface TreeObject extends TreeItem {
   path?: string;
 }
 
-export class KnativeTreeObject implements TreeObject {
+export class KnativeTreeItemObject implements KnativeTreeItem {
   // eslint-disable-next-line no-useless-constructor
   constructor(
-    private parent: TreeObject,
+    private parent: KnativeTreeItem,
     public readonly item: KnativeItem,
     public readonly name: string,
     public readonly contextValue: ContextType,
@@ -81,7 +81,7 @@ export class KnativeTreeObject implements TreeObject {
 
   get path(): string {
     if (!this.explorerPath) {
-      let parent: TreeObject;
+      let parent: KnativeTreeItem;
       const segments: string[] = [];
       do {
         segments.splice(0, 0, this.getName());
@@ -122,11 +122,11 @@ export class KnativeTreeObject implements TreeObject {
     return this.name;
   }
 
-  getChildren(): ProviderResult<TreeObject[]> {
+  getChildren(): ProviderResult<KnativeTreeItem[]> {
     return CONTEXT_DATA[this.contextValue].getChildren();
   }
 
-  getParent(): TreeObject {
+  getParent(): KnativeTreeItem {
     return this.parent;
   }
 
