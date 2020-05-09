@@ -79,7 +79,7 @@ export class ServiceDataProvider implements TreeDataProvider<KnativeTreeItem> {
   ];
 
   /**
-   * The Revision is a child of Service. Every update makes a new Revision.  
+   * The Revision is a child of Service. Every update makes a new Revision.
    * Fetch the Revisions and associate them with their parent Services.
    *
    * @param parentService
@@ -150,9 +150,6 @@ export class ServiceDataProvider implements TreeDataProvider<KnativeTreeItem> {
       })
       .sort(compareNodes);
 
-    if (children.length === 1 && children[0].label === 'No Service Found') {
-      return children;
-    }
     return children;
   }
 
@@ -222,9 +219,7 @@ export class ServiceDataProvider implements TreeDataProvider<KnativeTreeItem> {
     if (!name) {
       return null;
     }
-    if (name === imageName && !force) {
-      return null;
-    }
+
     const service: CreateService = { name, image, force };
     return service;
   }
