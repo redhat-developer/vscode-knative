@@ -28,8 +28,8 @@ export class KnExecute {
 
   public async execute(command: CliCommand, cwd?: string, fail = true): Promise<CliExitData> {
     const cmd = command;
-    const cmdProgram = command.cliCommand;
-    const toolLocation = await KnCliConfig.detectOrDownload(cmdProgram);
+    // Get the location of the cli tool and add it as a path to the command so that it will run.
+    const toolLocation = await KnCliConfig.detectOrDownload(cmd.cliCommand);
     if (toolLocation) {
       cmd.cliCommand = toolLocation;
     }
