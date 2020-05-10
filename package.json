@@ -139,7 +139,7 @@
       },
       {
         "command": "service.explorer.openFile",
-        "title": "Open File",
+        "title": "Describe",
         "category": "Knative"
       },
       {
@@ -167,11 +167,6 @@
       "view/item/context": [
         {
           "command": "knative.service.open-in-browser",
-          "when": "view == knativeProjectExplorerServices && viewItem == service",
-          "group": "c1"
-        },
-        {
-          "command": "service.explorer.openFile",
           "when": "view == knativeProjectExplorerServices && viewItem == service",
           "group": "c1"
         },
