@@ -49,42 +49,42 @@ export class KnAPI {
    */
   static createService(createServiceObj: CreateService): CliCommand {
     // Set up the initial values for the command.
-    const commandArguments: string[] = [`service`, `create`];
+    const commandArguments: string[] = ['service', 'create'];
     // check if --force was set
     if (createServiceObj.force) {commandArguments.push('--force');}
     // It should always have a name value.
     commandArguments.push(createServiceObj.name);
     // If the port was set, use it.
     if (createServiceObj.port) {
-      commandArguments.push(`--port`);
+      commandArguments.push('--port');
       commandArguments.push(`${createServiceObj.port}`);
     }
     // If ENV variables were included, add them all.
     if (createServiceObj.env) {
       createServiceObj.env.forEach((value, key) => {
-        commandArguments.push(`--env`);
+        commandArguments.push('--env');
         commandArguments.push(`${key.toUpperCase()}=${value.toUpperCase()}`);
       });
     }
     // It should always have an image value.
-    commandArguments.push(`--image`);
+    commandArguments.push('--image');
     commandArguments.push(`${createServiceObj.image}`);
     // If a namespace is listed, use it.
     if (createServiceObj.namespace) {
-      commandArguments.push(`-n`);
+      commandArguments.push('-n');
       commandArguments.push(`${createServiceObj.namespace}`);
     }
     // If annotations were added then include them all.
     if (createServiceObj.annotation) {
       createServiceObj.annotation.forEach((value, key) => {
-        commandArguments.push(`--annotation`);
+        commandArguments.push('--annotation');
         commandArguments.push(`${key}=${value}`);
       });
     }
     // If labels were added then include them all.
     if (createServiceObj.label) {
       createServiceObj.label.forEach((value, key) => {
-        commandArguments.push(`--label`);
+        commandArguments.push('--label');
         commandArguments.push(`${key}=${value}`);
       });
     }
@@ -96,7 +96,7 @@ export class KnAPI {
    * Return the list of Knative Services in JSON format.
    */
   static listServices(): CliCommand {
-    const a = [`service`, `list`, `-o`, `json`];
+    const a = ['service', 'list', '-o', 'json'];
     return newKnCommand(a);
   }
 
@@ -106,7 +106,7 @@ export class KnAPI {
    * @param feature - This should be `service`, `revision`, etc
    */
   static describeFeature(feature: string, name: string, outputFormat?: string): CliCommand {
-    const a = [feature, `describe`, name];
+    const a = [feature, 'describe', name];
     if (outputFormat) {
       a.push(...['-o', outputFormat]);
     }
@@ -119,14 +119,14 @@ export class KnAPI {
    * @param name - the Name of the Service to be deleted.
    */
   static deleteServices(name: string): CliCommand {
-    return newKnCommand([`service`, `delete`, name]);
+    return newKnCommand(['service', 'delete', name]);
   }
 
   /**
    * Return the list of all Knative Revisions in JSON format in the current namespace.
    */
   static listRevisions(): CliCommand {
-    const a = [`revision`, `list`, `-o`, `json`];
+    const a = ['revision', 'list', '-o', 'json'];
     return newKnCommand(a);
   }
 
@@ -141,14 +141,14 @@ export class KnAPI {
 
 
   static printKnVersion(): CliCommand {
-    return newKnCommand([`version`]);
+    return newKnCommand(['version']);
   }
 
   // static printKnVersionAndProjects(): CliCommand {
-  //   return newKnCommand([`version`, `&&`, `kn`, `service`, `list`]);
+  //   return newKnCommand(['version', '&&', 'kn', 'service', 'list']);
   // }
 
   static knLogout(): CliCommand {
-    return newKnCommand([`logout`]);
+    return newKnCommand(['logout']);
   }
 }
