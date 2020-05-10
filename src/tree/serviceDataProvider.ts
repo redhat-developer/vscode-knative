@@ -153,9 +153,25 @@ export class ServiceDataProvider implements TreeDataProvider<KnativeTreeItem> {
     return children;
   }
 
-  public async deleteFeature(service: KnativeTreeItem): Promise<void> {
-    await this.knExecutor.execute(KnAPI.deleteFeature(service.contextValue, service.getName()));
-    this.refresh();
+  public async deleteFeature(node: KnativeTreeItem): Promise<void> {
+    const response = await window.showInformationMessage(
+      `YES to Delete.`,
+      { modal: true },
+      'Yes',
+      'No',
+    );
+    if (response === 'Yes') {
+      await this.knExecutor.execute(KnAPI.deleteFeature(node.contextValue, node.getName()));
+      this.refresh();
+      if (node.contextValue === 'service') {
+        this.ksvc.removeService(node.getName());
+      // TODO: The ksvc revisions are not being made correctly. Until we fix that, we can't remove one.
+      // } else if (node.contextValue === 'revision') {
+      //   this.ksvc.removeRevision(node.getName());
+      }
+      return null;
+    }
+    return null;
   }
 
   // eslint-disable-next-line class-methods-use-this

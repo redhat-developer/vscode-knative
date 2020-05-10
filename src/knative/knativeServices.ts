@@ -73,12 +73,21 @@ export class KnativeServices {
     return this.services;
   }
 
-  public removeService(service: Service): Service[] {
+  public removeService(name: string): Service[] {
     // find the index of the service passed in.
-    const servicdIndex: number = this.services.findIndex((s) => s.name === service.name);
+    const serviceIndex: number = this.services.findIndex((s) => s.name === name);
     // remove the service
-    this.services.splice(servicdIndex, 1);
+    this.services.splice(serviceIndex, 1);
     this.updateTree();
     return this.services;
+  }
+
+  public removeRevision(name: string): Revision[] {
+    // find the index of the revision passed in.
+    const revisionIndex: number = this.revisions.findIndex((s) => s.name === name);
+    // remove the revision
+    this.revisions.splice(revisionIndex, 1);
+    this.updateTree();
+    return this.revisions;
   }
 }
