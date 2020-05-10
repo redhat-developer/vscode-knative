@@ -173,7 +173,12 @@
         {
           "command": "service.explorer.delete",
           "when": "view == knativeProjectExplorerServices && viewItem == service",
-          "group": "c1"
+          "group": "c2"
+        },
+        {
+          "command": "service.explorer.delete",
+          "when": "view == knativeProjectExplorerServices && viewItem == revision",
+          "group": "c2"
         }
       ],
       "view/title": [

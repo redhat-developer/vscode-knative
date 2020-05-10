@@ -37,7 +37,7 @@ export class ServiceExplorer implements Disposable {
     this.treeView = window.createTreeView('knativeProjectExplorerServices', { treeDataProvider });
 
     commands.registerCommand('service.explorer.create', () => treeDataProvider.addService());
-    commands.registerCommand('service.explorer.delete', (treeItem: KnativeTreeItem) => treeDataProvider.deleteService(treeItem));
+    commands.registerCommand('service.explorer.delete', (treeItem: KnativeTreeItem) => treeDataProvider.deleteFeature(treeItem));
     commands.registerCommand('service.explorer.refresh', () => treeDataProvider.refresh());
     commands.registerCommand('service.explorer.reportIssue', () => reportIssue());
   }

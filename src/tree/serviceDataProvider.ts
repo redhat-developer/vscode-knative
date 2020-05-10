@@ -153,8 +153,8 @@ export class ServiceDataProvider implements TreeDataProvider<KnativeTreeItem> {
     return children;
   }
 
-  public async deleteService(service: KnativeTreeItem): Promise<void> {
-    await this.knExecutor.execute(KnAPI.deleteServices(service.getName()));
+  public async deleteFeature(service: KnativeTreeItem): Promise<void> {
+    await this.knExecutor.execute(KnAPI.deleteFeature(service.contextValue, service.getName()));
     this.refresh();
   }
 
