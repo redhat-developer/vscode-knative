@@ -34,6 +34,7 @@ For example if there is an image subfolder under your extension project workspac
 This extension contributes the following settings:
 
 * `service.explorer.create`: Create a new Knative service in the current namespace
+* `service.explorer.openFile`: Display yaml for selected item
 * `service.explorer.refresh`: Refresh the Explorer tree view
 * `service.explorer.reportIssue`: Report Extension Issue on GitHub
 * `knative.service.open-in-browser`: Open the list of Services in the browser
@@ -47,15 +48,20 @@ This extension contributes the following settings:
 
 > See [CHANGELOG](CHANGELOG.md) for details.
 
-### 0.1.0
+### 0.4.0
 
-- Initial release of the Knative extension
-- Display a list of Services
+- Display yaml file for Services and Revisions when selected.
+- Support Deletion of Services and Revisions
+
+### 0.3.0
+
+- Display Revisions for each Service
 
 ### 0.2.0
 
 - Create Service (Deploy Container Image)
 
-### 0.3.0
+### 0.1.0
 
-- Display Revisions for each Service
+- Initial release of the Knative extension
+- Display a list of Services
