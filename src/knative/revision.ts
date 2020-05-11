@@ -12,8 +12,6 @@ export class Revision extends KnativeItem {
 
   status: boolean;
 
-  static revisions: Revision[];
-
   static toRevision(value: any): Revision {
     const revision = new Revision();
     revision.name = value.metadata.name;

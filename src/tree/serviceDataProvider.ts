@@ -165,9 +165,8 @@ export class ServiceDataProvider implements TreeDataProvider<KnativeTreeItem> {
       this.refresh();
       if (node.contextValue === 'service') {
         this.ksvc.removeService(node.getName());
-      // TODO: The ksvc revisions are not being made correctly. Until we fix that, we can't remove one.
-      // } else if (node.contextValue === 'revision') {
-      //   this.ksvc.removeRevision(node.getName());
+      } else if (node.contextValue === 'revision') {
+        this.ksvc.removeRevision(node.getName());
       }
       return null;
     }
@@ -215,7 +214,7 @@ export class ServiceDataProvider implements TreeDataProvider<KnativeTreeItem> {
       ignoreFocusOut: true,
       prompt: 'Enter a Name for the Service',
       validateInput: async (nameUsed: string) => {
-        const found: Service = this.ksvc.findServices(nameUsed);
+        const found: Service = this.ksvc.findService(nameUsed);
         if (found) {
           const response = await window.showInformationMessage(
             `That name has already been used. Do you want to overwrite the Service?`,

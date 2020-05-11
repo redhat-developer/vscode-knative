@@ -7,6 +7,9 @@ import { Service } from './service';
 import { Revision } from './revision';
 // import { compareNodes } from '../kn/knativeTreeObject';
 
+type revisionService = {revision: Revision, service: Service};
+type revisionServiceIndex = {revisionIndex?: number, serviceIndex?: number};
+
 export class KnativeServices {
   private static instance: KnativeServices;
 
@@ -24,8 +27,6 @@ export class KnativeServices {
 
   private services: Service[];
 
-  private revisions: Revision[];
-
   // eslint-disable-next-line class-methods-use-this
   private updateTree(): void {
     // tell the tree view to refresh it's look at the data in 'services'
@@ -36,8 +37,44 @@ export class KnativeServices {
     return this.services;
   }
 
-  public findServices(name: string): Service {
-    return this.services[this.services.findIndex((s) => s.name === name)];
+  public findService(serviceName: string): Service {
+    return this.services[this.services.findIndex((s) => s.name === serviceName)];
+  }
+
+  public findRevision(revisionName: string): Revision {
+    let revision: Revision;
+
+    this.services.find((s: Service) => {
+      revision = s.revisions.find((r: Revision) => r.name === revisionName);
+      return revision.name === revisionName
+    })
+
+    return revision;
+  }
+
+  public findRevisionAndService(revisionName: string): revisionService {
+    let revision: Revision;
+
+    const service: Service = this.services.find((s: Service) => {
+      revision = s.revisions.find((r: Revision) => r.name === revisionName);
+      return revision.name === revisionName
+    })
+
+    const rs: revisionService = {revision, service};
+    return rs;
+  }
+
+  public findRevisionAndServiceIndex(revisionName: string): revisionServiceIndex {
+    let revisionIndex: number;
+
+    const serviceIndex: number = this.services.findIndex((s: Service) => {
+      const revision: Revision = s.revisions.find((r: Revision) => r.name === revisionName);
+      revisionIndex = s.revisions.findIndex((r: Revision) => r.name === revisionName);
+      return revision.name === revisionName
+    })
+
+    const rs: revisionServiceIndex = {revisionIndex, serviceIndex};
+    return rs;
   }
 
   public addService(service: Service): Service {
@@ -55,10 +92,12 @@ export class KnativeServices {
   }
 
   public addRevisions(revisions: Revision[]): Revision[] {
-    this.revisions = revisions;
-    // this.revisions.sort(compareNodes);
+    // The revision should know the name of the Service it belongs to.
+    // The service should hold an array of it's revisions.
+    // Set the revisions to the parent service item.
+    this.findService(revisions[0].service).revisions = revisions;
     this.updateTree();
-    return this.revisions;
+    return revisions;
   }
 
   public updateService(service: Service): Service[] {
@@ -78,16 +117,18 @@ export class KnativeServices {
     const serviceIndex: number = this.services.findIndex((s) => s.name === name);
     // remove the service
     this.services.splice(serviceIndex, 1);
+
     this.updateTree();
     return this.services;
   }
 
-  public removeRevision(name: string): Revision[] {
-    // find the index of the revision passed in.
-    const revisionIndex: number = this.revisions.findIndex((s) => s.name === name);
+  public removeRevision(name: string): void {
+    // Find the Revision and it's Service
+    const rs: revisionServiceIndex = this.findRevisionAndServiceIndex(name);
+
     // remove the revision
-    this.revisions.splice(revisionIndex, 1);
+    this.services[rs.serviceIndex].revisions.splice(rs.revisionIndex, 1);
+
     this.updateTree();
-    return this.revisions;
   }
 }

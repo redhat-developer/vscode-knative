@@ -4,6 +4,7 @@
  *-----------------------------------------------------------------------------------------------*/
 
 import { KnativeItem } from './knativeItem';
+import { Revision } from './revision';
 
 export interface CreateService {
   name: string;
@@ -21,7 +22,7 @@ export class Service extends KnativeItem implements CreateService {
     super();
   }
 
-  static services: Service[];
+  revisions: Revision[];
 
   static toService(value: any): Service {
     const service = new Service(value.metadata.name, value.status.url);
