@@ -155,12 +155,11 @@ export class ServiceDataProvider implements TreeDataProvider<KnativeTreeItem> {
 
   public async deleteFeature(node: KnativeTreeItem): Promise<void> {
     const response = await window.showInformationMessage(
-      `YES to Delete.`,
+      `Please confirm deletion.`,
       { modal: true },
-      'Yes',
-      'No',
+      'Delete',
     );
-    if (response === 'Yes') {
+    if (response === 'Delete') {
       await this.knExecutor.execute(KnAPI.deleteFeature(node.contextValue, node.getName()));
       this.refresh();
       if (node.contextValue === 'service') {
