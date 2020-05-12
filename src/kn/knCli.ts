@@ -5,6 +5,7 @@
 
 // import * as vscode from 'vscode';
 import { SpawnOptions, spawn } from 'child_process';
+import { window } from 'vscode';
 import { KnOutputChannel, OutputChannel } from '../output/knOutputChannel';
 
 export interface CliExitData {
@@ -88,10 +89,33 @@ export class KnCli implements Cli {
         console.error(`error: ${err}`);
         error = err;
       });
-      kn.on('close', () => {
+      kn.on('exit', () => {
+        if (error) {
+          if (typeof error === 'string' && error.search('no such host') > 0) {
+            window.showErrorMessage(
+              `The cluster is not up. Please log into a running cluster.`,
+              { modal: true },
+              'OK',
+            );
+          }
+          if (typeof error === 'string' && error.search('no configuration') > 0) {
+            window.showErrorMessage(
+              `The kubeconfig file can't be found.`,
+              { modal: true },
+              'OK',
+            );
+          }
+          if (typeof error === 'string' && error.search('no Knative') > 0) {
+            window.showErrorMessage(
+              `The Knative / Serving Operator is not installed. Please install it to use this extension.`,
+              { modal: true },
+              'OK',
+            );
+          }
+        }
         resolve({ error, stdout });
       });
-      kn.on('exit', () => {
+      kn.on('close', () => {
         resolve({ error, stdout });
       });
     });
