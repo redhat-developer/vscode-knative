@@ -26,17 +26,14 @@ export class WatchUtil {
         if (timer) {
           clearTimeout(timer);
         }
-
         timer = setTimeout(() => {
           timer = undefined;
-          let newContext: string;
-          WatchUtil.grep(join(location, filename), /current-context:.*/).then((result) => {
-            newContext = result;
+          WatchUtil.grep(join(location, filename), /current-context:.*/).then((newContext: string) => {
+            if (context !== newContext) {
+              emitter.emit('file-changed');
+              context = newContext;
+            }
           });
-          if (context !== newContext) {
-            emitter.emit('file-changed');
-            context = newContext;
-          }
         }, 500);
       }
     });
