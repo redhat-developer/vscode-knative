@@ -54,28 +54,19 @@ export function compareNodes(a: KnativeTreeItem, b: KnativeTreeItem): number {
   return t || a.label.localeCompare(b.label);
 }
 
-export interface KnativeTreeItem extends TreeItem {
-  getChildren(): ProviderResult<KnativeTreeItem[]>;
-  getParent(): KnativeTreeItem;
-  getKnativeItem(): KnativeItem;
-  getName(): string;
-  contextValue: string;
-  compType?: string;
-  contextPath?: Uri;
-  path?: string;
-}
-
-export class KnativeTreeItemObject implements KnativeTreeItem {
+export class KnativeTreeItem extends TreeItem {
   // eslint-disable-next-line no-useless-constructor
   constructor(
     private parent: KnativeTreeItem,
     public readonly item: KnativeItem,
-    public readonly name: string,
+    public readonly label: string,
     public readonly contextValue: ContextType,
     public readonly collapsibleState: TreeItemCollapsibleState = Collapsed,
     public contextPath?: Uri,
     public readonly compType?: string,
-  ) {}
+  ) {
+    super(label, collapsibleState);
+  }
 
   private explorerPath: string;
 
@@ -100,13 +91,8 @@ export class KnativeTreeItemObject implements KnativeTreeItem {
     return format(CONTEXT_DATA[this.contextValue].tooltip, this);
   }
 
-  get label(): string {
-    const label = this.name;
-    return label;
-  }
-
   get description(): string {
-    return this.name;
+    return this.label;
   }
 
   get command(): Command {
@@ -119,7 +105,7 @@ export class KnativeTreeItemObject implements KnativeTreeItem {
   }
 
   getName(): string {
-    return this.name;
+    return this.label;
   }
 
   getChildren(): ProviderResult<KnativeTreeItem[]> {

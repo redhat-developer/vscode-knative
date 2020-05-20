@@ -5,7 +5,7 @@
 
 import { Event, ProviderResult, EventEmitter, TreeDataProvider, TreeItem, TreeItemCollapsibleState, window } from 'vscode';
 import * as validator from 'validator';
-import { KnativeTreeItem, KnativeTreeItemObject, compareNodes } from './knativeTreeItem';
+import { KnativeTreeItem, compareNodes } from './knativeTreeItem';
 import { KnExecute, loadItems } from '../kn/knExecute';
 import { CliExitData } from '../kn/knCli';
 import { KnAPI } from '../kn/kn-api';
@@ -96,7 +96,7 @@ export class ServiceDataProvider implements TreeDataProvider<KnativeTreeItem> {
     // Create the Revision tree item for each one found.
     const revisionTreeObjects: KnativeTreeItem[] = revisions
       .map<KnativeTreeItem>((value) => {
-        const obj: KnativeTreeItem = new KnativeTreeItemObject(
+        const obj: KnativeTreeItem = new KnativeTreeItem(
           parentService,
           value,
           value.name,
@@ -123,7 +123,7 @@ export class ServiceDataProvider implements TreeDataProvider<KnativeTreeItem> {
     // Create an empty state message when there is no Service.
     if (services.length === 0) {
       return [
-        new KnativeTreeItemObject(
+        new KnativeTreeItem(
           null,
           null,
           'No Service Found',
@@ -137,7 +137,7 @@ export class ServiceDataProvider implements TreeDataProvider<KnativeTreeItem> {
     // Convert the fetch Services into TreeItems
     const children = services
       .map<KnativeTreeItem>((value) => {
-        const obj: KnativeTreeItem = new KnativeTreeItemObject(
+        const obj: KnativeTreeItem = new KnativeTreeItem(
           null,
           value,
           value.name,
