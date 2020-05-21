@@ -22,7 +22,7 @@ suite('ServiceDataProvider', () => {
         .resolves({ error: undefined, stdout: 'No services found.' });
       const result = await serviceDataProvider.getChildren();
       expect(result).to.have.lengthOf(1);
-      expect(result[0].description).equals('No Service Found');
+      expect(result[0].description).equals('');
       expect(result[0].label).equals('No Service Found');
       expect(result[0].getName()).equals('No Service Found');
     });
@@ -35,7 +35,7 @@ suite('Single service', ()=>{
         .resolves({ error: undefined, stdout: JSON.stringify(singleServiceData) });
       const result = await serviceDataProvider.getChildren();
       expect(result).to.have.lengthOf(1);
-      expect(result[0].description).equals('greeter');
+      expect(result[0].description).equals('');
       expect(result[0].label).equals('greeter');
       expect(result[0].getName()).equals('greeter');
       expect(result[0].tooltip).equals('Service: greeter');

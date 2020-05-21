@@ -91,8 +91,10 @@ export class KnativeTreeItem extends TreeItem {
     return format(CONTEXT_DATA[this.contextValue].tooltip, this);
   }
 
+  // The description is the text after the label. It is grey and a smaller font.
+  // eslint-disable-next-line class-methods-use-this
   get description(): string {
-    return this.label;
+    return '';
   }
 
   get command(): Command {
