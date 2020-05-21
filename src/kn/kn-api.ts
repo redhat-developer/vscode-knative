@@ -130,12 +130,27 @@ export class KnAPI {
     return newKnCommand(a);
   }
 
-
   /**
    * Return the list of all Knative Revisions in JSON format in the current namespace.
    */
   static listRevisionsForService(service: string ): CliCommand {
     const a = ['revision', 'list', '-o', 'json', '-s', service];
+    return newKnCommand(a);
+  }
+
+  /**
+   * Return the list of all Knative routes in JSON format in the current namespace.
+   */
+  static listRoutes(): CliCommand {
+    const a = ['route', 'list', '-o', 'json'];
+    return newKnCommand(a);
+  }
+
+  /**
+   * Return the list of all Knative routes in JSON format in the current namespace.
+   */
+  static listRoutesForService(service: string ): CliCommand {
+    const a = ['route', 'list', service, '-o', 'json'];
     return newKnCommand(a);
   }
 
