@@ -23,9 +23,9 @@ For example if there is an image subfolder under your extension project workspac
 
 ## Requirements
 
-  * Logging in to a Kubernetes cluster is done via the [Kubernetes extension](https://marketplace.visualstudio.com/items?itemName=ms-kubernetes-tools.vscode-kubernetes-tools) (ms-kubernetes-tools.vscode-kubernetes-tools), VSCode should ask you to install it if you don't already have it. 
+  * Logging in to a Kubernetes cluster is done via the [Kubernetes extension](https://marketplace.visualstudio.com/items?itemName=ms-kubernetes-tools.vscode-kubernetes-tools) (ms-kubernetes-tools.vscode-kubernetes-tools). 
 
-  > NOTE: You will need to have the kubeconfig for the cluster that you are accessing stored locally.
+  > NOTE: You will need to have the [kubeconfig](https://kubernetes.io/docs/concepts/configuration/organize-cluster-access-kubeconfig/#the-kubeconfig-environment-variable) for the cluster that you are accessing stored locally.
 
 *  Knative is run on the [kn cli](https://github.com/knative/client). The extension will offer to download and install it if it can't find it.
 
