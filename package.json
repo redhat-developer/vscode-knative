@@ -163,7 +163,20 @@
       }
     ],
     "menus": {
-      "commandPalette": [],
+      "commandPalette": [
+        {
+          "command": "service.explorer.delete",
+          "when": "false"
+        },
+        {
+          "command": "knative.service.open-in-browser",
+          "when": "false"
+        },
+        {
+          "command": "service.explorer.openFile",
+          "when": "false"
+        }
+      ],
       "view/item/context": [
         {
           "command": "knative.service.open-in-browser",
