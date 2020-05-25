@@ -16,39 +16,33 @@ export interface Step {
 }
 
 export class Progress {
-  static execWithProgress(
-    options: vscode.ProgressOptions,
-    steps: Step[],
-  ): Thenable<void> {
-    return vscode.window.withProgress(
-      options,
-      (progress: vscode.Progress<{ increment: number; message: string }>) => {
-        const calls: (() => Promise<any>)[] = [];
-        steps.reduce(
-          (previous: Step, current: Step, currentIndex: number, innerSteps: Step[]) => {
-            let _current: Step;
-            _current.total = previous.total + current.increment;
-            calls.push(async () => {
-              await Promise.resolve();
-              progress.report({ increment: previous.increment, message: `${previous.total}%` });
-              await executor.execute(_current.command);
-              if (currentIndex + 1 === innerSteps.length) {
-                progress.report({
-                  increment: _current.increment,
-                  message: `${_current.total}%`,
-                });
-              }
-            });
-            return _current;
-          },
-          { increment: 0, command: createCliCommand(''), total: 0 },
-        );
+  static execWithProgress(options: vscode.ProgressOptions, steps: Step[]): Thenable<void> {
+    return vscode.window.withProgress(options, (progress: vscode.Progress<{ increment: number; message: string }>) => {
+      const calls: (() => Promise<any>)[] = [];
+      steps.reduce(
+        (previous: Step, current: Step, currentIndex: number, innerSteps: Step[]) => {
+          let _current: Step;
+          _current.total = previous.total + current.increment;
+          calls.push(async () => {
+            await Promise.resolve();
+            progress.report({ increment: previous.increment, message: `${previous.total}%` });
+            await executor.execute(_current.command);
+            if (currentIndex + 1 === innerSteps.length) {
+              progress.report({
+                increment: _current.increment,
+                message: `${_current.total}%`,
+              });
+            }
+          });
+          return _current;
+        },
+        { increment: 0, command: createCliCommand(''), total: 0 },
+      );
 
-        return calls.reduce<Promise<any>>((previous: Promise<any>, current: () => Promise<any>) => {
-          return previous.then(current);
-        }, Promise.resolve());
-      },
-    );
+      return calls.reduce<Promise<any>>((previous: Promise<any>, current: () => Promise<any>) => {
+        return previous.then(current);
+      }, Promise.resolve());
+    });
   }
 
   static async execCmdWithProgress(title: string, cmd: CliCommand): Promise<any> {
@@ -83,9 +77,7 @@ export class Progress {
           title,
         },
         async (progress: vscode.Progress<{ increment: number; message: string }>) => {
-          await func(progress)
-            .then(resolve)
-            .catch(reject);
+          await func(progress).then(resolve).catch(reject);
         },
       );
     });

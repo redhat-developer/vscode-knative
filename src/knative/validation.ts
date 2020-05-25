@@ -11,7 +11,7 @@ export abstract class Validation {
   }
 
   static lengthName(message: string, value: string, offset: number): string {
-    return validator.isLength(value, {min:2, max: 63 - offset}) ? null : message;
+    return validator.isLength(value, { min: 2, max: 63 - offset }) ? null : message;
   }
 
   static validateUrl(message: string, value: string): string {

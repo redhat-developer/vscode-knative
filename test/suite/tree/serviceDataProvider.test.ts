@@ -11,15 +11,12 @@ suite('ServiceDataProvider', () => {
   const sandbox = sinon.createSandbox();
   const serviceDataProvider = new ServiceDataProvider();
 
-  teardown(()=>{
+  teardown(() => {
     sandbox.restore();
   });
   suite('No Services', () => {
-
     test('getChildren should return the No Services node when KN execute returns "No Services found"', async () => {
-      sandbox
-        .stub(serviceDataProvider.knExecutor, 'execute')
-        .resolves({ error: undefined, stdout: 'No services found.' });
+      sandbox.stub(serviceDataProvider.knExecutor, 'execute').resolves({ error: undefined, stdout: 'No services found.' });
       const result = await serviceDataProvider.getChildren();
       expect(result).to.have.lengthOf(1);
       expect(result[0].description).equals('');
@@ -28,7 +25,7 @@ suite('ServiceDataProvider', () => {
     });
   });
 
-suite('Single service', ()=>{
+  suite('Single service', () => {
     test('getChildren should return single node', async () => {
       sandbox
         .stub(serviceDataProvider.knExecutor, 'execute')
@@ -41,5 +38,4 @@ suite('Single service', ()=>{
       expect(result[0].tooltip).equals('Service: greeter');
     });
   });
-
 });

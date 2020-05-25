@@ -20,12 +20,7 @@ export class WindowUtil {
    *
    * @returns terminal
    */
-  static createTerminal(
-    name: string,
-    cwd: string,
-    toolLocation?: string,
-    env: NodeJS.ProcessEnv = process.env,
-  ): Terminal {
+  static createTerminal(name: string, cwd: string, toolLocation?: string, env: NodeJS.ProcessEnv = process.env): Terminal {
     const finalEnv: NodeJS.ProcessEnv = {};
     // Copy everything from 'env' to 'finalEnv' so that we don't change the param 'env'
     Object.assign(finalEnv, env);

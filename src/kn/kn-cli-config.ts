@@ -95,11 +95,7 @@ async function getVersion(location: string): Promise<string> {
  * @param locations
  * @param versionRange
  */
-async function selectTool(
-  locations: string[],
-  versionRange: string,
-  versionLocalBuildRange: number,
-): Promise<string> {
+async function selectTool(locations: string[], versionRange: string, versionLocalBuildRange: number): Promise<string> {
   let foundLocation: string;
   // Check the version of the cli to make sure it matches what we coded against.
   try {
@@ -113,10 +109,7 @@ async function selectTool(
         const locationsVersion: string = await getVersion(location);
 
         // Check if the version is a local build after a certain date or matches the given vesion range for releases version.
-        if (
-          Number(locationsVersion) > versionLocalBuildRange ||
-          satisfies(locationsVersion, versionRange)
-        ) {
+        if (Number(locationsVersion) > versionLocalBuildRange || satisfies(locationsVersion, versionRange)) {
           foundLocation = location;
           break;
         }
@@ -175,18 +168,11 @@ export class KnCliConfig {
       // So if the tool location hasn't been set then we need to figure that out.
       if (toolLocation === undefined) {
         // Look in [HOME]/.vs-kn/ for the kn cli executable
-        const toolCacheLocation = path.resolve(
-          Platform.getUserHomePath(),
-          '.vs-kn',
-          KnCliConfig.tools[cmd].cmdFileName,
-        );
+        const toolCacheLocation = path.resolve(Platform.getUserHomePath(), '.vs-kn', KnCliConfig.tools[cmd].cmdFileName);
         // If kn cli is installed, get it's install location/path
         const whichLocation = which(cmd);
         // Get a list of locations.
-        const toolLocations: string[] = [
-          whichLocation ? whichLocation.stdout : null,
-          toolCacheLocation,
-        ];
+        const toolLocations: string[] = [whichLocation ? whichLocation.stdout : null, toolCacheLocation];
         // Check the list of locations and see if what we need is there.
         // selectTool(toolLocations, KnCliConfig.tools[cmd].versionRange).then((foundToolLocation) => {
         let foundToolLocation: string = await selectTool(
@@ -197,11 +183,7 @@ export class KnCliConfig {
         // If the cli tool is still not found then we will need to install it.
         if (foundToolLocation === undefined || foundToolLocation === null) {
           // Set the download location for the cli executable.
-          const toolDlLocation = path.resolve(
-            Platform.getUserHomePath(),
-            '.vs-kn',
-            KnCliConfig.tools[cmd].dlFileName,
-          );
+          const toolDlLocation = path.resolve(Platform.getUserHomePath(), '.vs-kn', KnCliConfig.tools[cmd].dlFileName);
           // Message for expected version number
           const installRequest = `Download and install v${KnCliConfig.tools[cmd].version}`;
           // Create a pop-up that asks to download and install.
@@ -231,8 +213,7 @@ export class KnCliConfig {
                   KnCliConfig.tools[cmd].url,
                   toolDlLocation,
                   // token,
-                  (dlProgress, increment) =>
-                    progress.report({ increment, message: `${dlProgress}%` }),
+                  (dlProgress, increment) => progress.report({ increment, message: `${dlProgress}%` }),
                 );
 
                 // Get the hash for the downloaded file.
@@ -269,9 +250,7 @@ export class KnCliConfig {
           } else if (response === `Help`) {
             commands.executeCommand(
               'vscode.open',
-              Uri.parse(
-                `https://github.com/talamer/vscode-knative/blob/master/README.md#requirements`,
-              ),
+              Uri.parse(`https://github.com/talamer/vscode-knative/blob/master/README.md#requirements`),
             );
           }
         }

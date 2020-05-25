@@ -38,11 +38,11 @@ export class Refs {
           return;
         }
         const name = ref.name.split('/')[2].replace(/\^\{\}$/, '');
-        if (ref.name.startsWith("refs/heads")) {
+        if (ref.name.startsWith('refs/heads')) {
           tags.set(name, { name, type: Type.BRANCH, hash: ref.hash.substr(0, 7) });
         }
 
-        if (ref.name.startsWith("refs/tags")) {
+        if (ref.name.startsWith('refs/tags')) {
           tags.set(name, { name, type: Type.TAG, hash: ref.hash.substr(0, 7) });
         }
       });

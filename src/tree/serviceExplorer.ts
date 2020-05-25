@@ -15,14 +15,16 @@ const kubeConfigFolder: string = path.join(Platform.getUserHomePath(), '.kube');
 const kubeconfigEnv: string = process.env.KUBECONFIG;
 let kubeconfigList: string[] = [];
 // check to make sure there is an ENV for KUBECONFIG
-if (kubeconfigEnv) {kubeconfigList = kubeconfigEnv.split(path.delimiter);}
+if (kubeconfigEnv) {
+  kubeconfigList = kubeconfigEnv.split(path.delimiter);
+}
 const kubeconfigParam: string[][] = [[kubeConfigFolder, 'config']];
 kubeconfigList.forEach((value): void => {
   const kubeconfigSplit: string[] = value.split(path.sep);
   const kubeconfigFileName: string = kubeconfigSplit.pop();
   const kubeconfigDir: string = kubeconfigSplit.join(path.sep);
-  kubeconfigParam.push([kubeconfigDir, kubeconfigFileName])
-})
+  kubeconfigParam.push([kubeconfigDir, kubeconfigFileName]);
+});
 
 function issueUrl(): string {
   const { packageJSON } = extensions.getExtension('redhat.vscode-knative');
@@ -34,7 +36,6 @@ async function reportIssue(): Promise<unknown> {
   return commands.executeCommand('vscode.open', Uri.parse(issueUrl()));
 }
 
-
 export class ServiceExplorer implements Disposable {
   private treeView: TreeView<KnativeTreeItem>;
 
@@ -44,8 +45,8 @@ export class ServiceExplorer implements Disposable {
     const treeDataProvider = new ServiceDataProvider();
     kubeconfigParam.forEach((params) => {
       const l = this.fsw.push(WatchUtil.watchFileForContextChange(params[0], params[1]));
-      this.fsw[l -1].emitter.on('file-changed', ()=>treeDataProvider.refresh());
-    })
+      this.fsw[l - 1].emitter.on('file-changed', () => treeDataProvider.refresh());
+    });
 
     // Initialize the tree/explorer view by linking the refernece in the package.json to this class.
     this.treeView = window.createTreeView('knativeProjectExplorerServices', { treeDataProvider });
@@ -58,7 +59,9 @@ export class ServiceExplorer implements Disposable {
 
   dispose(): void {
     // this.fsw.watcher.close();
-    this.fsw.forEach((value) => {value.watcher.close();})
+    this.fsw.forEach((value) => {
+      value.watcher.close();
+    });
     this.treeView.dispose();
   }
 

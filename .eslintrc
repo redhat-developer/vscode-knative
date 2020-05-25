@@ -68,6 +68,7 @@
     "object-shorthand": ["error", "properties"],
     "prefer-const": ["error", { "destructuring": "all" }],
     "prefer-template": 2,
+    "prettier/prettier": "error",
     "radix": 2
   },
   "settings": {

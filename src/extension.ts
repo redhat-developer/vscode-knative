@@ -15,7 +15,7 @@ import { vfsUri, KnativeResourceVirtualFileSystemProvider, KN_RESOURCE_SCHEME } 
  * @param treeItem
  */
 export function openInEditor(treeItem: KnativeTreeItem): void {
-  const {contextValue} = treeItem;
+  const { contextValue } = treeItem;
   const name: string = treeItem.getName();
   const outputFormat = vscode.workspace.getConfiguration('vs-knative')['vs-knative.outputFormat'];
   const uri = vfsUri(contextValue, name, outputFormat);
@@ -39,7 +39,7 @@ export function activate(extensionContext: vscode.ExtensionContext): void {
   const resourceDocProvider = new KnativeResourceVirtualFileSystemProvider();
   // The command has been defined in the package.json file.
   // Now provide the implementation of the command with registerCommand.
-  // The commandId parameter must match the command field in package.json. 
+  // The commandId parameter must match the command field in package.json.
   const disposable = [
     vscode.commands.registerCommand('knative.service.open-in-browser', (treeItem: KnativeTreeItem) => {
       const service = treeItem.getKnativeItem() as Service;

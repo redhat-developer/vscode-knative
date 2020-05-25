@@ -5,7 +5,7 @@
 
 import { Uri, workspace } from 'vscode';
 
-const EXTENSION_CONFIG_KEY = "vs-knative";
+const EXTENSION_CONFIG_KEY = 'vs-knative';
 
 export const enum Kind {
   LocalConfig,
