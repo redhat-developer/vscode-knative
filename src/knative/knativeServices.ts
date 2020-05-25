@@ -7,8 +7,8 @@ import { Service } from './service';
 import { Revision } from './revision';
 // import { compareNodes } from '../kn/knativeTreeObject';
 
-type revisionService = {revision: Revision, service: Service};
-type revisionServiceIndex = {revisionIndex?: number, serviceIndex?: number};
+type revisionService = { revision: Revision; service: Service };
+type revisionServiceIndex = { revisionIndex?: number; serviceIndex?: number };
 
 export class KnativeServices {
   private static instance: KnativeServices;
@@ -46,8 +46,8 @@ export class KnativeServices {
 
     this.services.find((s: Service) => {
       revision = s.revisions.find((r: Revision) => r.name === revisionName);
-      return revision.name === revisionName
-    })
+      return revision.name === revisionName;
+    });
 
     return revision;
   }
@@ -57,10 +57,10 @@ export class KnativeServices {
 
     const service: Service = this.services.find((s: Service) => {
       revision = s.revisions.find((r: Revision) => r.name === revisionName);
-      return revision.name === revisionName
-    })
+      return revision.name === revisionName;
+    });
 
-    const rs: revisionService = {revision, service};
+    const rs: revisionService = { revision, service };
     return rs;
   }
 
@@ -70,10 +70,10 @@ export class KnativeServices {
     const serviceIndex: number = this.services.findIndex((s: Service) => {
       const revision: Revision = s.revisions.find((r: Revision) => r.name === revisionName);
       revisionIndex = s.revisions.findIndex((r: Revision) => r.name === revisionName);
-      return revision.name === revisionName
-    })
+      return revision.name === revisionName;
+    });
 
-    const rs: revisionServiceIndex = {revisionIndex, serviceIndex};
+    const rs: revisionServiceIndex = { revisionIndex, serviceIndex };
     return rs;
   }
 

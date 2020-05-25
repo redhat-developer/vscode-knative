@@ -123,15 +123,7 @@ export class ServiceDataProvider implements TreeDataProvider<KnativeTreeItem> {
     // Create an empty state message when there is no Service.
     if (services.length === 0) {
       return [
-        new KnativeTreeItem(
-          null,
-          null,
-          'No Service Found',
-          ContextType.SERVICE,
-          TreeItemCollapsibleState.Collapsed,
-          null,
-          null,
-        ),
+        new KnativeTreeItem(null, null, 'No Service Found', ContextType.SERVICE, TreeItemCollapsibleState.Collapsed, null, null),
       ];
     }
     // Convert the fetch Services into TreeItems
@@ -154,11 +146,7 @@ export class ServiceDataProvider implements TreeDataProvider<KnativeTreeItem> {
   }
 
   public async deleteFeature(node: KnativeTreeItem): Promise<void> {
-    const response = await window.showInformationMessage(
-      `Please confirm deletion.`,
-      { modal: true },
-      'Delete',
-    );
+    const response = await window.showInformationMessage(`Please confirm deletion.`, { modal: true }, 'Delete');
     if (response === 'Delete') {
       await this.knExecutor.execute(KnAPI.deleteFeature(node.contextValue, node.getName()));
       this.refresh();

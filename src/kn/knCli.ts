@@ -92,18 +92,10 @@ export class KnCli implements Cli {
       kn.on('exit', () => {
         if (error) {
           if (typeof error === 'string' && error.search('no such host') > 0) {
-            window.showErrorMessage(
-              `The cluster is not up. Please log into a running cluster.`,
-              { modal: true },
-              'OK',
-            );
+            window.showErrorMessage(`The cluster is not up. Please log into a running cluster.`, { modal: true }, 'OK');
           }
           if (typeof error === 'string' && error.search('no configuration') > 0) {
-            window.showErrorMessage(
-              `The kubeconfig file can't be found.`,
-              { modal: true },
-              'OK',
-            );
+            window.showErrorMessage(`The kubeconfig file can't be found.`, { modal: true }, 'OK');
           }
           if (typeof error === 'string' && error.search('no Knative') > 0) {
             window.showErrorMessage(

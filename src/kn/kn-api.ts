@@ -51,7 +51,9 @@ export class KnAPI {
     // Set up the initial values for the command.
     const commandArguments: string[] = ['service', 'create'];
     // check if --force was set
-    if (createServiceObj.force) {commandArguments.push('--force');}
+    if (createServiceObj.force) {
+      commandArguments.push('--force');
+    }
     // It should always have a name value.
     commandArguments.push(createServiceObj.name);
     // If the port was set, use it.
@@ -133,7 +135,7 @@ export class KnAPI {
   /**
    * Return the list of all Knative Revisions in JSON format in the current namespace.
    */
-  static listRevisionsForService(service: string ): CliCommand {
+  static listRevisionsForService(service: string): CliCommand {
     const a = ['revision', 'list', '-o', 'json', '-s', service];
     return newKnCommand(a);
   }
@@ -149,11 +151,10 @@ export class KnAPI {
   /**
    * Return the list of all Knative routes in JSON format in the current namespace.
    */
-  static listRoutesForService(service: string ): CliCommand {
+  static listRoutesForService(service: string): CliCommand {
     const a = ['route', 'list', service, '-o', 'json'];
     return newKnCommand(a);
   }
-
 
   static printKnVersion(): CliCommand {
     return newKnCommand(['version']);

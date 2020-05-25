@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See LICENSE file in the project root for license information.
  *-----------------------------------------------------------------------------------------------*/
 
-import { QuickPickItem } from "vscode";
+import { QuickPickItem } from 'vscode';
 
 export class QuickPickCommand implements QuickPickItem {
   // eslint-disable-next-line no-useless-constructor
@@ -14,6 +14,6 @@ export class QuickPickCommand implements QuickPickItem {
     public detail?: string,
     public picked?: boolean,
     public alwaysShow?: boolean,
-    public getName?: () => string
+    public getName?: () => string,
   ) {}
 }

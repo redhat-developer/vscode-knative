@@ -11,14 +11,7 @@ import { platform } from 'os';
 downloadAndUnzipVSCode().then((executable: string): void => {
   let exe: string = executable;
   if (platform() === 'darwin') {
-    exe = `'${join(
-      exe.substring(0, exe.indexOf('.app') + 4),
-      'Contents',
-      'Resources',
-      'app',
-      'bin',
-      'code',
-    )}'`;
+    exe = `'${join(exe.substring(0, exe.indexOf('.app') + 4), 'Contents', 'Resources', 'app', 'bin', 'code')}'`;
   } else {
     exe = join(dirname(exe), 'bin', 'code');
   }

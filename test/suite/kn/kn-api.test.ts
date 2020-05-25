@@ -31,15 +31,7 @@ suite('KN API commands that will', () => {
     test('should create a service with name, image, and namespace', () => {
       // const command = 'kn service create mysvc --image dev.local/ns/image:latest -n myns';
       const command: CliCommand = {
-        cliArguments: [
-          'service',
-          'create',
-          'mysvc',
-          '--image',
-          'dev.local/ns/image:latest',
-          '-n',
-          'myns',
-        ],
+        cliArguments: ['service', 'create', 'mysvc', '--image', 'dev.local/ns/image:latest', '-n', 'myns'],
         cliCommand: 'kn',
       };
       const commandAPI = KnAPI.createService({
@@ -52,14 +44,7 @@ suite('KN API commands that will', () => {
     test('should create a service with image using --force flag', () => {
       // const command = 'kn service create --force mysvc --image dev.local/ns/image:latest';
       const command: CliCommand = {
-        cliArguments: [
-          'service',
-          'create',
-          '--force',
-          'mysvc',
-          '--image',
-          'dev.local/ns/image:latest',
-        ],
+        cliArguments: ['service', 'create', '--force', 'mysvc', '--image', 'dev.local/ns/image:latest'],
         cliCommand: 'kn',
       };
       const commandAPI = KnAPI.createService({
@@ -122,15 +107,7 @@ suite('KN API commands that will', () => {
     test('should create a service with a port', () => {
       // const command = 'kn service create mysvc --port 80 --image dev.local/ns/image:latest';
       const command: CliCommand = {
-        cliArguments: [
-          'service',
-          'create',
-          'mysvc',
-          '--port',
-          '80',
-          '--image',
-          'dev.local/ns/image:latest',
-        ],
+        cliArguments: ['service', 'create', 'mysvc', '--port', '80', '--image', 'dev.local/ns/image:latest'],
         cliCommand: 'kn',
       };
       const commandAPI = KnAPI.createService({
@@ -203,19 +180,18 @@ suite('KN API commands that will', () => {
   suite('List revisions', () => {
     test('should return command for listing all revisions', () => {
       const command: CliCommand = {
-        cliArguments: ['revision', 'list','-o','json'],
-        cliCommand: 'kn'
-      }
+        cliArguments: ['revision', 'list', '-o', 'json'],
+        cliCommand: 'kn',
+      };
       assert.deepEqual(command.cliArguments, KnAPI.listRevisions().cliArguments);
-     });
-     test('should return command for listing revisions for a service', () => {
-      const sname ='myservice'
+    });
+    test('should return command for listing revisions for a service', () => {
+      const sname = 'myservice';
       const command: CliCommand = {
-        cliArguments: ['revision', 'list','-o','json', '-s', sname],
-        cliCommand: 'kn'
-      }
+        cliArguments: ['revision', 'list', '-o', 'json', '-s', sname],
+        cliCommand: 'kn',
+      };
       assert.deepEqual(command.cliArguments, KnAPI.listRevisionsForService(sname).cliArguments);
-     });
+    });
   });
-
 });

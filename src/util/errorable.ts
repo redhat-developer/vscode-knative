@@ -7,13 +7,13 @@
  *-----------------------------------------------------------------------------------------------*/
 
 export interface Succeeded<T> {
-    readonly succeeded: true;
-    readonly result: T;
+  readonly succeeded: true;
+  readonly result: T;
 }
 
 export interface Failed {
-    readonly succeeded: false;
-    readonly error: string[];
+  readonly succeeded: false;
+  readonly error: string[];
 }
 
 export type Errorable<T> = Succeeded<T> | Failed;
@@ -28,13 +28,13 @@ export type Errorable<T> = Succeeded<T> | Failed;
 
 // eslint-disable-next-line @typescript-eslint/no-namespace
 export namespace Errorable {
-    // eslint-disable-next-line no-inner-declarations
-    export function succeeded<T>(e: Errorable<T>): e is Succeeded<T> {
-        return e.succeeded;
-    }
+  // eslint-disable-next-line no-inner-declarations
+  export function succeeded<T>(e: Errorable<T>): e is Succeeded<T> {
+    return e.succeeded;
+  }
 
-    // eslint-disable-next-line no-inner-declarations
-    export function failed<T>(e: Errorable<T>): e is Failed {
-        return !e.succeeded;
-    }
+  // eslint-disable-next-line no-inner-declarations
+  export function failed<T>(e: Errorable<T>): e is Failed {
+    return !e.succeeded;
+  }
 }
