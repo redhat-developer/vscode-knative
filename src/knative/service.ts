@@ -18,12 +18,7 @@ export interface CreateService {
 }
 
 export class Service extends KnativeItem implements CreateService {
-
-  constructor(
-    public name: string,
-    public image: string,
-    public details?: Items
-  ) {
+  constructor(public name: string, public image: string, public details?: Items) {
     super();
   }
 
@@ -42,11 +37,7 @@ export class Service extends KnativeItem implements CreateService {
   revisions: Revision[];
 
   static toService(value: Items): Service {
-    const service = new Service(
-      value.metadata.name,
-      value.status.url,
-      value
-    );
+    const service = new Service(value.metadata.name, value.status.url, value);
     return service;
   }
 }
