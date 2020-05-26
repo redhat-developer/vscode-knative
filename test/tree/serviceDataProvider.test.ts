@@ -1,7 +1,7 @@
 import * as chai from 'chai';
 import * as sinonChai from 'sinon-chai';
 import * as sinon from 'sinon';
-import { ServiceDataProvider } from '../../../src/tree/serviceDataProvider';
+import { ServiceDataProvider } from '../../src/tree/serviceDataProvider';
 import * as singleServiceData from './singleServiceServiceList.json';
 
 const { expect } = chai;
