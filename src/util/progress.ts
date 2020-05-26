@@ -77,7 +77,9 @@ export class Progress {
           title,
         },
         async (progress: vscode.Progress<{ increment: number; message: string }>) => {
-          await func(progress).then(resolve).catch(reject);
+          await func(progress)
+            .then(resolve)
+            .catch(reject);
         },
       );
     });
