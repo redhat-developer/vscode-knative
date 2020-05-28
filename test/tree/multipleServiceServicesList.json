@@ -1,0 +1,592 @@
+{
+  "apiVersion": "serving.knative.dev/v1",
+  "items": [
+    {
+      "apiVersion": "serving.knative.dev/v1",
+      "kind": "Service",
+      "metadata": {
+        "annotations": {
+          "image.openshift.io/triggers": "[{\"from\":{\"kind\":\"ImageStreamTag\",\"name\":\"aaa:latest\",\"namespace\":\"a-serverles-example\"},\"fieldPath\":\"spec.template.spec.containers[?(@.name==\\\"aaa\\\")].image\"}]",
+          "serving.knative.dev/creator": "kube:admin",
+          "serving.knative.dev/lastModifier": "kube:admin"
+        },
+        "creationTimestamp": "2020-05-27T17:08:03Z",
+        "generation": 1,
+        "labels": {
+          "app.kubernetes.io/component": "aaa",
+          "app.kubernetes.io/instance": "aaa",
+          "app.kubernetes.io/name": "aaa",
+          "app.kubernetes.io/part-of": "bbb-app",
+          "app.openshift.io/runtime": "aaa",
+          "app.openshift.io/runtime-namespace": "a-serverles-example",
+          "app.openshift.io/runtime-version": "latest"
+        },
+        "managedFields": [
+          {
+            "apiVersion": "serving.knative.dev/v1",
+            "fieldsType": "FieldsV1",
+            "fieldsV1": {
+              "f:metadata": {
+                "f:annotations": {
+                  ".": {},
+                  "f:image.openshift.io/triggers": {}
+                },
+                "f:labels": {
+                  ".": {},
+                  "f:app.kubernetes.io/component": {},
+                  "f:app.kubernetes.io/instance": {},
+                  "f:app.kubernetes.io/name": {},
+                  "f:app.kubernetes.io/part-of": {},
+                  "f:app.openshift.io/runtime": {},
+                  "f:app.openshift.io/runtime-namespace": {},
+                  "f:app.openshift.io/runtime-version": {}
+                }
+              },
+              "f:spec": {
+                ".": {},
+                "f:template": {
+                  ".": {},
+                  "f:metadata": {
+                    ".": {},
+                    "f:annotations": {
+                      ".": {},
+                      "f:image.openshift.io/triggers": {}
+                    },
+                    "f:labels": {
+                      ".": {},
+                      "f:app.kubernetes.io/component": {},
+                      "f:app.kubernetes.io/instance": {},
+                      "f:app.kubernetes.io/name": {},
+                      "f:app.kubernetes.io/part-of": {},
+                      "f:app.openshift.io/runtime": {},
+                      "f:app.openshift.io/runtime-namespace": {},
+                      "f:app.openshift.io/runtime-version": {}
+                    }
+                  },
+                  "f:spec": {
+                    ".": {},
+                    "f:containers": {}
+                  }
+                }
+              }
+            },
+            "manager": "Mozilla",
+            "operation": "Update",
+            "time": "2020-05-27T17:08:03Z"
+          },
+          {
+            "apiVersion": "serving.knative.dev/v1",
+            "fieldsType": "FieldsV1",
+            "fieldsV1": {
+              "f:status": {
+                "f:address": {
+                  ".": {},
+                  "f:url": {}
+                },
+                "f:conditions": {},
+                "f:latestCreatedRevisionName": {},
+                "f:latestReadyRevisionName": {},
+                "f:observedGeneration": {},
+                "f:traffic": {},
+                "f:url": {}
+              }
+            },
+            "manager": "controller",
+            "operation": "Update",
+            "time": "2020-05-27T17:08:32Z"
+          }
+        ],
+        "name": "aaa",
+        "namespace": "a-serverles-example",
+        "resourceVersion": "48407",
+        "selfLink": "/apis/serving.knative.dev/v1/namespaces/a-serverles-example/services/aaa",
+        "uid": "2b8fb07f-ffc2-4b2f-9f81-9be9d2734193"
+      },
+      "spec": {
+        "template": {
+          "metadata": {
+            "annotations": {
+              "image.openshift.io/triggers": "[{\"from\":{\"kind\":\"ImageStreamTag\",\"name\":\"aaa:latest\",\"namespace\":\"a-serverles-example\"},\"fieldPath\":\"spec.template.spec.containers[?(@.name==\\\"aaa\\\")].image\"}]"
+            },
+            "creationTimestamp": null,
+            "labels": {
+              "app.kubernetes.io/component": "aaa",
+              "app.kubernetes.io/instance": "aaa",
+              "app.kubernetes.io/name": "aaa",
+              "app.kubernetes.io/part-of": "bbb-app",
+              "app.openshift.io/runtime": "aaa",
+              "app.openshift.io/runtime-namespace": "a-serverles-example",
+              "app.openshift.io/runtime-version": "latest"
+            }
+          },
+          "spec": {
+            "containerConcurrency": 0,
+            "containers": [
+              {
+                "image": "image-registry.openshift-image-registry.svc:5000/a-serverles-example/aaa:latest",
+                "imagePullPolicy": "Always",
+                "name": "user-container",
+                "ports": [
+                  {
+                    "containerPort": 8080
+                  }
+                ],
+                "readinessProbe": {
+                  "successThreshold": 1,
+                  "tcpSocket": {
+                    "port": 0
+                  }
+                },
+                "resources": {}
+              }
+            ],
+            "timeoutSeconds": 300
+          }
+        },
+        "traffic": [
+          {
+            "latestRevision": true,
+            "percent": 100
+          }
+        ]
+      },
+      "status": {
+        "address": {
+          "url": "http://aaa.a-serverles-example.svc.cluster.local"
+        },
+        "conditions": [
+          {
+            "lastTransitionTime": "2020-05-27T17:08:32Z",
+            "status": "True",
+            "type": "ConfigurationsReady"
+          },
+          {
+            "lastTransitionTime": "2020-05-27T17:08:32Z",
+            "status": "True",
+            "type": "Ready"
+          },
+          {
+            "lastTransitionTime": "2020-05-27T17:08:32Z",
+            "status": "True",
+            "type": "RoutesReady"
+          }
+        ],
+        "latestCreatedRevisionName": "aaa-2pz9r",
+        "latestReadyRevisionName": "aaa-2pz9r",
+        "observedGeneration": 1,
+        "traffic": [
+          {
+            "latestRevision": true,
+            "percent": 100,
+            "revisionName": "aaa-2pz9r"
+          }
+        ],
+        "url": "http://aaa-a-serverles-example.apps.devcluster.openshift.com"
+      }
+    },
+    {
+      "apiVersion": "serving.knative.dev/v1",
+      "kind": "Service",
+      "metadata": {
+        "annotations": {
+          "serving.knative.dev/creator": "system:admin",
+          "serving.knative.dev/lastModifier": "system:admin"
+        },
+        "creationTimestamp": "2020-05-27T18:51:39Z",
+        "generation": 3,
+        "managedFields": [
+          {
+            "apiVersion": "serving.knative.dev/v1",
+            "fieldsType": "FieldsV1",
+            "fieldsV1": {
+              "f:spec": {
+                ".": {},
+                "f:template": {
+                  ".": {},
+                  "f:metadata": {
+                    ".": {},
+                    "f:annotations": {
+                      ".": {},
+                      "f:client.knative.dev/user-image": {}
+                    },
+                    "f:creationTimestamp": {},
+                    "f:name": {}
+                  },
+                  "f:spec": {
+                    ".": {},
+                    "f:containers": {}
+                  }
+                }
+              },
+              "f:status": {}
+            },
+            "manager": "kn",
+            "operation": "Update",
+            "time": "2020-05-27T18:52:21Z"
+          },
+          {
+            "apiVersion": "serving.knative.dev/v1",
+            "fieldsType": "FieldsV1",
+            "fieldsV1": {
+              "f:status": {
+                "f:conditions": {},
+                "f:latestCreatedRevisionName": {},
+                "f:latestReadyRevisionName": {},
+                "f:observedGeneration": {},
+                "f:traffic": {}
+              }
+            },
+            "manager": "controller",
+            "operation": "Update",
+            "time": "2020-05-27T18:52:26Z"
+          }
+        ],
+        "name": "bbb",
+        "namespace": "a-serverles-example",
+        "resourceVersion": "114706",
+        "selfLink": "/apis/serving.knative.dev/v1/namespaces/a-serverles-example/services/bbb",
+        "uid": "eea7c9ae-3132-4835-b193-94364c831488"
+      },
+      "spec": {
+        "template": {
+          "metadata": {
+            "annotations": {
+              "client.knative.dev/user-image": "quay.io/rhdevelopers/knative-tutorial-greeter:quarkus"
+            },
+            "creationTimestamp": null,
+            "name": "bbb-bhkmk-1"
+          },
+          "spec": {
+            "containerConcurrency": 0,
+            "containers": [
+              {
+                "image": "quay.io/rhdevelopers/knative-tutorial-greeter:quarkus",
+                "name": "user-container",
+                "readinessProbe": {
+                  "successThreshold": 1,
+                  "tcpSocket": {
+                    "port": 0
+                  }
+                },
+                "resources": {}
+              }
+            ],
+            "timeoutSeconds": 300
+          }
+        },
+        "traffic": [
+          {
+            "latestRevision": true,
+            "percent": 100
+          }
+        ]
+      },
+      "status": {
+        "address": {
+          "url": "http://bbb.a-serverles-example.svc.cluster.local"
+        },
+        "conditions": [
+          {
+            "lastTransitionTime": "2020-05-27T18:52:26Z",
+            "status": "True",
+            "type": "ConfigurationsReady"
+          },
+          {
+            "lastTransitionTime": "2020-05-27T18:52:26Z",
+            "status": "True",
+            "type": "Ready"
+          },
+          {
+            "lastTransitionTime": "2020-05-27T18:52:26Z",
+            "status": "True",
+            "type": "RoutesReady"
+          }
+        ],
+        "latestCreatedRevisionName": "bbb-bhkmk-1",
+        "latestReadyRevisionName": "bbb-bhkmk-1",
+        "observedGeneration": 3,
+        "traffic": [
+          {
+            "latestRevision": true,
+            "percent": 100,
+            "revisionName": "bbb-bhkmk-1"
+          }
+        ],
+        "url": "http://bbb-a-serverles-example.apps.devcluster.openshift.com"
+      }
+    },
+    {
+      "apiVersion": "serving.knative.dev/v1",
+      "kind": "Service",
+      "metadata": {
+        "annotations": {
+          "serving.knative.dev/creator": "system:admin",
+          "serving.knative.dev/lastModifier": "system:admin"
+        },
+        "creationTimestamp": "2020-05-27T18:52:32Z",
+        "generation": 1,
+        "managedFields": [
+          {
+            "apiVersion": "serving.knative.dev/v1",
+            "fieldsType": "FieldsV1",
+            "fieldsV1": {
+              "f:spec": {
+                ".": {},
+                "f:template": {
+                  ".": {},
+                  "f:metadata": {
+                    ".": {},
+                    "f:annotations": {
+                      ".": {},
+                      "f:client.knative.dev/user-image": {}
+                    },
+                    "f:creationTimestamp": {},
+                    "f:name": {}
+                  },
+                  "f:spec": {
+                    ".": {},
+                    "f:containers": {}
+                  }
+                }
+              },
+              "f:status": {}
+            },
+            "manager": "kn",
+            "operation": "Update",
+            "time": "2020-05-27T18:52:32Z"
+          },
+          {
+            "apiVersion": "serving.knative.dev/v1",
+            "fieldsType": "FieldsV1",
+            "fieldsV1": {
+              "f:status": {
+                "f:address": {
+                  ".": {},
+                  "f:url": {}
+                },
+                "f:conditions": {},
+                "f:latestCreatedRevisionName": {},
+                "f:latestReadyRevisionName": {},
+                "f:observedGeneration": {},
+                "f:traffic": {},
+                "f:url": {}
+              }
+            },
+            "manager": "controller",
+            "operation": "Update",
+            "time": "2020-05-27T18:52:37Z"
+          }
+        ],
+        "name": "ccc",
+        "namespace": "a-serverles-example",
+        "resourceVersion": "114874",
+        "selfLink": "/apis/serving.knative.dev/v1/namespaces/a-serverles-example/services/ccc",
+        "uid": "6ca1878a-6698-42c8-92de-e6a1b4c3bbb0"
+      },
+      "spec": {
+        "template": {
+          "metadata": {
+            "annotations": {
+              "client.knative.dev/user-image": "quay.io/rhdevelopers/knative-tutorial-greeter:quarkus"
+            },
+            "creationTimestamp": null,
+            "name": "ccc-nxljy-1"
+          },
+          "spec": {
+            "containerConcurrency": 0,
+            "containers": [
+              {
+                "image": "quay.io/rhdevelopers/knative-tutorial-greeter:quarkus",
+                "name": "user-container",
+                "readinessProbe": {
+                  "successThreshold": 1,
+                  "tcpSocket": {
+                    "port": 0
+                  }
+                },
+                "resources": {}
+              }
+            ],
+            "timeoutSeconds": 300
+          }
+        },
+        "traffic": [
+          {
+            "latestRevision": true,
+            "percent": 100
+          }
+        ]
+      },
+      "status": {
+        "address": {
+          "url": "http://ccc.a-serverles-example.svc.cluster.local"
+        },
+        "conditions": [
+          {
+            "lastTransitionTime": "2020-05-27T18:52:36Z",
+            "status": "True",
+            "type": "ConfigurationsReady"
+          },
+          {
+            "lastTransitionTime": "2020-05-27T18:52:36Z",
+            "status": "True",
+            "type": "Ready"
+          },
+          {
+            "lastTransitionTime": "2020-05-27T18:52:36Z",
+            "status": "True",
+            "type": "RoutesReady"
+          }
+        ],
+        "latestCreatedRevisionName": "ccc-nxljy-1",
+        "latestReadyRevisionName": "ccc-nxljy-1",
+        "observedGeneration": 1,
+        "traffic": [
+          {
+            "latestRevision": true,
+            "percent": 100,
+            "revisionName": "ccc-nxljy-1"
+          }
+        ],
+        "url": "http://ccc-a-serverles-example.apps.devcluster.openshift.com"
+      }
+    },
+    {
+      "apiVersion": "serving.knative.dev/v1",
+      "kind": "Service",
+      "metadata": {
+        "annotations": {
+          "serving.knative.dev/creator": "system:admin",
+          "serving.knative.dev/lastModifier": "system:admin"
+        },
+        "creationTimestamp": "2020-05-27T20:18:20Z",
+        "generation": 1,
+        "managedFields": [
+          {
+            "apiVersion": "serving.knative.dev/v1",
+            "fieldsType": "FieldsV1",
+            "fieldsV1": {
+              "f:spec": {
+                ".": {},
+                "f:template": {
+                  ".": {},
+                  "f:metadata": {
+                    ".": {},
+                    "f:annotations": {
+                      ".": {},
+                      "f:client.knative.dev/user-image": {}
+                    },
+                    "f:creationTimestamp": {},
+                    "f:name": {}
+                  },
+                  "f:spec": {
+                    ".": {},
+                    "f:containers": {}
+                  }
+                }
+              },
+              "f:status": {}
+            },
+            "manager": "kn",
+            "operation": "Update",
+            "time": "2020-05-27T20:18:20Z"
+          },
+          {
+            "apiVersion": "serving.knative.dev/v1",
+            "fieldsType": "FieldsV1",
+            "fieldsV1": {
+              "f:status": {
+                "f:address": {
+                  ".": {},
+                  "f:url": {}
+                },
+                "f:conditions": {},
+                "f:latestCreatedRevisionName": {},
+                "f:latestReadyRevisionName": {},
+                "f:observedGeneration": {},
+                "f:traffic": {},
+                "f:url": {}
+              }
+            },
+            "manager": "controller",
+            "operation": "Update",
+            "time": "2020-05-27T20:18:31Z"
+          }
+        ],
+        "name": "greeter",
+        "namespace": "a-serverles-example",
+        "resourceVersion": "169628",
+        "selfLink": "/apis/serving.knative.dev/v1/namespaces/a-serverles-example/services/greeter",
+        "uid": "832eb8a3-6ea2-4511-987d-ac3e1226af1a"
+      },
+      "spec": {
+        "template": {
+          "metadata": {
+            "annotations": {
+              "client.knative.dev/user-image": "quay.io/rhdevelopers/knative-tutorial-greeter:quarkus"
+            },
+            "creationTimestamp": null,
+            "name": "greeter-btrnq-1"
+          },
+          "spec": {
+            "containerConcurrency": 0,
+            "containers": [
+              {
+                "image": "quay.io/rhdevelopers/knative-tutorial-greeter:quarkus",
+                "name": "user-container",
+                "readinessProbe": {
+                  "successThreshold": 1,
+                  "tcpSocket": {
+                    "port": 0
+                  }
+                },
+                "resources": {}
+              }
+            ],
+            "timeoutSeconds": 300
+          }
+        },
+        "traffic": [
+          {
+            "latestRevision": true,
+            "percent": 100
+          }
+        ]
+      },
+      "status": {
+        "address": {
+          "url": "http://greeter.a-serverles-example.svc.cluster.local"
+        },
+        "conditions": [
+          {
+            "lastTransitionTime": "2020-05-27T20:18:30Z",
+            "status": "True",
+            "type": "ConfigurationsReady"
+          },
+          {
+            "lastTransitionTime": "2020-05-27T20:18:31Z",
+            "status": "True",
+            "type": "Ready"
+          },
+          {
+            "lastTransitionTime": "2020-05-27T20:18:31Z",
+            "status": "True",
+            "type": "RoutesReady"
+          }
+        ],
+        "latestCreatedRevisionName": "greeter-btrnq-1",
+        "latestReadyRevisionName": "greeter-btrnq-1",
+        "observedGeneration": 1,
+        "traffic": [
+          {
+            "latestRevision": true,
+            "percent": 100,
+            "revisionName": "greeter-btrnq-1"
+          }
+        ],
+        "url": "http://greeter-a-serverles-example.apps.devcluster.openshift.com"
+      }
+    }
+  ],
+  "kind": "ServiceList"
+}

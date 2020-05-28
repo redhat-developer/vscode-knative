@@ -3,7 +3,7 @@ import * as assert from 'assert';
 import * as vscode from 'vscode';
 
 suite('Knative extension', () => {
-  test('Extension should be present', () => {
+  test('should be present', () => {
     assert.ok(vscode.extensions.getExtension('redhat.vscode-knative'));
   });
 

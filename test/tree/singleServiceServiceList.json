@@ -1,103 +1,142 @@
 {
-  "kind": "ServiceList",
-  "apiVersion": "serving.knative.dev/v1alpha1",
-  "metadata": {
-      "selfLink": "/apis/serving.knative.dev/v1alpha1/namespaces/developer-code/services",
-      "resourceVersion": "110476769"
-  },
+  "apiVersion": "serving.knative.dev/v1",
   "items": [
-      {
-          "kind": "Service",
-          "apiVersion": "serving.knative.dev/v1alpha1",
-          "metadata": {
-              "name": "greeter",
-              "namespace": "developer-code",
-              "selfLink": "/apis/serving.knative.dev/v1alpha1/namespaces/developer-code/services/greeter",
-              "uid": "daa78dc1-4db0-47c6-bf28-0e4342badc6e",
-              "resourceVersion": "110475491",
-              "generation": 1,
-              "creationTimestamp": "2020-05-06T23:10:06Z",
-              "annotations": {
-                  "serving.knative.dev/creator": "developer",
-                  "serving.knative.dev/lastModifier": "developer"
-              }
+    {
+      "apiVersion": "serving.knative.dev/v1",
+      "kind": "Service",
+      "metadata": {
+          "annotations": {
+              "serving.knative.dev/creator": "system:admin",
+              "serving.knative.dev/lastModifier": "system:admin"
           },
-          "spec": {
-              "template": {
-                  "metadata": {
-                      "name": "greeter-xdfjc-1",
-                      "creationTimestamp": null,
-                      "annotations": {
-                          "client.knative.dev/user-image": "quay.io/rhdevelopers/knative-tutorial-greeter:quarkus"
-                      }
-                  },
-                  "spec": {
-                      "containers": [
-                          {
-                              "name": "user-container",
-                              "image": "quay.io/rhdevelopers/knative-tutorial-greeter:quarkus",
-                              "resources": {
-                                  "limits": {
-                                      "cpu": "1",
-                                      "memory": "200M"
+          "creationTimestamp": "2020-05-27T20:18:20Z",
+          "generation": 1,
+          "managedFields": [
+              {
+                  "apiVersion": "serving.knative.dev/v1",
+                  "fieldsType": "FieldsV1",
+                  "fieldsV1": {
+                      "f:spec": {
+                          ".": {},
+                          "f:template": {
+                              ".": {},
+                              "f:metadata": {
+                                  ".": {},
+                                  "f:annotations": {
+                                      ".": {},
+                                      "f:client.knative.dev/user-image": {}
                                   },
-                                  "requests": {
-                                      "cpu": "400m",
-                                      "memory": "100M"
-                                  }
+                                  "f:creationTimestamp": {},
+                                  "f:name": {}
                               },
-                              "readinessProbe": {
-                                  "tcpSocket": {
-                                      "port": 0
-                                  },
-                                  "successThreshold": 1
+                              "f:spec": {
+                                  ".": {},
+                                  "f:containers": {}
                               }
                           }
-                      ],
-                      "containerConcurrency": 0,
-                      "timeoutSeconds": 300
-                  }
+                      },
+                      "f:status": {}
+                  },
+                  "manager": "kn",
+                  "operation": "Update",
+                  "time": "2020-05-27T20:18:20Z"
               },
-              "traffic": [
-                  {
-                      "latestRevision": true,
-                      "percent": 100
-                  }
-              ]
+              {
+                  "apiVersion": "serving.knative.dev/v1",
+                  "fieldsType": "FieldsV1",
+                  "fieldsV1": {
+                      "f:status": {
+                          "f:address": {
+                              ".": {},
+                              "f:url": {}
+                          },
+                          "f:conditions": {},
+                          "f:latestCreatedRevisionName": {},
+                          "f:latestReadyRevisionName": {},
+                          "f:observedGeneration": {},
+                          "f:traffic": {},
+                          "f:url": {}
+                      }
+                  },
+                  "manager": "controller",
+                  "operation": "Update",
+                  "time": "2020-05-27T20:18:31Z"
+              }
+          ],
+          "name": "greeter",
+          "namespace": "a-serverles-example",
+          "resourceVersion": "169628",
+          "selfLink": "/apis/serving.knative.dev/v1/namespaces/a-serverles-example/services/greeter",
+          "uid": "832eb8a3-6ea2-4511-987d-ac3e1226af1a"
+      },
+      "spec": {
+          "template": {
+              "metadata": {
+                  "annotations": {
+                      "client.knative.dev/user-image": "quay.io/rhdevelopers/knative-tutorial-greeter:quarkus"
+                  },
+                  "creationTimestamp": null,
+                  "name": "greeter-btrnq-1"
+              },
+              "spec": {
+                  "containerConcurrency": 0,
+                  "containers": [
+                      {
+                          "image": "quay.io/rhdevelopers/knative-tutorial-greeter:quarkus",
+                          "name": "user-container",
+                          "readinessProbe": {
+                              "successThreshold": 1,
+                              "tcpSocket": {
+                                  "port": 0
+                              }
+                          },
+                          "resources": {}
+                      }
+                  ],
+                  "timeoutSeconds": 300
+              }
           },
-          "status": {
-              "observedGeneration": 1,
-              "conditions": [
-                  {
-                      "type": "ConfigurationsReady",
-                      "status": "True",
-                      "lastTransitionTime": "2020-05-06T23:10:11Z"
-                  },
-                  {
-                      "type": "Ready",
-                      "status": "True",
-                      "lastTransitionTime": "2020-05-06T23:10:12Z"
-                  },
-                  {
-                      "type": "RoutesReady",
-                      "status": "True",
-                      "lastTransitionTime": "2020-05-06T23:10:12Z"
-                  }
-              ],
-              "url": "http://greeter-developer-code.apps.member.crt-stage.com",
-              "address": {
-                  "url": "http://greeter.developer-code.svc.cluster.local"
+          "traffic": [
+              {
+                  "latestRevision": true,
+                  "percent": 100
+              }
+          ]
+      },
+      "status": {
+          "address": {
+              "url": "http://greeter.a-serverles-example.svc.cluster.local"
+          },
+          "conditions": [
+              {
+                  "lastTransitionTime": "2020-05-27T20:18:30Z",
+                  "status": "True",
+                  "type": "ConfigurationsReady"
               },
-              "traffic": [
-                  {
-                      "revisionName": "greeter-xdfjc-1",
-                      "latestRevision": true,
-                      "percent": 100
-                  }
-              ],
-              "latestReadyRevisionName": "greeter-xdfjc-1",
-              "latestCreatedRevisionName": "greeter-xdfjc-1"
-          }
+              {
+                  "lastTransitionTime": "2020-05-27T20:18:31Z",
+                  "status": "True",
+                  "type": "Ready"
+              },
+              {
+                  "lastTransitionTime": "2020-05-27T20:18:31Z",
+                  "status": "True",
+                  "type": "RoutesReady"
+              }
+          ],
+          "latestCreatedRevisionName": "greeter-btrnq-1",
+          "latestReadyRevisionName": "greeter-btrnq-1",
+          "observedGeneration": 1,
+          "traffic": [
+              {
+                  "latestRevision": true,
+                  "percent": 100,
+                  "revisionName": "greeter-btrnq-1"
+              }
+          ],
+          "url": "http://greeter-a-serverles-example.apps.devcluster.openshift.com"
       }
-  ]
+  }
+],
+  "kind": "ServiceList"
 }

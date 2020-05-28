@@ -159,12 +159,4 @@ export class KnAPI {
   static printKnVersion(): CliCommand {
     return newKnCommand(['version']);
   }
-
-  // static printKnVersionAndProjects(): CliCommand {
-  //   return newKnCommand(['version', '&&', 'kn', 'service', 'list']);
-  // }
-
-  static knLogout(): CliCommand {
-    return newKnCommand(['logout']);
-  }
 }
