@@ -8,7 +8,6 @@ import { KnativeTreeItem } from '../../src/tree/knativeTreeItem';
 import { ContextType } from '../../src/kn/config';
 import { KnativeItem } from '../../src/knative/knativeItem';
 import { Service } from '../../src/knative/service';
-import { Revision } from '../../src/knative/revision';
 
 const { expect } = chai;
 chai.use(sinonChai);
