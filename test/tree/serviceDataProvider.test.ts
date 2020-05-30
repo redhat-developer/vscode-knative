@@ -28,11 +28,10 @@ suite('ServiceDataProvider', () => {
   // TODO: figure out how to test an event that is fired.
   suite('Refresh', () => {
     test('should fire the tree data change event', () => {
-      // const api = rewire('../../src/tree/serviceDataProvider');
-      // const onDidChangeTreeDataEmitter = api.__get__('onDidChangeTreeDataEmitter');
-      // const spy = sandbox.spy(onDidChangeTreeDataEmitter, 'fire');
+      const spy = sandbox.spy();
+      serviceDataProvider.onDidChangeTreeData(spy);
       serviceDataProvider.refresh();
-      // assert(spy.called);
+      assert(spy.calledOnce);
     });
   });
 
