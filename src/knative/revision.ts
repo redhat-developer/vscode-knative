@@ -3,19 +3,28 @@
  *  Licensed under the MIT License. See LICENSE file in the project root for license information.
  *-----------------------------------------------------------------------------------------------*/
 
+import { URL } from 'url';
 import { KnativeItem } from './knativeItem';
 
 export class Revision extends KnativeItem {
-  constructor(public name: string, public service: string, public details?: Items) {
+  constructor(public name: string, public service: string, public details?: Items, public traffic?: Traffic | null) {
     super();
   }
 
   status: boolean;
 
-  static toRevision(value: Items): Revision {
-    const revision = new Revision(value.metadata.name, value.metadata.ownerReferences[0].name, value);
+  static toRevision(value: Items, revisionTraffic: Traffic): Revision {
+    const revision = new Revision(value.metadata.name, value.metadata.ownerReferences[0].name, value, revisionTraffic);
     return revision;
   }
+}
+export interface Traffic {
+  tag: string;
+  revisionName: string;
+  confgiurationName: string;
+  latestRevision: boolean;
+  percent: number;
+  url: URL;
 }
 export interface JSONRevision {
   apiVersion: string;

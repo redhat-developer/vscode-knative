@@ -3,6 +3,7 @@
  *  Licensed under the MIT License. See LICENSE file in the project root for license information.
  *-----------------------------------------------------------------------------------------------*/
 
+import { URL } from 'url';
 import { KnativeItem } from './knativeItem';
 import { Revision } from './revision';
 
@@ -130,9 +131,12 @@ export interface Resources {
   requests: {};
 }
 export interface Traffic {
+  tag: string;
+  revisionName: string;
+  confgiurationName: string;
   latestRevision: boolean;
   percent: number;
-  revisionName: string;
+  url: URL;
 }
 export interface Status {
   address: Address;

@@ -11,7 +11,7 @@ import { CliExitData } from '../kn/knCli';
 import { KnAPI } from '../kn/kn-api';
 import { ContextType } from '../kn/config';
 import { Service, CreateService } from '../knative/service';
-import { Revision } from '../knative/revision';
+import { Revision, Items, Traffic } from '../knative/revision';
 import { KnativeServices } from '../knative/knativeServices';
 
 export class ServiceDataProvider implements TreeDataProvider<KnativeTreeItem> {
@@ -86,7 +86,22 @@ export class ServiceDataProvider implements TreeDataProvider<KnativeTreeItem> {
    */
   public async getRevisions(parentService: KnativeTreeItem): Promise<KnativeTreeItem[]> {
     const result: CliExitData = await this.knExecutor.execute(KnAPI.listRevisionsForService(parentService.getName()));
-    const revisions: Revision[] = this.ksvc.addRevisions(loadItems(result).map((value) => Revision.toRevision(value)));
+
+    const service: Service = parentService.getKnativeItem() as Service;
+    const { traffic } = service.details.status;
+
+    const revisions: Revision[] = this.ksvc.addRevisions(
+      loadItems(result).map((value: Items) => {
+        // get the revision name, check it against the list of traffic from the parent, then pass in the traffic if found
+        const revisionTraffic: Traffic = traffic.find((val): boolean => {
+          if (value.metadata.name === val.revisionName) {
+            return true;
+          }
+          return false;
+        });
+        return Revision.toRevision(value, revisionTraffic);
+      }),
+    );
 
     // If there are no Revisions then there is either no Service or an error.
     if (revisions.length === 0) {
@@ -94,21 +109,18 @@ export class ServiceDataProvider implements TreeDataProvider<KnativeTreeItem> {
     }
 
     // Create the Revision tree item for each one found.
-    const revisionTreeObjects: KnativeTreeItem[] = revisions
-      .map<KnativeTreeItem>((value) => {
-        const obj: KnativeTreeItem = new KnativeTreeItem(
-          parentService,
-          value,
-          value.name,
-          ContextType.REVISION,
-          TreeItemCollapsibleState.None,
-          null,
-          null,
-        );
-        // this.data.setPathToObject(obj);
-        return obj;
-      })
-      .sort(compareNodes);
+    const revisionTreeObjects: KnativeTreeItem[] = revisions.map<KnativeTreeItem>((value) => {
+      const obj: KnativeTreeItem = new KnativeTreeItem(
+        parentService,
+        value,
+        value.name,
+        ContextType.REVISION,
+        TreeItemCollapsibleState.None,
+        null,
+        null,
+      );
+      return obj;
+    });
     return revisionTreeObjects;
   }
 

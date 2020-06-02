@@ -7,6 +7,7 @@ import { ProviderResult, TreeItemCollapsibleState, Uri, TreeItem, Command } from
 import * as path from 'path';
 import { ContextType } from '../kn/config';
 import { KnativeItem } from '../knative/knativeItem';
+import { Revision } from '../knative/revision';
 
 import format = require('string-format');
 
@@ -16,21 +17,25 @@ const CONTEXT_DATA = {
   revision: {
     icon: 'REV.svg',
     tooltip: 'Revision: {label}',
+    description: '',
     getChildren: (): undefined[] => [],
   },
   service: {
     icon: 'SVC.svg',
     tooltip: 'Service: {label}',
+    description: '',
     getChildren: (): undefined[] => [],
   },
   route: {
     icon: 'RTE.svg',
     tooltip: 'Route: {label}',
+    description: '',
     getChildren: (): undefined[] => [],
   },
   event: {
     icon: 'EVT.svg',
     tooltip: 'Event: {label}',
+    description: '',
     getChildren: (): undefined[] => [],
   },
 };
@@ -55,6 +60,8 @@ export function compareNodes(a: KnativeTreeItem, b: KnativeTreeItem): number {
 }
 
 export class KnativeTreeItem extends TreeItem {
+  private name: string;
+
   // eslint-disable-next-line no-useless-constructor
   constructor(
     private parent: KnativeTreeItem,
@@ -66,6 +73,15 @@ export class KnativeTreeItem extends TreeItem {
     public readonly compType?: string,
   ) {
     super(label, collapsibleState);
+    // Set the name since the label can have the traffic and we need the actual name for the yaml
+    this.name = label;
+    // Check the type since only a Revision can have traffic.
+    if (parent && parent.contextValue === 'service') {
+      const rev: Revision = item as Revision;
+      if (rev && rev.traffic) {
+        this.label = `${this.label} (${rev.traffic.percent}%)`;
+      }
+    }
   }
 
   private explorerPath: string;
@@ -92,9 +108,8 @@ export class KnativeTreeItem extends TreeItem {
   }
 
   // The description is the text after the label. It is grey and a smaller font.
-  // eslint-disable-next-line class-methods-use-this
   get description(): string {
-    return '';
+    return CONTEXT_DATA[this.contextValue].description;
   }
 
   get command(): Command {
@@ -107,7 +122,7 @@ export class KnativeTreeItem extends TreeItem {
   }
 
   getName(): string {
-    return this.label;
+    return this.name;
   }
 
   getChildren(): ProviderResult<KnativeTreeItem[]> {
