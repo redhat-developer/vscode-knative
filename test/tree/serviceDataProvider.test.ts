@@ -73,13 +73,16 @@ suite('ServiceDataProvider', () => {
     test('getChildren should return single node', async () => {
       sandbox
         .stub(serviceDataProvider.knExecutor, 'execute')
+        .resolves({ error: undefined, stdout: JSON.stringify(singleServiceData) });
+      const parent = await serviceDataProvider.getChildren();
+      sandbox.restore();
+      sandbox
+        .stub(serviceDataProvider.knExecutor, 'execute')
         .resolves({ error: undefined, stdout: JSON.stringify(singleServiceRevisionData) });
-      const parentKnativeItem: KnativeItem = new Service('greeter', 'quay.io/rhdevelopers/knative-tutorial-greeter:quarkus');
-      const parent: KnativeTreeItem = new KnativeTreeItem(null, parentKnativeItem, 'greeter', ContextType.SERVICE, 0, null, null);
-      const result = await serviceDataProvider.getChildren(parent);
+      const result = await serviceDataProvider.getChildren(parent[0]);
       expect(result).to.have.lengthOf(1);
       expect(result[0].description).equals('');
-      expect(result[0].label).equals('greeter-btrnq-1');
+      expect(result[0].label).equals('greeter-btrnq-1 (100%)');
       expect(result[0].getName()).equals('greeter-btrnq-1');
       expect(result[0].tooltip).equals('Revision: greeter-btrnq-1');
     });
@@ -87,7 +90,7 @@ suite('ServiceDataProvider', () => {
 
   suite('Getting a Parent Item', () => {
     test('should return null for a Service', () => {
-      const parentKnativeItem: KnativeItem = new Service('greeter', 'quay.io/rhdevelopers/knative-tutorial-greeter:quarkus');
+      const parentKnativeItem: Service = new Service('greeter', 'quay.io/rhdevelopers/knative-tutorial-greeter:quarkus');
       const parent: KnativeTreeItem = new KnativeTreeItem(null, parentKnativeItem, 'greeter', ContextType.SERVICE, 0, null, null);
       const item: KnativeTreeItem = serviceDataProvider.getParent(parent);
       assert.equals(item, null);
@@ -98,12 +101,15 @@ suite('ServiceDataProvider', () => {
     test('should return the Service of the Revision', async () => {
       sandbox
         .stub(serviceDataProvider.knExecutor, 'execute')
+        .resolves({ error: undefined, stdout: JSON.stringify(singleServiceData) });
+      const parent = await serviceDataProvider.getChildren();
+      sandbox.restore();
+      sandbox
+        .stub(serviceDataProvider.knExecutor, 'execute')
         .resolves({ error: undefined, stdout: JSON.stringify(singleServiceRevisionData) });
-      const parentKnativeItem: KnativeItem = new Service('greeter', 'quay.io/rhdevelopers/knative-tutorial-greeter:quarkus');
-      const parent: KnativeTreeItem = new KnativeTreeItem(null, parentKnativeItem, 'greeter', ContextType.SERVICE, 0, null, null);
-      const result = await serviceDataProvider.getRevisions(parent);
+      const result = await serviceDataProvider.getRevisions(parent[0]);
       const item: KnativeTreeItem = serviceDataProvider.getParent(result[0]);
-      assert.equals(item, parent);
+      assert.equals(item, parent[0]);
     });
   });
 });

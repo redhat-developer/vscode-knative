@@ -16,25 +16,25 @@ const { Collapsed } = TreeItemCollapsibleState;
 const CONTEXT_DATA = {
   revision: {
     icon: 'REV.svg',
-    tooltip: 'Revision: {label}',
+    tooltip: 'Revision: {name}',
     description: '',
     getChildren: (): undefined[] => [],
   },
   service: {
     icon: 'SVC.svg',
-    tooltip: 'Service: {label}',
+    tooltip: 'Service: {name}',
     description: '',
     getChildren: (): undefined[] => [],
   },
   route: {
     icon: 'RTE.svg',
-    tooltip: 'Route: {label}',
+    tooltip: 'Route: {name}',
     description: '',
     getChildren: (): undefined[] => [],
   },
   event: {
     icon: 'EVT.svg',
-    tooltip: 'Event: {label}',
+    tooltip: 'Event: {name}',
     description: '',
     getChildren: (): undefined[] => [],
   },
