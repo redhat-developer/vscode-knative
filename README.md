@@ -48,9 +48,13 @@ This extension contributes the following settings:
 
 > See [CHANGELOG](CHANGELOG.md) for details.
 
+### 0.5.0
+
+- Display Traffic percentage on the Revisions
+
 ### 0.4.0
 
-- Display yaml file for Services and Revisions when selected.
+- Display yaml file for Services and Revisions when selected
 - Support Deletion of Services and Revisions
 
 ### 0.3.0
