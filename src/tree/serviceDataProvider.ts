@@ -55,6 +55,8 @@ export class ServiceDataProvider implements TreeDataProvider<KnativeTreeItem> {
     if (element) {
       if (element.contextValue === 'service') {
         children = this.getRevisions(element);
+      } else if (element.getName() === 'No Service Found') {
+        children = [];
       } else {
         children = element.getChildren();
       }
@@ -135,7 +137,7 @@ export class ServiceDataProvider implements TreeDataProvider<KnativeTreeItem> {
     // Create an empty state message when there is no Service.
     if (services.length === 0) {
       return [
-        new KnativeTreeItem(null, null, 'No Service Found', ContextType.SERVICE, TreeItemCollapsibleState.Collapsed, null, null),
+        new KnativeTreeItem(null, null, 'No Service Found', ContextType.SERVICE, TreeItemCollapsibleState.None, null, null),
       ];
     }
     // Convert the fetch Services into TreeItems

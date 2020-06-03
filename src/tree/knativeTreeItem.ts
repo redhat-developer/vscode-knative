@@ -113,6 +113,9 @@ export class KnativeTreeItem extends TreeItem {
   }
 
   get command(): Command {
+    if (this.name === 'No Service Found') {
+      return;
+    }
     const c: Command = {
       command: 'service.explorer.openFile',
       title: 'Load',
