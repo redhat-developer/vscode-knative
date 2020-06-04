@@ -20,6 +20,12 @@ const CONTEXT_DATA = {
     description: '',
     getChildren: (): undefined[] => [],
   },
+  'revision.tagged': {
+    icon: 'REV.svg',
+    tooltip: 'Revision: {name}',
+    description: '',
+    getChildren: (): undefined[] => [],
+  },
   service: {
     icon: 'SVC.svg',
     tooltip: 'Service: {name}',
