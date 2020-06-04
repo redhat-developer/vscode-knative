@@ -95,11 +95,8 @@ export class ServiceDataProvider implements TreeDataProvider<KnativeTreeItem> {
     const revisions: Revision[] = this.ksvc.addRevisions(
       loadItems(result).map((value: Items) => {
         // get the revision name, check it against the list of traffic from the parent, then pass in the traffic if found
-        const revisionTraffic: Traffic = traffic.find((val): boolean => {
-          if (value.metadata.name === val.revisionName) {
-            return true;
-          }
-          return false;
+        const revisionTraffic: Traffic[] = traffic.filter((val): boolean => {
+          return value.metadata.name === val.revisionName;
         });
         return Revision.toRevision(value, revisionTraffic);
       }),

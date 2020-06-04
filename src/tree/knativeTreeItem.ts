@@ -79,7 +79,12 @@ export class KnativeTreeItem extends TreeItem {
     if (parent && parent.contextValue === 'service') {
       const rev: Revision = item as Revision;
       if (rev && rev.traffic) {
-        this.label = `${this.label} (${rev.traffic.percent}%)`;
+        const percentTraffic = rev.traffic.find((val) => {
+          return val.percent;
+        });
+        if (percentTraffic) {
+          this.label = `${this.label} (${percentTraffic.percent}%)`;
+        }
       }
     }
   }
