@@ -7,13 +7,13 @@ import { URL } from 'url';
 import { KnativeItem } from './knativeItem';
 
 export class Revision extends KnativeItem {
-  constructor(public name: string, public service: string, public details?: Items, public traffic?: Traffic | null) {
+  constructor(public name: string, public service: string, public details?: Items, public traffic?: Traffic[] | null) {
     super();
   }
 
   status: boolean;
 
-  static toRevision(value: Items, revisionTraffic: Traffic): Revision {
+  static toRevision(value: Items, revisionTraffic: Traffic[]): Revision {
     const revision = new Revision(value.metadata.name, value.metadata.ownerReferences[0].name, value, revisionTraffic);
     return revision;
   }
