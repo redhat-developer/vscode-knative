@@ -7,7 +7,7 @@ import { ProviderResult, TreeItemCollapsibleState, Uri, TreeItem, Command } from
 import * as path from 'path';
 import { ContextType } from '../kn/config';
 import { KnativeItem } from '../knative/knativeItem';
-import { Revision } from '../knative/revision';
+import { Revision, Traffic } from '../knative/revision';
 
 import format = require('string-format');
 
@@ -68,6 +68,8 @@ export function compareNodes(a: KnativeTreeItem, b: KnativeTreeItem): number {
 export class KnativeTreeItem extends TreeItem {
   private name: string;
 
+  private desc: string;
+
   // eslint-disable-next-line no-useless-constructor
   constructor(
     private parent: KnativeTreeItem,
@@ -84,12 +86,16 @@ export class KnativeTreeItem extends TreeItem {
     // Check the type since only a Revision can have traffic.
     if (parent && parent.contextValue === 'service') {
       const rev: Revision = item as Revision;
-      if (rev && rev.traffic) {
-        const percentTraffic = rev.traffic.find((val) => {
-          return val.percent;
+      if (rev && rev.traffic.length > 0) {
+        // Look through the traffic list for revisions.
+        // When you find one that matches the revision of this Item, pull it out to update the label and description.
+        const percentTraffic: Traffic = rev.traffic.find((val) => {
+          return val.revisionName === this.label;
         });
+        // Ensure we only update revisions with traffic, leaving the others alone.
         if (percentTraffic) {
           this.label = `${this.label} (${percentTraffic.percent}%)`;
+          this.desc = `${percentTraffic.latestRevision ? 'latest' : ''} ${percentTraffic.tag ? percentTraffic.tag : ''}`;
         }
       }
     }
@@ -120,7 +126,7 @@ export class KnativeTreeItem extends TreeItem {
 
   // The description is the text after the label. It is grey and a smaller font.
   get description(): string {
-    return CONTEXT_DATA[this.contextValue].description;
+    return this.desc;
   }
 
   get command(): Command {

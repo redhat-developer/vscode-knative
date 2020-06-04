@@ -44,33 +44,27 @@ suite('ServiceDataProvider', () => {
     });
   });
 
-  suite('No Services', () => {
-    test('getChildren should return the No Services node when KN execute returns "No Services found"', async () => {
+  suite('Getting Tree Children', () => {
+    test('should return the No Services node when KN execute returns "No Services found"', async () => {
       sandbox.stub(serviceDataProvider.knExecutor, 'execute').resolves({ error: undefined, stdout: 'No services found.' });
       const result = await serviceDataProvider.getChildren();
       expect(result).to.have.lengthOf(1);
-      expect(result[0].description).equals('');
+      expect(result[0].description).equals(undefined);
       expect(result[0].label).equals('No Service Found');
       expect(result[0].getName()).equals('No Service Found');
     });
-  });
-
-  suite('Single service', () => {
-    test('getChildren should return single node', async () => {
+    test('should return a single Service tree node', async () => {
       sandbox
         .stub(serviceDataProvider.knExecutor, 'execute')
         .resolves({ error: undefined, stdout: JSON.stringify(singleServiceData) });
       const result = await serviceDataProvider.getChildren();
       expect(result).to.have.lengthOf(1);
-      expect(result[0].description).equals('');
+      expect(result[0].description).equals(undefined);
       expect(result[0].label).equals('greeter');
       expect(result[0].getName()).equals('greeter');
       expect(result[0].tooltip).equals('Service: greeter');
     });
-  });
-
-  suite('Single revision', () => {
-    test('getChildren should return single node', async () => {
+    test('should return a single Revision tree node', async () => {
       sandbox
         .stub(serviceDataProvider.knExecutor, 'execute')
         .resolves({ error: undefined, stdout: JSON.stringify(singleServiceData) });
@@ -81,7 +75,7 @@ suite('ServiceDataProvider', () => {
         .resolves({ error: undefined, stdout: JSON.stringify(singleServiceRevisionData) });
       const result = await serviceDataProvider.getChildren(parent[0]);
       expect(result).to.have.lengthOf(1);
-      expect(result[0].description).equals('');
+      expect(result[0].description).equals('latest ');
       expect(result[0].label).equals('greeter-btrnq-1 (100%)');
       expect(result[0].getName()).equals('greeter-btrnq-1');
       expect(result[0].tooltip).equals('Revision: greeter-btrnq-1');
@@ -95,9 +89,6 @@ suite('ServiceDataProvider', () => {
       const item: KnativeTreeItem = serviceDataProvider.getParent(parent);
       assert.equals(item, null);
     });
-  });
-
-  suite('Getting a Parent Item', () => {
     test('should return the Service of the Revision', async () => {
       sandbox
         .stub(serviceDataProvider.knExecutor, 'execute')
