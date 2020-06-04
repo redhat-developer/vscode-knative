@@ -132,7 +132,14 @@
                   "latestRevision": true,
                   "percent": 100,
                   "revisionName": "greeter-btrnq-1"
-              }
+              },
+              {
+                "tag": "old",
+                "revisionName": "greeter-btrnq-1",
+                "latestRevision": false,
+                "percent": 0,
+                "url": "http://old-greeter-a-serverles-example.apps.devcluster.openshift.com"
+            }
           ],
           "url": "http://greeter-a-serverles-example.apps.devcluster.openshift.com"
       }
