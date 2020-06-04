@@ -8,6 +8,7 @@ import { Service } from './knative/service';
 import { ServiceExplorer } from './tree/serviceExplorer';
 import { KnativeTreeItem } from './tree/knativeTreeItem';
 import { vfsUri, KnativeResourceVirtualFileSystemProvider, KN_RESOURCE_SCHEME } from './util/virtualfs';
+import { Revision } from './knative/revision';
 
 /**
  * This is set up as a Command. It can be called from a menu or by clicking on the tree item.
@@ -42,8 +43,22 @@ export function activate(extensionContext: vscode.ExtensionContext): void {
   // The commandId parameter must match the command field in package.json.
   const disposable = [
     vscode.commands.registerCommand('knative.service.open-in-browser', (treeItem: KnativeTreeItem) => {
-      const service = treeItem.getKnativeItem() as Service;
-      vscode.commands.executeCommand('vscode.open', vscode.Uri.parse(service.image));
+      const item = treeItem.getKnativeItem();
+      if (item instanceof Service) {
+        vscode.commands.executeCommand('vscode.open', vscode.Uri.parse(item.image));
+      }
+      if (item instanceof Revision) {
+        if (item.traffic) {
+          // Find the first tagged traffic & open the URL. There can be more than one tagged traffics
+          // however for our purposes opening the first one should be enough.
+          const taggedTraffic = item.traffic.find((val) => {
+            return val.tag;
+          });
+          if (taggedTraffic) {
+            vscode.commands.executeCommand('vscode.open', vscode.Uri.parse(taggedTraffic.url.toString()));
+          }
+        }
+      }
     }),
     vscode.commands.registerCommand('service.explorer.openFile', (treeItem: KnativeTreeItem) => openInEditor(treeItem)),
 

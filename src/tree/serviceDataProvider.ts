@@ -109,11 +109,16 @@ export class ServiceDataProvider implements TreeDataProvider<KnativeTreeItem> {
 
     // Create the Revision tree item for each one found.
     const revisionTreeObjects: KnativeTreeItem[] = revisions.map<KnativeTreeItem>((value) => {
+      let context = ContextType.REVISION;
+      if (value.traffic && value.traffic.find((val) => val.tag)) {
+        context = ContextType.REVISION_TAGGED;
+      }
+
       const obj: KnativeTreeItem = new KnativeTreeItem(
         parentService,
         value,
         value.name,
-        ContextType.REVISION,
+        context,
         TreeItemCollapsibleState.None,
         null,
         null,

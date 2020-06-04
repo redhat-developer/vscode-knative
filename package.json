@@ -183,17 +183,12 @@
       "view/item/context": [
         {
           "command": "knative.service.open-in-browser",
-          "when": "view == knativeProjectExplorerServices && viewItem == service",
+          "when": "view == knativeProjectExplorerServices && viewItem == service || viewItem == revision.tagged",
           "group": "c1"
         },
         {
           "command": "service.explorer.delete",
-          "when": "view == knativeProjectExplorerServices && viewItem == service",
-          "group": "c2"
-        },
-        {
-          "command": "service.explorer.delete",
-          "when": "view == knativeProjectExplorerServices && viewItem == revision",
+          "when": "view == knativeProjectExplorerServices && viewItem == service || viewItem =~ /revision.*/g",
           "group": "c2"
         }
       ],
