@@ -72,6 +72,16 @@ suite('Knative Services', () => {
       assert.equals({ revision, service }, returnedServiceRevision);
     });
   });
+  suite('Check Traffic', () => {
+    test('should a revision with 2 traffics one tagged', () => {
+      const returnedRevision = ksvc.findRevision('greeter-btrnq-1');
+      assert.equals(revision, returnedRevision);
+      chai.assert.exists(revision.traffic);
+      chai.assert.equal(revision.traffic.length, 2);
+      chai.assert.equal(revision.traffic[0].percent, 100);
+      chai.assert.equal(revision.traffic[1].tag, 'old');
+    });
+  });
   suite('Finding Service and Revision indexes', () => {
     test('should return an object with both service and revision using the revision name', () => {
       const returnedServiceRevision = ksvc.findRevisionAndServiceIndex('greeter-btrnq-1');
