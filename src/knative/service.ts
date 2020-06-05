@@ -18,6 +18,76 @@ export interface CreateService {
   namespace?: string;
 }
 
+export interface UpdateService {
+  name: string;
+  /**
+   * --image string
+   *
+   * Image to run.
+   */
+  image?: string;
+  /**
+   * -p, --port int32
+   *
+   * The port where application listens on.
+   */
+  port?: number;
+  /**
+   * -n, --namespace string
+   *
+   * Specify the namespace to operate in.
+   */
+  namespace?: string;
+  /**
+   * -e, --env stringArray
+   *
+   * Environment variable to set. NAME=value; you may provide this flag any number of times to set multiple environment variables. To unset, specify the environment variable name followed by a "-" (e.g., NAME-).
+   */
+  env?: Map<string, string>;
+  /**
+   * -a, --annotation stringArray
+   *
+   * Service annotation to set. name=value; you may provide this flag any number of times to set multiple annotations. To unset, specify the annotation name followed by a "-" (e.g., name-).
+   */
+  annotation?: Map<string, boolean>;
+  /**
+   * -l, --label stringArray
+   *
+   * Labels to set for both Service and Revision. name=value; you may provide this flag any number of times to set multiple labels. To unset, specify the label name followed by a "-" (e.g., name-).
+   */
+  label?: Map<string, string>;
+  /**
+   * --limit strings
+   *
+   * The resource requirement limits for this Service. For example, 'cpu=100m,memory=256Mi'. You can use this flag multiple times. To unset a resource limit, append "-" to the resource name, e.g. '--limit memory-'.
+   */
+  limit?: Map<string, string>;
+  /**
+   * --request strings
+   *
+   * The resource requirement requests for this Service. For example, 'cpu=100m,memory=256Mi'. You can use this flag multiple times. To unset a resource request, append "-" to the resource name, e.g. '--request cpu-'.
+   */
+  request?: Map<string, string>;
+  /**
+   * --tag strings
+   *
+   * Set tag (format: --tag revisionRef=tagName) where revisionRef can be a revision or '@latest' string representing latest ready revision. This flag can be specified multiple times.
+   */
+  tag?: Map<string, string>;
+  /**
+   * --traffic strings
+   *
+   * Set traffic distribution (format: --traffic revisionRef=percent) where revisionRef can be a revision or a tag or '@latest' string representing latest ready revision. This flag can be given multiple times with percent summing up to 100%.
+   */
+  traffic?: Map<string, string>;
+  /**
+   * --untag strings
+   *
+   * Untag revision (format: --untag tagName). This flag can be specified multiple times.
+   */
+  untag?: Map<string, string>;
+}
+
 export class Service extends KnativeItem implements CreateService {
   constructor(public name: string, public image: string, public details?: Items) {
     super();

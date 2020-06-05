@@ -4,7 +4,7 @@
  *-----------------------------------------------------------------------------------------------*/
 
 import { CliCommand, createCliCommand } from './knCli';
-import { CreateService } from '../knative/service';
+import { CreateService, UpdateService } from '../knative/service';
 
 function newKnCommand(knArguments: string[]): CliCommand {
   return createCliCommand('kn', ...knArguments);
@@ -31,10 +31,10 @@ export class KnAPI {
    * #### Create or replace a service 's1' with image dev.local/ns/image:v2 using --force flag
    * if service 's1' doesn't exist, it's just a normal create operation
    * `kn service create --force s1 --image dev.local/ns/image:v2`
-
+   *
    * #### Create or replace environment variables of service 's1' using --force flag
    * `kn service create --force s1 --env KEY1=NEW_VALUE1 --env NEW_KEY2=NEW_VALUE2 --image dev.local/ns/image:v1`
-
+   *
    * #### Create service 'mysvc' with port 80
    * `kn service create mysvc --port 80 --image dev.local/ns/image:latest`
    *
@@ -87,6 +87,108 @@ export class KnAPI {
     if (createServiceObj.label) {
       createServiceObj.label.forEach((value, key) => {
         commandArguments.push('--label');
+        commandArguments.push(`${key}=${value}`);
+      });
+    }
+
+    return newKnCommand(commandArguments);
+  }
+
+  /**
+   *
+   * @param updateServiceObj - a UpdateService object that requires the service name.
+   *
+   * #### Updates a service 'svc' with new environment variables
+   * `kn service update svc --env KEY1=VALUE1 --env KEY2=VALUE2`
+   *
+   * #### Update a service 'svc' with new port
+   * `kn service update svc --port 80`
+   *
+   * #### Updates a service 'svc' with new request and limit parameters
+   * `kn service update svc --request cpu=500m --limit memory=1024Mi --limit cpu=1000m`
+   *
+   * #### Assign tag 'latest' and 'stable' to revisions 'echo-v2' and 'echo-v1' respectively
+   * `kn service update svc --tag echo-v2=latest --tag echo-v1=stable`
+   * OR
+   * `kn service update svc --tag echo-v2=latest,echo-v1=stable`
+   *
+   * #### Update tag from 'testing' to 'staging' for latest ready revision of service
+   * `kn service update svc --untag testing --tag @latest=staging`
+   *
+   * #### Add tag 'test' to echo-v3 revision with 10% traffic and rest to latest ready revision of service
+   * `kn service update svc --tag echo-v3=test --traffic test=10,@latest=90`
+   */
+  static updateService(updateServiceObj: UpdateService): CliCommand {
+    // Set up the initial values for the command.
+    const commandArguments: string[] = ['service', 'update', updateServiceObj.name];
+    // If an image is list, use it.
+    if (updateServiceObj.image) {
+      commandArguments.push('--image');
+      commandArguments.push(`${updateServiceObj.image}`);
+    }
+    // If the port was set, use it.
+    if (updateServiceObj.port) {
+      commandArguments.push('--port');
+      commandArguments.push(`${updateServiceObj.port}`);
+    }
+    // If a namespace is listed, use it.
+    if (updateServiceObj.namespace) {
+      commandArguments.push('-n');
+      commandArguments.push(`${updateServiceObj.namespace}`);
+    }
+    // If ENV variables were included, add them all.
+    if (updateServiceObj.env) {
+      updateServiceObj.env.forEach((value, key) => {
+        commandArguments.push('--env');
+        commandArguments.push(`${key.toUpperCase()}=${value.toUpperCase()}`);
+      });
+    }
+    // If annotations were added then include them all.
+    if (updateServiceObj.annotation) {
+      updateServiceObj.annotation.forEach((value, key) => {
+        commandArguments.push('--annotation');
+        commandArguments.push(`${key}=${value}`);
+      });
+    }
+    // If labels were added then include them all.
+    if (updateServiceObj.label) {
+      updateServiceObj.label.forEach((value, key) => {
+        commandArguments.push('--label');
+        commandArguments.push(`${key}=${value}`);
+      });
+    }
+    // If labels were added then include them all.
+    if (updateServiceObj.limit) {
+      updateServiceObj.limit.forEach((value, key) => {
+        commandArguments.push('--limit');
+        commandArguments.push(`${key}=${value}`);
+      });
+    }
+    // If labels were added then include them all.
+    if (updateServiceObj.request) {
+      updateServiceObj.request.forEach((value, key) => {
+        commandArguments.push('--request');
+        commandArguments.push(`${key}=${value}`);
+      });
+    }
+    // If labels were added then include them all.
+    if (updateServiceObj.tag) {
+      updateServiceObj.tag.forEach((value, key) => {
+        commandArguments.push('--tag');
+        commandArguments.push(`${key}=${value}`);
+      });
+    }
+    // If labels were added then include them all.
+    if (updateServiceObj.traffic) {
+      updateServiceObj.traffic.forEach((value, key) => {
+        commandArguments.push('--traffic');
+        commandArguments.push(`${key}=${value}`);
+      });
+    }
+    // If labels were added then include them all.
+    if (updateServiceObj.untag) {
+      updateServiceObj.untag.forEach((value, key) => {
+        commandArguments.push('--untag');
         commandArguments.push(`${key}=${value}`);
       });
     }
