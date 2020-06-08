@@ -85,17 +85,26 @@ export class KnativeTreeItem extends TreeItem {
     this.name = label;
     // Check the type since only a Revision can have traffic.
     if (parent && parent.contextValue === 'service') {
+      // Ensure we only update revisions with traffic, leaving the others alone.
       const rev: Revision = item as Revision;
       if (rev && rev.traffic.length > 0) {
+        let tagComposit = '';
+        let percentTraffic = 0;
         // Look through the traffic list for revisions.
-        // When you find one that matches the revision of this Item, pull it out to update the label and description.
-        const percentTraffic: Traffic = rev.traffic.find((val) => {
-          return val.revisionName === this.label;
+        // When you find one that matches the revision of this Item, pull it out to update the label.
+        rev.traffic.forEach((val: Traffic) => {
+          if (val.revisionName === this.label) {
+            // Traffic percent can be assigned to latest and a tag. It needs to be totalled.
+            percentTraffic += val.percent ? val.percent : 0;
+            // There can be more than one tag, so collect all of them. Then add it to the Description.
+            tagComposit += `${val.latestRevision ? 'latest' : ''}`;
+            tagComposit += `${val.tag ? val.tag : ''} `;
+          }
         });
-        // Ensure we only update revisions with traffic, leaving the others alone.
-        if (percentTraffic) {
-          this.label = `${this.label} (${percentTraffic.percent}%)`;
-          this.desc = `${percentTraffic.latestRevision ? 'latest' : ''} ${percentTraffic.tag ? percentTraffic.tag : ''}`;
+        this.desc = tagComposit;
+        // Revisions with tags are traffic with 0% until the traffic is set. Only show the percentage when traffic is set.
+        if (percentTraffic > 0) {
+          this.label = `${this.label} (${percentTraffic}%)`;
         }
       }
     }

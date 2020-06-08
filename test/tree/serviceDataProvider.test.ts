@@ -75,7 +75,7 @@ suite('ServiceDataProvider', () => {
         .resolves({ error: undefined, stdout: JSON.stringify(singleServiceRevisionData) });
       const result = await serviceDataProvider.getChildren(parent[0]);
       expect(result).to.have.lengthOf(1);
-      expect(result[0].description).equals('latest ');
+      expect(result[0].description).equals('latest old ');
       expect(result[0].label).equals('greeter-btrnq-1 (100%)');
       expect(result[0].getName()).equals('greeter-btrnq-1');
       expect(result[0].tooltip).equals('Revision: greeter-btrnq-1');
