@@ -17,7 +17,11 @@ export function loadJSON<T>(filePath: string): Promise<T> {
       if (err) {
         reject(err);
       } else {
-        resolve(JSON.parse(data));
+        try {
+          resolve(JSON.parse(data));
+        } catch (parseErr) {
+          reject(parseErr);
+        }
       }
     });
   });
