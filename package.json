@@ -146,6 +146,11 @@
         "category": "Knative"
       },
       {
+        "command": "service.explorer.tag",
+        "title": "Add a Tag",
+        "category": "Knative"
+      },
+      {
         "command": "service.explorer.refresh",
         "title": "Refresh View",
         "category": "Knative",
@@ -172,6 +177,10 @@
           "when": "false"
         },
         {
+          "command": "service.explorer.tag",
+          "when": "false"
+        },
+        {
           "command": "knative.service.open-in-browser",
           "when": "false"
         },
@@ -190,6 +199,11 @@
           "command": "service.explorer.delete",
           "when": "view == knativeProjectExplorerServices && viewItem == service || viewItem =~ /revision.*/g",
           "group": "c2"
+        },
+        {
+          "command": "service.explorer.tag",
+          "when": "view == knativeProjectExplorerServices && viewItem == service || viewItem =~ /revision.*/g",
+          "group": "c3"
         }
       ],
       "view/title": [

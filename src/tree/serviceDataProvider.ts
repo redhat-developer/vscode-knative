@@ -10,7 +10,7 @@ import { KnExecute, loadItems } from '../kn/knExecute';
 import { CliExitData } from '../kn/knCli';
 import { KnAPI } from '../kn/kn-api';
 import { ContextType } from '../kn/config';
-import { Service, CreateService } from '../knative/service';
+import { Service, CreateService, UpdateService } from '../knative/service';
 import { Revision, Items, Traffic } from '../knative/revision';
 import { KnativeServices } from '../knative/knativeServices';
 
@@ -260,6 +260,36 @@ export class ServiceDataProvider implements TreeDataProvider<KnativeTreeItem> {
     const service: Service = new Service(servObj.name, servObj.image);
 
     this.ksvc.addService(service);
+
+    if (result.error) {
+      // TODO: handle the error
+      // check the kind of errors we can get back
+    }
+    this.refresh();
+    // return this.insertAndRevealService(createKnObj(servObj.name));
+  }
+
+  public async addTag(node: KnativeTreeItem): Promise<KnativeTreeItem[]> {
+    const tagName: string = await window.showInputBox({
+      ignoreFocusOut: true,
+      prompt: 'Enter a Tag name',
+    });
+
+    const revisionName = node.getName();
+    const serviceName = node.getParent().getName();
+    const tagContent = new Map([[revisionName, tagName]]);
+
+    const servObj: UpdateService = { name: serviceName, tag: tagContent };
+
+    if (!servObj.name) {
+      return null;
+    }
+
+    // Get the raw data from the cli call.
+    const result: CliExitData = await this.knExecutor.execute(KnAPI.updateService(servObj));
+    const service: Service = new Service(servObj.name, servObj.image);
+
+    this.ksvc.updateService(service);
 
     if (result.error) {
       // TODO: handle the error
