@@ -14,16 +14,8 @@ suite('Parse utility class', () => {
   const invalidJsonFilePath = path.join(__dirname, 'invalid.json');
 
   suiteSetup(() => {
-    fs.writeFile(filePath, JSON.stringify(json), 'utf8', function erroneous(err: Error) {
-      if (err) {
-        throw err;
-      }
-    });
-    fs.writeFile(invalidJsonFilePath, 'Invalid json', 'utf8', function erroneous(err: Error) {
-      if (err) {
-        throw err;
-      }
-    });
+    fs.writeFileSync(filePath, JSON.stringify(json), 'utf8');
+    fs.writeFileSync(invalidJsonFilePath, 'Invalid json', 'utf8');
   });
 
   test('should parse valid JSON from existing file', async () => {
