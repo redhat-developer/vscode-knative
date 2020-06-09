@@ -44,6 +44,10 @@ This extension contributes the following settings:
 > BUGS: Please check the [issues](https://github.com/talamer/vscode-knative/issues?q=is%3Aissue+is%3Aopen+label%3Akind%2Fbug) and report any you find.
 * Limited features due to Alpha level of development.
 
+## Contributing
+
+> To learn how to contribute, please see this [guide](https://github.com/talamer/vscode-knative/blob/master/CONTRIBUTING.md).
+
 ## Release Notes
 
 > See [CHANGELOG](CHANGELOG.md) for details.
