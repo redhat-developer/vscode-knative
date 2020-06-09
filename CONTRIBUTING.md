@@ -18,7 +18,20 @@ There are only a few guidelines that we need contributors to follow.
 	```
 5. Open the folder in VS Code
 
-## Run the extension locally
+## Developing the extension
+We strongly suggest that you use another VSCode extensions to ease the development of the extension. We are using multiple tools to keep codebase clean, maintainable and code readable. for this purpose consider installing `esbenp.prettier-vscode` and `dbaeumer.vscode-eslint`.
+1. Once you have all package dependencies installed (`npm install`) you can compile the extension, so you are sure you have all the dependencies installed correctly:
+    ```
+    npm run build
+    ```
+2. Now you can run unit tests suite by going to the `Run` tab and launching `Extension Tests (vscode-knative)` task.
+3. Or you can run tests from the CLI:
+    ```
+    npm test
+    ```
+4. To run extension in VSCode using the code directly from the workspace, launch `Run Extension (vscode-knative)` task.
+
+## Installing the extension from the source code
 
 1. Install `vsce` - A command line tool you'll use to publish extensions to the Extension Marketplace.
     ```bash
