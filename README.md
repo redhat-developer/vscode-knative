@@ -52,6 +52,10 @@ This extension contributes the following settings:
 
 > See [CHANGELOG](CHANGELOG.md) for details.
 
+### 0.6.0
+
+- Display and Add Tags to Revisions
+
 ### 0.5.0
 
 - Display Traffic percentage on the Revisions

@@ -19,7 +19,7 @@ There are only a few guidelines that we need contributors to follow.
 5. Open the folder in VS Code
 
 ## Developing the extension
-We strongly suggest that you use another VSCode extensions to ease the development of the extension. We are using multiple tools to keep codebase clean, maintainable and code readable. for this purpose consider installing `esbenp.prettier-vscode` and `dbaeumer.vscode-eslint`.
+We strongly suggest that you use `esbenp.prettier-vscode` and `dbaeumer.vscode-eslint` to ease the development of the extension. We are using multiple tools to keep codebase clean, maintainable and code readable. 
 1. Once you have all package dependencies installed (`npm install`) you can compile the extension, so you are sure you have all the dependencies installed correctly:
     ```
     npm run build
