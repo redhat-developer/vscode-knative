@@ -34,19 +34,19 @@ export function cliCommandToString(command: CliCommand): string {
   return `${command.cliCommand} ${command.cliArguments.join(' ')}`;
 }
 
-export class KnCli implements Cli {
-  private static instance: KnCli;
+export class CmdCli implements Cli {
+  private static instance: CmdCli;
 
   /**
    * Print and Show info in the knative output channel/window.
    */
   private knOutputChannel: OutputChannel = new KnOutputChannel();
 
-  static getInstance(): KnCli {
-    if (!KnCli.instance) {
-      KnCli.instance = new KnCli();
+  static getInstance(): CmdCli {
+    if (!CmdCli.instance) {
+      CmdCli.instance = new CmdCli();
     }
-    return KnCli.instance;
+    return CmdCli.instance;
   }
 
   /**
@@ -73,23 +73,23 @@ export class KnCli implements Cli {
       //   // eslint-disable-next-line no-param-reassign
       //   opts.shell = true;
       // }
-      const kn = spawn(cmd.cliCommand, cmd.cliArguments, opts);
+      const command = spawn(cmd.cliCommand, cmd.cliArguments, opts);
       let stdout = '';
       let error: string | Error;
-      kn.stdout.on('data', (data) => {
+      command.stdout.on('data', (data) => {
         stdout += data;
       });
-      kn.stderr.on('data', (data) => {
+      command.stderr.on('data', (data) => {
         error += data;
       });
-      kn.on('error', (err) => {
+      command.on('error', (err) => {
         // do not reject it here, because caller in some cases need the error and the streams
         // to make a decision
         // eslint-disable-next-line no-console
         console.error(`error: ${err}`);
         error = err;
       });
-      kn.on('exit', () => {
+      command.on('exit', () => {
         if (error) {
           if (typeof error === 'string' && error.search('no such host') > 0) {
             window.showErrorMessage(`The cluster is not up. Please log into a running cluster.`, { modal: true }, 'OK');
@@ -107,7 +107,7 @@ export class KnCli implements Cli {
         }
         resolve({ error, stdout });
       });
-      kn.on('close', () => {
+      command.on('close', () => {
         resolve({ error, stdout });
       });
     });

@@ -6,16 +6,16 @@
 import { Event, ProviderResult, EventEmitter, TreeDataProvider, TreeItem, TreeItemCollapsibleState, window } from 'vscode';
 import * as validator from 'validator';
 import { KnativeTreeItem, compareNodes } from './knativeTreeItem';
-import { KnExecute, loadItems } from '../kn/knExecute';
-import { CliExitData } from '../kn/knCli';
-import { KnAPI } from '../kn/kn-api';
-import { ContextType } from '../kn/config';
+import { Execute, loadItems } from '../cli/execute';
+import { CliExitData } from '../cli/cmdCli';
+import { KnAPI } from '../cli/kn-api';
+import { ContextType } from '../cli/config';
 import { Service, CreateService, UpdateService } from '../knative/service';
 import { Revision, Items, Traffic } from '../knative/revision';
 import { KnativeServices } from '../knative/knativeServices';
 
 export class ServiceDataProvider implements TreeDataProvider<KnativeTreeItem> {
-  public knExecutor = new KnExecute();
+  public knExecutor = new Execute();
 
   private onDidChangeTreeDataEmitter: EventEmitter<KnativeTreeItem | undefined | null> = new EventEmitter<
     KnativeTreeItem | undefined | null

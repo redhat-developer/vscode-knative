@@ -11,12 +11,12 @@ import { fromFile } from 'hasha';
 import { sync } from 'mkdirp';
 import { tmpdir } from 'os';
 import { join, resolve } from 'path';
-// import { KnConfig } from '../src/kn/kn-cli-config';
+// import { Config } from '../src/cli/cli-config';
 import { DownloadUtil } from '../src/util/download';
 // import loadJSON from '../src/util/parse';
 
-// const configData = '../src/kn/kn-cli-config.json';
-import configData = require('../src/kn/kn-cli-config.json');
+// const configData = '../src/cli/cli-config.json';
+import configData = require('../src/cli/cli-config.json');
 
 async function downloadFileAndCreateSha256(
   targetFolder: string,

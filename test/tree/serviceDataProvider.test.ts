@@ -7,7 +7,7 @@ import { ServiceDataProvider } from '../../src/tree/serviceDataProvider';
 import * as singleServiceData from './singleServiceServiceList.json';
 import * as singleServiceRevisionData from './singleServiceRevisionList.json';
 import { KnativeTreeItem } from '../../src/tree/knativeTreeItem';
-import { ContextType } from '../../src/kn/config';
+import { ContextType } from '../../src/cli/config';
 import { KnativeItem } from '../../src/knative/knativeItem';
 import { Service } from '../../src/knative/service';
 

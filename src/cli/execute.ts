@@ -5,19 +5,19 @@
 
 import { Terminal } from 'vscode';
 import * as path from 'path';
-import { KnCliConfig } from './kn-cli-config';
-import { KnCli, Cli, CliCommand, CliExitData, cliCommandToString } from './knCli';
+import { CmdCliConfig } from './cli-config';
+import { CmdCli, Cli, CliCommand, CliExitData, cliCommandToString } from './cmdCli';
 import { WindowUtil } from '../util/windowUtils';
 
-export class KnExecute {
-  private cli: Cli = KnCli.getInstance();
+export class Execute {
+  private cli: Cli = CmdCli.getInstance();
 
   // eslint-disable-next-line class-methods-use-this
   public async executeInTerminal(command: CliCommand, cwd: string = process.cwd(), name = 'Knative'): Promise<void> {
     // Get the first word in the command string sent.
     const cmd = command.cliCommand;
     // Get the location of the installed cli tool.
-    let toolLocation = await KnCliConfig.detectOrDownload(cmd);
+    let toolLocation = await CmdCliConfig.detectOrDownload(cmd);
     if (toolLocation) {
       toolLocation = path.dirname(toolLocation);
     }
@@ -29,7 +29,7 @@ export class KnExecute {
   public async execute(command: CliCommand, cwd?: string, fail = true): Promise<CliExitData> {
     const cmd = command;
     // Get the location of the cli tool and add it as a path to the command so that it will run.
-    const toolLocation = await KnCliConfig.detectOrDownload(cmd.cliCommand);
+    const toolLocation = await CmdCliConfig.detectOrDownload(cmd.cliCommand);
     if (toolLocation) {
       cmd.cliCommand = toolLocation;
     }

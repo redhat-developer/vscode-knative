@@ -3,11 +3,11 @@
  *  Licensed under the MIT License. See LICENSE file in the project root for license information.
  *-----------------------------------------------------------------------------------------------*/
 
-import { CliCommand, createCliCommand } from './knCli';
+import { CliCommand, createCliCommand, CmdCli } from './cmdCli';
 import { CreateService, UpdateService } from '../knative/service';
 
-function newKnCommand(knArguments: string[]): CliCommand {
-  return createCliCommand('kn', ...knArguments);
+function knCliCommand(cmdArguments: string[]): CliCommand {
+  return createCliCommand('kn', ...cmdArguments);
 }
 
 // function newOcCommand(...ocArguments: string[]): CliCommand {
@@ -91,7 +91,7 @@ export class KnAPI {
       });
     }
 
-    return newKnCommand(commandArguments);
+    return knCliCommand(commandArguments);
   }
 
   /**
@@ -193,7 +193,7 @@ export class KnAPI {
       });
     }
 
-    return newKnCommand(commandArguments);
+    return knCliCommand(commandArguments);
   }
 
   /**
@@ -201,7 +201,7 @@ export class KnAPI {
    */
   static listServices(): CliCommand {
     const a = ['service', 'list', '-o', 'json'];
-    return newKnCommand(a);
+    return knCliCommand(a);
   }
 
   /**
@@ -214,7 +214,7 @@ export class KnAPI {
     if (outputFormat) {
       a.push(...['-o', outputFormat]);
     }
-    return newKnCommand(a);
+    return knCliCommand(a);
   }
 
   /**
@@ -223,7 +223,7 @@ export class KnAPI {
    * @param name - the Name of the Service to be deleted.
    */
   static deleteFeature(contextValue: string, name: string): CliCommand {
-    return newKnCommand([contextValue, 'delete', name]);
+    return knCliCommand([contextValue, 'delete', name]);
   }
 
   /**
@@ -231,7 +231,7 @@ export class KnAPI {
    */
   static listRevisions(): CliCommand {
     const a = ['revision', 'list', '-o', 'json'];
-    return newKnCommand(a);
+    return knCliCommand(a);
   }
 
   /**
@@ -239,7 +239,7 @@ export class KnAPI {
    */
   static listRevisionsForService(service: string): CliCommand {
     const a = ['revision', 'list', '-o', 'json', '-s', service];
-    return newKnCommand(a);
+    return knCliCommand(a);
   }
 
   /**
@@ -247,7 +247,7 @@ export class KnAPI {
    */
   static listRoutes(): CliCommand {
     const a = ['route', 'list', '-o', 'json'];
-    return newKnCommand(a);
+    return knCliCommand(a);
   }
 
   /**
@@ -255,10 +255,47 @@ export class KnAPI {
    */
   static listRoutesForService(service: string): CliCommand {
     const a = ['route', 'list', service, '-o', 'json'];
-    return newKnCommand(a);
+    return knCliCommand(a);
   }
 
   static printKnVersion(): CliCommand {
-    return newKnCommand(['version']);
+    return knCliCommand(['version']);
+  }
+
+  static async getKnVersion(location: string): Promise<string> {
+    const version = new RegExp(
+      `Version:\\s+v(((([0-9]+)\\.([0-9]+)\\.([0-9]+)|(([0-9]+)-([0-9a-zA-Z]+)-([0-9a-zA-Z]+)))(?:-([0-9a-zA-Z-]+(?:\\.[0-9a-zA-Z-]+)*))?)(?:\\+([0-9a-zA-Z-]+(?:\\.[0-9a-zA-Z-]+)*))?).*`,
+    );
+    let detectedVersion: string;
+
+    try {
+      const data = await CmdCli.getInstance().execute(createCliCommand(`${location}`, `version`));
+
+      if (data.stdout) {
+        const toolVersion: string[] = data.stdout
+          .trim()
+          .split('\n')
+          // Find the line of text that has the version.
+          .filter((value1) => version.exec(value1))
+          // Pull out just the version from the line from above.
+          .map((value2) => {
+            const regexResult = version.exec(value2);
+            if (regexResult[8]) {
+              // if the version is a local build then we will find more regex value and we need to pull the 8th in the array
+              return regexResult[8];
+            }
+            // if it is a released version then just get it
+            return regexResult[1];
+          });
+        if (toolVersion.length) {
+          [detectedVersion] = toolVersion;
+        }
+      }
+      return detectedVersion;
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.log(`GetVersion had an error: ${error}`);
+      return undefined;
+    }
   }
 }

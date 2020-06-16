@@ -1,25 +1,38 @@
-import * as assert from 'assert';
-import { KnAPI } from '../../src/kn/kn-api';
-import { CliCommand } from '../../src/kn/knCli';
+import * as chai from 'chai';
+import * as sinonChai from 'sinon-chai';
+import * as sinon from 'sinon';
+import * as referee from '@sinonjs/referee';
+import { KnAPI } from '../../src/cli/kn-api';
+import { CliCommand, CmdCli } from '../../src/cli/cmdCli';
 
 import rewire = require('rewire');
 
-suite('New Command', () => {
+const { assert } = referee;
+const { expect } = chai;
+chai.use(sinonChai);
+
+suite('KN CLI Command', () => {
   test('should create a proper command string', () => {
-    const api = rewire('../../src/kn/kn-api');
-    const newKnCommand = api.__get__('newKnCommand');
+    const api = rewire('../../src/cli/kn-api');
+    const knCliCommand = api.__get__('knCliCommand');
     const knArguments: string[] = ['service', 'list'];
-    const commandApi: CliCommand = newKnCommand(knArguments);
+    const commandApi: CliCommand = knCliCommand(knArguments);
     const command: CliCommand = {
       cliArguments: ['service', 'list'],
       cliCommand: 'kn',
     };
 
-    assert.deepEqual(command, commandApi);
+    assert.equals(command, commandApi);
   });
 });
 
 suite('KN API commands that will', () => {
+  const sandbox = sinon.createSandbox();
+
+  teardown(() => {
+    sandbox.restore();
+  });
+
   suite('Create a Service', () => {
     const envMap = new Map([
       ['key1', 'new_Value1'],
@@ -42,7 +55,7 @@ suite('KN API commands that will', () => {
         cliCommand: 'kn',
       };
       const commandAPI = KnAPI.createService({ name: 'mysvc', image: 'dev.local/ns/image:latest' });
-      assert.deepEqual(command.cliArguments, commandAPI.cliArguments);
+      assert.equals(command.cliArguments, commandAPI.cliArguments);
     });
     test('should create a service with image using --force flag', () => {
       const command: CliCommand = {
@@ -54,7 +67,7 @@ suite('KN API commands that will', () => {
         image: 'dev.local/ns/image:latest',
         force: true,
       });
-      assert.deepEqual(command.cliArguments, commandAPI.cliArguments);
+      assert.equals(command.cliArguments, commandAPI.cliArguments);
     });
     test('should create a service with a port', () => {
       const command: CliCommand = {
@@ -66,7 +79,7 @@ suite('KN API commands that will', () => {
         image: 'dev.local/ns/image:latest',
         port: 80,
       });
-      assert.deepEqual(command.cliArguments, commandAPI.cliArguments);
+      assert.equals(command.cliArguments, commandAPI.cliArguments);
     });
     test('should create a service with multiple environment variables', () => {
       const command: CliCommand = {
@@ -88,7 +101,7 @@ suite('KN API commands that will', () => {
         image: 'dev.local/ns/image:latest',
         env: envMap,
       });
-      assert.deepEqual(command.cliArguments, commandAPI.cliArguments);
+      assert.equals(command.cliArguments, commandAPI.cliArguments);
     });
     test('should create a service with multiple environment variables using --force flag', () => {
       const command: CliCommand = {
@@ -112,7 +125,7 @@ suite('KN API commands that will', () => {
         force: true,
         env: envMap,
       });
-      assert.deepEqual(command.cliArguments, commandAPI.cliArguments);
+      assert.equals(command.cliArguments, commandAPI.cliArguments);
     });
     test('should create a service with name, image, and namespace', () => {
       const command: CliCommand = {
@@ -124,7 +137,7 @@ suite('KN API commands that will', () => {
         image: 'dev.local/ns/image:latest',
         namespace: 'myns',
       });
-      assert.deepEqual(command.cliArguments, commandAPI.cliArguments);
+      assert.equals(command.cliArguments, commandAPI.cliArguments);
     });
     test('should create a service with annotations', () => {
       const command: CliCommand = {
@@ -146,7 +159,7 @@ suite('KN API commands that will', () => {
         image: 'dev.local/ns/image:latest',
         annotation: annoationMap,
       });
-      assert.deepEqual(command.cliArguments, commandAPI.cliArguments);
+      assert.equals(command.cliArguments, commandAPI.cliArguments);
     });
     test('should create a service with labels', () => {
       const command: CliCommand = {
@@ -168,7 +181,7 @@ suite('KN API commands that will', () => {
         image: 'dev.local/ns/image:latest',
         label: labelMap,
       });
-      assert.deepEqual(command.cliArguments, commandAPI.cliArguments);
+      assert.equals(command.cliArguments, commandAPI.cliArguments);
     });
     test('should create a service with all the options applied', () => {
       const command: CliCommand = {
@@ -208,7 +221,7 @@ suite('KN API commands that will', () => {
         annotation: annoationMap,
         label: labelMap,
       });
-      assert.deepEqual(command.cliArguments, commandAPI.cliArguments);
+      assert.equals(command.cliArguments, commandAPI.cliArguments);
     });
   });
   suite('Update a Service', () => {
@@ -258,7 +271,7 @@ suite('KN API commands that will', () => {
         cliCommand: 'kn',
       };
       const commandAPI = KnAPI.updateService({ name: 'mysvc', image: 'dev.local/ns/image:latest' });
-      assert.deepEqual(command.cliArguments, commandAPI.cliArguments);
+      assert.equals(command.cliArguments, commandAPI.cliArguments);
     });
     test('should update a service with a port', () => {
       const command: CliCommand = {
@@ -269,18 +282,7 @@ suite('KN API commands that will', () => {
         name: 'mysvc',
         port: 80,
       });
-      assert.deepEqual(command.cliArguments, commandAPI.cliArguments);
-    });
-    test('should update a service with multiple environment variables', () => {
-      const command: CliCommand = {
-        cliArguments: ['service', 'update', 'mysvc', '--env', 'KEY1=NEW_VALUE1', '--env', 'NEW_KEY2=NEW_VALUE2'],
-        cliCommand: 'kn',
-      };
-      const commandAPI = KnAPI.updateService({
-        name: 'mysvc',
-        env: envMap,
-      });
-      assert.deepEqual(command.cliArguments, commandAPI.cliArguments);
+      assert.equals(command.cliArguments, commandAPI.cliArguments);
     });
     test('should update a service with name and namespace', () => {
       const command: CliCommand = {
@@ -291,7 +293,18 @@ suite('KN API commands that will', () => {
         name: 'mysvc',
         namespace: 'myns',
       });
-      assert.deepEqual(command.cliArguments, commandAPI.cliArguments);
+      assert.equals(command.cliArguments, commandAPI.cliArguments);
+    });
+    test('should update a service with multiple environment variables', () => {
+      const command: CliCommand = {
+        cliArguments: ['service', 'update', 'mysvc', '--env', 'KEY1=NEW_VALUE1', '--env', 'NEW_KEY2=NEW_VALUE2'],
+        cliCommand: 'kn',
+      };
+      const commandAPI = KnAPI.updateService({
+        name: 'mysvc',
+        env: envMap,
+      });
+      assert.equals(command.cliArguments, commandAPI.cliArguments);
     });
     test('should update a service with annotations', () => {
       const command: CliCommand = {
@@ -310,7 +323,7 @@ suite('KN API commands that will', () => {
         name: 'mysvc',
         annotation: annoationMap,
       });
-      assert.deepEqual(command.cliArguments, commandAPI.cliArguments);
+      assert.equals(command.cliArguments, commandAPI.cliArguments);
     });
     test('should update a service with labels', () => {
       const command: CliCommand = {
@@ -321,7 +334,7 @@ suite('KN API commands that will', () => {
         name: 'mysvc',
         label: labelMap,
       });
-      assert.deepEqual(command.cliArguments, commandAPI.cliArguments);
+      assert.equals(command.cliArguments, commandAPI.cliArguments);
     });
     test('should update a service with limits', () => {
       const command: CliCommand = {
@@ -332,7 +345,7 @@ suite('KN API commands that will', () => {
         name: 'mysvc',
         limit: limitMap,
       });
-      assert.deepEqual(command.cliArguments, commandAPI.cliArguments);
+      assert.equals(command.cliArguments, commandAPI.cliArguments);
     });
     test('should update a service with requests', () => {
       const command: CliCommand = {
@@ -343,7 +356,7 @@ suite('KN API commands that will', () => {
         name: 'mysvc',
         request: requestMap,
       });
-      assert.deepEqual(command.cliArguments, commandAPI.cliArguments);
+      assert.equals(command.cliArguments, commandAPI.cliArguments);
     });
     test('should update a service with tags', () => {
       const command: CliCommand = {
@@ -354,7 +367,7 @@ suite('KN API commands that will', () => {
         name: 'mysvc',
         tag: tagMap,
       });
-      assert.deepEqual(command.cliArguments, commandAPI.cliArguments);
+      assert.equals(command.cliArguments, commandAPI.cliArguments);
     });
     test('should update a service with traffic', () => {
       const command: CliCommand = {
@@ -365,7 +378,7 @@ suite('KN API commands that will', () => {
         name: 'mysvc',
         traffic: trafficMap,
       });
-      assert.deepEqual(command.cliArguments, commandAPI.cliArguments);
+      assert.equals(command.cliArguments, commandAPI.cliArguments);
     });
     test('should update a service with untag', () => {
       const command: CliCommand = {
@@ -376,7 +389,7 @@ suite('KN API commands that will', () => {
         name: 'mysvc',
         untag: untagMap,
       });
-      assert.deepEqual(command.cliArguments, commandAPI.cliArguments);
+      assert.equals(command.cliArguments, commandAPI.cliArguments);
     });
     test('should update a service with all the options applied', () => {
       const command: CliCommand = {
@@ -439,7 +452,7 @@ suite('KN API commands that will', () => {
         traffic: trafficMap,
         untag: untagMap,
       });
-      assert.deepEqual(command.cliArguments, commandAPI.cliArguments);
+      assert.equals(command.cliArguments, commandAPI.cliArguments);
     });
   });
   suite('List Services', () => {
@@ -449,7 +462,7 @@ suite('KN API commands that will', () => {
         cliCommand: 'kn',
       };
       const commandAPI = KnAPI.listServices();
-      assert.deepEqual(command.cliArguments, commandAPI.cliArguments);
+      assert.equals(command.cliArguments, commandAPI.cliArguments);
     });
   });
 
@@ -459,7 +472,7 @@ suite('KN API commands that will', () => {
         cliArguments: ['revision', 'list', '-o', 'json'],
         cliCommand: 'kn',
       };
-      assert.deepEqual(command.cliArguments, KnAPI.listRevisions().cliArguments);
+      assert.equals(command.cliArguments, KnAPI.listRevisions().cliArguments);
     });
     test('should return command for listing revisions for a service', () => {
       const sname = 'myservice';
@@ -467,7 +480,7 @@ suite('KN API commands that will', () => {
         cliArguments: ['revision', 'list', '-o', 'json', '-s', sname],
         cliCommand: 'kn',
       };
-      assert.deepEqual(command.cliArguments, KnAPI.listRevisionsForService(sname).cliArguments);
+      assert.equals(command.cliArguments, KnAPI.listRevisionsForService(sname).cliArguments);
     });
   });
 
@@ -480,7 +493,7 @@ suite('KN API commands that will', () => {
         cliArguments: [feature, 'describe', name, '-o', outputFormat],
         cliCommand: 'kn',
       };
-      assert.deepEqual(command.cliArguments, KnAPI.describeFeature(feature, name, outputFormat).cliArguments);
+      assert.equals(command.cliArguments, KnAPI.describeFeature(feature, name, outputFormat).cliArguments);
     });
     test('should return command for describing the service foo in YAML', () => {
       const feature = 'service';
@@ -490,7 +503,16 @@ suite('KN API commands that will', () => {
         cliArguments: [feature, 'describe', name, '-o', outputFormat],
         cliCommand: 'kn',
       };
-      assert.deepEqual(command.cliArguments, KnAPI.describeFeature(feature, name, outputFormat).cliArguments);
+      assert.equals(command.cliArguments, KnAPI.describeFeature(feature, name, outputFormat).cliArguments);
+    });
+    test('should return command for describing the service foo when no output is set', () => {
+      const feature = 'service';
+      const name = 'foo';
+      const command: CliCommand = {
+        cliArguments: [feature, 'describe', name],
+        cliCommand: 'kn',
+      };
+      assert.equals(command.cliArguments, KnAPI.describeFeature(feature, name).cliArguments);
     });
   });
 
@@ -502,7 +524,7 @@ suite('KN API commands that will', () => {
         cliArguments: [feature, 'delete', name],
         cliCommand: 'kn',
       };
-      assert.deepEqual(command.cliArguments, KnAPI.deleteFeature(feature, name).cliArguments);
+      assert.equals(command.cliArguments, KnAPI.deleteFeature(feature, name).cliArguments);
     });
   });
 
@@ -512,7 +534,7 @@ suite('KN API commands that will', () => {
         cliArguments: ['route', 'list', '-o', 'json'],
         cliCommand: 'kn',
       };
-      assert.deepEqual(command.cliArguments, KnAPI.listRoutes().cliArguments);
+      assert.equals(command.cliArguments, KnAPI.listRoutes().cliArguments);
     });
     test('should return command for listing routes for a service', () => {
       const sname = 'myservice';
@@ -520,7 +542,7 @@ suite('KN API commands that will', () => {
         cliArguments: ['route', 'list', sname, '-o', 'json'],
         cliCommand: 'kn',
       };
-      assert.deepEqual(command.cliArguments, KnAPI.listRoutesForService(sname).cliArguments);
+      assert.equals(command.cliArguments, KnAPI.listRoutesForService(sname).cliArguments);
     });
   });
 
@@ -530,7 +552,36 @@ suite('KN API commands that will', () => {
         cliArguments: ['version'],
         cliCommand: 'kn',
       };
-      assert.deepEqual(command.cliArguments, KnAPI.printKnVersion().cliArguments);
+      assert.equals(command.cliArguments, KnAPI.printKnVersion().cliArguments);
+    });
+  });
+  suite('Get version', () => {
+    test('should return the version number for a stable release', async () => {
+      sandbox.stub(CmdCli.getInstance(), 'execute').resolves({ error: undefined, stdout: 'Version:      v0.14.0' });
+      const version = await KnAPI.getKnVersion('path/to/kubectl');
+      expect(version).equals('0.14.0');
+    });
+    test('should return the version number for a nightly release', async () => {
+      sandbox
+        .stub(CmdCli.getInstance(), 'execute')
+        .resolves({ error: undefined, stdout: 'Version:      v20200309-local-34433f6' });
+      const version = await KnAPI.getKnVersion('path/to/kubectl');
+      expect(version).equals('20200309');
+    });
+    test('should return Undefined when the version is not the correct text', async () => {
+      sandbox.stub(CmdCli.getInstance(), 'execute').resolves({ error: undefined, stdout: 'not the version text' });
+      const version = await KnAPI.getKnVersion('path/to/kubectl');
+      expect(version).equals(undefined);
+    });
+    test('should return Undefined when the version is not returned', async () => {
+      sandbox.stub(CmdCli.getInstance(), 'execute').resolves({ error: undefined, stdout: undefined });
+      const version = await KnAPI.getKnVersion('path/to/kubectl');
+      expect(version).equals(undefined);
+    });
+    test('should return Undefined for errors', async () => {
+      sandbox.stub(CmdCli.getInstance(), 'execute').throws({ error: 'Error generated by a test', stdout: undefined });
+      const version = await KnAPI.getKnVersion('path/to/kubectl');
+      expect(version).equals(undefined);
     });
   });
 });

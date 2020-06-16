@@ -4,10 +4,10 @@
  *-----------------------------------------------------------------------------------------------*/
 
 import * as vscode from 'vscode';
-import { KnExecute } from '../kn/knExecute';
-import { CliCommand, createCliCommand } from '../kn/knCli';
+import { Execute } from '../cli/execute';
+import { CliCommand, createCliCommand } from '../cli/cmdCli';
 
-const executor = new KnExecute();
+const executor = new Execute();
 
 export interface Step {
   command: CliCommand;

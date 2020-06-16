@@ -23,10 +23,10 @@ import * as path from 'path';
 import * as fs from 'fs';
 import * as querystring from 'querystring';
 
-import { KnExecute } from '../kn/knExecute';
-import { CliExitData } from '../kn/knCli';
-import { KnAPI } from '../kn/kn-api';
-import * as config from '../kn/config';
+import { Execute } from '../cli/execute';
+import { CliExitData } from '../cli/cmdCli';
+import { KnAPI } from '../cli/kn-api';
+import * as config from '../cli/config';
 import { Errorable } from './errorable';
 
 export const KN_RESOURCE_SCHEME = 'knmsx';
@@ -51,7 +51,7 @@ export class KnativeResourceVirtualFileSystemProvider implements FileSystemProvi
 
   onDidChangeFile: Event<FileChangeEvent[]> = this.onDidChangeFileEmitter.event;
 
-  public knExecutor = new KnExecute();
+  public knExecutor = new Execute();
 
   // eslint-disable-next-line class-methods-use-this
   watch(_uri: Uri, _options: { recursive: boolean; excludes: string[] }): Disposable {

@@ -5,7 +5,7 @@
 
 import { ProviderResult, TreeItemCollapsibleState, Uri, TreeItem, Command } from 'vscode';
 import * as path from 'path';
-import { ContextType } from '../kn/config';
+import { ContextType } from '../cli/config';
 import { KnativeItem } from '../knative/knativeItem';
 import { Revision, Traffic } from '../knative/revision';
 
