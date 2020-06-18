@@ -70,7 +70,7 @@ function verifyTools(): void {
 
 const fileCheckRegex = /\w*kn-cli-config.json/;
 
-exec('git diff --name-only origin/master -- .', (error, stdout) => {
+exec('git diff --name-only origin/main -- .', (error, stdout) => {
   if (error) {
     throw error;
   }

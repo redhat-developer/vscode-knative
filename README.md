@@ -46,7 +46,7 @@ This extension contributes the following settings:
 
 ## Contributing
 
-> To learn how to contribute, please see this [guide](https://github.com/talamer/vscode-knative/blob/master/CONTRIBUTING.md).
+> To learn how to contribute, please see this [guide](https://github.com/talamer/vscode-knative/blob/main/CONTRIBUTING.md).
 
 ## Release Notes
 
