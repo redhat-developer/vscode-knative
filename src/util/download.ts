@@ -24,7 +24,7 @@ export class DownloadUtil {
       })
         .on('progress', (state: { percent: number }) => {
           const current = Math.round(state.percent * 100);
-          if (previous && progressCallBack) {
+          if (current !== previous && progressCallBack) {
             progressCallBack(current, current - previous);
           }
           previous = current;

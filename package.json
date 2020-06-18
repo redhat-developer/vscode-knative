@@ -104,6 +104,7 @@
     "eslint-plugin-prettier": "^3.1.2",
     "istanbul": "^0.4.5",
     "mocha-jenkins-reporter": "^0.4.2",
+    "proxyquire": "^2.1.0",
     "prettier": "^2.0.5",
     "remap-istanbul": "^0.13.0",
     "rewire": "^5.0.0",

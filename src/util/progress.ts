@@ -18,7 +18,7 @@ export interface Step {
 export class Progress {
   static execWithProgress(options: vscode.ProgressOptions, steps: Step[]): Thenable<void> {
     return vscode.window.withProgress(options, (progress: vscode.Progress<{ increment: number; message: string }>) => {
-      const calls: (() => Promise<any>)[] = [];
+      const calls: (() => Promise<void>)[] = [];
       steps.reduce(
         (previous: Step, current: Step, currentIndex: number, innerSteps: Step[]) => {
           let _current: Step;
@@ -39,13 +39,13 @@ export class Progress {
         { increment: 0, command: createCliCommand(''), total: 0 },
       );
 
-      return calls.reduce<Promise<any>>((previous: Promise<any>, current: () => Promise<any>) => {
+      return calls.reduce<Promise<void>>((previous: Promise<void>, current: () => Promise<void>) => {
         return previous.then(current);
       }, Promise.resolve());
     });
   }
 
-  static async execCmdWithProgress(title: string, cmd: CliCommand): Promise<any> {
+  static async execCmdWithProgress(title: string, cmd: CliCommand): Promise<void> {
     return new Promise((resolve, reject) => {
       vscode.window.withProgress(
         {
