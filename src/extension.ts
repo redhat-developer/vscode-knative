@@ -15,10 +15,9 @@ import { Revision } from './knative/revision';
  *
  * @param treeItem
  */
-export function openInEditor(treeItem: KnativeTreeItem): void {
+export function openTreeItemInEditor(treeItem: KnativeTreeItem, outputFormat: string): void {
   const { contextValue } = treeItem;
   const name: string = treeItem.getName();
-  const outputFormat = vscode.workspace.getConfiguration('vs-knative')['vs-knative.outputFormat'];
   const uri = vfsUri(contextValue, name, outputFormat);
   vscode.workspace.openTextDocument(uri).then(
     (doc) => {
@@ -60,7 +59,9 @@ export function activate(extensionContext: vscode.ExtensionContext): void {
         }
       }
     }),
-    vscode.commands.registerCommand('service.explorer.openFile', (treeItem: KnativeTreeItem) => openInEditor(treeItem)),
+    vscode.commands.registerCommand('service.explorer.openFile', (treeItem: KnativeTreeItem) =>
+      openTreeItemInEditor(treeItem, vscode.workspace.getConfiguration('vs-knative')['vs-knative.outputFormat']),
+    ),
 
     // Temporarily loaded resource providers
     vscode.workspace.registerFileSystemProvider(KN_RESOURCE_SCHEME, resourceDocProvider, {

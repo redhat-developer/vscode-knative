@@ -31,7 +31,6 @@ import { Errorable } from './errorable';
 
 export const KN_RESOURCE_SCHEME = 'knmsx';
 export const KN_RESOURCE_AUTHORITY = 'loadknativecore';
-export const HELM_RESOURCE_AUTHORITY = 'helmget';
 
 export function vfsUri(
   contextValue: string,
@@ -39,17 +38,61 @@ export function vfsUri(
   outputFormat: string,
   namespace?: string | null | undefined /* TODO: rationalise null and undefined */,
 ): Uri {
-  const docname = `${contextValue.replace('/', '-')}${name}.${outputFormat}`;
+  const docname = `${contextValue.replace('/', '-')}-${name}.${outputFormat}`;
   const nonce = new Date().getTime();
   const nsquery = namespace ? `ns=${namespace}&` : '';
+  // "knmsx://loadknativecore/serviceknative-tutorial-greeter.yaml?contextValue=service&name=knative-tutorial-greeter&_=1593030763939"
   const uri = `${KN_RESOURCE_SCHEME}://${KN_RESOURCE_AUTHORITY}/${docname}?${nsquery}contextValue=${contextValue}&name=${name}&_=${nonce}`;
   return Uri.parse(uri);
+}
+
+export async function showWorkspaceFolderPick(): Promise<WorkspaceFolder | undefined> {
+  if (!workspace.workspaceFolders) {
+    window.showErrorMessage('This command requires an open folder.');
+    return undefined;
+  }
+  if (workspace.workspaceFolders.length === 1) {
+    return workspace.workspaceFolders[0];
+  }
+  return window.showWorkspaceFolderPick();
+}
+
+export async function selectRootFolder(): Promise<string | undefined> {
+  const folder = await showWorkspaceFolderPick();
+  if (!folder) {
+    return undefined;
+  }
+  if (folder.uri.scheme !== 'file') {
+    window.showErrorMessage('This command requires a filesystem folder'); // TODO: make it not
+    return undefined;
+  }
+  return folder.uri.fsPath;
+}
+
+async function saveAsync(uri: Uri, content: Uint8Array, subFolder?: string): Promise<void> {
+  const rootPath = await selectRootFolder();
+  if (!rootPath) {
+    return;
+  }
+  const fspath = path.join(rootPath, subFolder || '', uri.fsPath);
+  fs.writeFileSync(fspath, content);
+}
+
+async function getFilePathAsync(filePath: string, subFolder?: string): Promise<string> {
+  const rootPath = await selectRootFolder();
+  if (!rootPath) {
+    return;
+  }
+  const fspath = path.join(rootPath, subFolder || '', filePath);
+  return fspath;
 }
 
 export class KnativeResourceVirtualFileSystemProvider implements FileSystemProvider {
   private readonly onDidChangeFileEmitter: EventEmitter<FileChangeEvent[]> = new EventEmitter<FileChangeEvent[]>();
 
   onDidChangeFile: Event<FileChangeEvent[]> = this.onDidChangeFileEmitter.event;
+
+  private yamlDirName = '.knative';
 
   public knExecutor = new Execute();
 
@@ -63,12 +106,28 @@ export class KnativeResourceVirtualFileSystemProvider implements FileSystemProvi
   }
 
   // eslint-disable-next-line class-methods-use-this
-  stat(_uri: Uri): FileStat {
+  async stat(_uri: Uri): Promise<FileStat> {
+    let fileType: FileType = FileType.File;
+    let createTime = 0;
+    let modifiedTime = 0;
+    let fileSize = 0;
+
+    const pathInWorkSpace: string = await getFilePathAsync(_uri.path);
+    fs.stat(pathInWorkSpace, (err, stats) => {
+      if (err) {
+        throw err;
+      }
+      fileType = FileType.File;
+      createTime = stats.ctimeMs;
+      modifiedTime = stats.mtimeMs;
+      fileSize = stats.size;
+    });
+
     return {
-      type: FileType.File,
-      ctime: 0,
-      mtime: 0,
-      size: 65536, // These files don't seem to matter for us
+      type: fileType,
+      ctime: createTime,
+      mtime: modifiedTime,
+      size: fileSize,
     };
   }
 
@@ -77,16 +136,32 @@ export class KnativeResourceVirtualFileSystemProvider implements FileSystemProvi
     return [];
   }
 
-  // eslint-disable-next-line class-methods-use-this
+  async createDirectoryAsync(_uri: Uri): Promise<void> {
+    const dir = await getFilePathAsync(_uri.path, this.yamlDirName);
+
+    if (!fs.existsSync(dir)) {
+      fs.mkdirSync(dir);
+    }
+  }
+
   createDirectory(_uri: Uri): void | Thenable<void> {
-    // no-op
+    this.createDirectoryAsync(_uri);
   }
 
   readFile(uri: Uri): Uint8Array | Thenable<Uint8Array> {
+    this.createDirectory(uri);
     return this.readFileAsync(uri);
   }
 
   async readFileAsync(uri: Uri): Promise<Uint8Array> {
+    // Check if there is an edited local version.
+    // Check if the version on the cluster is newer,
+    // Then if it is, ask the user if they want to replace the edited version.
+    if (await getFilePathAsync(uri.path, this.yamlDirName)) {
+      // use local file
+      const content = await this.loadResource(uri);
+      return Buffer.from(content, 'utf8');
+    }
     const content = await this.loadResource(uri);
     return Buffer.from(content, 'utf8');
   }
@@ -100,16 +175,16 @@ export class KnativeResourceVirtualFileSystemProvider implements FileSystemProvi
     const ns = query.ns as string | undefined;
     const resourceAuthority = uri.authority;
 
-    const eer = await this.execLoadResource(resourceAuthority, ns, contextValue, name, outputFormat);
+    const eced = await this.execLoadResource(resourceAuthority, ns, contextValue, name, outputFormat);
 
-    if (Errorable.failed(eer)) {
-      window.showErrorMessage(eer.error[0]);
-      throw eer.error[0];
+    if (Errorable.failed(eced)) {
+      window.showErrorMessage(eced.error[0]);
+      throw eced.error[0];
     }
 
-    const er = eer.result;
+    const ced = eced.result;
 
-    return er.stdout;
+    return ced.stdout;
   }
 
   // eslint-disable-next-line class-methods-use-this
@@ -120,11 +195,11 @@ export class KnativeResourceVirtualFileSystemProvider implements FileSystemProvi
     name: string,
     outputFormat: string,
   ): Promise<Errorable<CliExitData>> {
-    let ker: CliExitData;
+    let ced: CliExitData;
     switch (resourceAuthority) {
       case KN_RESOURCE_AUTHORITY:
-        ker = await this.knExecutor.execute(KnAPI.describeFeature(contextValue, name, outputFormat));
-        return { succeeded: true, result: ker };
+        ced = await this.knExecutor.execute(KnAPI.describeFeature(contextValue, name, outputFormat));
+        return { succeeded: true, result: ced };
       default:
         return {
           succeeded: false,
@@ -135,46 +210,9 @@ export class KnativeResourceVirtualFileSystemProvider implements FileSystemProvi
     }
   }
 
+  // eslint-disable-next-line class-methods-use-this
   writeFile(uri: Uri, content: Uint8Array, _options: { create: boolean; overwrite: boolean }): void | Thenable<void> {
-    return this.saveAsync(uri, content); // TODO: respect options
-  }
-
-  // eslint-disable-next-line class-methods-use-this
-  async showWorkspaceFolderPick(): Promise<WorkspaceFolder | undefined> {
-    if (!workspace.workspaceFolders) {
-      window.showErrorMessage('This command requires an open folder.');
-      return undefined;
-    }
-    if (workspace.workspaceFolders.length === 1) {
-      return workspace.workspaceFolders[0];
-    }
-    return window.showWorkspaceFolderPick();
-  }
-
-  // eslint-disable-next-line class-methods-use-this
-  async selectRootFolder(): Promise<string | undefined> {
-    const folder = await this.showWorkspaceFolderPick();
-    if (!folder) {
-      return undefined;
-    }
-    if (folder.uri.scheme !== 'file') {
-      window.showErrorMessage('This command requires a filesystem folder'); // TODO: make it not
-      return undefined;
-    }
-    return folder.uri.fsPath;
-  }
-
-  private async saveAsync(uri: Uri, content: Uint8Array): Promise<void> {
-    // This assumes no pathing in the URI - if this changes, we'll need to
-    // create subdirectories.
-    // TODO: not loving prompting as part of the write when it should really be part of a separate
-    // 'save' workflow - but needs must, I think
-    const rootPath = await this.selectRootFolder();
-    if (!rootPath) {
-      return;
-    }
-    const fspath = path.join(rootPath, uri.fsPath);
-    fs.writeFileSync(fspath, content);
+    return saveAsync(uri, content, this.yamlDirName); // TODO: respect options
   }
 
   // eslint-disable-next-line class-methods-use-this
