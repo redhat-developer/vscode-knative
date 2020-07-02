@@ -121,7 +121,8 @@
     "onCommand:service.explorer.delete",
     "onCommand:service.explorer.openFile",
     "onCommand:service.explorer.refresh",
-    "onCommand:service.explorer.reportIssue"
+    "onCommand:service.explorer.reportIssue",
+    "onCommand:service.explorer.upload"
   ],
   "contributes": {
     "commands": [
@@ -162,6 +163,11 @@
         "title": "Report Extension Issue on GitHub",
         "category": "Knative",
         "icon": "$(issues)"
+      },
+      {
+        "command": "service.explorer.upload",
+        "title": "Upload YAML to cluster",
+        "category": "Knative"
       }
     ],
     "keybindings": [
@@ -188,12 +194,21 @@
         {
           "command": "service.explorer.openFile",
           "when": "false"
+        },
+        {
+          "command": "service.explorer.upload",
+          "when": "false"
         }
       ],
       "view/item/context": [
         {
           "command": "knative.service.open-in-browser",
           "when": "view == knativeProjectExplorerServices && viewItem == service || viewItem == revision.tagged",
+          "group": "c0"
+        },
+        {
+          "command": "service.explorer.upload",
+          "when": "view == knativeProjectExplorerServices && viewItem == service",
           "group": "c1"
         },
         {

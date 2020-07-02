@@ -4,6 +4,7 @@
  *-----------------------------------------------------------------------------------------------*/
 
 export class Platform {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   static identify(map): any | undefined {
     if (map[Platform.OS]) {
       return map[Platform.OS]();

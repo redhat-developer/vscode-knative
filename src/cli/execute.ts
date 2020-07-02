@@ -35,12 +35,14 @@ export class Execute {
     }
     return this.cli
       .execute(cmd, cwd ? { cwd } : {})
-      .then(async (result) => (result.error && fail ? Promise.reject(result.error) : result))
+      .then((result) => (result.error && fail ? Promise.reject(result.error) : result))
       .catch((err) => (fail ? Promise.reject(err) : Promise.resolve({ error: null, stdout: '', stderr: '' })));
   }
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function loadItems(result: CliExitData): any[] {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let data: any[] = [];
   try {
     const { items } = JSON.parse(result.stdout);

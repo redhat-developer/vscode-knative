@@ -54,6 +54,9 @@ export class ServiceExplorer implements Disposable {
     commands.registerCommand('service.explorer.create', () => treeDataProvider.addService());
     commands.registerCommand('service.explorer.delete', (treeItem: KnativeTreeItem) => treeDataProvider.deleteFeature(treeItem));
     commands.registerCommand('service.explorer.tag', (treeItem: KnativeTreeItem) => treeDataProvider.addTag(treeItem));
+    commands.registerCommand('service.explorer.upload', (treeItem: KnativeTreeItem) =>
+      treeDataProvider.updateServiceFromYaml(treeItem),
+    );
     commands.registerCommand('service.explorer.refresh', () => treeDataProvider.refresh());
     commands.registerCommand('service.explorer.reportIssue', () => reportIssue());
   }

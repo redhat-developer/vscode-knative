@@ -5,17 +5,22 @@
 
 import { Event, ProviderResult, EventEmitter, TreeDataProvider, TreeItem, TreeItemCollapsibleState, window } from 'vscode';
 import * as validator from 'validator';
+import * as path from 'path';
 import { KnativeTreeItem, compareNodes } from './knativeTreeItem';
 import { Execute, loadItems } from '../cli/execute';
 import { CliExitData } from '../cli/cmdCli';
 import { KnAPI } from '../cli/kn-api';
+import { KubectlAPI } from '../cli/kubectl-api';
 import { ContextType } from '../cli/config';
 import { Service, CreateService, UpdateService } from '../knative/service';
 import { Revision, Items, Traffic } from '../knative/revision';
 import { KnativeServices } from '../knative/knativeServices';
+import { KnativeResourceVirtualFileSystemProvider } from '../util/virtualfs';
 
 export class ServiceDataProvider implements TreeDataProvider<KnativeTreeItem> {
   public knExecutor = new Execute();
+
+  public knvfs = new KnativeResourceVirtualFileSystemProvider();
 
   private onDidChangeTreeDataEmitter: EventEmitter<KnativeTreeItem | undefined | null> = new EventEmitter<
     KnativeTreeItem | undefined | null
@@ -297,6 +302,45 @@ export class ServiceDataProvider implements TreeDataProvider<KnativeTreeItem> {
     }
     this.refresh();
     // return this.insertAndRevealService(createKnObj(servObj.name));
+  }
+
+  public async updateServiceFromYaml(node: KnativeTreeItem): Promise<void> {
+    // get local URL for YAML file
+    const serviceName = node.getName();
+    const files = await this.knvfs.readDirectoryAsync();
+    let fileURI = '';
+    files.forEach((loc): void => {
+      // eslint-disable-next-line @typescript-eslint/prefer-string-starts-ends-with
+      const fileName = loc[0].slice(loc[0].lastIndexOf(path.sep) + 1);
+      if (fileName === `service-${serviceName}.yaml`) {
+        [fileURI] = loc;
+      }
+    });
+
+    try {
+      // push the updated YAML back to the cluster
+      const result: CliExitData = await this.knExecutor.execute(KubectlAPI.applyYAML(fileURI));
+      // Delete the yaml that was pushed if there was no error
+      if (result.error) {
+        // deal with the error that is passed on but not thrown by the Promise.
+      }
+      // TODO: Delete the local YAML file that was uploaded.
+      // TODO: Refresh the list to read the update
+    } catch (error) {
+      if (typeof error === 'string' && error.search('validation failed') > 0) {
+        // eslint-disable-next-line @typescript-eslint/prefer-string-starts-ends-with
+        const fileName = error.slice(error.lastIndexOf('validation failed:'));
+        window.showErrorMessage(
+          `The YAMl file failed validation with the following error.\n\n${fileName}`,
+          { modal: true },
+          'OK',
+        );
+      } else {
+        // eslint-disable-next-line no-console
+        console.log(`updateServiceFromYaml error = ${error}`);
+        await window.showErrorMessage(`There was an error while uploading the YAML. `, { modal: true }, 'OK');
+      }
+    }
   }
 
   public async requireLogin(): Promise<boolean> {

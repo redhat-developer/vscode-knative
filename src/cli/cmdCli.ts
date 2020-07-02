@@ -63,7 +63,7 @@ export class CmdCli implements Cli {
    * @param opts
    */
   execute(cmd: CliCommand, opts: SpawnOptions = {}): Promise<CliExitData> {
-    return new Promise<CliExitData>((resolve) => {
+    return new Promise<CliExitData>((resolve, reject) => {
       this.knOutputChannel.print(cliCommandToString(cmd));
       if (opts.windowsHide === undefined) {
         // eslint-disable-next-line no-param-reassign
@@ -93,23 +93,23 @@ export class CmdCli implements Cli {
         if (error) {
           if (typeof error === 'string' && error.search('no such host') > 0) {
             window.showErrorMessage(`The cluster is not up. Please log into a running cluster.`, { modal: true }, 'OK');
-          }
-          if (typeof error === 'string' && error.search('no configuration') > 0) {
+          } else if (typeof error === 'string' && error.search('no configuration') > 0) {
             window.showErrorMessage(`The kubeconfig file can't be found.`, { modal: true }, 'OK');
-          }
-          if (typeof error === 'string' && error.search('no Knative') > 0) {
+          } else if (typeof error === 'string' && error.search('no Knative') > 0) {
             window.showErrorMessage(
               `The Knative / Serving Operator is not installed. Please install it to use this extension.`,
               { modal: true },
               'OK',
             );
+          } else {
+            reject(error);
           }
         }
         resolve({ error, stdout });
       });
-      command.on('close', () => {
-        resolve({ error, stdout });
-      });
+      // command.on('close', () => {
+      //   resolve({ error, stdout });
+      // });
     });
   }
 }

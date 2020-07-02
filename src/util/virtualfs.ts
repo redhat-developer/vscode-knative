@@ -78,12 +78,12 @@ async function saveAsync(uri: Uri, content: Uint8Array, subFolder?: string): Pro
   fs.writeFileSync(fspath, content);
 }
 
-async function getFilePathAsync(filePath: string, subFolder?: string): Promise<string> {
+async function getFilePathAsync(subFolder?: string, fileName?: string): Promise<string> {
   const rootPath = await selectRootFolder();
   if (!rootPath) {
     return;
   }
-  const fspath = path.join(rootPath, subFolder || '', filePath);
+  const fspath = path.join(rootPath, subFolder || '', fileName || '');
   return fspath;
 }
 
@@ -105,14 +105,13 @@ export class KnativeResourceVirtualFileSystemProvider implements FileSystemProvi
     return new Disposable(() => {});
   }
 
-  // eslint-disable-next-line class-methods-use-this
   async stat(_uri: Uri): Promise<FileStat> {
     let fileType: FileType = FileType.File;
     let createTime = 0;
     let modifiedTime = 0;
     let fileSize = 0;
 
-    const pathInWorkSpace: string = await getFilePathAsync(_uri.path);
+    const pathInWorkSpace: string = await getFilePathAsync(this.yamlDirName, _uri.path);
     fs.stat(pathInWorkSpace, (err, stats) => {
       if (err) {
         throw err;
@@ -131,13 +130,24 @@ export class KnativeResourceVirtualFileSystemProvider implements FileSystemProvi
     };
   }
 
-  // eslint-disable-next-line class-methods-use-this
+  async readDirectoryAsync(): Promise<[string, FileType][]> {
+    const files: [string, FileType][] = [];
+    const dir = await getFilePathAsync(this.yamlDirName, null);
+
+    if (fs.existsSync(dir)) {
+      fs.readdirSync(dir).forEach((localFile) => {
+        files.push([path.join(dir, localFile), FileType.File]);
+      });
+    }
+    return files;
+  }
+
   readDirectory(_uri: Uri): [string, FileType][] | Thenable<[string, FileType][]> {
-    return [];
+    return this.readDirectoryAsync();
   }
 
   async createDirectoryAsync(_uri: Uri): Promise<void> {
-    const dir = await getFilePathAsync(_uri.path, this.yamlDirName);
+    const dir = await getFilePathAsync(this.yamlDirName, null);
 
     if (!fs.existsSync(dir)) {
       fs.mkdirSync(dir);
@@ -150,17 +160,19 @@ export class KnativeResourceVirtualFileSystemProvider implements FileSystemProvi
 
   readFile(uri: Uri): Uint8Array | Thenable<Uint8Array> {
     this.createDirectory(uri);
+    this.readDirectory(uri);
     return this.readFileAsync(uri);
   }
 
   async readFileAsync(uri: Uri): Promise<Uint8Array> {
     // Check if there is an edited local version.
-    // Check if the version on the cluster is newer,
+    // TODO: Check if the version on the cluster is newer,
     // Then if it is, ask the user if they want to replace the edited version.
-    if (await getFilePathAsync(uri.path, this.yamlDirName)) {
+    const localFile = await getFilePathAsync(this.yamlDirName, uri.path);
+    if (fs.existsSync(localFile)) {
       // use local file
-      const content = await this.loadResource(uri);
-      return Buffer.from(content, 'utf8');
+      const localContent = fs.readFileSync(localFile, { encoding: 'utf8' });
+      return Buffer.from(localContent, 'utf8');
     }
     const content = await this.loadResource(uri);
     return Buffer.from(content, 'utf8');
