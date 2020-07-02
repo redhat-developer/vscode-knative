@@ -17,7 +17,6 @@ suite('Parse utility class', () => {
     fs.writeFileSync(filePath, JSON.stringify(json), 'utf8');
     fs.writeFileSync(invalidJsonFilePath, 'Invalid json', 'utf8');
   });
-
   test('should parse valid JSON from existing file', async () => {
     const jsonFromFile = await loadJSON<string>(filePath);
     const expected = {
@@ -29,7 +28,6 @@ suite('Parse utility class', () => {
     const actual = JSON.stringify(jsonFromFile);
     assert.deepInclude(actual, expectedStr, `Comparison failed, expected ${expectedStr} but got: ${actual}`);
   });
-
   test('should throw an error when processing invalid JSON file', async () => {
     try {
       await loadJSON<string>(invalidJsonFilePath);
@@ -37,7 +35,6 @@ suite('Parse utility class', () => {
       expect(err).to.be.an('error', 'Unexpected token');
     }
   });
-
   test('should throw an error when passing non-existing file', async () => {
     try {
       await loadJSON<string>('/not/really/a/path.json');
@@ -45,7 +42,6 @@ suite('Parse utility class', () => {
       expect(err).to.be.an('error', 'Cannot find module');
     }
   });
-
   suiteTeardown(() => {
     fs.unlinkSync(filePath);
     fs.unlinkSync(invalidJsonFilePath);

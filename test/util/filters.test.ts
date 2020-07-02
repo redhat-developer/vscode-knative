@@ -17,13 +17,11 @@ suite('Filters utility class', () => {
     );
     expect(spy.calledOnce);
   });
-
   test('should not replace similar token-like expression string in given text', () => {
     expect(
       Filters.filterToken('some string and given token=xxx or --token xxx or -- token=xxx, should not result in filtered string'),
     ).not.to.include('--token **********');
   });
-
   test('should replace password string in given text', () => {
     const spy = sandbox.spy(Filters, 'filterToken');
     expect(
@@ -31,7 +29,6 @@ suite('Filters utility class', () => {
     ).to.include('-p **********');
     expect(spy.calledOnce);
   });
-
   test('should not replace similar password-like string or parameter annotation in given text', () => {
     expect(
       Filters.filterPassword(
@@ -39,7 +36,6 @@ suite('Filters utility class', () => {
       ),
     ).to.include('-p **********');
   });
-
   test('should return same falsy object if not full string', () => {
     expect(Filters.filterToken('')).to.equal('');
     expect(Filters.filterToken(null)).to.equal(null);
