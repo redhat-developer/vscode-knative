@@ -23,11 +23,11 @@ import * as path from 'path';
 import * as fs from 'fs';
 import * as querystring from 'querystring';
 
-import { Execute } from '../cli/execute';
-import { CliExitData } from '../cli/cmdCli';
-import { KnAPI } from '../cli/kn-api';
-import * as config from '../cli/config';
-import { Errorable } from './errorable';
+import { Execute } from './execute';
+import { CliExitData } from './cmdCli';
+import { KnAPI } from './kn-api';
+import * as config from './config';
+import { Errorable } from '../util/errorable';
 
 export const KN_RESOURCE_SCHEME = 'knmsx';
 export const KN_RESOURCE_AUTHORITY = 'loadknativecore';

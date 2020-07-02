@@ -15,7 +15,7 @@ import { ContextType } from '../cli/config';
 import { Service, CreateService, UpdateService } from '../knative/service';
 import { Revision, Items, Traffic } from '../knative/revision';
 import { KnativeServices } from '../knative/knativeServices';
-import { KnativeResourceVirtualFileSystemProvider } from '../util/virtualfs';
+import { KnativeResourceVirtualFileSystemProvider } from '../cli/virtualfs';
 
 export class ServiceDataProvider implements TreeDataProvider<KnativeTreeItem> {
   public knExecutor = new Execute();

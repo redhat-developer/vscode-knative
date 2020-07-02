@@ -7,7 +7,7 @@ import * as vscode from 'vscode';
 import { Service } from './knative/service';
 import { ServiceExplorer } from './tree/serviceExplorer';
 import { KnativeTreeItem } from './tree/knativeTreeItem';
-import { vfsUri, KnativeResourceVirtualFileSystemProvider, KN_RESOURCE_SCHEME } from './util/virtualfs';
+import { vfsUri, KnativeResourceVirtualFileSystemProvider, KN_RESOURCE_SCHEME } from './cli/virtualfs';
 import { Revision } from './knative/revision';
 
 /**
