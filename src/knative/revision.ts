@@ -47,7 +47,7 @@ export interface Metadata {
   managedFields?: ManagedFields[] | null;
   name: string;
   namespace: string;
-  ownerReferences?: OwnerReferencesEntity[] | null;
+  ownerReferences: OwnerReferencesEntity[];
   resourceVersion: string;
   selfLink: string;
   uid: string;
