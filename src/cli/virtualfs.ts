@@ -69,7 +69,7 @@ export async function selectRootFolder(): Promise<string | undefined> {
   return folder.uri.fsPath;
 }
 
-async function saveAsync(uri: Uri, content: Uint8Array, subFolder?: string): Promise<void> {
+export async function saveAsync(uri: Uri, content: Uint8Array, subFolder?: string): Promise<void> {
   const rootPath = await selectRootFolder();
   if (!rootPath) {
     return;
@@ -78,7 +78,7 @@ async function saveAsync(uri: Uri, content: Uint8Array, subFolder?: string): Pro
   fs.writeFileSync(fspath, content);
 }
 
-async function getFilePathAsync(subFolder?: string, fileName?: string): Promise<string> {
+export async function getFilePathAsync(subFolder?: string, fileName?: string): Promise<string> {
   const rootPath = await selectRootFolder();
   if (!rootPath) {
     return;
@@ -130,6 +130,10 @@ export class KnativeResourceVirtualFileSystemProvider implements FileSystemProvi
     };
   }
 
+  readDirectory(_uri: Uri): [string, FileType][] | Thenable<[string, FileType][]> {
+    return this.readDirectoryAsync();
+  }
+
   async readDirectoryAsync(): Promise<[string, FileType][]> {
     const files: [string, FileType][] = [];
     const dir = await getFilePathAsync(this.yamlDirName, null);
@@ -142,8 +146,8 @@ export class KnativeResourceVirtualFileSystemProvider implements FileSystemProvi
     return files;
   }
 
-  readDirectory(_uri: Uri): [string, FileType][] | Thenable<[string, FileType][]> {
-    return this.readDirectoryAsync();
+  createDirectory(_uri: Uri): void | Thenable<void> {
+    return this.createDirectoryAsync(_uri);
   }
 
   async createDirectoryAsync(_uri: Uri): Promise<void> {
@@ -154,21 +158,18 @@ export class KnativeResourceVirtualFileSystemProvider implements FileSystemProvi
     }
   }
 
-  createDirectory(_uri: Uri): void | Thenable<void> {
-    this.createDirectoryAsync(_uri);
-  }
-
   readFile(uri: Uri): Uint8Array | Thenable<Uint8Array> {
     this.createDirectory(uri);
-    this.readDirectory(uri);
     return this.readFileAsync(uri);
   }
 
   async readFileAsync(uri: Uri): Promise<Uint8Array> {
+    await this.createDirectoryAsync(uri);
     // Check if there is an edited local version.
     // TODO: Check if the version on the cluster is newer,
     // Then if it is, ask the user if they want to replace the edited version.
     const localFile = await getFilePathAsync(this.yamlDirName, uri.path);
+    // (example) localFile = "/home/josh/git/vscode-extension-samples/basic-multi-root-sample/.knative/service-example.yaml"
     if (fs.existsSync(localFile)) {
       // use local file
       const localContent = fs.readFileSync(localFile, { encoding: 'utf8' });
@@ -186,7 +187,6 @@ export class KnativeResourceVirtualFileSystemProvider implements FileSystemProvi
     const name = query.name as string;
     const ns = query.ns as string | undefined;
     const resourceAuthority = uri.authority;
-
     const eced = await this.execLoadResource(resourceAuthority, ns, contextValue, name, outputFormat);
 
     if (Errorable.failed(eced)) {
@@ -210,6 +210,7 @@ export class KnativeResourceVirtualFileSystemProvider implements FileSystemProvi
     let ced: CliExitData;
     switch (resourceAuthority) {
       case KN_RESOURCE_AUTHORITY:
+        // fetch the YAML output
         ced = await this.knExecutor.execute(KnAPI.describeFeature(contextValue, name, outputFormat));
         return { succeeded: true, result: ced };
       default:
