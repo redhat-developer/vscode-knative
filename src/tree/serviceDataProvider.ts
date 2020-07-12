@@ -325,7 +325,8 @@ export class ServiceDataProvider implements TreeDataProvider<KnativeTreeItem> {
         // deal with the error that is passed on but not thrown by the Promise.
       }
       // TODO: Delete the local YAML file that was uploaded.
-      // TODO: Refresh the list to read the update
+      // Refresh the list to read the update
+      this.refresh();
     } catch (error) {
       if (typeof error === 'string' && error.search('validation failed') > 0) {
         // eslint-disable-next-line @typescript-eslint/prefer-string-starts-ends-with

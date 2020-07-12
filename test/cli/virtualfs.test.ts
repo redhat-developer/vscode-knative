@@ -24,11 +24,14 @@ suite('VirtualFileSystem', () => {
   const _uriExternalFile = Uri.parse(
     'knmsx://loadknativecore/service-example.yaml?contextValue%3Dservice%26name%3Dexample%26_%3D1594328823824',
   );
+  const _uriExternalFileForRevision = Uri.parse(
+    'knmsx://loadknativecore/service-example.yaml?contextValue%3Drevision%26name%3Dexample%26_%3D1594328823824',
+  );
   const _uriExternalFileWithNamespace = Uri.parse(
     'knmsx://loadknativecore/service-example.yaml?ns%3DtestNamespace%26contextValue%3Dservice%26name%3Dexample%26_%3D1594328823824',
   );
   const _uriExternalFileNotKnative = Uri.parse(
-    'knmsx://loadothercore/service-example.yaml?contextValue%3DService%26name%3Dexample%26_%3D1594328823824',
+    'knmsx://loadothercore/service-example.yaml?contextValue%3Dservice%26name%3Dexample%26_%3D1594328823824',
   );
   const _uriWorkspaceRoot = Uri.file('/workspace/root/test/uri');
   const testLocalContent = `apiVersion: serving.knative.dev/v1 kind: Service metadata: annotations: serving.knative.dev/creator: system:admin serving.knative.dev/lastModifier: system:admin creationTimestamp: "2020-07-09T02:39:32Z" generation: 1 name: local namespace: a-serverless-example spec: template: metadata: annotations: client.knative.dev/user-image: quay.io/rhdevelopers/knative-tutorial-greeter:quarkus creationTimestamp: null name: local-qycgp-1 spec: containerConcurrency: 0 containers: - image: quay.io/rhdevelopers/knative-tutorial-greeter:quarkus name: user-container readinessProbe: successThreshold: 1 tcpSocket: port: 0 resources: {} timeoutSeconds: 300 traffic: - latestRevision: true percent: 100 `;
@@ -239,7 +242,7 @@ suite('VirtualFileSystem', () => {
       // },
     };
 
-    const externalYamlFileContent = `apiVersion: serving.knative.dev/v1
+    const externalYamlFileContentOld = `apiVersion: serving.knative.dev/v1
 kind: Service
 metadata:
   annotations:
@@ -333,9 +336,39 @@ status:
     revisionName: example-nxdzm-1
   url: http://example-a-serverless-example.apps.aballant-2020-07-09.devcluster.openshift.com
 `;
+    const externalYamlFileContent = `apiVersion: serving.knative.dev/v1
+kind: Service
+metadata:
+  annotations:
+    serving.knative.dev/creator: system:admin
+    serving.knative.dev/lastModifier: system:admin
+  name: example
+  namespace: a-serverless-example
+spec:
+  template:
+    spec:
+      containerConcurrency: 0
+      containers:
+        - image: quay.io/rhdevelopers/knative-tutorial-greeter:quarkus
+          name: user-container
+          readinessProbe:
+            successThreshold: 1
+            tcpSocket:
+              port: 0
+          resources: {}
+      timeoutSeconds: 300
+  traffic:
+    - latestRevision: true
+      percent: 100
+`;
     const ced: CliExitData = {
       error: undefined,
-      stdout: externalYamlFileContent,
+      stdout: externalYamlFileContentOld,
+    };
+
+    const cedError: CliExitData = {
+      error: 'something went wrong in fetching the yaml',
+      stdout: undefined,
     };
 
     beforeEach(() => {
@@ -390,6 +423,12 @@ status:
       const foundExteranlContent: Uint8Array | Thenable<Uint8Array> = await knvfs.readFile(_uriExternalFile);
       assert.equals(foundExteranlContent, testContent);
     });
+    test('should return the content of a external yaml file from a single folder for a Revision.', async () => {
+      sandbox.stub(workspace, 'workspaceFolders').value(oneWSFolders);
+      const testContent: Uint8Array | Thenable<Uint8Array> = Buffer.from(externalYamlFileContentOld, 'utf8');
+      const foundExteranlContent: Uint8Array | Thenable<Uint8Array> = await knvfs.readFile(_uriExternalFileForRevision);
+      assert.equals(foundExteranlContent, testContent);
+    });
     test('should return the content of a external yaml file even if it can not find the workspace folder.', async () => {
       sandbox.stub(workspace, 'workspaceFolders').value(emptyWSFolders);
       const testContent: Uint8Array | Thenable<Uint8Array> = Buffer.from(externalYamlFileContent, 'utf8');
@@ -402,7 +441,19 @@ status:
       const foundExteranlContent: Uint8Array | Thenable<Uint8Array> = await knvfs.readFile(_uriExternalFile);
       assert.equals(foundExteranlContent, testContent);
     });
-    test('should throw an error if the resouce is not a Service.', async () => {
+    test('should throw an error if fetching the yaml has an error.', async () => {
+      sandbox.restore();
+      sandbox.stub(workspace, 'workspaceFolders').value(oneWSFolders);
+      sandbox.stub(knvfs.knExecutor, 'execute').resolves(cedError);
+      let error;
+      try {
+        await knvfs.readFile(_uriExternalFile);
+      } catch (err) {
+        error = err;
+      }
+      assert(error);
+    });
+    test('should throw an error if the resouce is not Knative.', async () => {
       sandbox.stub(workspace, 'workspaceFolders').value(oneWSFolders);
       let error;
       try {

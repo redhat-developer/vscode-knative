@@ -22,7 +22,7 @@ import {
 import * as path from 'path';
 import * as fs from 'fs';
 import * as querystring from 'querystring';
-
+import * as yaml from 'yaml';
 import { Execute } from './execute';
 import { CliExitData } from './cmdCli';
 import { KnAPI } from './kn-api';
@@ -159,7 +159,6 @@ export class KnativeResourceVirtualFileSystemProvider implements FileSystemProvi
   }
 
   readFile(uri: Uri): Uint8Array | Thenable<Uint8Array> {
-    this.createDirectory(uri);
     return this.readFileAsync(uri);
   }
 
@@ -199,7 +198,6 @@ export class KnativeResourceVirtualFileSystemProvider implements FileSystemProvi
     return ced.stdout;
   }
 
-  // eslint-disable-next-line class-methods-use-this
   async execLoadResource(
     resourceAuthority: string,
     ns: string | undefined,
@@ -208,11 +206,17 @@ export class KnativeResourceVirtualFileSystemProvider implements FileSystemProvi
     outputFormat: string,
   ): Promise<Errorable<CliExitData>> {
     let ced: CliExitData;
+    let cleanedCed: CliExitData;
     switch (resourceAuthority) {
       case KN_RESOURCE_AUTHORITY:
         // fetch the YAML output
         ced = await this.knExecutor.execute(KnAPI.describeFeature(contextValue, name, outputFormat));
-        return { succeeded: true, result: ced };
+        if (contextValue === 'service') {
+          cleanedCed = this.removeServerSideYamlElements(ced);
+        } else {
+          cleanedCed = ced;
+        }
+        return { succeeded: true, result: cleanedCed };
       default:
         return {
           succeeded: false,
@@ -224,6 +228,26 @@ export class KnativeResourceVirtualFileSystemProvider implements FileSystemProvi
   }
 
   // eslint-disable-next-line class-methods-use-this
+  removeServerSideYamlElements(ced: CliExitData): CliExitData {
+    if (ced.error) {
+      return ced;
+    }
+    const doc = yaml.parse(ced.stdout);
+    delete doc.metadata.creationTimestamp;
+    delete doc.metadata.generation;
+    delete doc.metadata.managedFields;
+    delete doc.metadata.resourceVersion;
+    delete doc.metadata.selfLink;
+    delete doc.metadata.uid;
+    delete doc.spec.template.metadata;
+    delete doc.spec.template.metadata;
+    delete doc.status;
+
+    const cleanStdout = yaml.stringify(doc);
+    const cleanCED: CliExitData = { error: ced.error, stdout: cleanStdout };
+    return cleanCED;
+  }
+
   writeFile(uri: Uri, content: Uint8Array, _options: { create: boolean; overwrite: boolean }): void | Thenable<void> {
     return saveAsync(uri, content, this.yamlDirName); // TODO: respect options
   }
