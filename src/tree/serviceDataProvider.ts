@@ -16,11 +16,14 @@ import { Service, CreateService, UpdateService } from '../knative/service';
 import { Revision, Items, Traffic } from '../knative/revision';
 import { KnativeServices } from '../knative/knativeServices';
 import { KnativeResourceVirtualFileSystemProvider } from '../cli/virtualfs';
+import { KnOutputChannel, OutputChannel } from '../output/knOutputChannel';
 
 export class ServiceDataProvider implements TreeDataProvider<KnativeTreeItem> {
   public knExecutor = new Execute();
 
   public knvfs = new KnativeResourceVirtualFileSystemProvider();
+
+  private knOutputChannel: OutputChannel = new KnOutputChannel();
 
   private onDidChangeTreeDataEmitter: EventEmitter<KnativeTreeItem | undefined | null> = new EventEmitter<
     KnativeTreeItem | undefined | null
@@ -30,6 +33,13 @@ export class ServiceDataProvider implements TreeDataProvider<KnativeTreeItem> {
 
   refresh(target?: KnativeTreeItem): void {
     this.onDidChangeTreeDataEmitter.fire(target);
+  }
+
+  /**
+   * Display info in the Knative Output channel/window
+   */
+  showOutputChannel(): void {
+    this.knOutputChannel.show();
   }
 
   /**

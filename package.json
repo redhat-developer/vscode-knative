@@ -123,7 +123,8 @@
     "onCommand:service.explorer.openFile",
     "onCommand:service.explorer.refresh",
     "onCommand:service.explorer.reportIssue",
-    "onCommand:service.explorer.upload"
+    "onCommand:service.explorer.upload",
+    "onCommand:service.output"
   ],
   "contributes": {
     "commands": [
@@ -168,6 +169,11 @@
       {
         "command": "service.explorer.upload",
         "title": "Upload YAML to cluster",
+        "category": "Knative"
+      },
+      {
+        "command": "service.output",
+        "title": "Show Output Channel",
         "category": "Knative"
       }
     ],
