@@ -163,7 +163,7 @@ export class KnativeResourceVirtualFileSystemProvider implements FileSystemProvi
   }
 
   async readFileAsync(uri: Uri): Promise<Uint8Array> {
-    await this.createDirectoryAsync(uri);
+    await this.createDirectory(uri);
     // Check if there is an edited local version.
     // TODO: Check if the version on the cluster is newer,
     // Then if it is, ask the user if they want to replace the edited version.
@@ -240,7 +240,6 @@ export class KnativeResourceVirtualFileSystemProvider implements FileSystemProvi
     delete doc.metadata.selfLink;
     delete doc.metadata.uid;
     delete doc.spec.template.metadata;
-    delete doc.spec.template.metadata;
     delete doc.status;
 
     const cleanStdout = yaml.stringify(doc);
@@ -254,11 +253,28 @@ export class KnativeResourceVirtualFileSystemProvider implements FileSystemProvi
 
   // eslint-disable-next-line class-methods-use-this
   delete(_uri: Uri, _options: { recursive: boolean }): void | Thenable<void> {
-    // no-op
+    if (fs.existsSync(_uri.path)) {
+      fs.unlink(_uri.path, (err) => {
+        if (err) {
+          throw err;
+        }
+      });
+    }
   }
 
-  // eslint-disable-next-line class-methods-use-this
   rename(_oldUri: Uri, _newUri: Uri, _options: { overwrite: boolean }): void | Thenable<void> {
-    // no-op
+    return this.renameAsync(_oldUri, _newUri, _options);
+  }
+
+  async renameAsync(oldUri: Uri, newUri: Uri, options: { overwrite: boolean }): Promise<void> {
+    const oldLocalFile = await getFilePathAsync(this.yamlDirName, oldUri.path);
+    const newLocalFile = await getFilePathAsync(this.yamlDirName, newUri.path);
+    if (fs.existsSync(oldLocalFile)) {
+      fs.rename(oldLocalFile, newLocalFile, (err) => {
+        if (err) {
+          throw err;
+        }
+      });
+    }
   }
 }

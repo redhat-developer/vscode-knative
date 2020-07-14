@@ -124,6 +124,7 @@
     "onCommand:service.explorer.refresh",
     "onCommand:service.explorer.reportIssue",
     "onCommand:service.explorer.upload",
+    "onCommand:service.explorer.deleteLocal",
     "onCommand:service.output"
   ],
   "contributes": {
@@ -142,6 +143,11 @@
       {
         "command": "service.explorer.delete",
         "title": "Delete",
+        "category": "Knative"
+      },
+      {
+        "command": "service.explorer.deleteLocal",
+        "title": "Delete the local copy of the YAML file",
         "category": "Knative"
       },
       {
@@ -203,6 +209,10 @@
           "when": "false"
         },
         {
+          "command": "service.explorer.deleteLocal",
+          "when": "false"
+        },
+        {
           "command": "service.explorer.upload",
           "when": "false"
         }
@@ -215,6 +225,11 @@
         },
         {
           "command": "service.explorer.upload",
+          "when": "view == knativeProjectExplorerServices && viewItem == service",
+          "group": "c1"
+        },
+        {
+          "command": "service.explorer.deleteLocal",
           "when": "view == knativeProjectExplorerServices && viewItem == service",
           "group": "c1"
         },

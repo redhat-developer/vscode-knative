@@ -21,6 +21,7 @@ suite('VirtualFileSystem', () => {
   const knvfs = new vfs.KnativeResourceVirtualFileSystemProvider();
 
   const _uriLocalFile = Uri.file('service-local.yaml');
+  const _uriLocalErrorFile = Uri.file('error-local.yaml');
   const _uriExternalFile = Uri.parse(
     'knmsx://loadknativecore/service-example.yaml?contextValue%3Dservice%26name%3Dexample%26_%3D1594328823824',
   );
@@ -77,6 +78,13 @@ suite('VirtualFileSystem', () => {
     ): string {
       return testLocalContent;
     },
+    rename: function rename(oldPath: fs.PathLike, newPath: fs.PathLike, callback: fs.NoParamCallback): void {
+      let error: NodeJS.ErrnoException | null = null;
+      if (oldPath === '/workspace/root/test/uri/.knative/error-local.yaml' || oldPath === undefined || newPath === undefined) {
+        error = { name: 'test error', message: 'could not find the file' };
+      }
+      callback(error);
+    },
     stat: function stat(path: fs.PathLike, callback: (err: NodeJS.ErrnoException, stats: fs.Stats) => void): void {
       let error: NodeJS.ErrnoException | null = null;
       if (path === undefined) {
@@ -88,6 +96,13 @@ suite('VirtualFileSystem', () => {
         size: 3,
       } as fs.Stats;
       callback(error, stats);
+    },
+    unlink: function unlink(path: fs.PathLike, callback: fs.NoParamCallback): void {
+      let error: NodeJS.ErrnoException | null = null;
+      if (path === '/error-local.yaml' || path === undefined) {
+        error = { name: 'test error', message: 'could not find the file' };
+      }
+      callback(error);
     },
     // eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-explicit-any
     writeFileSync: function writeFileSync(path: fs.PathLike | number, data: any, options?: fs.WriteFileOptions): void {
@@ -511,19 +526,63 @@ spec:
   });
   suite('Delete File', () => {
     test('should delete a yaml file to folder in a workspace.', async () => {
-      const spyDelete = sandbox.spy(knvfs, 'delete');
+      const spyExists = sandbox.spy(fsMock, 'existsSync');
+      const spyUnlink = sandbox.spy(fsMock, 'unlink');
       sandbox.stub(workspace, 'workspaceFolders').value(oneWSFolders);
-      await knvfs.delete(_uriLocalFile);
-      sinon.assert.calledOnce(spyDelete);
+      await knvfs.delete(_uriLocalFile, { recursive: false });
+      sinon.assert.calledOnce(spyExists);
+      sinon.assert.calledOnce(spyUnlink);
+      sandbox.restore();
+    });
+    test('should throw an error if it can not find the workspace folder while trying delete a yaml file to folder in a workspace.', async () => {
+      sandbox.stub(workspace, 'workspaceFolders').value(oneWSFolders);
+      let error;
+      try {
+        await knvfs.delete(_uriLocalErrorFile, { recursive: false });
+      } catch (err) {
+        error = err;
+      }
+      assert(error);
+      sandbox.restore();
+    });
+    test('should not delete a yaml file to folder in a workspace if it cant find it.', async () => {
+      const spyExists = sandbox.spy(fsMock, 'existsSync');
+      const spyUnlink = sandbox.spy(fsMock, 'unlink');
+      sandbox.stub(workspace, 'workspaceFolders').value(oneWSFolders);
+      await knvfs.delete('not/a/good/path', { recursive: false });
+      sinon.assert.calledOnce(spyExists);
+      sinon.assert.notCalled(spyUnlink);
       sandbox.restore();
     });
   });
   suite('Rename File', () => {
     test('should rename a yaml file to folder in a workspace.', async () => {
-      const spyRename = sandbox.spy(knvfs, 'rename');
+      const spyExists = sandbox.spy(fsMock, 'existsSync');
+      const spyRename = sandbox.spy(fsMock, 'rename');
       sandbox.stub(workspace, 'workspaceFolders').value(oneWSFolders);
-      await knvfs.rename(_uriLocalFile);
+      await knvfs.rename(_uriLocalFile, _uriLocalFile, { recursive: false });
+      sinon.assert.calledOnce(spyExists);
       sinon.assert.calledOnce(spyRename);
+      sandbox.restore();
+    });
+    test('should throw an error if it can not find the workspace folder while trying to rename a yaml file to folder in a workspace.', async () => {
+      sandbox.stub(workspace, 'workspaceFolders').value(oneWSFolders);
+      let error;
+      try {
+        await knvfs.rename(_uriLocalErrorFile, _uriLocalErrorFile, { recursive: false });
+      } catch (err) {
+        error = err;
+      }
+      assert(error);
+      sandbox.restore();
+    });
+    test('should not rename a yaml file to folder in a workspace if it cant find it.', async () => {
+      const spyExists = sandbox.spy(fsMock, 'existsSync');
+      const spyRename = sandbox.spy(fsMock, 'rename');
+      sandbox.stub(workspace, 'workspaceFolders').value(oneWSFolders);
+      await knvfs.rename(_uriExternalFile, _uriExternalFile, { recursive: false });
+      sinon.assert.calledOnce(spyExists);
+      sinon.assert.notCalled(spyRename);
       sandbox.restore();
     });
   });

@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See LICENSE file in the project root for license information.
  *-----------------------------------------------------------------------------------------------*/
 
-import { Event, ProviderResult, EventEmitter, TreeDataProvider, TreeItem, TreeItemCollapsibleState, window } from 'vscode';
+import { Event, ProviderResult, EventEmitter, TreeDataProvider, TreeItem, TreeItemCollapsibleState, window, Uri } from 'vscode';
 import * as validator from 'validator';
 import * as path from 'path';
 import { KnativeTreeItem, compareNodes } from './knativeTreeItem';
@@ -314,7 +314,7 @@ export class ServiceDataProvider implements TreeDataProvider<KnativeTreeItem> {
     // return this.insertAndRevealService(createKnObj(servObj.name));
   }
 
-  public async updateServiceFromYaml(node: KnativeTreeItem): Promise<void> {
+  public async getLocalYamlPathForNode(node: KnativeTreeItem): Promise<string> {
     // get local URL for YAML file
     const serviceName = node.getName();
     const files = await this.knvfs.readDirectoryAsync();
@@ -326,6 +326,11 @@ export class ServiceDataProvider implements TreeDataProvider<KnativeTreeItem> {
         [fileURI] = loc;
       }
     });
+    return fileURI;
+  }
+
+  public async updateServiceFromYaml(node: KnativeTreeItem): Promise<void> {
+    const fileURI = await this.getLocalYamlPathForNode(node);
 
     try {
       // push the updated YAML back to the cluster
@@ -333,8 +338,19 @@ export class ServiceDataProvider implements TreeDataProvider<KnativeTreeItem> {
       // Delete the yaml that was pushed if there was no error
       if (result.error) {
         // deal with the error that is passed on but not thrown by the Promise.
+        throw result.error;
       }
-      // TODO: Delete the local YAML file that was uploaded.
+      // Delete the local YAML file that was uploaded.
+      const response = await window.showInformationMessage(
+        `The file was uploaded. Do you want to delete the local copy and download the updated version?`,
+        { modal: true },
+        'Yes',
+        'No',
+      );
+      if (response === 'Yes') {
+        this.knvfs.delete(Uri.file(fileURI), { recursive: false });
+      }
+
       // Refresh the list to read the update
       this.refresh();
     } catch (error) {
@@ -351,6 +367,17 @@ export class ServiceDataProvider implements TreeDataProvider<KnativeTreeItem> {
         console.log(`updateServiceFromYaml error = ${error}`);
         await window.showErrorMessage(`There was an error while uploading the YAML. `, { modal: true }, 'OK');
       }
+    }
+  }
+
+  public async deleteLocalYaml(node: KnativeTreeItem): Promise<void> {
+    const fileURI = await this.getLocalYamlPathForNode(node);
+
+    // Delete the local YAML file that was uploaded.
+    const response = await window.showInformationMessage(`YES to delete the local copy.`, { modal: true }, 'Yes', 'No');
+    if (response === 'Yes') {
+      this.knvfs.delete(Uri.file(fileURI), { recursive: false });
+      this.refresh();
     }
   }
 
