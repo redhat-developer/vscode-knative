@@ -4,8 +4,10 @@ import * as fs from 'fs';
 import * as sinonChai from 'sinon-chai';
 import * as sinon from 'sinon';
 import * as referee from '@sinonjs/referee';
+import * as pth from 'path';
 import { beforeEach } from 'mocha';
 import { CliExitData } from '../../src/cli/cmdCli';
+import * as knv from '../../src/cli/virtualfs';
 
 import rewire = require('rewire');
 
@@ -18,7 +20,7 @@ chai.use(sinonChai);
 suite('VirtualFileSystem', () => {
   const sandbox = sinon.createSandbox();
   let revertFS: Function;
-  const knvfs = new vfs.KnativeResourceVirtualFileSystemProvider();
+  const knvfs: knv.KnativeResourceVirtualFileSystemProvider = new vfs.KnativeResourceVirtualFileSystemProvider();
 
   const _uriLocalFile = Uri.file('service-local.yaml');
   const _uriLocalErrorFile = Uri.file('error-local.yaml');
@@ -34,7 +36,7 @@ suite('VirtualFileSystem', () => {
   const _uriExternalFileNotKnative = Uri.parse(
     'knmsx://loadothercore/service-example.yaml?contextValue%3Dservice%26name%3Dexample%26_%3D1594328823824',
   );
-  const _uriWorkspaceRoot = Uri.file('/workspace/root/test/uri');
+  const _uriWorkspaceRoot = Uri.file(`${pth.sep}workspace${pth.sep}root${pth.sep}test${pth.sep}uri`);
   const testLocalContent = `apiVersion: serving.knative.dev/v1 kind: Service metadata: annotations: serving.knative.dev/creator: system:admin serving.knative.dev/lastModifier: system:admin creationTimestamp: "2020-07-09T02:39:32Z" generation: 1 name: local namespace: a-serverless-example spec: template: metadata: annotations: client.knative.dev/user-image: quay.io/rhdevelopers/knative-tutorial-greeter:quarkus creationTimestamp: null name: local-qycgp-1 spec: containerConcurrency: 0 containers: - image: quay.io/rhdevelopers/knative-tutorial-greeter:quarkus name: user-container readinessProbe: successThreshold: 1 tcpSocket: port: 0 resources: {} timeoutSeconds: 300 traffic: - latestRevision: true percent: 100 `;
   const wsFolder1: WorkspaceFolder = { uri: _uriWorkspaceRoot, name: 'test1', index: 1 };
   const wsFolder2: WorkspaceFolder = { uri: _uriWorkspaceRoot, name: 'test2', index: 2 };
@@ -49,11 +51,11 @@ suite('VirtualFileSystem', () => {
 
   const fsMock = {
     existsSync: function existsSync(path: fs.PathLike): boolean {
-      const externalUri = `${_uriWorkspaceRoot.path}/.knative${_uriExternalFile.path}`;
+      const externalUri = `${_uriWorkspaceRoot.fsPath}${pth.sep}.knative${_uriExternalFile.fsPath}`;
       if (path === undefined) {
         return false;
       }
-      if (path === externalUri) {
+      if (path === externalUri || path === _uriExternalFile.fsPath) {
         return false;
       }
       return true;
@@ -68,7 +70,7 @@ suite('VirtualFileSystem', () => {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       options?: { encoding: BufferEncoding | null; withFileTypes?: false } | BufferEncoding | null,
     ): string[] {
-      return ['/test1.yaml', '/test2.yaml'];
+      return [`${pth.sep}test1.yaml`, `${pth.sep}test2.yaml`];
     },
     readFileSync: function readFileSync(
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -80,7 +82,11 @@ suite('VirtualFileSystem', () => {
     },
     rename: function rename(oldPath: fs.PathLike, newPath: fs.PathLike, callback: fs.NoParamCallback): void {
       let error: NodeJS.ErrnoException | null = null;
-      if (oldPath === '/workspace/root/test/uri/.knative/error-local.yaml' || oldPath === undefined || newPath === undefined) {
+      if (
+        oldPath === `${pth.sep}workspace${pth.sep}root${pth.sep}test${pth.sep}uri${pth.sep}.knative${pth.sep}error-local.yaml` ||
+        oldPath === undefined ||
+        newPath === undefined
+      ) {
         error = { name: 'test error', message: 'could not find the file' };
       }
       callback(error);
@@ -99,7 +105,7 @@ suite('VirtualFileSystem', () => {
     },
     unlink: function unlink(path: fs.PathLike, callback: fs.NoParamCallback): void {
       let error: NodeJS.ErrnoException | null = null;
-      if (path === '/error-local.yaml' || path === undefined) {
+      if (path === `${pth.sep}error-local.yaml` || path === undefined) {
         error = { name: 'test error', message: 'could not find the file' };
       }
       callback(error);
@@ -123,13 +129,13 @@ suite('VirtualFileSystem', () => {
     test('should return unique URI', () => {
       const builtURI: Uri = vfs.vfsUri('service', 'example', 'yaml');
       assert.equals(builtURI.authority, _uriExternalFile.authority);
-      assert.equals(builtURI.path, _uriExternalFile.path);
+      assert.equals(builtURI.fsPath, _uriExternalFile.fsPath);
       assert.equals(builtURI.scheme, _uriExternalFile.scheme);
     });
     test('should return unique URI with optional Namespace', () => {
       const builtURI: Uri = vfs.vfsUri('service', 'example', 'yaml', 'testNamespace');
       assert.equals(builtURI.authority, _uriExternalFileWithNamespace.authority);
-      assert.equals(builtURI.path, _uriExternalFileWithNamespace.path);
+      assert.equals(builtURI.fsPath, _uriExternalFileWithNamespace.fsPath);
       assert.equals(builtURI.scheme, _uriExternalFileWithNamespace.scheme);
       assert.equals(builtURI.query.includes('testNamespace'), _uriExternalFileWithNamespace.query.includes('testNamespace'));
     });
@@ -189,8 +195,8 @@ suite('VirtualFileSystem', () => {
 
   suite('Read Directory', () => {
     const files: [string, FileType][] = [
-      ['/workspace/root/test/uri/.knative/test1.yaml', 1],
-      ['/workspace/root/test/uri/.knative/test2.yaml', 1],
+      [`${pth.sep}workspace${pth.sep}root${pth.sep}test${pth.sep}uri${pth.sep}.knative${pth.sep}test1.yaml`, 1],
+      [`${pth.sep}workspace${pth.sep}root${pth.sep}test${pth.sep}uri${pth.sep}.knative${pth.sep}test2.yaml`, 1],
     ];
     test('should return a list of files from one folder.', async () => {
       sandbox.stub(workspace, 'workspaceFolders').value(oneWSFolders);
@@ -201,7 +207,7 @@ suite('VirtualFileSystem', () => {
     test('should return a list of files when no sub-folder is provided.', async () => {
       sandbox.stub(workspace, 'workspaceFolders').value(oneWSFolders);
       const foundPath = await vfs.getFilePathAsync();
-      assert.equals(foundPath, _uriWorkspaceRoot.path);
+      assert.equals(foundPath, _uriWorkspaceRoot.fsPath);
       sandbox.restore();
     });
     test('should throw an error if it can not find the workspace folder.', async () => {
@@ -490,7 +496,7 @@ spec:
     test('should write a yaml file to folder in a workspace.', async () => {
       const spyWrite = sandbox.spy(fsMock, 'writeFileSync');
       sandbox.stub(workspace, 'workspaceFolders').value(oneWSFolders);
-      await knvfs.writeFile(_uriLocalFile, 'utf8');
+      await knvfs.writeFile(_uriLocalFile, Buffer.from(testLocalContent), { create: true, overwrite: true });
       sinon.assert.calledOnce(spyWrite);
       sandbox.restore();
     });
@@ -504,14 +510,14 @@ spec:
     test('should NOT write a yaml file to folder if it can not find the workspace file.', async () => {
       const spyWrite = sandbox.spy(fsMock, 'writeFileSync');
       sandbox.stub(workspace, 'workspaceFolders').value(emptyWSFolders);
-      await knvfs.writeFile(_uriLocalFile, 'utf8');
+      await knvfs.writeFile(_uriLocalFile, Buffer.from(testLocalContent), { create: true, overwrite: true });
       sinon.assert.notCalled(spyWrite);
       sandbox.restore();
     });
     test('should NOT write a yaml file to folder if the uri is not of type File.', async () => {
       const spyWrite = sandbox.spy(fsMock, 'writeFileSync');
       sandbox.stub(workspace, 'workspaceFolders').value(notFileWSFolders);
-      await knvfs.writeFile(_uriLocalFile, 'utf8');
+      await knvfs.writeFile(_uriLocalFile, Buffer.from(testLocalContent), { create: true, overwrite: true });
       sinon.assert.notCalled(spyWrite);
       sandbox.restore();
     });
@@ -519,7 +525,7 @@ spec:
       const spyWrite = sandbox.spy(fsMock, 'writeFileSync');
       sandbox.stub(workspace, 'workspaceFolders').value(multipleWSFolders);
       sandbox.stub(window, 'showWorkspaceFolderPick').resolves(multipleWSFolders[0]);
-      await knvfs.writeFile(_uriLocalFile, 'utf8');
+      await knvfs.writeFile(_uriLocalFile, Buffer.from(testLocalContent), { create: true, overwrite: true });
       sinon.assert.calledOnce(spyWrite);
       sandbox.restore();
     });
@@ -549,7 +555,7 @@ spec:
       const spyExists = sandbox.spy(fsMock, 'existsSync');
       const spyUnlink = sandbox.spy(fsMock, 'unlink');
       sandbox.stub(workspace, 'workspaceFolders').value(oneWSFolders);
-      await knvfs.delete('not/a/good/path', { recursive: false });
+      await knvfs.delete(_uriExternalFile, { recursive: false });
       sinon.assert.calledOnce(spyExists);
       sinon.assert.notCalled(spyUnlink);
       sandbox.restore();
@@ -560,7 +566,7 @@ spec:
       const spyExists = sandbox.spy(fsMock, 'existsSync');
       const spyRename = sandbox.spy(fsMock, 'rename');
       sandbox.stub(workspace, 'workspaceFolders').value(oneWSFolders);
-      await knvfs.rename(_uriLocalFile, _uriLocalFile, { recursive: false });
+      await knvfs.rename(_uriLocalFile, _uriLocalFile, { overwrite: false });
       sinon.assert.calledOnce(spyExists);
       sinon.assert.calledOnce(spyRename);
       sandbox.restore();
@@ -569,18 +575,18 @@ spec:
       sandbox.stub(workspace, 'workspaceFolders').value(oneWSFolders);
       let error;
       try {
-        await knvfs.rename(_uriLocalErrorFile, _uriLocalErrorFile, { recursive: false });
+        await knvfs.rename(_uriLocalErrorFile, _uriLocalErrorFile, { overwrite: false });
       } catch (err) {
         error = err;
       }
       assert(error);
       sandbox.restore();
     });
-    test('should not rename a yaml file to folder in a workspace if it cant find it.', async () => {
+    test('should not rename a yaml file in folder in a workspace if it cant find it.', async () => {
       const spyExists = sandbox.spy(fsMock, 'existsSync');
       const spyRename = sandbox.spy(fsMock, 'rename');
       sandbox.stub(workspace, 'workspaceFolders').value(oneWSFolders);
-      await knvfs.rename(_uriExternalFile, _uriExternalFile, { recursive: false });
+      await knvfs.rename(_uriExternalFile, _uriExternalFile, { overwrite: false });
       sinon.assert.calledOnce(spyExists);
       sinon.assert.notCalled(spyRename);
       sandbox.restore();
