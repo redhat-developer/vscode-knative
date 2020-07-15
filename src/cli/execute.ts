@@ -40,6 +40,10 @@ export class Execute {
   }
 }
 
+/**
+ * Convert the results of a search, putting the `item` and children into JSON format
+ * @param result: CliExitData
+ */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function loadItems(result: CliExitData): any[] {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

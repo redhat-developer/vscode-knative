@@ -334,25 +334,41 @@ export class ServiceDataProvider implements TreeDataProvider<KnativeTreeItem> {
 
     try {
       // push the updated YAML back to the cluster
-      const result: CliExitData = await this.knExecutor.execute(KubectlAPI.applyYAML(fileURI));
+      const result: CliExitData = await this.knExecutor.execute(KubectlAPI.applyYAML(fileURI, { override: false }));
       // Delete the yaml that was pushed if there was no error
       if (result.error) {
+        // eslint-disable-next-line no-console
+        console.log(`updateServiceFromYaml result.error = ${result.error}`);
         // deal with the error that is passed on but not thrown by the Promise.
         throw result.error;
       }
-      // Delete the local YAML file that was uploaded.
-      const response = await window.showInformationMessage(
-        `The file was uploaded. Do you want to delete the local copy and download the updated version?`,
-        { modal: true },
-        'Yes',
-        'No',
-      );
-      if (response === 'Yes') {
-        this.knvfs.delete(Uri.file(fileURI), { recursive: false });
+      if (typeof result.stdout === 'string' && result.stdout.search('unchanged') > 0) {
+        // Delete the local YAML file that was uploaded.
+        const response = await window.showInformationMessage(
+          `The file is unchange.\nDo you want to delete the local copy?`,
+          { modal: true },
+          'Delete',
+        );
+        if (response === 'Delete') {
+          this.knvfs.delete(Uri.file(fileURI), { recursive: false });
+        }
+      } else {
+        // Delete the local YAML file that was uploaded.
+        const response = await window.showInformationMessage(
+          `The file was uploaded. Do you want to delete the local copy and download the updated version?`,
+          { modal: true },
+          'Delete',
+        );
+        if (response === 'Delete') {
+          this.knvfs.delete(Uri.file(fileURI), { recursive: false });
+        }
       }
-
-      // Refresh the list to read the update
-      this.refresh();
+      // eslint-disable-next-line no-console
+      console.log(`updateServiceFromYaml result.stdout = ${result.stdout}`);
+      // eslint-disable-next-line no-console
+      console.log(`updateServiceFromYaml result.stderr = ${result.stderr}`);
+      // eslint-disable-next-line no-console
+      console.log(`updateServiceFromYaml result.error = ${result.error}`);
     } catch (error) {
       if (typeof error === 'string' && error.search('validation failed') > 0) {
         // eslint-disable-next-line @typescript-eslint/prefer-string-starts-ends-with
@@ -362,20 +378,30 @@ export class ServiceDataProvider implements TreeDataProvider<KnativeTreeItem> {
           { modal: true },
           'OK',
         );
+      } else if (typeof error === 'string' && error.search('undefinedWarning') > 0) {
+        // eslint-disable-next-line no-console
+        console.log(`updateServiceFromYaml error = ${error}`);
+        // do nothing it was a warning
       } else {
         // eslint-disable-next-line no-console
         console.log(`updateServiceFromYaml error = ${error}`);
         await window.showErrorMessage(`There was an error while uploading the YAML. `, { modal: true }, 'OK');
       }
     }
+    // Refresh the list to read the update
+    this.refresh();
   }
 
   public async deleteLocalYaml(node: KnativeTreeItem): Promise<void> {
     const fileURI = await this.getLocalYamlPathForNode(node);
 
     // Delete the local YAML file that was uploaded.
-    const response = await window.showInformationMessage(`YES to delete the local copy.`, { modal: true }, 'Yes', 'No');
-    if (response === 'Yes') {
+    const response = await window.showInformationMessage(
+      `Are you sure you want to delete the local copy.`,
+      { modal: true },
+      'Delete',
+    );
+    if (response === 'Delete') {
       this.knvfs.delete(Uri.file(fileURI), { recursive: false });
       this.refresh();
     }
