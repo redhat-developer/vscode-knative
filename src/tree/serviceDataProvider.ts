@@ -6,6 +6,7 @@
 import { Event, ProviderResult, EventEmitter, TreeDataProvider, TreeItem, TreeItemCollapsibleState, window, Uri } from 'vscode';
 import * as validator from 'validator';
 import * as path from 'path';
+import * as yaml from 'yaml';
 import { KnativeTreeItem, compareNodes } from './knativeTreeItem';
 import { Execute, loadItems } from '../cli/execute';
 import { CliExitData } from '../cli/cmdCli';
@@ -15,7 +16,7 @@ import { ContextType } from '../cli/config';
 import { Service, CreateService, UpdateService } from '../knative/service';
 import { Revision, Items, Traffic } from '../knative/revision';
 import { KnativeServices } from '../knative/knativeServices';
-import { KnativeResourceVirtualFileSystemProvider } from '../cli/virtualfs';
+import { KnativeResourceVirtualFileSystemProvider, getFilePathAsync, vfsUri } from '../cli/virtualfs';
 import { KnOutputChannel, OutputChannel } from '../output/knOutputChannel';
 
 export class ServiceDataProvider implements TreeDataProvider<KnativeTreeItem> {
@@ -271,15 +272,49 @@ export class ServiceDataProvider implements TreeDataProvider<KnativeTreeItem> {
     }
 
     // Get the raw data from the cli call.
-    const result: CliExitData = await this.knExecutor.execute(KnAPI.createService(servObj));
+    // const result: CliExitData = await this.knExecutor.execute(KnAPI.createService(servObj));
     const service: Service = new Service(servObj.name, servObj.image);
 
     this.ksvc.addService(service);
 
-    if (result.error) {
-      // TODO: handle the error
-      // check the kind of errors we can get back
+    // *** As a hack, make a file for the yaml, use kubectl apply to create, then delete the file
+    // Check the local files for the URL for YAML file
+    const serviceName = servObj.name;
+    const files = await this.knvfs.readDirectoryAsync();
+    let filePath = '';
+    files.forEach((loc): void => {
+      // eslint-disable-next-line @typescript-eslint/prefer-string-starts-ends-with
+      const fileName = loc[0].slice(loc[0].lastIndexOf(path.sep) + 1);
+      if (fileName === `service-${serviceName}.yaml`) {
+        [filePath] = loc;
+      }
+    });
+    if (filePath === '') {
+      // The file doesn't exist, so write it
+      const newUri = vfsUri('service', serviceName, 'yaml');
+      // eslint-disable-next-line prettier/prettier
+      const stringContent = yaml.parse(`apiVersion: serving.knative.dev/v1\nkind: Service\nmetadata:\n  name: ${servObj.name}\nspec:\n  template:\n    spec:\n      containers:\n      - image: ${servObj.image}`);
+      const yamlContent = yaml.stringify(stringContent);
+      await this.knvfs.writeFile(newUri, Buffer.from(yamlContent, 'utf8'), {
+        create: true,
+        overwrite: false,
+      });
+      filePath = await getFilePathAsync('.knative', newUri.path);
+      try {
+        await this.knExecutor.execute(KubectlAPI.applyYAML(filePath, { override: true }));
+      } catch (err) {
+        // eslint-disable-next-line no-console
+        console.log(`Error while using kubectl apply to create. ${err}`);
+      }
+
+      await this.knvfs.delete(Uri.file(filePath), { recursive: false });
     }
+    // *** End Hack
+
+    // if (result.error) {
+    //   // TODO: handle the error
+    //   // check the kind of errors we can get back
+    // }
     this.refresh();
     // return this.insertAndRevealService(createKnObj(servObj.name));
   }

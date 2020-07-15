@@ -33,7 +33,7 @@ suite('Kubectl API commands that will', () => {
         cliArguments: ['apply', '-f', './path.yaml'],
         cliCommand: 'kubectl',
       };
-      const commandAPI = KubectlAPI.applyYAML('./path.yaml');
+      const commandAPI = KubectlAPI.applyYAML('./path.yaml', { override: false });
       assert.equals(command.cliArguments, commandAPI.cliArguments);
     });
   });

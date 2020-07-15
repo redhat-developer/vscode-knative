@@ -16,8 +16,11 @@ export class KubectlAPI {
   /**
    * Return the list of Knative Services in JSON format.
    */
-  static applyYAML(yamlPath: string): CliCommand {
+  static applyYAML(yamlPath: string, options: { override: boolean }): CliCommand {
     const a = ['apply', '-f', yamlPath];
+    if (options.override) {
+      a.push('--force');
+    }
     return kubectlCliCommand(a);
   }
 
