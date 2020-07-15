@@ -111,7 +111,7 @@ export class KnativeResourceVirtualFileSystemProvider implements FileSystemProvi
     let modifiedTime = 0;
     let fileSize = 0;
 
-    const pathInWorkSpace: string = await getFilePathAsync(this.yamlDirName, _uri.path);
+    const pathInWorkSpace: string = await getFilePathAsync(this.yamlDirName, _uri.fsPath);
     fs.stat(pathInWorkSpace, (err, stats) => {
       if (err) {
         throw err;
@@ -167,7 +167,7 @@ export class KnativeResourceVirtualFileSystemProvider implements FileSystemProvi
     // Check if there is an edited local version.
     // TODO: Check if the version on the cluster is newer,
     // Then if it is, ask the user if they want to replace the edited version.
-    const localFile = await getFilePathAsync(this.yamlDirName, uri.path);
+    const localFile = await getFilePathAsync(this.yamlDirName, uri.fsPath);
     // (example) localFile = "/home/josh/git/vscode-extension-samples/basic-multi-root-sample/.knative/service-example.yaml"
     if (fs.existsSync(localFile)) {
       // use local file
@@ -253,8 +253,8 @@ export class KnativeResourceVirtualFileSystemProvider implements FileSystemProvi
 
   // eslint-disable-next-line class-methods-use-this
   delete(_uri: Uri, _options: { recursive: boolean }): void | Thenable<void> {
-    if (fs.existsSync(_uri.path)) {
-      fs.unlink(_uri.path, (err) => {
+    if (fs.existsSync(_uri.fsPath)) {
+      fs.unlink(_uri.fsPath, (err) => {
         if (err) {
           throw err;
         }
@@ -267,8 +267,8 @@ export class KnativeResourceVirtualFileSystemProvider implements FileSystemProvi
   }
 
   async renameAsync(oldUri: Uri, newUri: Uri, options: { overwrite: boolean }): Promise<void> {
-    const oldLocalFile = await getFilePathAsync(this.yamlDirName, oldUri.path);
-    const newLocalFile = await getFilePathAsync(this.yamlDirName, newUri.path);
+    const oldLocalFile = await getFilePathAsync(this.yamlDirName, oldUri.fsPath);
+    const newLocalFile = await getFilePathAsync(this.yamlDirName, newUri.fsPath);
     if (fs.existsSync(oldLocalFile)) {
       fs.rename(oldLocalFile, newLocalFile, (err) => {
         if (err) {
