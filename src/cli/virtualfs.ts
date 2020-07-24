@@ -138,6 +138,7 @@ export class KnativeResourceVirtualFileSystemProvider implements FileSystemProvi
 
   async readDirectoryAsync(): Promise<[string, FileType][]> {
     const files: [string, FileType][] = [];
+    await this.createDirectoryAsync(null);
     const dir = await getFilePathAsync(this.yamlDirName, null);
 
     if (fs.existsSync(dir)) {
