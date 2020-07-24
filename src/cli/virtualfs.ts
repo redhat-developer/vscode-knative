@@ -38,11 +38,13 @@ export function vfsUri(
   outputFormat: string,
   namespace?: string | null | undefined /* TODO: rationalise null and undefined */,
 ): Uri {
-  const docname = `${contextValue.replace('/', '-')}-${name}.${outputFormat}`;
+  const c1 = contextValue.replace('/', '-');
+  const context = c1.replace('.', '-');
+  const docname = `${context}-${name}.${outputFormat}`;
   const nonce = new Date().getTime();
   const nsquery = namespace ? `ns=${namespace}&` : '';
   // "knmsx://loadknativecore/serviceknative-tutorial-greeter.yaml?contextValue=service&name=knative-tutorial-greeter&_=1593030763939"
-  const uri = `${KN_RESOURCE_SCHEME}://${KN_RESOURCE_AUTHORITY}/${docname}?${nsquery}contextValue=${contextValue}&name=${name}&_=${nonce}`;
+  const uri = `${KN_RESOURCE_SCHEME}://${KN_RESOURCE_AUTHORITY}/${docname}?${nsquery}contextValue=${context}&name=${name}&_=${nonce}`;
   return Uri.parse(uri);
 }
 
@@ -183,10 +185,11 @@ export class KnativeResourceVirtualFileSystemProvider implements FileSystemProvi
 
     const outputFormat = config.getOutputFormat();
     const contextValue = query.contextValue as string;
+    const context = contextValue === 'revision-tagged' ? 'revision' : contextValue;
     const name = query.name as string;
     const ns = query.ns as string | undefined;
     const resourceAuthority = uri.authority;
-    const eced = await this.execLoadResource(resourceAuthority, ns, contextValue, name, outputFormat);
+    const eced = await this.execLoadResource(resourceAuthority, ns, context, name, outputFormat);
 
     if (Errorable.failed(eced)) {
       window.showErrorMessage(eced.error[0]);
