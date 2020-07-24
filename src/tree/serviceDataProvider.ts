@@ -154,9 +154,7 @@ export class ServiceDataProvider implements TreeDataProvider<KnativeTreeItem> {
     // Pull out the name of the service from the raw data.
     // Create an empty state message when there is no Service.
     if (services.length === 0) {
-      return [
-        new KnativeTreeItem(null, null, 'No Service Found', ContextType.SERVICE, TreeItemCollapsibleState.None, null, null),
-      ];
+      return [new KnativeTreeItem(null, null, 'No Service Found', ContextType.NONE, TreeItemCollapsibleState.None, null, null)];
     }
     // Convert the fetch Services into TreeItems
     const children = services

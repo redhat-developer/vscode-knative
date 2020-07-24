@@ -14,6 +14,12 @@ import format = require('string-format');
 const { Collapsed } = TreeItemCollapsibleState;
 
 const CONTEXT_DATA = {
+  none: {
+    icon: '',
+    tooltip: 'Not Found',
+    description: '',
+    getChildren: (): undefined[] => [],
+  },
   revision: {
     icon: 'REV.svg',
     tooltip: 'Revision: {name}',
