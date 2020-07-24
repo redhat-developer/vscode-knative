@@ -68,14 +68,8 @@ export class ServiceDataProvider implements TreeDataProvider<KnativeTreeItem> {
    */
   getChildren(element?: KnativeTreeItem): ProviderResult<KnativeTreeItem[]> {
     let children: ProviderResult<KnativeTreeItem[]>;
-    if (element) {
-      if (element.contextValue === 'service') {
-        children = this.getRevisions(element);
-      } else if (element.getName() === 'No Service Found') {
-        children = [];
-      } else {
-        children = element.getChildren();
-      }
+    if (element && element.contextValue === 'service') {
+      children = this.getRevisions(element);
     } else {
       children = this.getServices() as ProviderResult<KnativeTreeItem[]>;
     }
@@ -97,18 +91,59 @@ export class ServiceDataProvider implements TreeDataProvider<KnativeTreeItem> {
   ];
 
   /**
+   * Fetch a list of Revision data for a specific Service.
+   *
+   * The Revision data may not have finished getting created when this call comes.
+   * So check if it is there and call it again until it is finished.
+   *
+   * @param parentService: KnativeTreeItem
+   */
+  private async getRevisionData(parentService: KnativeTreeItem): Promise<CliExitData> {
+    // Get the raw data from the cli call.
+    const result: CliExitData = await this.knExecutor.execute(KnAPI.listRevisionsForService(parentService.getName()));
+    // Confirm we got data where we expect it, if not get it again.
+    if ((result.stdout === '' || result.stdout === null) && result.error === undefined) {
+      return this.getRevisionData(parentService);
+    }
+    return result;
+  }
+
+  /**
    * The Revision is a child of Service. Every update makes a new Revision.
    * Fetch the Revisions and associate them with their parent Services.
    *
    * @param parentService
    */
   public async getRevisions(parentService: KnativeTreeItem): Promise<KnativeTreeItem[]> {
-    const result: CliExitData = await this.knExecutor.execute(KnAPI.listRevisionsForService(parentService.getName()));
+    let result: CliExitData;
+    try {
+      result = await this.getRevisionData(parentService);
+    } catch (err) {
+      // Catch the Rejected Promise of the Execute to list Revisions.
+      window.showErrorMessage(
+        `ServiceDataProvider.getRevisions caught an error getting the Revision for ${parentService.getName()}.\n ${err}`,
+        { modal: true },
+        'OK',
+      );
+      return null;
+    }
+
+    if (result.error) {
+      // If we get an error back and not data, tell the user and stop processing it.
+      window.showErrorMessage(
+        `ServiceDataProvider.getRevisions Failed to get the Revision for ${parentService.getName()}.\n ${result.error}`,
+        { modal: true },
+        'OK',
+      );
+      return null;
+    }
 
     const service: Service = parentService.getKnativeItem() as Service;
     const { traffic } = service.details.status;
 
+    // Add a list of the Revisions to the parent Service, then return the Revisions
     const revisions: Revision[] = this.ksvc.addRevisions(
+      // Pull the data out of the Items object in the JSON results
       loadItems(result).map((value: Items) => {
         // get the revision name, check it against the list of traffic from the parent, then pass in the traffic if found
         const revisionTraffic: Traffic[] = traffic.filter((val): boolean => {
@@ -117,11 +152,6 @@ export class ServiceDataProvider implements TreeDataProvider<KnativeTreeItem> {
         return Revision.toRevision(value, revisionTraffic);
       }),
     );
-
-    // If there are no Revisions then there is either no Service or an error.
-    if (revisions.length === 0) {
-      return;
-    }
 
     // Create the Revision tree item for each one found.
     const revisionTreeObjects: KnativeTreeItem[] = revisions.map<KnativeTreeItem>((value) => {
@@ -145,17 +175,54 @@ export class ServiceDataProvider implements TreeDataProvider<KnativeTreeItem> {
   }
 
   /**
-   * The Service is the highest level of the tree for Knative. This method sets it at the root if not already done.
+   * Fetch the Service data
+   *
+   * When creating a new Service on the cluster it takes time, however this fetch is called immediately.
+   * It will continue to call itself untill the data is complete on the cluster.
    */
-  public async getServices(): Promise<KnativeTreeItem[]> {
+  private async getServicesList(): Promise<Service[]> {
     // Get the raw data from the cli call.
     const result: CliExitData = await this.knExecutor.execute(KnAPI.listServices());
     const services: Service[] = this.ksvc.addServices(loadItems(result).map((value) => Service.toService(value)));
+
+    // If there are no Services found then stop looking and we can post 'No Services Found`
+    if (services.length === 0) {
+      return services;
+    }
+
+    let serviceNotReady: boolean;
+    // Make sure there is Status info in the Service to confirm that it has finised being created.
+    services.find((s): boolean => {
+      if (
+        s?.details?.status?.conditions === undefined ||
+        s.details.status.traffic === undefined ||
+        s.details.status.conditions[0].status !== 'True'
+      ) {
+        serviceNotReady = true;
+        return serviceNotReady;
+      }
+      serviceNotReady = false;
+      return serviceNotReady;
+    });
+    if (serviceNotReady) {
+      return this.getServicesList();
+    }
+
+    return services;
+  }
+
+  /**
+   * The Service is the highest level of the tree for Knative. This method sets it at the root if not already done.
+   */
+  public async getServices(): Promise<KnativeTreeItem[]> {
+    const services = await this.getServicesList();
+
     // Pull out the name of the service from the raw data.
     // Create an empty state message when there is no Service.
     if (services.length === 0) {
       return [new KnativeTreeItem(null, null, 'No Service Found', ContextType.NONE, TreeItemCollapsibleState.None, null, null)];
     }
+
     // Convert the fetch Services into TreeItems
     const children = services
       .map<KnativeTreeItem>((value) => {
@@ -291,7 +358,9 @@ export class ServiceDataProvider implements TreeDataProvider<KnativeTreeItem> {
       // The file doesn't exist, so write it
       const newUri = vfsUri('service', serviceName, 'yaml');
       // eslint-disable-next-line prettier/prettier
-      const stringContent = yaml.parse(`apiVersion: serving.knative.dev/v1\nkind: Service\nmetadata:\n  name: ${servObj.name}\nspec:\n  template:\n    spec:\n      containers:\n      - image: ${servObj.image}`);
+      const stringContent = yaml.parse(
+        `apiVersion: serving.knative.dev/v1\nkind: Service\nmetadata:\n  name: ${servObj.name}\nspec:\n  template:\n    spec:\n      containers:\n      - image: ${servObj.image}`,
+      );
       const yamlContent = yaml.stringify(stringContent);
       await this.knvfs.writeFile(newUri, Buffer.from(yamlContent, 'utf8'), {
         create: true,
@@ -396,12 +465,6 @@ export class ServiceDataProvider implements TreeDataProvider<KnativeTreeItem> {
           this.knvfs.delete(Uri.file(fileURI), { recursive: false });
         }
       }
-      // eslint-disable-next-line no-console
-      console.log(`updateServiceFromYaml result.stdout = ${result.stdout}`);
-      // eslint-disable-next-line no-console
-      console.log(`updateServiceFromYaml result.stderr = ${result.stderr}`);
-      // eslint-disable-next-line no-console
-      console.log(`updateServiceFromYaml result.error = ${result.error}`);
     } catch (error) {
       if (typeof error === 'string' && error.search('validation failed') > 0) {
         // eslint-disable-next-line @typescript-eslint/prefer-string-starts-ends-with

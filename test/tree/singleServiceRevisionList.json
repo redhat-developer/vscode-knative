@@ -6,17 +6,17 @@
       "kind": "Revision",
       "metadata": {
         "annotations": {
-          "client.knative.dev/user-image": "quay.io/rhdevelopers/knative-tutorial-greeter:quarkus",
           "serving.knative.dev/creator": "system:admin",
-          "serving.knative.dev/lastPinned": "1590610710"
+          "serving.knative.dev/lastPinned": "1595546588"
         },
-        "creationTimestamp": "2020-05-27T20:18:21Z",
+        "creationTimestamp": "2020-07-23T23:23:04Z",
+        "generateName": "example-",
         "generation": 1,
         "labels": {
-          "serving.knative.dev/configuration": "greeter",
-          "serving.knative.dev/configurationGeneration": "1",
-          "serving.knative.dev/route": "greeter",
-          "serving.knative.dev/service": "greeter"
+          "serving.knative.dev/configuration": "example",
+          "serving.knative.dev/configurationGeneration": "3",
+          "serving.knative.dev/route": "example",
+          "serving.knative.dev/service": "example"
         },
         "managedFields": [
           {
@@ -26,10 +26,10 @@
               "f:metadata": {
                 "f:annotations": {
                   ".": {},
-                  "f:client.knative.dev/user-image": {},
                   "f:serving.knative.dev/creator": {},
                   "f:serving.knative.dev/lastPinned": {}
                 },
+                "f:generateName": {},
                 "f:labels": {
                   ".": {},
                   "f:serving.knative.dev/configuration": {},
@@ -39,7 +39,7 @@
                 },
                 "f:ownerReferences": {
                   ".": {},
-                  "k:{\"uid\":\"1910a1ac-7b1d-4621-b149-b84a120e2940\"}": {
+                  "k:{\"uid\":\"44de9281-8fff-4aeb-8a69-7bea9947f43d\"}": {
                     ".": {},
                     "f:apiVersion": {},
                     "f:blockOwnerDeletion": {},
@@ -67,24 +67,24 @@
             },
             "manager": "controller",
             "operation": "Update",
-            "time": "2020-05-27T20:19:30Z"
+            "time": "2020-07-23T23:24:08Z"
           }
         ],
-        "name": "greeter-btrnq-1",
-        "namespace": "a-serverles-example",
+        "name": "example-75w7v",
+        "namespace": "a-serverless-example",
         "ownerReferences": [
           {
             "apiVersion": "serving.knative.dev/v1",
             "blockOwnerDeletion": true,
             "controller": true,
             "kind": "Configuration",
-            "name": "greeter",
-            "uid": "1910a1ac-7b1d-4621-b149-b84a120e2940"
+            "name": "example",
+            "uid": "44de9281-8fff-4aeb-8a69-7bea9947f43d"
           }
         ],
-        "resourceVersion": "170283",
-        "selfLink": "/apis/serving.knative.dev/v1/namespaces/a-serverles-example/revisions/greeter-btrnq-1",
-        "uid": "722fff54-5b5a-474e-a853-2a050fcc18de"
+        "resourceVersion": "81531",
+        "selfLink": "/apis/serving.knative.dev/v1/namespaces/a-serverless-example/revisions/example-75w7v",
+        "uid": "e0fe4445-ed60-44f7-b4b1-7126fb252810"
       },
       "spec": {
         "containerConcurrency": 0,
@@ -106,7 +106,7 @@
       "status": {
         "conditions": [
           {
-            "lastTransitionTime": "2020-05-27T20:19:30Z",
+            "lastTransitionTime": "2020-07-23T23:24:08Z",
             "message": "The target is not receiving traffic.",
             "reason": "NoTraffic",
             "severity": "Info",
@@ -114,25 +114,291 @@
             "type": "Active"
           },
           {
-            "lastTransitionTime": "2020-05-27T20:18:30Z",
+            "lastTransitionTime": "2020-07-23T23:23:08Z",
             "status": "True",
             "type": "ContainerHealthy"
           },
           {
-            "lastTransitionTime": "2020-05-27T20:18:30Z",
+            "lastTransitionTime": "2020-07-23T23:23:08Z",
             "status": "True",
             "type": "Ready"
           },
           {
-            "lastTransitionTime": "2020-05-27T20:18:30Z",
+            "lastTransitionTime": "2020-07-23T23:23:08Z",
             "status": "True",
             "type": "ResourcesAvailable"
           }
         ],
         "imageDigest": "quay.io/rhdevelopers/knative-tutorial-greeter@sha256:767e2f4b37d29de3949c8c695d3285739829c348df1dd703479bbae6dc86aa5a",
-        "logUrl": "http://localhost:8001/api/v1/namespaces/knative-monitoring/services/kibana-logging/proxy/app/kibana#/discover?_a=(query:(match:(kubernetes.labels.knative-dev%2FrevisionUID:(query:'722fff54-5b5a-474e-a853-2a050fcc18de',type:phrase))))",
+        "logUrl": "http://localhost:8001/api/v1/namespaces/knative-monitoring/services/kibana-logging/proxy/app/kibana#/discover?_a=(query:(match:(kubernetes.labels.knative-dev%2FrevisionUID:(query:'e0fe4445-ed60-44f7-b4b1-7126fb252810',type:phrase))))",
         "observedGeneration": 1,
-        "serviceName": "greeter-btrnq-1"
+        "serviceName": "example-75w7v"
+      }
+    },
+    {
+      "apiVersion": "serving.knative.dev/v1",
+      "kind": "Revision",
+      "metadata": {
+        "annotations": {
+          "serving.knative.dev/creator": "system:admin",
+          "serving.knative.dev/lastPinned": "1595546562"
+        },
+        "creationTimestamp": "2020-07-23T23:22:38Z",
+        "generateName": "example-",
+        "generation": 1,
+        "labels": {
+          "serving.knative.dev/configuration": "example",
+          "serving.knative.dev/configurationGeneration": "2",
+          "serving.knative.dev/service": "example"
+        },
+        "managedFields": [
+          {
+            "apiVersion": "serving.knative.dev/v1",
+            "fieldsType": "FieldsV1",
+            "fieldsV1": {
+              "f:metadata": {
+                "f:annotations": {
+                  ".": {},
+                  "f:serving.knative.dev/creator": {},
+                  "f:serving.knative.dev/lastPinned": {}
+                },
+                "f:generateName": {},
+                "f:labels": {
+                  ".": {},
+                  "f:serving.knative.dev/configuration": {},
+                  "f:serving.knative.dev/configurationGeneration": {},
+                  "f:serving.knative.dev/service": {}
+                },
+                "f:ownerReferences": {
+                  ".": {},
+                  "k:{\"uid\":\"44de9281-8fff-4aeb-8a69-7bea9947f43d\"}": {
+                    ".": {},
+                    "f:apiVersion": {},
+                    "f:blockOwnerDeletion": {},
+                    "f:controller": {},
+                    "f:kind": {},
+                    "f:name": {},
+                    "f:uid": {}
+                  }
+                }
+              },
+              "f:spec": {
+                ".": {},
+                "f:containerConcurrency": {},
+                "f:containers": {},
+                "f:timeoutSeconds": {}
+              },
+              "f:status": {
+                ".": {},
+                "f:conditions": {},
+                "f:imageDigest": {},
+                "f:logUrl": {},
+                "f:observedGeneration": {},
+                "f:serviceName": {}
+              }
+            },
+            "manager": "controller",
+            "operation": "Update",
+            "time": "2020-07-23T23:23:42Z"
+          }
+        ],
+        "name": "example-g4hm8",
+        "namespace": "a-serverless-example",
+        "ownerReferences": [
+          {
+            "apiVersion": "serving.knative.dev/v1",
+            "blockOwnerDeletion": true,
+            "controller": true,
+            "kind": "Configuration",
+            "name": "example",
+            "uid": "44de9281-8fff-4aeb-8a69-7bea9947f43d"
+          }
+        ],
+        "resourceVersion": "80702",
+        "selfLink": "/apis/serving.knative.dev/v1/namespaces/a-serverless-example/revisions/example-g4hm8",
+        "uid": "139f3e34-2ca0-498e-b98d-636c5186f1f5"
+      },
+      "spec": {
+        "containerConcurrency": 0,
+        "containers": [
+          {
+            "image": "quay.io/rhdevelopers/knative-tutorial-greeter:quarkus",
+            "name": "user-container",
+            "readinessProbe": {
+              "successThreshold": 1,
+              "tcpSocket": {
+                "port": 0
+              }
+            },
+            "resources": {}
+          }
+        ],
+        "timeoutSeconds": 200
+      },
+      "status": {
+        "conditions": [
+          {
+            "lastTransitionTime": "2020-07-23T23:23:42Z",
+            "message": "The target is not receiving traffic.",
+            "reason": "NoTraffic",
+            "severity": "Info",
+            "status": "False",
+            "type": "Active"
+          },
+          {
+            "lastTransitionTime": "2020-07-23T23:22:42Z",
+            "status": "True",
+            "type": "ContainerHealthy"
+          },
+          {
+            "lastTransitionTime": "2020-07-23T23:22:42Z",
+            "status": "True",
+            "type": "Ready"
+          },
+          {
+            "lastTransitionTime": "2020-07-23T23:22:39Z",
+            "status": "True",
+            "type": "ResourcesAvailable"
+          }
+        ],
+        "imageDigest": "quay.io/rhdevelopers/knative-tutorial-greeter@sha256:767e2f4b37d29de3949c8c695d3285739829c348df1dd703479bbae6dc86aa5a",
+        "logUrl": "http://localhost:8001/api/v1/namespaces/knative-monitoring/services/kibana-logging/proxy/app/kibana#/discover?_a=(query:(match:(kubernetes.labels.knative-dev%2FrevisionUID:(query:'139f3e34-2ca0-498e-b98d-636c5186f1f5',type:phrase))))",
+        "observedGeneration": 1,
+        "serviceName": "example-g4hm8"
+      }
+    },
+    {
+      "apiVersion": "serving.knative.dev/v1",
+      "kind": "Revision",
+      "metadata": {
+        "annotations": {
+          "serving.knative.dev/creator": "system:admin",
+          "serving.knative.dev/lastPinned": "1595544804"
+        },
+        "creationTimestamp": "2020-07-23T22:53:04Z",
+        "generateName": "example-",
+        "generation": 1,
+        "labels": {
+          "serving.knative.dev/configuration": "example",
+          "serving.knative.dev/configurationGeneration": "1",
+          "serving.knative.dev/route": "example",
+          "serving.knative.dev/service": "example"
+        },
+        "managedFields": [
+          {
+            "apiVersion": "serving.knative.dev/v1",
+            "fieldsType": "FieldsV1",
+            "fieldsV1": {
+              "f:metadata": {
+                "f:annotations": {
+                  ".": {},
+                  "f:serving.knative.dev/creator": {},
+                  "f:serving.knative.dev/lastPinned": {}
+                },
+                "f:generateName": {},
+                "f:labels": {
+                  ".": {},
+                  "f:serving.knative.dev/configuration": {},
+                  "f:serving.knative.dev/configurationGeneration": {},
+                  "f:serving.knative.dev/route": {},
+                  "f:serving.knative.dev/service": {}
+                },
+                "f:ownerReferences": {
+                  ".": {},
+                  "k:{\"uid\":\"44de9281-8fff-4aeb-8a69-7bea9947f43d\"}": {
+                    ".": {},
+                    "f:apiVersion": {},
+                    "f:blockOwnerDeletion": {},
+                    "f:controller": {},
+                    "f:kind": {},
+                    "f:name": {},
+                    "f:uid": {}
+                  }
+                }
+              },
+              "f:spec": {
+                ".": {},
+                "f:containerConcurrency": {},
+                "f:containers": {},
+                "f:timeoutSeconds": {}
+              },
+              "f:status": {
+                ".": {},
+                "f:conditions": {},
+                "f:imageDigest": {},
+                "f:logUrl": {},
+                "f:observedGeneration": {},
+                "f:serviceName": {}
+              }
+            },
+            "manager": "controller",
+            "operation": "Update",
+            "time": "2020-07-23T23:23:52Z"
+          }
+        ],
+        "name": "example-2fvz4",
+        "namespace": "a-serverless-example",
+        "ownerReferences": [
+          {
+            "apiVersion": "serving.knative.dev/v1",
+            "blockOwnerDeletion": true,
+            "controller": true,
+            "kind": "Configuration",
+            "name": "example",
+            "uid": "44de9281-8fff-4aeb-8a69-7bea9947f43d"
+          }
+        ],
+        "resourceVersion": "81118",
+        "selfLink": "/apis/serving.knative.dev/v1/namespaces/a-serverless-example/revisions/example-2fvz4",
+        "uid": "38d9e4ce-a187-40f2-bc51-d50be5596e01"
+      },
+      "spec": {
+        "containerConcurrency": 0,
+        "containers": [
+          {
+            "image": "quay.io/rhdevelopers/knative-tutorial-greeter:quarkus",
+            "name": "user-container",
+            "readinessProbe": {
+              "successThreshold": 1,
+              "tcpSocket": {
+                "port": 0
+              }
+            },
+            "resources": {}
+          }
+        ],
+        "timeoutSeconds": 300
+      },
+      "status": {
+        "conditions": [
+          {
+            "lastTransitionTime": "2020-07-23T22:54:24Z",
+            "message": "The target is not receiving traffic.",
+            "reason": "NoTraffic",
+            "severity": "Info",
+            "status": "False",
+            "type": "Active"
+          },
+          {
+            "lastTransitionTime": "2020-07-23T22:53:24Z",
+            "status": "True",
+            "type": "ContainerHealthy"
+          },
+          {
+            "lastTransitionTime": "2020-07-23T22:53:24Z",
+            "status": "True",
+            "type": "Ready"
+          },
+          {
+            "lastTransitionTime": "2020-07-23T22:53:24Z",
+            "status": "True",
+            "type": "ResourcesAvailable"
+          }
+        ],
+        "imageDigest": "quay.io/rhdevelopers/knative-tutorial-greeter@sha256:767e2f4b37d29de3949c8c695d3285739829c348df1dd703479bbae6dc86aa5a",
+        "logUrl": "http://localhost:8001/api/v1/namespaces/knative-monitoring/services/kibana-logging/proxy/app/kibana#/discover?_a=(query:(match:(kubernetes.labels.knative-dev%2FrevisionUID:(query:'38d9e4ce-a187-40f2-bc51-d50be5596e01',type:phrase))))",
+        "observedGeneration": 1,
+        "serviceName": "example-2fvz4"
       }
     }
   ],

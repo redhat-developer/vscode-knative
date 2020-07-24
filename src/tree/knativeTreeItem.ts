@@ -93,7 +93,7 @@ export class KnativeTreeItem extends TreeItem {
     if (parent && parent.contextValue === 'service') {
       // Ensure we only update revisions with traffic, leaving the others alone.
       const rev: Revision = item as Revision;
-      if (rev && rev.traffic.length > 0) {
+      if (rev && rev.traffic && rev.traffic.length > 0) {
         let tagComposit = '';
         let percentTraffic = 0;
         // Look through the traffic list for revisions.
