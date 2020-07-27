@@ -121,7 +121,7 @@ export class ServiceDataProvider implements TreeDataProvider<KnativeTreeItem> {
     } catch (err) {
       // Catch the Rejected Promise of the Execute to list Revisions.
       window.showErrorMessage(
-        `ServiceDataProvider.getRevisions caught an error getting the Revision for ${parentService.getName()}.\n ${err}`,
+        `Caught an error getting the Revision for ${parentService.getName()}.\n ${err}`,
         { modal: true },
         'OK',
       );
@@ -131,7 +131,7 @@ export class ServiceDataProvider implements TreeDataProvider<KnativeTreeItem> {
     if (result.error) {
       // If we get an error back and not data, tell the user and stop processing it.
       window.showErrorMessage(
-        `ServiceDataProvider.getRevisions Failed to get the Revision for ${parentService.getName()}.\n ${result.error}`,
+        `Failed to get the Revision for ${parentService.getName()}.\n ${result.error}`,
         { modal: true },
         'OK',
       );

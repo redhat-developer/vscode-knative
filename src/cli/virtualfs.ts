@@ -76,8 +76,10 @@ export async function saveAsync(uri: Uri, content: Uint8Array, subFolder?: strin
   if (!rootPath) {
     return;
   }
-  const fspath = path.join(rootPath, subFolder || '', uri.fsPath);
-  fs.writeFileSync(fspath, content);
+  if (!uri.fsPath.startsWith('/revision')) {
+    const fspath = path.join(rootPath, subFolder || '', uri.fsPath);
+    fs.writeFileSync(fspath, content);
+  }
 }
 
 export async function getFilePathAsync(subFolder?: string, fileName?: string): Promise<string> {
