@@ -1,6 +1,6 @@
 #!/usr/bin/env groovy
 
-node('rhel7'){
+node('rhel8'){
   stage('Checkout repo') {
     deleteDir()
     git url: 'https://github.com/talamer/vscode-knative.git',
