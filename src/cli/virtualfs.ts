@@ -76,7 +76,7 @@ export async function saveAsync(uri: Uri, content: Uint8Array, subFolder?: strin
   if (!rootPath) {
     return;
   }
-  if (!uri.fsPath.startsWith('/revision')) {
+  if (!uri.fsPath.startsWith(`${path.sep}revision`)) {
     const fspath = path.join(rootPath, subFolder || '', uri.fsPath);
     fs.writeFileSync(fspath, content);
   }
