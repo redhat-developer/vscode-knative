@@ -48,7 +48,7 @@ suite('VirtualFileSystem', () => {
   const wsFolder3: WorkspaceFolder = { uri: _uriWorkspaceRoot, name: 'test3', index: 3 };
   const oneWSFolders: WorkspaceFolder[] = [wsFolder1];
   const multipleWSFolders: WorkspaceFolder[] = [wsFolder1, wsFolder2, wsFolder3];
-  const emptyWSFolders: WorkspaceFolder[] = null;
+  const emptyWSFolders: WorkspaceFolder[] = undefined;
   // HTTP URI
   const _uriRootNotFile = Uri.parse('http://testHttp/some/uri');
   const wsFolderNotFile: WorkspaceFolder = { uri: _uriRootNotFile, name: 'test3', index: 3 };
@@ -75,7 +75,10 @@ suite('VirtualFileSystem', () => {
     },
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     mkdirSync: function mkdirSync(path: fs.PathLike, options?: number | string | fs.MakeDirectoryOptions | null): void {
-      // do nothing
+      if (!path) {
+        const err = `test mock of mkdirSync can not parse "${path}"`;
+        throw err;
+      }
     },
     readdirSync: function readdirSync(
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -217,7 +220,7 @@ suite('VirtualFileSystem', () => {
     ];
     test('should return a list of files from one folder.', async () => {
       sandbox.stub(workspace, 'workspaceFolders').value(oneWSFolders);
-      const foundFiles: [string, FileType][] = await knvfs.readDirectory(_uriLocalFile);
+      const foundFiles: [string, FileType][] = await knvfs.readDirectory(null);
       assert.equals(foundFiles, files);
       sandbox.restore();
     });
@@ -229,14 +232,24 @@ suite('VirtualFileSystem', () => {
     });
     test('should throw an error if it can not find the workspace folder.', async () => {
       sandbox.stub(workspace, 'workspaceFolders').value(emptyWSFolders);
-      const foundFiles: [string, FileType][] = await knvfs.readDirectory(_uriLocalFile);
-      assert.equals(foundFiles, []);
+      let error;
+      try {
+        await knvfs.readDirectory(_uriLocalFile);
+      } catch (err) {
+        error = err;
+      }
+      assert(error);
       sandbox.restore();
     });
     test('should throw an error if the uri is not of type File.', async () => {
       sandbox.stub(workspace, 'workspaceFolders').value(notFileWSFolders);
-      const foundFiles: [string, FileType][] = await knvfs.readDirectory(_uriLocalFile);
-      assert.equals(foundFiles, []);
+      let error;
+      try {
+        await knvfs.readDirectory(_uriLocalFile);
+      } catch (err) {
+        error = err;
+      }
+      assert(error);
       sandbox.restore();
     });
     test('should return a list of files if multiple folders are found.', async () => {
@@ -248,22 +261,28 @@ suite('VirtualFileSystem', () => {
     });
   });
   suite('Create Directory', () => {
-    test('should create a directory in a given folder location.', async () => {
-      const spyExists = sandbox.spy(fsMock, 'existsSync');
-      const spyMkDir = sandbox.spy(fsMock, 'mkdirSync');
-      sandbox.stub(workspace, 'workspaceFolders').value(emptyWSFolders);
-      await knvfs.createDirectory(_uriLocalFile);
-      sinon.assert.calledOnce(spyExists);
-      sinon.assert.calledOnce(spyMkDir);
-      sandbox.restore();
-    });
-    test('should NOT create a directory if the folder already exists.', async () => {
+    test('should NOT create a directory if the directory already exists.', async () => {
       const spyExists = sandbox.spy(fsMock, 'existsSync');
       const spyMkDir = sandbox.spy(fsMock, 'mkdirSync');
       sandbox.stub(workspace, 'workspaceFolders').value(oneWSFolders);
-      await knvfs.createDirectory(_uriLocalFile);
+      await knvfs.createDirectory(null);
       sinon.assert.calledOnce(spyExists);
       sinon.assert.notCalled(spyMkDir);
+      sandbox.restore();
+    });
+    test('should NOT create a directory if is no workspace.', async () => {
+      const spyExists = sandbox.spy(fsMock, 'existsSync');
+      const spyMkDir = sandbox.spy(fsMock, 'mkdirSync');
+      sandbox.stub(workspace, 'workspaceFolders').value(emptyWSFolders);
+      let error;
+      try {
+        await knvfs.createDirectory(null);
+      } catch (err) {
+        error = err;
+      }
+      sinon.assert.calledOnce(spyExists);
+      sinon.assert.calledOnce(spyMkDir);
+      assert(error);
       sandbox.restore();
     });
   });
@@ -274,10 +293,6 @@ suite('VirtualFileSystem', () => {
       createDirectory: function createDirectory(uri: Uri): void | Thenable<void> {
         // do nothing
       },
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      // readDirectory: function readDirectory(uri: Uri): [string, FileType][] | Thenable<[string, FileType][]> {
-      //   return files;
-      // },
     };
 
     const externalYamlFileContentOld = `apiVersion: serving.knative.dev/v1
@@ -531,34 +546,6 @@ status:
   observedGeneration: 1
   serviceName: example-75w7v
   `;
-    // const example75w7vJson = yaml.parse(example75w7vYaml);
-    // const example75w7vRevsion: Revision = new Revision('example-g4hm8', 'example', example75w7vJson, [
-    //   {
-    //     tag: null,
-    //     revisionName: 'example-75w7v',
-    //     confgiurationName: null,
-    //     latestRevision: true,
-    //     percent: 100,
-    //     url: null,
-    //   },
-    //   {
-    //     tag: 'current',
-    //     revisionName: 'example-75w7v',
-    //     confgiurationName: null,
-    //     latestRevision: false,
-    //     percent: 0,
-    //     url: new URL('http://current-example-a-serverless-example.apps.devcluster.openshift.com'),
-    //   },
-    // ]);
-    // const example75w7vTreeItem: KnativeTreeItem = new KnativeTreeItem(
-    //   testServiceTreeItem,
-    //   example75w7vRevsion,
-    //   'example-75w7v',
-    //   ContextType.REVISION_TAGGED,
-    //   vscode.TreeItemCollapsibleState.None,
-    //   null,
-    //   null,
-    // );
 
     const ced: CliExitData = {
       error: undefined,
@@ -645,15 +632,23 @@ status:
     });
     test('should return the content of a external yaml file even if it can not find the workspace folder.', async () => {
       sandbox.stub(workspace, 'workspaceFolders').value(emptyWSFolders);
-      const testContent: Uint8Array | Thenable<Uint8Array> = Buffer.from(externalYamlFileContent, 'utf8');
-      const foundExteranlContent: Uint8Array | Thenable<Uint8Array> = await knvfs.readFile(_uriExternalFile);
-      assert.equals(foundExteranlContent, testContent);
+      let error;
+      try {
+        await knvfs.readFile(_uriExternalFile);
+      } catch (err) {
+        error = err;
+      }
+      assert(error);
     });
     test('should return the content of a external yaml file even if the uri is not of type File while getting the workspace folder.', async () => {
       sandbox.stub(workspace, 'workspaceFolders').value(notFileWSFolders);
-      const testContent: Uint8Array | Thenable<Uint8Array> = Buffer.from(externalYamlFileContent, 'utf8');
-      const foundExteranlContent: Uint8Array | Thenable<Uint8Array> = await knvfs.readFile(_uriExternalFile);
-      assert.equals(foundExteranlContent, testContent);
+      let error;
+      try {
+        await knvfs.readFile(_uriExternalFile);
+      } catch (err) {
+        error = err;
+      }
+      assert(error);
     });
     test('should throw an error if fetching the yaml has an error.', async () => {
       sandbox.restore();

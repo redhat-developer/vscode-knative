@@ -3,7 +3,17 @@
  *  Licensed under the MIT License. See LICENSE file in the project root for license information.
  *-----------------------------------------------------------------------------------------------*/
 
-import { Event, ProviderResult, EventEmitter, TreeDataProvider, TreeItem, TreeItemCollapsibleState, window, Uri } from 'vscode';
+import {
+  Event,
+  ProviderResult,
+  EventEmitter,
+  TreeDataProvider,
+  TreeItem,
+  TreeItemCollapsibleState,
+  window,
+  Uri,
+  FileType,
+} from 'vscode';
 import * as validator from 'validator';
 import * as path from 'path';
 import * as yaml from 'yaml';
@@ -345,7 +355,15 @@ export class ServiceDataProvider implements TreeDataProvider<KnativeTreeItem> {
     // *** As a hack, make a file for the yaml, use kubectl apply to create, then delete the file
     // Check the local files for the URL for YAML file
     const serviceName = servObj.name;
-    const files = await this.knvfs.readDirectoryAsync();
+    let files: [string, FileType][];
+    try {
+      files = await this.knvfs.readDirectoryAsync();
+    } catch (err) {
+      // eslint-disable-next-line no-console
+      console.log(`serviceDataProvider.addService Error trying to read directory.\n ${err}`);
+      // throw err;
+      return null;
+    }
     let filePath = '';
     files.forEach((loc): void => {
       // eslint-disable-next-line @typescript-eslint/prefer-string-starts-ends-with
@@ -367,6 +385,10 @@ export class ServiceDataProvider implements TreeDataProvider<KnativeTreeItem> {
         overwrite: false,
       });
       filePath = await getFilePathAsync('.knative', newUri.path);
+      if (!filePath) {
+        // We couldn't make or find the location to write the temp file.
+        return null;
+      }
       try {
         await this.knExecutor.execute(KubectlAPI.applyYAML(filePath, { override: true }));
       } catch (err) {
@@ -419,7 +441,15 @@ export class ServiceDataProvider implements TreeDataProvider<KnativeTreeItem> {
   public async getLocalYamlPathForNode(node: KnativeTreeItem): Promise<string> {
     // get local URL for YAML file
     const serviceName = node.getName();
-    const files = await this.knvfs.readDirectoryAsync();
+    let files: [string, FileType][];
+    try {
+      files = await this.knvfs.readDirectoryAsync();
+    } catch (err) {
+      // eslint-disable-next-line no-console
+      console.log(`serviceDataProvider.getLocalYamlPathForNode Error trying to read directory.\n ${err}`);
+      // throw err;
+      return null;
+    }
     let fileURI = '';
     files.forEach((loc): void => {
       // eslint-disable-next-line @typescript-eslint/prefer-string-starts-ends-with
