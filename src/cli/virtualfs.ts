@@ -33,6 +33,7 @@ export const KN_RESOURCE_SCHEME = 'knmsx';
 export const KN_RESOURCE_AUTHORITY = 'loadknativecore';
 
 export function vfsUri(
+  schema: string,
   contextValue: string,
   name: string,
   outputFormat: string,
@@ -44,7 +45,7 @@ export function vfsUri(
   const nonce = new Date().getTime();
   const nsquery = namespace ? `ns=${namespace}&` : '';
   // "knmsx://loadknativecore/serviceknative-tutorial-greeter.yaml?contextValue=service&name=knative-tutorial-greeter&_=1593030763939"
-  const uri = `${KN_RESOURCE_SCHEME}://${KN_RESOURCE_AUTHORITY}/${docname}?${nsquery}contextValue=${context}&name=${name}&_=${nonce}`;
+  const uri = `${schema}://${KN_RESOURCE_AUTHORITY}/${docname}?${nsquery}contextValue=${context}&name=${name}&_=${nonce}`;
   return Uri.parse(uri);
 }
 
@@ -195,7 +196,7 @@ export class KnativeResourceVirtualFileSystemProvider implements FileSystemProvi
     const name = query.name as string;
     const ns = query.ns as string | undefined;
     const resourceAuthority = uri.authority;
-    const eced = await this.execLoadResource(resourceAuthority, ns, context, name, outputFormat);
+    const eced = await this.execLoadResource(uri.scheme, resourceAuthority, ns, context, name, outputFormat);
 
     if (Errorable.failed(eced)) {
       window.showErrorMessage(eced.error[0]);
@@ -208,6 +209,7 @@ export class KnativeResourceVirtualFileSystemProvider implements FileSystemProvi
   }
 
   async execLoadResource(
+    scheme: string,
     resourceAuthority: string,
     ns: string | undefined,
     contextValue: string,
@@ -220,7 +222,7 @@ export class KnativeResourceVirtualFileSystemProvider implements FileSystemProvi
       case KN_RESOURCE_AUTHORITY:
         // fetch the YAML output
         ced = await this.knExecutor.execute(KnAPI.describeFeature(contextValue, name, outputFormat));
-        if (contextValue === 'service') {
+        if (contextValue === 'service' && scheme === KN_RESOURCE_SCHEME) {
           cleanedCed = this.removeServerSideYamlElements(ced);
         } else {
           cleanedCed = ced;

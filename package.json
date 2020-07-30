@@ -120,6 +120,7 @@
     "onView:knativeProjectExplorerServices",
     "onCommand:knative.service.list",
     "onCommand:service.explorer.delete",
+    "onCommand:service.explorer.edit",
     "onCommand:service.explorer.openFile",
     "onCommand:service.explorer.refresh",
     "onCommand:service.explorer.reportIssue",
@@ -149,6 +150,12 @@
         "command": "service.explorer.deleteLocal",
         "title": "Delete the local copy of the YAML file",
         "category": "Knative"
+      },
+      {
+        "command": "service.explorer.edit",
+        "title": "Edit",
+        "category": "Knative",
+        "icon": "$(edit)"
       },
       {
         "command": "service.explorer.openFile",
@@ -205,6 +212,10 @@
           "when": "false"
         },
         {
+          "command": "service.explorer.edit",
+          "when": "false"
+        },
+        {
           "command": "service.explorer.openFile",
           "when": "false"
         },
@@ -218,6 +229,11 @@
         }
       ],
       "view/item/context": [
+        {
+          "command": "service.explorer.edit",
+          "when": "view == knativeProjectExplorerServices && viewItem == service",
+          "group": "inline"
+        },
         {
           "command": "knative.service.open-in-browser",
           "when": "view == knativeProjectExplorerServices && viewItem == service || viewItem == revision.tagged",

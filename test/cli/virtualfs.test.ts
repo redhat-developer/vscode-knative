@@ -147,13 +147,13 @@ suite('VirtualFileSystem', () => {
 
   suite('VFS URI convertion', () => {
     test('should return unique URI', () => {
-      const builtURI: Uri = vfs.vfsUri('service', 'example', 'yaml');
+      const builtURI: Uri = vfs.vfsUri('knmsx', 'service', 'example', 'yaml');
       assert.equals(builtURI.authority, _uriExternalFile.authority);
       assert.equals(builtURI.fsPath, _uriExternalFile.fsPath);
       assert.equals(builtURI.scheme, _uriExternalFile.scheme);
     });
     test('should return unique URI with optional Namespace', () => {
-      const builtURI: Uri = vfs.vfsUri('service', 'example', 'yaml', 'testNamespace');
+      const builtURI: Uri = vfs.vfsUri('knmsx', 'service', 'example', 'yaml', 'testNamespace');
       assert.equals(builtURI.authority, _uriExternalFileWithNamespace.authority);
       assert.equals(builtURI.fsPath, _uriExternalFileWithNamespace.fsPath);
       assert.equals(builtURI.scheme, _uriExternalFileWithNamespace.scheme);

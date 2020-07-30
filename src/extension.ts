@@ -4,30 +4,19 @@
  *-----------------------------------------------------------------------------------------------*/
 
 import * as vscode from 'vscode';
-import { Service } from './knative/service';
-import { ServiceExplorer } from './tree/serviceExplorer';
-import { KnativeTreeItem } from './tree/knativeTreeItem';
-import { vfsUri, KnativeResourceVirtualFileSystemProvider, KN_RESOURCE_SCHEME } from './cli/virtualfs';
+import { KnativeResourceVirtualFileSystemProvider, KN_RESOURCE_SCHEME } from './cli/virtualfs';
+import { openTreeItemInEditor } from './editor/knativeOpenTextDocument';
+import { KnativeReadonlyProvider } from './editor/knativeReadonlyProvider';
 import { Revision } from './knative/revision';
+import { Service } from './knative/service';
+import { KnativeTreeItem } from './tree/knativeTreeItem';
+import { ServiceExplorer } from './tree/serviceExplorer';
 
-/**
- * This is set up as a Command. It can be called from a menu or by clicking on the tree item.
- *
- * @param treeItem
- */
-export function openTreeItemInEditor(treeItem: KnativeTreeItem, outputFormat: string): void {
-  const { contextValue } = treeItem;
-  const name: string = treeItem.getName();
-  const uri = vfsUri(contextValue, name, outputFormat);
-  vscode.workspace.openTextDocument(uri).then(
-    (doc) => {
-      if (doc) {
-        vscode.window.showTextDocument(doc, { preserveFocus: true, preview: true });
-      }
-    },
-    (err) => vscode.window.showErrorMessage(`Error loading document: ${err}`),
-  );
-}
+const resourceDocProvider = new KnativeResourceVirtualFileSystemProvider();
+
+// register a content provider for the knative readonly scheme
+const knReadonlyScheme = 'knreadonly';
+const knReadonlyProvider = new KnativeReadonlyProvider();
 
 /**
  * This method is called when your extension is activated.
@@ -36,7 +25,6 @@ export function openTreeItemInEditor(treeItem: KnativeTreeItem, outputFormat: st
  * @param extensionContext
  */
 export function activate(extensionContext: vscode.ExtensionContext): void {
-  const resourceDocProvider = new KnativeResourceVirtualFileSystemProvider();
   // The command has been defined in the package.json file.
   // Now provide the implementation of the command with registerCommand.
   // The commandId parameter must match the command field in package.json.
@@ -59,8 +47,13 @@ export function activate(extensionContext: vscode.ExtensionContext): void {
         }
       }
     }),
+    vscode.workspace.registerTextDocumentContentProvider(knReadonlyScheme, knReadonlyProvider),
     vscode.commands.registerCommand('service.explorer.openFile', (treeItem: KnativeTreeItem) =>
-      openTreeItemInEditor(treeItem, vscode.workspace.getConfiguration('vs-knative')['vs-knative.outputFormat']),
+      openTreeItemInEditor(treeItem, vscode.workspace.getConfiguration('vs-knative')['vs-knative.outputFormat'], false),
+    ),
+
+    vscode.commands.registerCommand('service.explorer.edit', (treeItem: KnativeTreeItem) =>
+      openTreeItemInEditor(treeItem, vscode.workspace.getConfiguration('vs-knative')['vs-knative.outputFormat'], true),
     ),
 
     // Temporarily loaded resource providers

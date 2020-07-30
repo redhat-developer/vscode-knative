@@ -26,7 +26,7 @@ import { ContextType } from '../cli/config';
 import { Service, CreateService, UpdateService } from '../knative/service';
 import { Revision, Items, Traffic } from '../knative/revision';
 import { KnativeServices } from '../knative/knativeServices';
-import { KnativeResourceVirtualFileSystemProvider, getFilePathAsync, vfsUri } from '../cli/virtualfs';
+import { KnativeResourceVirtualFileSystemProvider, getFilePathAsync, vfsUri, KN_RESOURCE_SCHEME } from '../cli/virtualfs';
 import { KnOutputChannel, OutputChannel } from '../output/knOutputChannel';
 
 export class ServiceDataProvider implements TreeDataProvider<KnativeTreeItem> {
@@ -374,7 +374,7 @@ export class ServiceDataProvider implements TreeDataProvider<KnativeTreeItem> {
     });
     if (filePath === '') {
       // The file doesn't exist, so write it
-      const newUri = vfsUri('service', serviceName, 'yaml');
+      const newUri = vfsUri(KN_RESOURCE_SCHEME, 'service', serviceName, 'yaml');
       // eslint-disable-next-line prettier/prettier
       const stringContent = yaml.parse(
         `apiVersion: serving.knative.dev/v1\nkind: Service\nmetadata:\n  name: ${servObj.name}\nspec:\n  template:\n    spec:\n      containers:\n      - image: ${servObj.image}`,

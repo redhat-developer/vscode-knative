@@ -150,7 +150,7 @@ export class KnativeTreeItem extends TreeItem {
     }
     const c: Command = {
       command: 'service.explorer.openFile',
-      title: 'Load',
+      title: 'Describe',
       arguments: [this],
     };
     return c;
