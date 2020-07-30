@@ -11,7 +11,7 @@ import * as knv from '../../src/cli/virtualfs';
 
 import rewire = require('rewire');
 
-const vfs = rewire('../../src/cli/virtualfs');
+const rewiredVFS = rewire('../../src/cli/virtualfs');
 
 const { assert } = referee;
 // const { expect } = chai;
@@ -20,7 +20,7 @@ chai.use(sinonChai);
 suite('VirtualFileSystem', () => {
   const sandbox = sinon.createSandbox();
   let revertFS: Function;
-  const knvfs: knv.KnativeResourceVirtualFileSystemProvider = new vfs.KnativeResourceVirtualFileSystemProvider();
+  const knvfs: knv.KnativeResourceVirtualFileSystemProvider = new rewiredVFS.KnativeResourceVirtualFileSystemProvider();
 
   const _uriLocalFile = Uri.file('service-local.yaml');
   const _uriLocalRevisionFile = Uri.file('revision-local.yaml');
@@ -28,17 +28,20 @@ suite('VirtualFileSystem', () => {
   const _uriExternalFile = Uri.parse(
     'knmsx://loadknativecore/service-example.yaml?contextValue%3Dservice%26name%3Dexample%26_%3D1594328823824',
   );
+  const _uriExternalFileReadonly = Uri.parse(
+    'knreadonly://loadknativecore/service-example.yaml?contextValue%3Dservice%26name%3Dexample%26_%3D1594328823824',
+  );
   const _uriExternalFileForRevision = Uri.parse(
-    'knmsx://loadknativecore/revision-example-75w7v.yaml?contextValue%3Drevision%26name%3Dexample%26_%3D1594328823824',
+    'knreadonly://loadknativecore/revision-example-75w7v.yaml?contextValue%3Drevision%26name%3Dexample%26_%3D1594328823824',
   );
   const _uriExternalFileForTaggedRevision = Uri.parse(
-    'knmsx://loadknativecore/revision-example-75w7v.yaml?contextValue%3Drevision-tagged%26name%3Dexample%26_%3D1594328823824',
+    'knreadonly://loadknativecore/revision-example-75w7v.yaml?contextValue%3Drevision-tagged%26name%3Dexample%26_%3D1594328823824',
   );
   const _uriExternalFileWithNamespace = Uri.parse(
-    'knmsx://loadknativecore/service-example.yaml?ns%3DtestNamespace%26contextValue%3Dservice%26name%3Dexample%26_%3D1594328823824',
+    'knreadonly://loadknativecore/service-example.yaml?ns%3DtestNamespace%26contextValue%3Dservice%26name%3Dexample%26_%3D1594328823824',
   );
   const _uriExternalFileNotKnative = Uri.parse(
-    'knmsx://loadothercore/service-example.yaml?contextValue%3Dservice%26name%3Dexample%26_%3D1594328823824',
+    'knreadonly://loadothercore/service-example.yaml?contextValue%3Dservice%26name%3Dexample%26_%3D1594328823824',
   );
   const _uriWorkspaceRoot = Uri.file(`${pth.sep}workspace${pth.sep}root${pth.sep}test${pth.sep}uri`);
   const testLocalServiceContent = `apiVersion: serving.knative.dev/v1 kind: Service metadata: annotations: serving.knative.dev/creator: system:admin serving.knative.dev/lastModifier: system:admin creationTimestamp: "2020-07-09T02:39:32Z" generation: 1 name: local namespace: a-serverless-example spec: template: metadata: annotations: client.knative.dev/user-image: quay.io/rhdevelopers/knative-tutorial-greeter:quarkus creationTimestamp: null name: local-qycgp-1 spec: containerConcurrency: 0 containers: - image: quay.io/rhdevelopers/knative-tutorial-greeter:quarkus name: user-container readinessProbe: successThreshold: 1 tcpSocket: port: 0 resources: {} timeoutSeconds: 300 traffic: - latestRevision: true percent: 100 `;
@@ -137,7 +140,7 @@ suite('VirtualFileSystem', () => {
   };
 
   beforeEach(() => {
-    revertFS = vfs.__set__('fs', fsMock);
+    revertFS = rewiredVFS.__set__('fs', fsMock);
   });
 
   teardown(() => {
@@ -147,13 +150,13 @@ suite('VirtualFileSystem', () => {
 
   suite('VFS URI convertion', () => {
     test('should return unique URI', () => {
-      const builtURI: Uri = vfs.vfsUri('knmsx', 'service', 'example', 'yaml');
+      const builtURI: Uri = rewiredVFS.vfsUri('knmsx', 'service', 'example', 'yaml');
       assert.equals(builtURI.authority, _uriExternalFile.authority);
       assert.equals(builtURI.fsPath, _uriExternalFile.fsPath);
       assert.equals(builtURI.scheme, _uriExternalFile.scheme);
     });
     test('should return unique URI with optional Namespace', () => {
-      const builtURI: Uri = vfs.vfsUri('knmsx', 'service', 'example', 'yaml', 'testNamespace');
+      const builtURI: Uri = rewiredVFS.vfsUri('knreadonly', 'service', 'example', 'yaml', 'testNamespace');
       assert.equals(builtURI.authority, _uriExternalFileWithNamespace.authority);
       assert.equals(builtURI.fsPath, _uriExternalFileWithNamespace.fsPath);
       assert.equals(builtURI.scheme, _uriExternalFileWithNamespace.scheme);
@@ -226,7 +229,7 @@ suite('VirtualFileSystem', () => {
     });
     test('should return a list of files when no sub-folder is provided.', async () => {
       sandbox.stub(workspace, 'workspaceFolders').value(oneWSFolders);
-      const foundPath = await vfs.getFilePathAsync();
+      const foundPath = await rewiredVFS.getFilePathAsync();
       assert.equals(foundPath, _uriWorkspaceRoot.fsPath);
       sandbox.restore();
     });
@@ -295,7 +298,7 @@ suite('VirtualFileSystem', () => {
       },
     };
 
-    const externalYamlFileContentOld = `apiVersion: serving.knative.dev/v1
+    const externalYamlFileContentFull = `apiVersion: serving.knative.dev/v1
 kind: Service
 metadata:
   annotations:
@@ -549,7 +552,7 @@ status:
 
     const ced: CliExitData = {
       error: undefined,
-      stdout: externalYamlFileContentOld,
+      stdout: externalYamlFileContentFull,
     };
 
     const cedRevision: CliExitData = {
@@ -563,7 +566,7 @@ status:
     };
 
     beforeEach(() => {
-      revertKnvfsMock = vfs.__set__('KnativeResourceVirtualFileSystemProvider', knvfsMock);
+      revertKnvfsMock = rewiredVFS.__set__('KnativeResourceVirtualFileSystemProvider', knvfsMock);
       sandbox.stub(knvfs.knExecutor, 'execute').resolves(ced);
     });
 
@@ -608,10 +611,16 @@ status:
     });
 
     // External file
-    test('should return the content of a external yaml file from a single folder.', async () => {
+    test('should return the content of a external yaml file from a single workspace that is editable.', async () => {
       sandbox.stub(workspace, 'workspaceFolders').value(oneWSFolders);
       const testContent: Uint8Array | Thenable<Uint8Array> = Buffer.from(externalYamlFileContent, 'utf8');
       const foundExteranlContent: Uint8Array | Thenable<Uint8Array> = await knvfs.readFile(_uriExternalFile);
+      assert.equals(foundExteranlContent, testContent);
+    });
+    test('should return the content of a external yaml file from a single workspace that is readonly.', async () => {
+      sandbox.stub(workspace, 'workspaceFolders').value(oneWSFolders);
+      const testContent: Uint8Array | Thenable<Uint8Array> = Buffer.from(externalYamlFileContentFull, 'utf8');
+      const foundExteranlContent: Uint8Array | Thenable<Uint8Array> = await knvfs.readFile(_uriExternalFileReadonly);
       assert.equals(foundExteranlContent, testContent);
     });
     test('should return the content of a external yaml file from a single folder for a Revision.', async () => {
@@ -691,7 +700,7 @@ status:
     test('should write a yaml file to folder in a workspace when no sub-folder is provided.', async () => {
       const spyWrite = sandbox.spy(fsMock, 'writeFileSync');
       sandbox.stub(workspace, 'workspaceFolders').value(oneWSFolders);
-      await vfs.saveAsync(_uriLocalFile, 'utf8');
+      await rewiredVFS.saveAsync(_uriLocalFile, 'utf8');
       sinon.assert.calledOnce(spyWrite);
       sandbox.restore();
     });
