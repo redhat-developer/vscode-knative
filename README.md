@@ -1,4 +1,4 @@
-<!-- ![CI](https://github.com/talamer/vscode-knative/workflows/CI/badge.svg) -->
+![CI](https://github.com/talamer/vscode-knative/workflows/CI/badge.svg)
 
 # Knative Serving & Eventing for Visual Studio Code
 
@@ -37,7 +37,6 @@ This extension contributes the following settings:
 * `service.explorer.openFile`: Display yaml for selected item
 * `service.explorer.refresh`: Refresh the Explorer tree view
 * `service.explorer.reportIssue`: Report Extension Issue on GitHub
-* `knative.service.open-in-browser`: Open the list of Services in the browser
 
 ## Known Issues
 
@@ -51,6 +50,10 @@ This extension contributes the following settings:
 ## Release Notes
 
 > See [CHANGELOG](CHANGELOG.md) for details.
+
+### 0.7.0
+
+- Edit Service YAML files and Apply them to the cluster.
 
 ### 0.6.0
 
