@@ -6,6 +6,8 @@
 import * as vscode from 'vscode';
 import { KnativeResourceVirtualFileSystemProvider } from '../cli/virtualfs';
 
+export const KN_READONLY_SCHEME = 'knreadonly';
+
 /**
  * This implements the VSCode Text Document Content Provider, loading knative resources as read only yaml files in the editor.
  *
@@ -17,9 +19,13 @@ export class KnativeReadonlyProvider implements vscode.TextDocumentContentProvid
 
   onDidChange = this.onDidChangeEmitter.event;
 
-  resourceDocProvider = new KnativeResourceVirtualFileSystemProvider();
+  knvfs: KnativeResourceVirtualFileSystemProvider;
+
+  constructor(knv: KnativeResourceVirtualFileSystemProvider) {
+    this.knvfs = knv;
+  }
 
   provideTextDocumentContent(uri: vscode.Uri): Promise<string> {
-    return this.resourceDocProvider.loadResource(uri);
+    return this.knvfs.loadResource(uri);
   }
 }

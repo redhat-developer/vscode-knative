@@ -41,27 +41,33 @@ export class ServiceExplorer implements Disposable {
 
   private fsw: FileContentChangeNotifier[] = [];
 
+  public treeDataProvider: ServiceDataProvider;
+
   public constructor() {
-    const treeDataProvider = new ServiceDataProvider();
+    this.treeDataProvider = new ServiceDataProvider();
     kubeconfigParam.forEach((params) => {
       const l = this.fsw.push(WatchUtil.watchFileForContextChange(params[0], params[1]));
-      this.fsw[l - 1].emitter.on('file-changed', () => treeDataProvider.refresh());
+      this.fsw[l - 1].emitter.on('file-changed', () => this.treeDataProvider.refresh());
     });
 
-    // Initialize the tree/explorer view by linking the refernece in the package.json to this class.
-    this.treeView = window.createTreeView('knativeProjectExplorerServices', { treeDataProvider });
+    // this.treeDataProvider.pollRefresh();
 
-    commands.registerCommand('service.output', () => treeDataProvider.showOutputChannel());
-    commands.registerCommand('service.explorer.create', () => treeDataProvider.addService());
-    commands.registerCommand('service.explorer.delete', (treeItem: KnativeTreeItem) => treeDataProvider.deleteFeature(treeItem));
-    commands.registerCommand('service.explorer.tag', (treeItem: KnativeTreeItem) => treeDataProvider.addTag(treeItem));
-    commands.registerCommand('service.explorer.upload', (treeItem: KnativeTreeItem) =>
-      treeDataProvider.updateServiceFromYaml(treeItem),
+    // Initialize the tree/explorer view by linking the refernece in the package.json to this class.
+    this.treeView = window.createTreeView('knativeProjectExplorerServices', { treeDataProvider: this.treeDataProvider });
+
+    commands.registerCommand('service.output', () => this.treeDataProvider.showOutputChannel());
+    commands.registerCommand('service.explorer.create', () => this.treeDataProvider.addService());
+    commands.registerCommand('service.explorer.delete', (treeItem: KnativeTreeItem) =>
+      this.treeDataProvider.deleteFeature(treeItem),
+    );
+    commands.registerCommand('service.explorer.tag', (treeItem: KnativeTreeItem) => this.treeDataProvider.addTag(treeItem));
+    commands.registerCommand('service.explorer.apply', (treeItem: KnativeTreeItem) =>
+      this.treeDataProvider.updateServiceFromYaml(treeItem),
     );
     commands.registerCommand('service.explorer.deleteLocal', (treeItem: KnativeTreeItem) =>
-      treeDataProvider.deleteLocalYaml(treeItem),
+      this.treeDataProvider.deleteLocalYaml(treeItem),
     );
-    commands.registerCommand('service.explorer.refresh', () => treeDataProvider.refresh());
+    commands.registerCommand('service.explorer.refresh', () => this.treeDataProvider.refresh());
     commands.registerCommand('service.explorer.reportIssue', () => reportIssue());
   }
 

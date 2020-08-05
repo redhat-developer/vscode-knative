@@ -105,6 +105,8 @@ export class Service extends KnativeItem implements CreateService {
 
   namespace?: string;
 
+  modified?: boolean;
+
   revisions: Revision[];
 
   static toService(value: Items): Service {

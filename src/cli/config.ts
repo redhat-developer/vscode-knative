@@ -14,8 +14,9 @@ export const enum Kind {
 export enum ContextType {
   NONE = 'none',
   REVISION = 'revision',
-  REVISION_TAGGED = 'revision.tagged',
+  REVISION_TAGGED = 'revision_tagged',
   SERVICE = 'service',
+  SERVICE_MODIFIED = 'service_modified',
   LOGIN_REQUIRED = 'login_required',
 }
 

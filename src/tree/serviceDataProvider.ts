@@ -5,14 +5,16 @@
 
 import {
   Event,
-  ProviderResult,
   EventEmitter,
+  FileChangeEvent,
+  FileType,
+  ProviderResult,
   TreeDataProvider,
   TreeItem,
   TreeItemCollapsibleState,
-  window,
   Uri,
-  FileType,
+  window,
+  workspace,
 } from 'vscode';
 import * as validator from 'validator';
 import * as path from 'path';
@@ -46,6 +48,22 @@ export class ServiceDataProvider implements TreeDataProvider<KnativeTreeItem> {
     this.onDidChangeTreeDataEmitter.fire(target);
   }
 
+  stopRefresh: NodeJS.Timeout;
+
+  pollRefresh = (): void => {
+    this.stopRefresh = setInterval(() => {
+      this.refresh();
+    }, 60000);
+  };
+
+  vfsListener = (event: FileChangeEvent[]): void => {
+    // eslint-disable-next-line no-console
+    console.log(`ServiceDataProvider.vfsListener event ${event[0].type}, ${event[0].uri.path}`);
+    this.refresh();
+  };
+
+  vfsListenerSubscription = this.knvfs.onDidChangeFile(this.vfsListener);
+
   /**
    * Display info in the Knative Output channel/window
    */
@@ -78,7 +96,7 @@ export class ServiceDataProvider implements TreeDataProvider<KnativeTreeItem> {
    */
   getChildren(element?: KnativeTreeItem): ProviderResult<KnativeTreeItem[]> {
     let children: ProviderResult<KnativeTreeItem[]>;
-    if (element && element.contextValue === 'service') {
+    if (element && (element.contextValue === 'service' || element.contextValue === 'service_modified')) {
       children = this.getRevisions(element);
     } else {
       children = this.getServices() as ProviderResult<KnativeTreeItem[]>;
@@ -232,6 +250,12 @@ export class ServiceDataProvider implements TreeDataProvider<KnativeTreeItem> {
     if (services.length === 0) {
       return [new KnativeTreeItem(null, null, 'No Service Found', ContextType.NONE, TreeItemCollapsibleState.None, null, null)];
     }
+    const iterator = services.values();
+
+    // eslint-disable-next-line no-restricted-syntax
+    for await (const value of iterator) {
+      value.modified = await this.isNodeModifiedLocally(value.name);
+    }
 
     // Convert the fetch Services into TreeItems
     const children = services
@@ -240,7 +264,7 @@ export class ServiceDataProvider implements TreeDataProvider<KnativeTreeItem> {
           null,
           value,
           value.name,
-          ContextType.SERVICE,
+          value.modified ? ContextType.SERVICE_MODIFIED : ContextType.SERVICE,
           TreeItemCollapsibleState.Expanded,
           null,
           null,
@@ -461,6 +485,32 @@ export class ServiceDataProvider implements TreeDataProvider<KnativeTreeItem> {
     return fileURI;
   }
 
+  /**
+   * Check if a given tree node has a matching local file. That indicates that it has been modified.
+   * @param node
+   */
+  public async isNodeModifiedLocally(serviceName: string): Promise<boolean> {
+    // get local URL for YAML file
+    let files: [string, FileType][];
+    try {
+      files = await this.knvfs.readDirectoryAsync();
+    } catch (err) {
+      // eslint-disable-next-line no-console
+      console.log(`serviceDataProvider.isNodeModifiedLocally Error trying to read directory.\n ${err}`);
+      // throw err;
+      return null;
+    }
+    let isFileFound = false;
+    files.forEach((loc): void => {
+      // eslint-disable-next-line @typescript-eslint/prefer-string-starts-ends-with
+      const fileName = loc[0].slice(loc[0].lastIndexOf(path.sep) + 1);
+      if (fileName === `service-${serviceName}.yaml`) {
+        isFileFound = true;
+      }
+    });
+    return isFileFound;
+  }
+
   public async updateServiceFromYaml(node: KnativeTreeItem): Promise<void> {
     const fileURI = await this.getLocalYamlPathForNode(node);
 
@@ -486,11 +536,14 @@ export class ServiceDataProvider implements TreeDataProvider<KnativeTreeItem> {
         }
       } else {
         // Delete the local YAML file that was uploaded.
-        const response = await window.showInformationMessage(
-          `The file was uploaded. Do you want to delete the local copy and download the updated version?`,
-          { modal: true },
-          'Delete',
-        );
+        let response = 'Delete';
+        if (!workspace.getConfiguration('knative').get<boolean>('disableCheckForDeletingLocal')) {
+          response = await window.showInformationMessage(
+            `The file was uploaded. Do you want to delete the local copy and download the updated version?`,
+            { modal: true },
+            'Delete',
+          );
+        }
         if (response === 'Delete') {
           this.knvfs.delete(Uri.file(fileURI), { recursive: false });
         }

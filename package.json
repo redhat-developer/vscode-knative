@@ -124,7 +124,7 @@
     "onCommand:service.explorer.openFile",
     "onCommand:service.explorer.refresh",
     "onCommand:service.explorer.reportIssue",
-    "onCommand:service.explorer.upload",
+    "onCommand:service.explorer.apply",
     "onCommand:service.explorer.deleteLocal",
     "onCommand:service.output"
   ],
@@ -180,8 +180,8 @@
         "icon": "$(issues)"
       },
       {
-        "command": "service.explorer.upload",
-        "title": "Upload YAML to cluster",
+        "command": "service.explorer.apply",
+        "title": "Apply YAML to cluster",
         "category": "Knative"
       },
       {
@@ -224,7 +224,7 @@
           "when": "false"
         },
         {
-          "command": "service.explorer.upload",
+          "command": "service.explorer.apply",
           "when": "false"
         }
       ],
@@ -236,17 +236,17 @@
         },
         {
           "command": "knative.service.open-in-browser",
-          "when": "view == knativeProjectExplorerServices && viewItem == service || viewItem == revision.tagged",
+          "when": "view == knativeProjectExplorerServices && viewItem == service || viewItem == revision_tagged",
           "group": "c0"
         },
         {
-          "command": "service.explorer.upload",
-          "when": "view == knativeProjectExplorerServices && viewItem == service",
+          "command": "service.explorer.apply",
+          "when": "view == knativeProjectExplorerServices && viewItem == service_modified",
           "group": "c1"
         },
         {
           "command": "service.explorer.deleteLocal",
-          "when": "view == knativeProjectExplorerServices && viewItem == service",
+          "when": "view == knativeProjectExplorerServices && viewItem == service_modified",
           "group": "c1"
         },
         {
@@ -257,7 +257,7 @@
         {
           "command": "service.explorer.tag",
           "when": "view == knativeProjectExplorerServices && viewItem == service || viewItem =~ /revision.*/g",
-          "group": "c3"
+          "group": "c2"
         }
       ],
       "view/title": [
@@ -299,11 +299,11 @@
       "type": "object",
       "title": "Knative",
       "properties": {
-        "knative.disableCheckForMigration": {
-          "title": "Disable check if migration required",
+        "knative.disableCheckForDeletingLocal": {
+          "title": "Disable check to delete",
           "type": "boolean",
-          "default": false,
-          "description": "Dsable check if migration is required for resources created with previous version of the extension and mirgation request message."
+          "default": true,
+          "description": "Disable check to delete local files created when editing. This only Effects the check when Applying the local YAML."
         },
         "knative.outputVerbosityLevel": {
           "title": "Output Verbosity Level",

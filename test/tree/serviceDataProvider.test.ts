@@ -204,6 +204,7 @@ status:
     'http://example-a-serverless-example.apps.devcluster.openshift.com',
     jsonServiceContentUnfiltered,
   );
+  testService.modified = false;
   const testServiceTreeItem: KnativeTreeItem = new KnativeTreeItem(
     null,
     testService,
@@ -634,7 +635,7 @@ status:
       sandbox.stub(serviceDataProvider.knExecutor, 'execute').resolves({ error: undefined, stdout: 'No services found.' });
       const result = await serviceDataProvider.getChildren();
       expect(result).to.have.lengthOf(1);
-      expect(result[0].description).equals(undefined);
+      expect(result[0].description).equals('');
       expect(result[0].label).equals('No Service Found');
       expect(result[0].getName()).equals('No Service Found');
     });
@@ -645,7 +646,7 @@ status:
         .resolves({ error: undefined, stdout: JSON.stringify(singleServiceData) });
       const result = await serviceDataProvider.getChildren();
       expect(result).to.have.lengthOf(1);
-      expect(result[0].description).equals(undefined);
+      expect(result[0].description).equals('');
       expect(result[0].label).equals('example');
       expect(result[0].getName()).equals('example');
       expect(result[0].tooltip).equals('Service: example');
@@ -718,6 +719,7 @@ status:
       sandbox.restore();
       const spy = sandbox.spy(sdp, 'getServicesList');
       sandbox.stub(sdp.knExecutor, 'execute').resolves({ error: undefined, stdout: JSON.stringify(singleServiceData) });
+      sandbox.stub(sdp, 'isNodeModifiedLocally').resolves(false);
       const result: KnativeTreeItem = await sdp.getServices();
       sinon.assert.calledOnce(spy);
       assert.equals(result[0], testServiceTreeItem);
@@ -725,6 +727,7 @@ status:
     test('should rerun the List command if it does not get complete data, then return a list of Services', async () => {
       sandbox.restore();
       const spy = sandbox.spy(sdp, 'getServicesList');
+      sandbox.stub(sdp, 'isNodeModifiedLocally').resolves(false);
       const stub = sandbox.stub(sdp.knExecutor, 'execute');
       stub.onCall(0).resolves({ error: undefined, stdout: JSON.stringify(singleServiceIncompleteData) });
       stub.resolves({ error: undefined, stdout: JSON.stringify(singleServiceData) });

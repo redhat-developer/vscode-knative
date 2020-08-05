@@ -7,14 +7,15 @@
  *-----------------------------------------------------------------------------------------------*/
 
 import {
-  Uri,
-  FileSystemProvider,
-  FileType,
-  FileStat,
-  FileChangeEvent,
+  Disposable,
   Event,
   EventEmitter,
-  Disposable,
+  FileChangeEvent,
+  FileChangeType,
+  FileStat,
+  FileSystemProvider,
+  FileType,
+  Uri,
   window,
   workspace,
   WorkspaceFolder,
@@ -103,9 +104,7 @@ export class KnativeResourceVirtualFileSystemProvider implements FileSystemProvi
 
   // eslint-disable-next-line class-methods-use-this
   watch(_uri: Uri, _options: { recursive: boolean; excludes: string[] }): Disposable {
-    // It would be quite neat to implement this to watch for changes
-    // in the cluster and update the doc accordingly.  But that is very
-    // definitely a future enhancement thing!
+    // ignore, fires for all changes
     // eslint-disable-next-line @typescript-eslint/no-empty-function
     return new Disposable(() => {});
   }
@@ -192,7 +191,7 @@ export class KnativeResourceVirtualFileSystemProvider implements FileSystemProvi
 
     const outputFormat = config.getOutputFormat();
     const contextValue = query.contextValue as string;
-    const context = contextValue === 'revision-tagged' ? 'revision' : contextValue;
+    const context = contextValue === 'revision_tagged' ? 'revision' : contextValue;
     const name = query.name as string;
     const ns = query.ns as string | undefined;
     const resourceAuthority = uri.authority;
@@ -218,10 +217,11 @@ export class KnativeResourceVirtualFileSystemProvider implements FileSystemProvi
   ): Promise<Errorable<CliExitData>> {
     let ced: CliExitData;
     let cleanedCed: CliExitData;
+    const feature: string = contextValue.includes('_') ? contextValue.substr(0, contextValue.indexOf('_')) : contextValue;
     switch (resourceAuthority) {
       case KN_RESOURCE_AUTHORITY:
         // fetch the YAML output
-        ced = await this.knExecutor.execute(KnAPI.describeFeature(contextValue, name, outputFormat));
+        ced = await this.knExecutor.execute(KnAPI.describeFeature(feature, name, outputFormat));
         if (contextValue === 'service' && scheme === KN_RESOURCE_SCHEME) {
           cleanedCed = this.removeServerSideYamlElements(ced);
         } else {
@@ -259,16 +259,18 @@ export class KnativeResourceVirtualFileSystemProvider implements FileSystemProvi
   }
 
   writeFile(uri: Uri, content: Uint8Array, _options: { create: boolean; overwrite: boolean }): void | Thenable<void> {
-    return saveAsync(uri, content, this.yamlDirName); // TODO: respect options
+    const s = saveAsync(uri, content, this.yamlDirName); // TODO: respect options
+    this.onDidChangeFileEmitter.fire([{ type: FileChangeType.Created, uri }]);
+    return s;
   }
 
-  // eslint-disable-next-line class-methods-use-this
-  delete(_uri: Uri, _options: { recursive: boolean }): void | Thenable<void> {
-    if (fs.existsSync(_uri.fsPath)) {
-      fs.unlink(_uri.fsPath, (err) => {
+  delete(uri: Uri, _options: { recursive: boolean }): void | Thenable<void> {
+    if (fs.existsSync(uri.fsPath)) {
+      fs.unlink(uri.fsPath, (err) => {
         if (err) {
           throw err;
         }
+        this.onDidChangeFileEmitter.fire([{ type: FileChangeType.Deleted, uri }]);
       });
     }
   }

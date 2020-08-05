@@ -35,7 +35,7 @@ suite('VirtualFileSystem', () => {
     'knreadonly://loadknativecore/revision-example-75w7v.yaml?contextValue%3Drevision%26name%3Dexample%26_%3D1594328823824',
   );
   const _uriExternalFileForTaggedRevision = Uri.parse(
-    'knreadonly://loadknativecore/revision-example-75w7v.yaml?contextValue%3Drevision-tagged%26name%3Dexample%26_%3D1594328823824',
+    'knreadonly://loadknativecore/revision-example-75w7v.yaml?contextValue%3Drevision_tagged%26name%3Dexample%26_%3D1594328823824',
   );
   const _uriExternalFileWithNamespace = Uri.parse(
     'knreadonly://loadknativecore/service-example.yaml?ns%3DtestNamespace%26contextValue%3Dservice%26name%3Dexample%26_%3D1594328823824',

@@ -4,19 +4,13 @@
  *-----------------------------------------------------------------------------------------------*/
 
 import * as vscode from 'vscode';
-import { KnativeResourceVirtualFileSystemProvider, KN_RESOURCE_SCHEME } from './cli/virtualfs';
+import { KN_RESOURCE_SCHEME } from './cli/virtualfs';
 import { openTreeItemInEditor } from './editor/knativeOpenTextDocument';
-import { KnativeReadonlyProvider } from './editor/knativeReadonlyProvider';
+import { KnativeReadonlyProvider, KN_READONLY_SCHEME } from './editor/knativeReadonlyProvider';
 import { Revision } from './knative/revision';
 import { Service } from './knative/service';
 import { KnativeTreeItem } from './tree/knativeTreeItem';
 import { ServiceExplorer } from './tree/serviceExplorer';
-
-const resourceDocProvider = new KnativeResourceVirtualFileSystemProvider();
-
-// register a content provider for the knative readonly scheme
-const knReadonlyScheme = 'knreadonly';
-const knReadonlyProvider = new KnativeReadonlyProvider();
 
 /**
  * This method is called when your extension is activated.
@@ -25,6 +19,11 @@ const knReadonlyProvider = new KnativeReadonlyProvider();
  * @param extensionContext
  */
 export function activate(extensionContext: vscode.ExtensionContext): void {
+  // eslint-disable-next-line no-new
+  const serviceExplorer = new ServiceExplorer();
+  // register a content provider for the knative readonly scheme
+  const knReadonlyProvider = new KnativeReadonlyProvider(serviceExplorer.treeDataProvider.knvfs);
+
   // The command has been defined in the package.json file.
   // Now provide the implementation of the command with registerCommand.
   // The commandId parameter must match the command field in package.json.
@@ -47,7 +46,7 @@ export function activate(extensionContext: vscode.ExtensionContext): void {
         }
       }
     }),
-    vscode.workspace.registerTextDocumentContentProvider(knReadonlyScheme, knReadonlyProvider),
+    vscode.workspace.registerTextDocumentContentProvider(KN_READONLY_SCHEME, knReadonlyProvider),
     vscode.commands.registerCommand('service.explorer.openFile', (treeItem: KnativeTreeItem) =>
       openTreeItemInEditor(treeItem, vscode.workspace.getConfiguration('vs-knative')['vs-knative.outputFormat'], false),
     ),
@@ -57,12 +56,11 @@ export function activate(extensionContext: vscode.ExtensionContext): void {
     ),
 
     // Temporarily loaded resource providers
-    vscode.workspace.registerFileSystemProvider(KN_RESOURCE_SCHEME, resourceDocProvider, {
+    vscode.workspace.registerFileSystemProvider(KN_RESOURCE_SCHEME, serviceExplorer.treeDataProvider.knvfs, {
       /* TODO: case sensitive? */
     }),
 
-    // eslint-disable-next-line no-new
-    new ServiceExplorer(),
+    serviceExplorer,
   ];
 
   // extensionContext.subscriptions.push(disposable);

@@ -26,7 +26,8 @@ const CONTEXT_DATA = {
     description: '',
     getChildren: (): undefined[] => [],
   },
-  'revision.tagged': {
+  // eslint-disable-next-line @typescript-eslint/camelcase
+  revision_tagged: {
     icon: 'REV.svg',
     tooltip: 'Revision: {name}',
     description: '',
@@ -36,6 +37,13 @@ const CONTEXT_DATA = {
     icon: 'SVC.svg',
     tooltip: 'Service: {name}',
     description: '',
+    getChildren: (): undefined[] => [],
+  },
+  // eslint-disable-next-line @typescript-eslint/camelcase
+  service_modified: {
+    icon: 'SVC.svg',
+    tooltip: 'Service: {name} modified',
+    description: 'modified',
     getChildren: (): undefined[] => [],
   },
   route: {
@@ -65,6 +73,7 @@ export function compareNodes(a: KnativeTreeItem, b: KnativeTreeItem): number {
   if (!b.contextValue) {
     return 1;
   }
+  // We do not want to consider sorting on anything after the underscore.
   const acontext = a.contextValue.includes('_') ? a.contextValue.substr(0, a.contextValue.indexOf('_')) : a.contextValue;
   const bcontext = b.contextValue.includes('_') ? b.contextValue.substr(0, b.contextValue.indexOf('_')) : b.contextValue;
   const t = acontext.localeCompare(bcontext);
@@ -76,7 +85,6 @@ export class KnativeTreeItem extends TreeItem {
 
   private desc: string;
 
-  // eslint-disable-next-line no-useless-constructor
   constructor(
     private parent: KnativeTreeItem,
     public readonly item: KnativeItem,
@@ -90,7 +98,7 @@ export class KnativeTreeItem extends TreeItem {
     // Set the name since the label can have the traffic and we need the actual name for the yaml
     this.name = label;
     // Check the type since only a Revision can have traffic.
-    if (parent && parent.contextValue === 'service') {
+    if (parent && (parent.contextValue === 'service' || parent.contextValue === 'service_modified')) {
       // Ensure we only update revisions with traffic, leaving the others alone.
       const rev: Revision = item as Revision;
       if (rev && rev.traffic && rev.traffic.length > 0) {
@@ -141,18 +149,27 @@ export class KnativeTreeItem extends TreeItem {
 
   // The description is the text after the label. It is grey and a smaller font.
   get description(): string {
-    return this.desc;
+    return this.desc || CONTEXT_DATA[this.contextValue].description;
   }
 
   get command(): Command {
     if (this.name === 'No Service Found') {
       return;
     }
-    const c: Command = {
-      command: 'service.explorer.openFile',
-      title: 'Describe',
-      arguments: [this],
-    };
+    let c: Command;
+    if (this.contextValue === 'service_modified') {
+      c = {
+        command: 'service.explorer.edit',
+        title: 'Edit',
+        arguments: [this],
+      };
+    } else {
+      c = {
+        command: 'service.explorer.openFile',
+        title: 'Describe',
+        arguments: [this],
+      };
+    }
     return c;
   }
 
