@@ -1,0 +1,324 @@
+#!/usr/bin/env groovy
+
+node('rhel8-32gb'){
+  stage('Checkout repo') {
+    deleteDir()
+    dir('vscode-knative') {
+      git url: "https://github.com/${FORK}/vscode-knative.git",
+        branch: "${BRANCH}"
+    }
+    dir('cdk-scripts') {
+      git url: 'https://github.com/odockal/cdk-scripts.git',
+        branch: "master"
+    }
+  }
+
+  stage('Setup CRC environment') {
+    sh """
+# Test slave's virtualization
+./cdk-scripts/scripts/cdk3-virt.sh
+
+# export workspace location that is os dependent - due to cygwin on windows
+CONTENT="WORKSPACE2=\$(pwd)"
+echo "\$CONTENT" > local_env.properties
+
+# Set os - dependent values
+HYPERVISOR=
+BASEFILE_NAME="crc"
+if [[ \$(uname) == *Darwin* ]]; then
+    HYPERVISOR="xhyve"
+elif [[ \$(uname) == *Linux* ]]; then
+    HYPERVISOR="kvm"
+elif [[ \$(uname) == *CYGWIN* ]]; then
+    HYPERVISOR="virtualbox"
+    BASEFILE_NAME="crc.exe"
+fi
+echo "HYPERVISOR=\$HYPERVISOR" >> local_env.properties
+echo "BASEFILE_NAME=\$BASEFILE_NAME" >> local_env.properties
+
+URL="URL="
+
+FILE_ENDING=
+OS=
+if [[ \$(uname) == *Darwin* ]]; then
+  OS="macos"
+  FILE_ENDING="crc-\$OS-amd64.tar.xz"
+elif [[ \$(uname) == *Linux* ]]; then
+  OS="linux"
+  FILE_ENDING="crc-\$OS-amd64.tar.xz"
+elif [[ \$(uname) == *CYGWIN* ]]; then
+  OS="windows"
+  FILE_ENDING="crc-\$OS-amd64.zip"
+fi
+URL="\${URL}\${CRC_URL}/\${FILE_ENDING}"
+
+echo "\${URL}" >> local_env.properties
+echo "OS=\${OS}" >> local_env.properties
+echo "FILE_ENDING=\${FILE_ENDING}" >> local_env.properties
+    """
+  }
+
+  stage('Download and Setup CRC') {
+    sh "echo \$BASEFILE_NAME"
+    withCredentials([string(credentialsId: 'crc-pull-secret', variable: 'PULL_SECRET')]){
+			writeFile(file: "${env.WORKSPACE}/crc-pull-secret.txt", text: "${env.PULL_SECRET}", encoding: "UTF-8")
+			env.CRC_PULL_SECRET = "${env.WORKSPACE}/crc-pull-secret.txt"
+sh """
+# inject env. variables from env properties file
+set -a
+. ./local_env.properties
+set +a
+# Download and setup CRC and pull secret
+cd \${WORKSPACE2}
+mkdir -p crc
+cd crc
+if [ -f ./crc ]; then
+  ls 
+  echo "crc binary exists, skipping"
+else
+  wget \${URL}
+  tar xvf \${FILE_ENDING}
+  mv */crc* .
+  chmod +x crc*
+fi
+
+./crc setup
+
+./\${BASEFILE_NAME} status || true
+./\${BASEFILE_NAME} version || true
+"""
+    }
+  }
+
+  stage('Run CRC and install Serverless operator, setup KNative on the cluster') {
+    sh """
+# inject env. variables from env properties file
+set -a
+. ./local_env.properties
+set +a
+
+operator_deployed() {
+    operator_deployed=`oc get csv | grep -i "serverless-operator" | cut -c \$(oc get csv | grep -b -o PHASE | cut -d: -f1)- | cut -d' ' -f2 | tail -n 1`
+    result=0
+    if [[ \$operator_deployed == *Succeeded* ]]; then
+        result=1
+    fi
+    echo \$result
+}
+
+eventing_deployed() {
+
+    for condition in `oc get knativeeventing.operator.knative.dev/knative-eventing \
+  -n knative-eventing \
+  --template='{{range .status.conditions}}{{printf "%s=%s\\n" .type .status}}{{end}}'`; do
+        status=\$(echo \$condition | cut -d= -f2)
+        if [ \$status == "True" ]; then
+            result=1
+        else
+            result=0
+            break;
+        fi
+    done
+    echo \$result
+}
+
+serving_deployed() {
+
+    for condition in `oc get knativeserving/knative-serving -n knative-serving --template='{{range .status.conditions}}{{printf "%s=%s\\n" .type .status}}{{end}}'`; do
+        status=\$(echo \$condition | cut -d= -f2)
+        if [ \$status == "True" ]; then
+            result=1
+        else
+            result=0
+            break;
+        fi
+    done
+    echo \$result
+}
+
+
+
+cd \${WORKSPACE2}/crc
+
+## Start crc and install all necessary stuff
+
+./\${BASEFILE_NAME} start -p \${CRC_PULL_SECRET} --memory 20480 --cpus 10
+
+./\${BASEFILE_NAME} status || true
+
+# add oc to the path
+./\${BASEFILE_NAME} oc-env
+eval \$(./\${BASEFILE_NAME} oc-env)
+
+oc version
+
+# log into a cluster using oc
+# password can be obtained from ~/.crc/cache/crc_libvirt_4.5.1/kubeadmin-password
+# 4.5.1 string can be get from ./crc version or from client version: oc version
+pass=`cat ~/.crc/cache/crc_libvirt_\$(oc version | head -n 1 | cut -d':' -f2 | xargs)/kubeadmin-password`
+oc login -u kubeadmin -p \${pass} https://api.crc.testing:6443 --insecure-skip-tls-verify
+
+# to list available operators
+oc get packagemanifests -n openshift-marketplace
+
+# we are searching for serverless operator: serverless-operator
+oc describe packagemanifests serverless-operator -n openshift-marketplace
+
+# Switch to openshif
+# Create a subscription yaml object - look for spec part in installed opeator to find installCSV, etc...
+cat >> subscription-serverless.yaml <<EOL
+apiVersion: operators.coreos.com/v1alpha1
+kind: Subscription
+metadata:
+  name: serverless-operator
+  namespace: openshift-operators 
+spec:
+  channel: '4.5'
+  installPlanApproval: Automatic
+  name: serverless-operator
+  source: redhat-operators
+  sourceNamespace: openshift-marketplace
+  startingCSV: serverless-operator.v1.7.2
+EOL
+
+# apply subscription
+oc apply -f subscription-serverless.yaml
+
+# change to default project - openshift-operators
+oc project openshift-operators
+# Verification of installed operators:
+oc get subscriptions
+# serverless-operator   serverless-operator   redhat-operators   4.5
+oc get csv
+
+echo "Operator deployed function: \$(operator_deployed)"
+
+while [ "\$(operator_deployed)" != "1" ]; do
+	echo "waiting 10 sec..."
+    sleep 10
+done
+
+echo "Operator is deployed"
+
+# Create a namespace and install knative serving
+oc create namespace knative-serving
+
+# Install Knative Serving
+cat > serving.yaml << EOL
+apiVersion: operator.knative.dev/v1alpha1
+kind: KnativeServing
+metadata:
+ name: knative-serving
+ namespace: knative-serving
+EOL
+
+# apply
+oc apply -f serving.yaml
+
+# Verification
+oc get knativeserving/knative-serving -n knative-serving --template='{{range .status.conditions}}{{printf "%s=%s\n" .type .status}}{{end}}'
+oc get pods -n knative-serving
+
+sleep 60
+
+echo "Knative serving deployed: \$(serving_deployed)"
+
+treshold=240
+timer=0
+deploying_result="KNative Serving is deploying"
+while [ "\$(serving_deployed)" != "1" ]; do
+	echo "waiting for \$timer sec..."
+    sleep 30
+    ((timer=timer+30))
+    if [ \$timer -ge \$treshold ]; then
+        deploying_result="Timeout reached when deploying KNative Serving, continue anyway"
+        break
+    fi
+done
+
+echo \$deploying_result
+
+oc get knativeserving/knative-serving -n knative-serving --template='{{range .status.conditions}}{{printf "%s=%s\n" .type .status}}{{end}}'
+oc get pods -n knative-serving
+
+# Install Knative Eventing
+
+# Create a namespace and install KNative eventing
+oc create namespace knative-eventing
+
+cat > eventing.yaml << EOL
+apiVersion: operator.knative.dev/v1alpha1
+kind: KnativeEventing
+metadata:
+  name: knative-eventing
+  namespace: knative-eventing
+EOL
+
+oc apply -f eventing.yaml
+
+# Verification
+oc get knativeeventing.operator.knative.dev/knative-eventing \
+  -n knative-eventing \
+  --template='{{range .status.conditions}}{{printf "%s=%s\n" .type .status}}{{end}}'
+oc get pods -n knative-eventing
+
+sleep 60
+
+echo "Knative eventing deployed: \$(eventing_deployed)"
+
+treshold=240
+timer=0
+deploying_result="KNative Eventing is deploying"
+while [ "\$(serving_deployed)" != "1" ]; do
+	echo "waiting for \$timer sec..."
+    sleep 30
+    ((timer=timer+30))
+    if [ \$timer -ge \$treshold ]; then
+        deploying_result="Timeout reached when deploying KNative Eventing, continue anyway"
+        break
+    fi
+done
+
+echo \$deploying_result
+
+# Verification
+oc get knativeeventing.operator.knative.dev/knative-eventing \
+  -n knative-eventing \
+  --template='{{range .status.conditions}}{{printf "%s=%s\n" .type .status}}{{end}}'
+oc get pods -n knative-eventing
+
+
+# Create new project for knative tutorial examplea app
+oc new-project another-serverless-example
+    """
+  }
+
+  stage('Install requirements') {
+    def nodeHome = tool 'nodejs-12.13.1'
+    env.PATH="${env.PATH}:${nodeHome}/bin"
+    sh "npm install -g typescript vsce"
+  }
+
+  stage('Build') {
+    dir('vscode-knative') {
+      sh "npm install"
+      sh "npm run build"
+    }
+  }
+
+  stage('Test') {
+    wrap([$class: 'Xvnc']) {
+      dir('vscode-knative') {
+        sh "npm test"
+      }
+    }
+  }
+
+  stage('UI Tests') {
+    wrap([$class: 'Xvnc']) {
+      dir('vscode-knative') {
+        sh "npm run ui-test"
+      }
+    }
+  }
+}
