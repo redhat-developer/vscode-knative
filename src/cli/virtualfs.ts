@@ -38,15 +38,15 @@ export function vfsUri(
   contextValue: string,
   name: string,
   outputFormat: string,
-  namespace?: string | null | undefined /* TODO: rationalise null and undefined */,
+  namespace?: string | null | undefined /* TODO: rationalize null and undefined */,
 ): Uri {
   const c1 = contextValue.replace('/', '-');
   const context = c1.replace('.', '-');
-  const docname = `${context}-${name}.${outputFormat}`;
+  const docName = `${context}-${name}.${outputFormat}`;
   const nonce = new Date().getTime();
-  const nsquery = namespace ? `ns=${namespace}&` : '';
+  const nsQuery = namespace ? `ns=${namespace}&` : '';
   // "knmsx://loadknativecore/serviceknative-tutorial-greeter.yaml?contextValue=service&name=knative-tutorial-greeter&_=1593030763939"
-  const uri = `${schema}://${KN_RESOURCE_AUTHORITY}/${docname}?${nsquery}contextValue=${context}&name=${name}&_=${nonce}`;
+  const uri = `${schema}://${KN_RESOURCE_AUTHORITY}/${docName}?${nsQuery}contextValue=${context}&name=${name}&_=${nonce}`;
   return Uri.parse(uri);
 }
 
