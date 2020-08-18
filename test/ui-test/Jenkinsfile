@@ -1,20 +1,21 @@
 #!/usr/bin/env groovy
 
-node('rhel8-32gb'){
-  stage('Checkout repo') {
-    deleteDir()
-    dir('vscode-knative') {
-      git url: "https://github.com/${FORK}/vscode-knative.git",
-        branch: "${BRANCH}"
+timeout(time: 90, unit: 'MINUTES') {
+  node('rhel8-32gb'){
+    stage('Checkout repo') {
+      deleteDir()
+      dir('vscode-knative') {
+        git url: "https://github.com/${FORK}/vscode-knative.git",
+          branch: "${BRANCH}"
+      }
+      dir('cdk-scripts') {
+        git url: 'https://github.com/odockal/cdk-scripts.git',
+          branch: "master"
+      }
     }
-    dir('cdk-scripts') {
-      git url: 'https://github.com/odockal/cdk-scripts.git',
-        branch: "master"
-    }
-  }
 
-  stage('Setup CRC environment') {
-    sh """
+    stage('Setup CRC environment') {
+      sh """
 # Test slave's virtualization
 ./cdk-scripts/scripts/cdk3-virt.sh
 
@@ -56,14 +57,14 @@ echo "\${URL}" >> local_env.properties
 echo "OS=\${OS}" >> local_env.properties
 echo "FILE_ENDING=\${FILE_ENDING}" >> local_env.properties
     """
-  }
+    }
 
-  stage('Download and Setup CRC') {
-    sh "echo \$BASEFILE_NAME"
-    withCredentials([string(credentialsId: 'crc-pull-secret', variable: 'PULL_SECRET')]){
-			writeFile(file: "${env.WORKSPACE}/crc-pull-secret.txt", text: "${env.PULL_SECRET}", encoding: "UTF-8")
-			env.CRC_PULL_SECRET = "${env.WORKSPACE}/crc-pull-secret.txt"
-sh """
+    stage('Download and Setup CRC') {
+      timeout(time: 15, unit: 'MINUTES') {
+        withCredentials([string(credentialsId: 'crc-pull-secret', variable: 'PULL_SECRET')]){
+          writeFile(file: "${env.WORKSPACE}/crc-pull-secret.txt", text: "${env.PULL_SECRET}", encoding: "UTF-8")
+          env.CRC_PULL_SECRET = "${env.WORKSPACE}/crc-pull-secret.txt"
+          sh """
 # inject env. variables from env properties file
 set -a
 . ./local_env.properties
@@ -86,16 +87,28 @@ fi
 
 ./\${BASEFILE_NAME} status || true
 ./\${BASEFILE_NAME} version || true
-"""
+        """
+        }
+      }
     }
-  }
 
-  stage('Run CRC and install Serverless operator, setup KNative on the cluster') {
-    sh """
+    stage('Run CRC and install Serverless operator, setup KNative on the cluster') {
+      timeout(time: 45, unit: 'MINUTES') { 
+        sh """
 # inject env. variables from env properties file
 set -a
 . ./local_env.properties
 set +a
+
+crc_started() {
+    openshiftStatus=\$(./crc status | grep OpenShift | awk -F: '{ print \$2 }' | tr -d " ")
+    crcStatus=\$(./crc status | grep "CRC VM:" | awk -F: '{ print \$2 }' | tr -d " ")
+    result=0
+    if [[ \$openshiftStatus == *Running* ]] && [[ \$crcStatus == *Running* ]]; then
+        result=1
+    fi
+    echo \$result
+}
 
 operator_deployed() {
     operator_deployed=`oc get csv | grep -i "serverless-operator" | cut -c \$(oc get csv | grep -b -o PHASE | cut -d: -f1)- | cut -d' ' -f2 | tail -n 1`
@@ -145,6 +158,24 @@ cd \${WORKSPACE2}/crc
 ./\${BASEFILE_NAME} start -p \${CRC_PULL_SECRET} --memory 20480 --cpus 10
 
 ./\${BASEFILE_NAME} status || true
+
+# verify crc is started
+echo "CRC is starting..."
+treshold=180
+timer=0
+starting_result="CRC is started and ready"
+while [ "\$(crc_started)" != "1" ]; do
+	echo "waiting for \$timer sec..."
+    sleep 10
+    ((timer=timer+10))
+    if [ \$timer -ge \$treshold ]; then
+        starting_result="Timeout reached when starting CRC"
+        echo \$starting_result
+        exit 1
+    fi
+done
+
+echo \$starting_result
 
 # add oc to the path
 ./\${BASEFILE_NAME} oc-env
@@ -216,7 +247,7 @@ EOL
 oc apply -f serving.yaml
 
 # Verification
-oc get knativeserving/knative-serving -n knative-serving --template='{{range .status.conditions}}{{printf "%s=%s\n" .type .status}}{{end}}'
+oc get knativeserving/knative-serving -n knative-serving --template='{{range .status.conditions}}{{printf "%s=%s\\n" .type .status}}{{end}}'
 oc get pods -n knative-serving
 
 sleep 60
@@ -238,7 +269,7 @@ done
 
 echo \$deploying_result
 
-oc get knativeserving/knative-serving -n knative-serving --template='{{range .status.conditions}}{{printf "%s=%s\n" .type .status}}{{end}}'
+oc get knativeserving/knative-serving -n knative-serving --template='{{range .status.conditions}}{{printf "%s=%s\\n" .type .status}}{{end}}'
 oc get pods -n knative-serving
 
 # Install Knative Eventing
@@ -259,7 +290,7 @@ oc apply -f eventing.yaml
 # Verification
 oc get knativeeventing.operator.knative.dev/knative-eventing \
   -n knative-eventing \
-  --template='{{range .status.conditions}}{{printf "%s=%s\n" .type .status}}{{end}}'
+  --template='{{range .status.conditions}}{{printf "%s=%s\\n" .type .status}}{{end}}'
 oc get pods -n knative-eventing
 
 sleep 60
@@ -284,40 +315,42 @@ echo \$deploying_result
 # Verification
 oc get knativeeventing.operator.knative.dev/knative-eventing \
   -n knative-eventing \
-  --template='{{range .status.conditions}}{{printf "%s=%s\n" .type .status}}{{end}}'
+  --template='{{range .status.conditions}}{{printf "%s=%s\\n" .type .status}}{{end}}'
 oc get pods -n knative-eventing
 
 
 # Create new project for knative tutorial examplea app
 oc new-project another-serverless-example
-    """
-  }
-
-  stage('Install requirements') {
-    def nodeHome = tool 'nodejs-12.13.1'
-    env.PATH="${env.PATH}:${nodeHome}/bin"
-    sh "npm install -g typescript vsce"
-  }
-
-  stage('Build') {
-    dir('vscode-knative') {
-      sh "npm install"
-      sh "npm run build"
-    }
-  }
-
-  stage('Test') {
-    wrap([$class: 'Xvnc']) {
-      dir('vscode-knative') {
-        sh "npm test"
+        """
       }
     }
-  }
 
-  stage('UI Tests') {
-    wrap([$class: 'Xvnc']) {
+    stage('Install requirements') {
+      def nodeHome = tool 'nodejs-12.13.1'
+      env.PATH="${env.PATH}:${nodeHome}/bin"
+      sh "npm install -g typescript vsce"
+    }
+
+    stage('Build') {
       dir('vscode-knative') {
-        sh "npm run ui-test"
+        sh "npm install"
+        sh "npm run build"
+      }
+    }
+
+    stage('Test') {
+      wrap([$class: 'Xvnc']) {
+        dir('vscode-knative') {
+          sh "npm test"
+        }
+      }
+    }
+
+    stage('UI Tests') {
+      wrap([$class: 'Xvnc']) {
+        dir('vscode-knative') {
+          sh "npm run ui-test"
+        }
       }
     }
   }
