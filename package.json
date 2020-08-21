@@ -119,6 +119,9 @@
     "vscode-extension-tester-native": "^3.0.0",
     "walker": "^1.0.7"
   },
+  "extensionDependencies": [
+    "redhat.vscode-yaml"
+  ],
   "activationEvents": [
     "onView:knativeProjectExplorerServices",
     "onCommand:knative.service.list",

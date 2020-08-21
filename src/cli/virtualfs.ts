@@ -29,6 +29,7 @@ import { CliExitData } from './cmdCli';
 import { KnAPI } from './kn-api';
 import * as config from './config';
 import { Errorable } from '../util/errorable';
+import { registerSchema } from '../editor/knativeSchemaRegister';
 
 export const KN_RESOURCE_SCHEME = 'knmsx';
 export const KN_RESOURCE_AUTHORITY = 'loadknativecore';
@@ -176,6 +177,9 @@ export class KnativeResourceVirtualFileSystemProvider implements FileSystemProvi
     // TODO: Check if the version on the cluster is newer,
     // Then if it is, ask the user if they want to replace the edited version.
     const localFile = await getFilePathAsync(this.yamlDirName, uri.fsPath);
+
+    await registerSchema();
+
     // (example) localFile = "/home/josh/git/vscode-extension-samples/basic-multi-root-sample/.knative/service-example.yaml"
     if (fs.existsSync(localFile)) {
       // use local file
