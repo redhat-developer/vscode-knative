@@ -206,7 +206,7 @@ export class ServiceDataProvider implements TreeDataProvider<KnativeTreeItem> {
    * Fetch the Service data
    *
    * When creating a new Service on the cluster it takes time, however this fetch is called immediately.
-   * It will continue to call itself untill the data is complete on the cluster.
+   * It will continue to call itself until the data is complete on the cluster.
    */
   private async getServicesList(): Promise<Service[]> {
     // Get the raw data from the cli call.
@@ -219,7 +219,7 @@ export class ServiceDataProvider implements TreeDataProvider<KnativeTreeItem> {
     }
 
     let serviceNotReady: boolean;
-    // Make sure there is Status info in the Service to confirm that it has finised being created.
+    // Make sure there is Status info in the Service to confirm that it has finished being created.
     services.find((s): boolean => {
       if (
         s?.details?.status?.conditions === undefined ||
@@ -299,7 +299,7 @@ export class ServiceDataProvider implements TreeDataProvider<KnativeTreeItem> {
   // eslint-disable-next-line class-methods-use-this
   async getUrl(): Promise<string | null> {
     // const createUrl: QuickPickItem = { label: `$(plus) Provide new URL...` };
-    // const clusterItems: QuickPickItem[] = [{ label: 'invinciblejai/tag-portal-v1' }];
+    // const clusterItems: QuickPickItem[] = [{ label: 'tag-portal-v1' }];
     // const choice = await window.showQuickPick([createUrl, ...clusterItems], {
     //   placeHolder: 'Provide Image URL to connect',
     //   ignoreFocusOut: true,
@@ -364,21 +364,21 @@ export class ServiceDataProvider implements TreeDataProvider<KnativeTreeItem> {
       return null;
     }
 
-    const servObj: CreateService = await this.getName(image);
+    const serveObj: CreateService = await this.getName(image);
 
-    if (!servObj.name) {
+    if (!serveObj.name) {
       return null;
     }
 
     // Get the raw data from the cli call.
-    // const result: CliExitData = await this.knExecutor.execute(KnAPI.createService(servObj));
-    const service: Service = new Service(servObj.name, servObj.image);
+    // const result: CliExitData = await this.knExecutor.execute(KnAPI.createService(serveObj));
+    const service: Service = new Service(serveObj.name, serveObj.image);
 
     this.ksvc.addService(service);
 
     // *** As a hack, make a file for the yaml, use kubectl apply to create, then delete the file
     // Check the local files for the URL for YAML file
-    const serviceName = servObj.name;
+    const serviceName = serveObj.name;
     let files: [string, FileType][];
     try {
       files = await this.knvfs.readDirectoryAsync();
@@ -401,7 +401,7 @@ export class ServiceDataProvider implements TreeDataProvider<KnativeTreeItem> {
       const newUri = vfsUri(KN_RESOURCE_SCHEME, 'service', serviceName, 'yaml');
       // eslint-disable-next-line prettier/prettier
       const stringContent = yaml.parse(
-        `apiVersion: serving.knative.dev/v1\nkind: Service\nmetadata:\n  name: ${servObj.name}\nspec:\n  template:\n    spec:\n      containers:\n      - image: ${servObj.image}`,
+        `apiVersion: serving.knative.dev/v1\nkind: Service\nmetadata:\n  name: ${serveObj.name}\nspec:\n  template:\n    spec:\n      containers:\n      - image: ${serveObj.image}`,
       );
       const yamlContent = yaml.stringify(stringContent);
       await this.knvfs.writeFile(newUri, Buffer.from(yamlContent, 'utf8'), {
@@ -429,7 +429,7 @@ export class ServiceDataProvider implements TreeDataProvider<KnativeTreeItem> {
     //   // check the kind of errors we can get back
     // }
     this.refresh();
-    // return this.insertAndRevealService(createKnObj(servObj.name));
+    // return this.insertAndRevealService(createKnObj(serveObj.name));
   }
 
   public async addTag(node: KnativeTreeItem): Promise<KnativeTreeItem[]> {
@@ -442,15 +442,15 @@ export class ServiceDataProvider implements TreeDataProvider<KnativeTreeItem> {
     const serviceName = node.getParent().getName();
     const tagContent = new Map([[revisionName, tagName]]);
 
-    const servObj: UpdateService = { name: serviceName, tag: tagContent };
+    const serveObj: UpdateService = { name: serviceName, tag: tagContent };
 
-    if (!servObj.name) {
+    if (!serveObj.name) {
       return null;
     }
 
     // Get the raw data from the cli call.
-    const result: CliExitData = await this.knExecutor.execute(KnAPI.updateService(servObj));
-    const service: Service = new Service(servObj.name, servObj.image);
+    const result: CliExitData = await this.knExecutor.execute(KnAPI.updateService(serveObj));
+    const service: Service = new Service(serveObj.name, serveObj.image);
 
     this.ksvc.updateService(service);
 
@@ -459,7 +459,7 @@ export class ServiceDataProvider implements TreeDataProvider<KnativeTreeItem> {
       // check the kind of errors we can get back
     }
     this.refresh();
-    // return this.insertAndRevealService(createKnObj(servObj.name));
+    // return this.insertAndRevealService(createKnObj(serveObj.name));
   }
 
   public async getLocalYamlPathForNode(node: KnativeTreeItem): Promise<string> {
@@ -527,7 +527,7 @@ export class ServiceDataProvider implements TreeDataProvider<KnativeTreeItem> {
       if (typeof result.stdout === 'string' && result.stdout.search('unchanged') > 0) {
         // Delete the local YAML file that was uploaded.
         const response = await window.showInformationMessage(
-          `The file is unchange.\nDo you want to delete the local copy?`,
+          `The file is unchanged.\nDo you want to delete the local copy?`,
           { modal: true },
           'Delete',
         );
