@@ -1,5 +1,3 @@
-/* eslint-disable no-restricted-syntax */
-/* eslint-disable no-await-in-loop */
 import { Notification, VSBrowser, NotificationsCenter, NotificationType, Workbench, SideBarView } from 'vscode-extension-tester';
 
 /**
@@ -8,14 +6,15 @@ import { Notification, VSBrowser, NotificationsCenter, NotificationType, Workben
 export async function findNotification(text: string): Promise<Notification | undefined> {
   await new Workbench().openNotificationsCenter();
   const notifications = await new NotificationsCenter().getNotifications(NotificationType.Any);
-  for (const notification of notifications) {
+  notifications.map(async (notification) => {
     if (notification) {
       const message = await notification.getMessage();
       if (message.includes(text)) {
         return notification;
       }
     }
-  }
+  });
+  return undefined;
 }
 
 export async function getNotifications(...types: NotificationType[]): Promise<Notification[]> {
@@ -30,14 +29,14 @@ export async function getNotifications(...types: NotificationType[]): Promise<No
 
 export async function notificationExists(text: string): Promise<boolean> {
   const notifications = await getNotifications();
-  for (const notification of notifications) {
+  notifications.map(async (notification) => {
     if (notification) {
       const message = await notification.getMessage();
       if (message.includes(text)) {
         return true;
       }
     }
-  }
+  });
   return false;
 }
 
@@ -53,18 +52,6 @@ export async function safeNotificationExists(text: string): Promise<boolean> {
     }
   }
   return result;
-}
-
-export async function notificationExistsWithObject(text: string): Promise<Notification | undefined> {
-  const notifications = await getNotifications();
-  for (const notification of notifications) {
-    if (notification) {
-      const message = await notification.getMessage();
-      if (message.includes(text)) {
-        return notification;
-      }
-    }
-  }
 }
 
 export async function waitForEvent(func: Function, timeout: number): Promise<unknown | undefined> {
