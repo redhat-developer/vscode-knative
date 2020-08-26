@@ -161,7 +161,7 @@ cd \${WORKSPACE2}/crc
 
 # verify crc is started
 echo "CRC is starting..."
-treshold=180
+treshold=240
 timer=0
 starting_result="CRC is started and ready"
 while [ "\$(crc_started)" != "1" ]; do
@@ -195,7 +195,7 @@ oc get packagemanifests -n openshift-marketplace
 # we are searching for serverless operator: serverless-operator
 oc describe packagemanifests serverless-operator -n openshift-marketplace
 
-# Switch to openshif
+# Switch to openshift
 # Create a subscription yaml object - look for spec part in installed opeator to find installCSV, etc...
 cat >> subscription-serverless.yaml <<EOL
 apiVersion: operators.coreos.com/v1alpha1
@@ -222,14 +222,21 @@ oc get subscriptions
 # serverless-operator   serverless-operator   redhat-operators   4.5
 oc get csv
 
-echo "Operator deployed function: \$(operator_deployed)"
+echo "Serverless Operator is deploying..."
 
+treshold=240
+timer=0
 while [ "\$(operator_deployed)" != "1" ]; do
-	echo "waiting 10 sec..."
-    sleep 10
+	echo "waiting for \$timer sec..."
+    sleep 30
+    ((timer=timer+30))
+    if [ \$timer -ge \$treshold ]; then
+        echo "Timeout reached when deploying Serverless operator"
+        exit 1
+    fi
 done
 
-echo "Operator is deployed"
+echo "Serverless operator is deployed"
 
 # Create a namespace and install knative serving
 oc create namespace knative-serving
@@ -246,17 +253,15 @@ EOL
 # apply
 oc apply -f serving.yaml
 
-# Verification
+# KNative Serving deploying status
 oc get knativeserving/knative-serving -n knative-serving --template='{{range .status.conditions}}{{printf "%s=%s\\n" .type .status}}{{end}}'
 oc get pods -n knative-serving
 
-sleep 60
+echo "Knative serving is deploying..."
 
-echo "Knative serving deployed: \$(serving_deployed)"
-
-treshold=240
+treshold=300
 timer=0
-deploying_result="KNative Serving is deploying"
+deploying_result="KNative Serving is deployed"
 while [ "\$(serving_deployed)" != "1" ]; do
 	echo "waiting for \$timer sec..."
     sleep 30
@@ -268,9 +273,6 @@ while [ "\$(serving_deployed)" != "1" ]; do
 done
 
 echo \$deploying_result
-
-oc get knativeserving/knative-serving -n knative-serving --template='{{range .status.conditions}}{{printf "%s=%s\\n" .type .status}}{{end}}'
-oc get pods -n knative-serving
 
 # Install Knative Eventing
 
@@ -287,19 +289,17 @@ EOL
 
 oc apply -f eventing.yaml
 
-# Verification
+# Check KNative Eventing deploying
 oc get knativeeventing.operator.knative.dev/knative-eventing \
   -n knative-eventing \
   --template='{{range .status.conditions}}{{printf "%s=%s\\n" .type .status}}{{end}}'
 oc get pods -n knative-eventing
 
-sleep 60
+echo "Knative eventing is deploying..."
 
-echo "Knative eventing deployed: \$(eventing_deployed)"
-
-treshold=240
+treshold=300
 timer=0
-deploying_result="KNative Eventing is deploying"
+deploying_result="KNative Eventing is deployed"
 while [ "\$(serving_deployed)" != "1" ]; do
 	echo "waiting for \$timer sec..."
     sleep 30
@@ -311,13 +311,6 @@ while [ "\$(serving_deployed)" != "1" ]; do
 done
 
 echo \$deploying_result
-
-# Verification
-oc get knativeeventing.operator.knative.dev/knative-eventing \
-  -n knative-eventing \
-  --template='{{range .status.conditions}}{{printf "%s=%s\\n" .type .status}}{{end}}'
-oc get pods -n knative-eventing
-
 
 # Create new project for knative tutorial examplea app
 oc new-project another-serverless-example
