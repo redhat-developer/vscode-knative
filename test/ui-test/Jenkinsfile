@@ -1,7 +1,7 @@
 #!/usr/bin/env groovy
 
 timeout(time: 90, unit: 'MINUTES') {
-  node('rhel8-32gb'){
+  node('rhel8-24gb'){
     stage('Checkout repo') {
       deleteDir()
       dir('vscode-knative') {
@@ -155,7 +155,7 @@ cd \${WORKSPACE2}/crc
 
 ## Start crc and install all necessary stuff
 
-./\${BASEFILE_NAME} start -p \${CRC_PULL_SECRET} --memory 20480 --cpus 10
+./\${BASEFILE_NAME} start -p \${CRC_PULL_SECRET} --memory 18432 --cpus 6
 
 ./\${BASEFILE_NAME} status || true
 
