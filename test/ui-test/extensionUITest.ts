@@ -11,6 +11,7 @@ export function extensionsUITest(): void {
       this.timeout(5000);
       const view = new ActivityBar().getViewControl('Extensions');
       const sideBar = await view.openView();
+      // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
       const section = (await sideBar.getContent().getSection('Installed')) as ExtensionsViewSection;
       const item = await section.findItem(`@installed ${KNativeConstants.KNATIVE_EXTENSION_NAME}`);
       expect(item).to.be.an.instanceOf(ExtensionsViewItem);
@@ -30,7 +31,7 @@ export function extensionsUITest(): void {
       expect(await titlePart.getTitle()).to.equal(KNativeConstants.KNATIVE_EXTENSION_BAR_NAME);
     });
 
-    it('should be ready for usage, requires oc on the path to be logged into cluster', async function context() {
+    it('should be ready for usage, requires access to the cluster', async function context() {
       this.timeout(7000);
       const view = new ActivityBar().getViewControl(KNativeConstants.KNATIVE_EXTENSION_NAME);
       const sideBar = await view.openView();
