@@ -38,6 +38,7 @@
     "lint:fix": "eslint . --ext .ts --fix",
     "pretest": "npm run clean && npm run compile && npm run lint",
     "test": "node ./out/build/unit-tests.js",
+    "ui-test": "npm run compile && extest setup-and-run out/test/ui-test/allTestsSuite.js",
     "install-test": "npm run clean && npm run compile && node ./out/build/unit-tests.js",
     "update-deps": "node_modules/.bin/ncu --upgrade --loglevel verbose --packageFile package.json && npm update",
     "verify": "node ./out/build/verify-tools.js",
@@ -114,6 +115,8 @@
     "source-map-support": "^0.5.16",
     "tmp": "0.1.0",
     "typescript": "^3.8.3",
+    "vscode-extension-tester": "^3.1.0",
+    "vscode-extension-tester-native": "^3.0.0",
     "walker": "^1.0.7"
   },
   "activationEvents": [

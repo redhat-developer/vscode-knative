@@ -27,6 +27,12 @@ node('rhel8'){
     }
   }
 
+  stage('UI Tests') {
+    wrap([$class: 'Xvnc']) {
+      sh "npm run ui-test"
+    }
+  }
+
   stage('Package') {
     def packageJson = readJSON file: 'package.json'
     packageJson.extensionDependencies = ["ms-kubernetes-tools.vscode-kubernetes-tools"]
