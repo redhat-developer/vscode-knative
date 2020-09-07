@@ -3,8 +3,7 @@
 node('rhel8'){
   stage('Checkout repo') {
     deleteDir()
-    git url: 'https://github.com/talamer/vscode-knative.git',
-      branch: "${BRANCH}"
+    git url: "https://github.com/${params.FORK}/vscode-knative.git", branch: params.BRANCH
   }
 
   stage('Install requirements') {
@@ -19,7 +18,7 @@ node('rhel8'){
   }
 
   withEnv(['JUNIT_REPORT_PATH=report.xml']) {
-    stage('Test') {
+    stage('Unit Tests') {
       wrap([$class: 'Xvnc']) {
         sh "npm test"
         junit 'report.xml'
@@ -29,7 +28,7 @@ node('rhel8'){
 
   stage('UI Tests') {
     wrap([$class: 'Xvnc']) {
-      sh "npm run ui-test"
+      sh "npm run base-ui-test"
     }
   }
 
