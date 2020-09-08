@@ -13,11 +13,12 @@
 		"rootDir": ".",
 		"sourceMap": true,
 		"strict": false,   /* enable all strict type-checking options */
-		"target": "es2017",
+		"target": "es6",
   },
 	"exclude": [
 		"node_modules",
-    ".vscode-test"
+    ".vscode-test",
+    "test-resources"
   ],
   "include": [
     "src",
