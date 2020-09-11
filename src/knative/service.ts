@@ -205,7 +205,7 @@ export interface Resources {
 export interface Traffic {
   tag: string;
   revisionName: string;
-  confgiurationName: string;
+  configurationName: string;
   latestRevision: boolean;
   percent: number;
   url: URL;

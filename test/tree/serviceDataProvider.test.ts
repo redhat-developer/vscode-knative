@@ -316,11 +316,11 @@ status:
   serviceName: example-75w7v
   `;
   const example75w7vJson = yaml.parse(example75w7vYaml);
-  const example75w7vRevsion: Revision = new Revision('example-g4hm8', 'example', example75w7vJson, [
+  const example75w7vRevision: Revision = new Revision('example-g4hm8', 'example', example75w7vJson, [
     {
       tag: null,
       revisionName: 'example-75w7v',
-      confgiurationName: null,
+      configurationName: null,
       latestRevision: true,
       percent: 100,
       url: null,
@@ -328,7 +328,7 @@ status:
     {
       tag: 'current',
       revisionName: 'example-75w7v',
-      confgiurationName: null,
+      configurationName: null,
       latestRevision: false,
       percent: 0,
       url: new URL('http://current-example-a-serverless-example.apps.devcluster.openshift.com'),
@@ -336,7 +336,7 @@ status:
   ]);
   const example75w7vTreeItem: KnativeTreeItem = new KnativeTreeItem(
     testServiceTreeItem,
-    example75w7vRevsion,
+    example75w7vRevision,
     'example-75w7v',
     ContextType.REVISION_TAGGED,
     vscode.TreeItemCollapsibleState.None,
@@ -443,10 +443,10 @@ status:
   serviceName: example-g4hm8
     `;
   const exampleG4hm8Json = yaml.parse(exampleG4hm8Yaml);
-  const exampleG4hm8Revsion: Revision = new Revision('example-g4hm8', 'example', exampleG4hm8Json);
+  const exampleG4hm8Revision: Revision = new Revision('example-g4hm8', 'example', exampleG4hm8Json);
   const exampleG4hm8TreeItem: KnativeTreeItem = new KnativeTreeItem(
     testServiceTreeItem,
-    exampleG4hm8Revsion,
+    exampleG4hm8Revision,
     'example-g4hm8',
     ContextType.REVISION,
     vscode.TreeItemCollapsibleState.None,
@@ -555,11 +555,11 @@ status:
   serviceName: example-2fvz4
     `;
   const example2fvz4Json = yaml.parse(example2fvz4Yaml);
-  const example2fvz4Revsion: Revision = new Revision('example-g4hm8', 'example', example2fvz4Json, [
+  const example2fvz4Revision: Revision = new Revision('example-g4hm8', 'example', example2fvz4Json, [
     {
       tag: 'old',
       revisionName: 'example-2fvz4',
-      confgiurationName: null,
+      configurationName: null,
       latestRevision: false,
       percent: 0,
       url: new URL('http://old-example-a-serverless-example.apps.devcluster.openshift.com'),
@@ -567,7 +567,7 @@ status:
   ]);
   const example2fvz4TreeItem: KnativeTreeItem = new KnativeTreeItem(
     testServiceTreeItem,
-    example2fvz4Revsion,
+    example2fvz4Revision,
     'example-2fvz4',
     ContextType.REVISION_TAGGED,
     vscode.TreeItemCollapsibleState.None,
