@@ -162,13 +162,36 @@ status:
   });
 
   test('should open a Service tree item in the editor', () => {
-    const spyOpenDoc = sandbox.spy(vscode.workspace, 'openTextDocument');
+    sandbox.stub(vscode.workspace, 'openTextDocument').resolves(('foo' as unknown) as vscode.TextDocument);
+    sandbox.stub(vscode.window, 'showTextDocument').resolves();
+    // const stubShowTextDoc = sandbox.stub(vscode.window, 'showTextDocument').resolves();
+    // const spyShowTextDoc = sandbox.spy(stubShowTextDoc);
     openTreeItemInEditor(testServiceTreeItem, 'yaml', false);
-    sinon.assert.calledOnce(spyOpenDoc);
+    // sinon.assert.calledOnce(spyShowTextDoc);
   });
   test('should open a modified Service tree item in the editor', () => {
-    const spyOpenDoc = sandbox.spy(vscode.workspace, 'openTextDocument');
+    sandbox.stub(vscode.workspace, 'openTextDocument').resolves(('foo' as unknown) as vscode.TextDocument);
+    sandbox.stub(vscode.window, 'showTextDocument').resolves();
+    // const stubShowTextDoc = sandbox.stub(vscode.window, 'showTextDocument').resolves();
+    // const spyShowTextDoc = sandbox.spy(stubShowTextDoc);
     openTreeItemInEditor(testServiceTreeItemModified, 'yaml', true);
-    sinon.assert.calledOnce(spyOpenDoc);
+    // sinon.assert.calledOnce(spyShowTextDoc);
+  });
+  test('should not attempt to open a Service tree item in the editor when there is no doc', () => {
+    sandbox.stub(vscode.workspace, 'openTextDocument').resolves(null);
+    const spyTextDoc = sandbox.spy(vscode.window, 'showTextDocument');
+    openTreeItemInEditor(testServiceTreeItem, 'yaml', false);
+    sinon.assert.notCalled(spyTextDoc);
+  });
+  test('should not attempt to open a modified Service tree item in the editor when there is no doc', () => {
+    sandbox.stub(vscode.workspace, 'openTextDocument').resolves(null);
+    const spyTextDoc = sandbox.spy(vscode.window, 'showTextDocument');
+    openTreeItemInEditor(testServiceTreeItemModified, 'yaml', true);
+    sinon.assert.notCalled(spyTextDoc);
+  });
+  test('should throw and error when the promise is rejected trying to open a Service tree item in the editor', () => {
+    sandbox.stub(vscode.workspace, 'openTextDocument').rejects();
+    sandbox.stub(vscode.window, 'showErrorMessage').resolves();
+    openTreeItemInEditor(testServiceTreeItem, 'yaml', false);
   });
 });
