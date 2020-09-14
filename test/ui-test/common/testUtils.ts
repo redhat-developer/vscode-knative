@@ -1,11 +1,21 @@
-import { Notification, VSBrowser, NotificationsCenter, NotificationType, Workbench, SideBarView } from 'vscode-extension-tester';
+import { Notification, VSBrowser, NotificationType, Workbench, SideBarView } from 'vscode-extension-tester';
 
 /**
  * @author Ondrej Dockal <odockal@redhat.com>
  */
+export async function cleanUpNotifications(): Promise<void> {
+  // clean up notifications
+  const nc = await new Workbench().openNotificationsCenter();
+  const notifications = await nc.getNotifications(NotificationType.Any);
+  if (notifications.length > 0) {
+    await nc.clearAllNotifications();
+  }
+  await nc.close();
+}
+
 export async function findNotification(text: string): Promise<Notification | undefined> {
-  await new Workbench().openNotificationsCenter();
-  const notifications = await new NotificationsCenter().getNotifications(NotificationType.Any);
+  const center = await new Workbench().openNotificationsCenter();
+  const notifications = await center.getNotifications(NotificationType.Any);
   notifications.map(async (notification) => {
     if (notification) {
       const message = await notification.getMessage();
@@ -18,11 +28,10 @@ export async function findNotification(text: string): Promise<Notification | und
 }
 
 export async function getNotifications(...types: NotificationType[]): Promise<Notification[]> {
-  await new Workbench().openNotificationsCenter();
+  const center = await new Workbench().openNotificationsCenter();
   const notifications = [];
-  // eslint-disable-next-line @typescript-eslint/no-misused-promises
-  types.forEach(async (type) => {
-    notifications.push(await new NotificationsCenter().getNotifications(type));
+  types.map(async (type) => {
+    notifications.push(...(await center.getNotifications(type)));
   });
   return notifications;
 }

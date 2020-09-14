@@ -1,7 +1,7 @@
 import { expect } from 'chai';
-import { ActivityBar, ExtensionsViewSection, ExtensionsViewItem, VSBrowser, NotificationType } from 'vscode-extension-tester';
+import { ActivityBar, ExtensionsViewSection, ExtensionsViewItem, ViewControl, SideBarView } from 'vscode-extension-tester';
 import { KNativeConstants } from './common/constants';
-import { getNotifications } from './common/testUtils';
+import { cleanUpNotifications } from './common/testUtils';
 /**
  * @author Ondrej Dockal <odockal@redhat.com>
  */
@@ -18,38 +18,39 @@ export function extensionsUITest(): void {
       expect(await item.getTitle()).to.equal(KNativeConstants.KNATIVE_EXTENSION_NAME);
     });
 
-    it('should have Knative Activity Bar object available', async function context() {
-      this.timeout(5000);
-      const view = new ActivityBar().getViewControl(KNativeConstants.KNATIVE_EXTENSION_NAME);
-      const sideBar = await view.openView();
-      // check that no notification error appeared
-      VSBrowser.instance.driver.wait(async function receiveNotifications() {
-        const notifs = await getNotifications(NotificationType.Error, NotificationType.Warning);
-        return notifs.length === 0;
-      }, 3000);
-      const titlePart = sideBar.getTitlePart();
-      expect(await titlePart.getTitle()).to.equal(KNativeConstants.KNATIVE_EXTENSION_BAR_NAME);
-    });
+    describe('Knative Activity Bar', () => {
+      let view: ViewControl;
+      let sideBar: SideBarView;
 
-    it('should be ready for usage, requires access to the cluster', async function context() {
-      this.timeout(7000);
-      const view = new ActivityBar().getViewControl(KNativeConstants.KNATIVE_EXTENSION_NAME);
-      const sideBar = await view.openView();
-      // check that no notification error appeared
-      VSBrowser.instance.driver.wait(async function receiveNotifications() {
-        const notifs = await getNotifications(NotificationType.Error, NotificationType.Warning);
-        return notifs.length === 0;
-      }, 3000);
-      const content = sideBar.getContent();
-      expect(await content.getText()).to.equal(KNativeConstants.NO_SERVICE_FOUND);
-      const sections = await content.getSections();
-      expect(sections.length).to.equal(1);
-      const section = sections[0];
-      expect(await section.getTitle()).to.equal(KNativeConstants.KNATIVE_EXTENSION_NAME);
-      const items = await sections[0].getVisibleItems();
-      expect(items.length).to.equal(1);
-      const item = items[0];
-      expect(await item.getText()).to.equal(KNativeConstants.NO_SERVICE_FOUND);
+      before(async () => {
+        view = new ActivityBar().getViewControl(KNativeConstants.KNATIVE_EXTENSION_NAME);
+        sideBar = await view.openView();
+      });
+
+      it('should be available', async function context() {
+        this.timeout(5000);
+        const titlePart = sideBar.getTitlePart();
+        expect(await titlePart.getTitle()).to.equal(KNativeConstants.KNATIVE_EXTENSION_BAR_NAME);
+      });
+
+      it('should provide Add service, Refresh action items', async function context() {
+        this.timeout(5000);
+        const actions = await sideBar.getTitlePart().getActions();
+        expect(actions.length).to.equal(3);
+        actions.forEach((action) => {
+          // eslint-disable-next-line max-nested-callbacks
+          expect(action.getTitle()).to.satisfy((title) =>
+            [
+              KNativeConstants.ACTION_ITEM_ADD_SERVICE,
+              KNativeConstants.ACTION_ITEM_REFRESH,
+              KNativeConstants.ACTION_ITEM_REPORT_ISSUE,
+              // eslint-disable-next-line max-nested-callbacks
+            ].some((expectedTitle) => {
+              return title.includes(expectedTitle);
+            }),
+          );
+        });
+      });
     });
 
     after(async function context() {
@@ -60,6 +61,8 @@ export function extensionsUITest(): void {
       if (await actionButton.isEnabled()) {
         await actionButton.click();
       }
+
+      await cleanUpNotifications();
     });
   });
 }
