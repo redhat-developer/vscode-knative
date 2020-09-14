@@ -23,7 +23,7 @@ export function knativeInitializationUITest(): void {
       try {
         await driver.wait(async () => {
           const notifs = await getNotifications(NotificationType.Error, NotificationType.Warning);
-          return !notifs || notifs.length === 0;
+          return notifs === null || notifs === undefined || notifs.length === 0;
         }, 5000);
       } catch (error) {
         assert.fail(`Error notification appeared during cluster loading`);

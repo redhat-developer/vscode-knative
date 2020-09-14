@@ -29,12 +29,11 @@ export async function findNotification(text: string): Promise<Notification | und
 
 export async function getNotifications(...types: NotificationType[]): Promise<Notification[]> {
   const center = await new Workbench().openNotificationsCenter();
-  let notifications = [];
-  types.forEach((type) => {
-    notifications = notifications.concat(center.getNotifications(type));
+  const notifications = [];
+  types.map(async (type) => {
+    notifications.push(...(await center.getNotifications(type)));
   });
-  const promisedNots = await Promise.all(notifications);
-  return promisedNots;
+  return notifications;
 }
 
 export async function notificationExists(text: string): Promise<boolean> {
