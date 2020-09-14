@@ -26,6 +26,10 @@ jobs:
       uses: GabrielBB/xvfb-action@v1.0
       with:
         run: npm test
+    - name: Run UI tests
+      uses: GabrielBB/xvfb-action@v1.0
+      with:
+        run: npm run base-ui-test
     - uses: codecov/codecov-action@v1
       name: codecov-upload
       with:
