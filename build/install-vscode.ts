@@ -16,4 +16,5 @@ downloadAndUnzipVSCode().then((executable: string): void => {
     exe = join(dirname(exe), 'bin', 'code');
   }
   execSync(`${exe} --install-extension ms-kubernetes-tools.vscode-kubernetes-tools`);
+  execSync(`${exe} --install-extension redhat.vscode-yaml`);
 });
