@@ -53,6 +53,10 @@ This extension contributes the following settings:
 
 > See [CHANGELOG](CHANGELOG.md) for details.
 
+### 0.8.0
+
+-  Add schema validation for Service YAML files.
+
 ### 0.7.0
 
 - Edit Service YAML files and Apply them to the cluster.
