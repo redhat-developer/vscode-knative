@@ -52,7 +52,7 @@ export class ServiceExplorer implements Disposable {
 
     // this.treeDataProvider.pollRefresh();
 
-    // Initialize the tree/explorer view by linking the refernece in the package.json to this class.
+    // Initialize the tree/explorer view by linking the reference in the package.json to this class.
     this.treeView = window.createTreeView('knativeProjectExplorerServices', { treeDataProvider: this.treeDataProvider });
 
     commands.registerCommand('service.output', () => this.treeDataProvider.showOutputChannel());

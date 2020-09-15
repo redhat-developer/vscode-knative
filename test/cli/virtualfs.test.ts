@@ -148,7 +148,7 @@ suite('VirtualFileSystem', () => {
     sandbox.restore();
   });
 
-  suite('VFS URI convertion', () => {
+  suite('VFS URI conversion', () => {
     test('should return unique URI', () => {
       const builtURI: Uri = rewiredVFS.vfsUri('knmsx', 'service', 'example', 'yaml');
       assert.equals(builtURI.authority, _uriExternalFile.authority);

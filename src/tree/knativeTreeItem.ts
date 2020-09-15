@@ -74,9 +74,9 @@ export function compareNodes(a: KnativeTreeItem, b: KnativeTreeItem): number {
     return 1;
   }
   // We do not want to consider sorting on anything after the underscore.
-  const acontext = a.contextValue.includes('_') ? a.contextValue.substr(0, a.contextValue.indexOf('_')) : a.contextValue;
-  const bcontext = b.contextValue.includes('_') ? b.contextValue.substr(0, b.contextValue.indexOf('_')) : b.contextValue;
-  const t = acontext.localeCompare(bcontext);
+  const aContext = a.contextValue.includes('_') ? a.contextValue.substr(0, a.contextValue.indexOf('_')) : a.contextValue;
+  const bContext = b.contextValue.includes('_') ? b.contextValue.substr(0, b.contextValue.indexOf('_')) : b.contextValue;
+  const t = aContext.localeCompare(bContext);
   return t || a.label.localeCompare(b.label);
 }
 
@@ -102,7 +102,7 @@ export class KnativeTreeItem extends TreeItem {
       // Ensure we only update revisions with traffic, leaving the others alone.
       const rev: Revision = item as Revision;
       if (rev && rev.traffic && rev.traffic.length > 0) {
-        let tagComposit = '';
+        let tagComposite = '';
         let percentTraffic = 0;
         // Look through the traffic list for revisions.
         // When you find one that matches the revision of this Item, pull it out to update the label.
@@ -111,11 +111,11 @@ export class KnativeTreeItem extends TreeItem {
             // Traffic percent can be assigned to latest and a tag. It needs to be totalled.
             percentTraffic += val.percent ? val.percent : 0;
             // There can be more than one tag, so collect all of them. Then add it to the Description.
-            tagComposit += `${val.latestRevision ? 'latest' : ''}`;
-            tagComposit += `${val.tag ? val.tag : ''} `;
+            tagComposite += `${val.latestRevision ? 'latest' : ''}`;
+            tagComposite += `${val.tag ? val.tag : ''} `;
           }
         });
-        this.desc = tagComposit;
+        this.desc = tagComposite;
         // Revisions with tags are traffic with 0% until the traffic is set. Only show the percentage when traffic is set.
         if (percentTraffic > 0) {
           this.label = `${this.label} (${percentTraffic}%)`;

@@ -29,6 +29,7 @@ import { CliExitData } from './cmdCli';
 import { KnAPI } from './kn-api';
 import * as config from './config';
 import { Errorable } from '../util/errorable';
+import { registerSchema } from '../editor/knativeSchemaRegister';
 
 export const KN_RESOURCE_SCHEME = 'knmsx';
 export const KN_RESOURCE_AUTHORITY = 'loadknativecore';
@@ -38,15 +39,15 @@ export function vfsUri(
   contextValue: string,
   name: string,
   outputFormat: string,
-  namespace?: string | null | undefined /* TODO: rationalise null and undefined */,
+  namespace?: string | null | undefined /* TODO: rationalize null and undefined */,
 ): Uri {
   const c1 = contextValue.replace('/', '-');
   const context = c1.replace('.', '-');
-  const docname = `${context}-${name}.${outputFormat}`;
+  const docName = `${context}-${name}.${outputFormat}`;
   const nonce = new Date().getTime();
-  const nsquery = namespace ? `ns=${namespace}&` : '';
+  const nsQuery = namespace ? `ns=${namespace}&` : '';
   // "knmsx://loadknativecore/serviceknative-tutorial-greeter.yaml?contextValue=service&name=knative-tutorial-greeter&_=1593030763939"
-  const uri = `${schema}://${KN_RESOURCE_AUTHORITY}/${docname}?${nsquery}contextValue=${context}&name=${name}&_=${nonce}`;
+  const uri = `${schema}://${KN_RESOURCE_AUTHORITY}/${docName}?${nsQuery}contextValue=${context}&name=${name}&_=${nonce}`;
   return Uri.parse(uri);
 }
 
@@ -176,6 +177,9 @@ export class KnativeResourceVirtualFileSystemProvider implements FileSystemProvi
     // TODO: Check if the version on the cluster is newer,
     // Then if it is, ask the user if they want to replace the edited version.
     const localFile = await getFilePathAsync(this.yamlDirName, uri.fsPath);
+
+    await registerSchema();
+
     // (example) localFile = "/home/josh/git/vscode-extension-samples/basic-multi-root-sample/.knative/service-example.yaml"
     if (fs.existsSync(localFile)) {
       // use local file

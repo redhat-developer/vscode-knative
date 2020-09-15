@@ -1,0 +1,1066 @@
+{
+  "$id": "https://github.com/talamer/vscode-knative/schemas/knschema.json",
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "JSON schema for Knative Service YAML files",
+  "description": "A knative Service schema",
+  "type": "object",
+  "required": ["apiVersion", "kind", "metadata"],
+  "properties": {
+    "apiVersion": {
+      "type": "string",
+      "description": "APIVersion defines the versioned schema of this representation\nof an object. Servers should convert recognized schemas to the latest\ninternal value, and may reject unrecognized values.\n\nMore info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources",
+      "enum": ["serving.knative.dev/v1", "serving.knative.dev/v1alpha1", "serving.knative.dev/v1beta1"]
+    },
+    "kind": {
+      "type": "string",
+      "description": "Kind is a string value representing the REST resource this\nobject represents. Servers may infer this from the endpoint the client\nsubmits requests to.\n\nCannot be updated. In CamelCase.\n\nMore info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds",
+      "enum": ["Service"]
+    },
+    "metadata": {
+      "type": "object",
+      "required": ["name", "namespace"],
+      "properties": {
+        "annotations": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          },
+          "description": "Annotations is an unstructured key value map stored with\na resource that may be set by external tools to store and retrieve\narbitrary metadata. They are not queryable and should be preserved\nwhen modifying objects.\n\nMore info: http://kubernetes.io/docs/user-guide/annotations"
+        },
+        "clusterName": {
+          "type": "string",
+          "description": "The name of the cluster which the object belongs to. This\nis used to distinguish resources with same name and namespace in different\nclusters. This field is not set anywhere right now and apiserver is\ngoing to ignore it if set in create or update request."
+        },
+        "creationTimestamp": {
+          "format": "date-time",
+          "type": ["string", "null"],
+          "description": "CreationTimestamp is a timestamp representing the server\ntime when this object was created. It is not guaranteed to be set\nin happens-before order across separate operations. Clients may not\nset this value. It is represented in RFC3339 form and is in UTC.\n2020-10-28T15:00:00.05Z (YYYY-MM-DDTHH:MM:SS:MMZ)\n\nPopulated by the system.\n\nRead-only.\n\nNull for lists.\n\nMore info: https://git.k8s.io/community/contributors/devel/api-conventions.md#metadata"
+        },
+        "deletionGracePeriodSeconds": {
+          "format": "int64",
+          "type": "integer",
+          "description": "Number of seconds allowed for this object to gracefully\nterminate before it will be removed from the system. Only set when\ndeletionTimestamp is also set.\n\nMay only be shortened.\n\nRead-only."
+        },
+        "deletionTimestamp": {
+          "format": "date-time",
+          "type": "string",
+          "description": "DeletionTimestamp is RFC 3339 date and time at which this\nresource will be deleted. This field is set by the server when a graceful\ndeletion is requested by the user, and is not directly settable by\na client. The resource is expected to be deleted (no longer visible\nfrom resource lists, and not reachable by name) after the time in\nthis field, once the finalizers list is empty. As long as the finalizers\nlist contains items, deletion is blocked. Once the deletionTimestamp\nis set, this value may not be unset or be set further into the future,\nalthough it may be shortened or the resource may be deleted prior\nto this time. For example, a user may request that a pod is deleted\nin 30 seconds. The Kubelet will react by sending a graceful termination\nsignal to the containers in the pod. After that 30 seconds, the Kubelet\nwill send a hard termination signal (SIGKILL) to the container and\nafter cleanup, remove the pod from the API. In the presence of network\npartitions, this object may still exist after this timestamp, until\nan administrator or automated process can determine the resource is\nfully terminated. \nIf not set, graceful deletion of the object has\nnot been requested.\n2020-10-28T15:00:00.05Z (YYYY-MM-DDTHH:MM:SS:MMZ)\n\nPopulated by the system when a graceful deletion is requested.\n\nRead-only.\n\nMore info: https://git.k8s.io/community/contributors/devel/api-conventions.md#metadata"
+        },
+        "finalizers": {
+          "type": "array",
+          "description": "Must be empty before the object is deleted from the registry.\nEach entry is an identifier for the responsible component that will\nremove the entry from the list. If the deletionTimestamp of the object\nis non-nil, entries in this list can only be removed.",
+          "items": {
+            "type": "string"
+          }
+        },
+        "generateName": {
+          "type": "string",
+          "description": "GenerateName is an optional prefix, used by the server,\nto generate a unique name ONLY IF the Name field has not been provided.\nIf this field is used, the name returned to the client will be different\nthan the name passed. This value will also be combined with a unique\nsuffix. The provided value has the same validation rules as the Name\nfield, and may be truncated by the length of the suffix required to\nmake the value unique on the server. If this field is specified and\nthe generated name exists, the server will NOT return a 409 - instead,\nit will either return 201 Created or 500 with Reason ServerTimeout\nindicating a unique name could not be found in the time allotted,\nand the client should retry (optionally after the time indicated in\nthe Retry-After header).\n\nApplied only if Name is not specified.\n\nMore info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#idempotency"
+        },
+        "generation": {
+          "format": "int64",
+          "type": "integer",
+          "description": "A sequence number representing a specific generation of\nthe desired state.\n\nPopulated by the system.\n\nRead-only."
+        },
+        "labels": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          },
+          "description": "Map of string keys and values that can be used to organize\nand categorize (scope and select) objects. May match selectors of\nreplication controllers and services.\n\nMore info: http://kubernetes.io/docs/user-guide/labels"
+        },
+        "managedFields": {
+          "type": "array",
+          "description": "ManagedFields maps workflow-id and version to the set\nof fields that are managed by that workflow. This is mostly for internal\nhousekeeping, and users typically shouldn't need to set or understand\nthis field. A workflow can be the user's name, a controller's name,\nor the name of a specific apply path like `ci-cd`. The set of fields\nis always in the version that the workflow used when modifying the\nobject. \n This field is alpha and can be changed or removed without\nnotice.",
+          "items": {
+            "type": "object",
+            "properties": {
+              "apiVersion": {
+                "type": "string",
+                "description": "APIVersion defines the version of this resource that\nthis field set applies to. The format is `group/version` just\nlike the top-level APIVersion field. It is necessary to track\nthe version of a field set because it cannot be automatically\nconverted."
+              },
+              "fields": {
+                "type": "object",
+                "additionalProperties": true,
+                "description": "Fields identifies a set of fields."
+              },
+              "manager": {
+                "type": "string",
+                "description": "Manager is an identifier of the workflow managing\nthese fields."
+              },
+              "operation": {
+                "type": "string",
+                "description": "Operation is the type of operation which lead to\nthis ManagedFieldsEntry being created. The only valid values\nfor this field are 'Apply' and 'Update'."
+              },
+              "time": {
+                "format": "date-time",
+                "type": "string",
+                "description": "Time is timestamp of when these fields were set.\nIt should always be empty if Operation is 'Apply'"
+              }
+            }
+          }
+        },
+        "name": {
+          "type": "string",
+          "description": "Name must be unique within a namespace. Is required when\ncreating resources, although some resources may allow a client to\nrequest the generation of an appropriate name automatically. Name\nis primarily intended for creation idempotence and configuration definition.\n\nCannot be updated.\n\nMore info: http://kubernetes.io/docs/user-guide/identifiers#names"
+        },
+        "namespace": {
+          "type": "string",
+          "description": "Namespace defines the space within each name must be unique.\nAn empty namespace is equivalent to the \"default\" namespace, but\n\"default\" is the canonical representation. Not all objects are required\nto be scoped to a namespace - the value of this field for those objects\nwill be empty.\n\n Must be a DNS_LABEL.\n\nCannot be updated.\n\nMore info: http://kubernetes.io/docs/user-guide/namespaces"
+        },
+        "ownerReferences": {
+          "type": "array",
+          "description": "List of objects depended by this object. If ALL objects\nin the list have been deleted, this object will be garbage collected.\nIf this object is managed by a controller, then an entry in this list\nwill point to this controller, with the controller field set to true.\nThere cannot be more than one managing controller.",
+          "items": {
+            "type": "object",
+            "required": ["apiVersion", "kind", "name", "uid"],
+            "properties": {
+              "apiVersion": {
+                "type": "string",
+                "description": "API version of the referent."
+              },
+              "blockOwnerDeletion": {
+                "type": "boolean",
+                "description": "If true, AND if the owner has the \"foregroundDeletion\"\nfinalizer, then the owner cannot be deleted from the key-value\nstore until this reference is removed. Defaults to false. To\nset this field, a user needs \"delete\" permission of the owner,\notherwise 422 (Unprocessable Entity) will be returned."
+              },
+              "controller": {
+                "type": "boolean",
+                "description": "If true, this reference points to the managing controller."
+              },
+              "kind": {
+                "type": "string",
+                "description": "Kind of the referent. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#types-kinds"
+              },
+              "name": {
+                "type": "string",
+                "description": "Name of the referent. More info: http://kubernetes.io/docs/user-guide/identifiers#names"
+              },
+              "uid": {
+                "type": "string",
+                "description": "UID of the referent. More info: http://kubernetes.io/docs/user-guide/identifiers#uids"
+              }
+            }
+          }
+        },
+        "resourceVersion": {
+          "type": "string",
+          "description": "An opaque value that represents the internal version of\nthis object that can be used by clients to determine when objects\nhave changed. May be used for optimistic concurrency, change detection,\nand the watch operation on a resource or set of resources. Clients\nmust treat these values as opaque and passed unmodified back to the\nserver. They may only be valid for a particular resource or set of\nresources.\n\nPopulated by the system.\n\nRead-only.\n\nMore info: https://git.k8s.io/community/contributors/devel/api-conventions.md#concurrency-control-and-consistency"
+        },
+        "selfLink": {
+          "type": "string",
+          "description": "SelfLink is a URL representing this object.\n\nPopulated by the system.\n\nRead-only.\n\nDEPRECATED"
+        },
+        "uid": {
+          "type": "string",
+          "description": "UID is the unique in time and space value for this object.\nIt is typically generated by the server on successful creation of\na resource and is not allowed to change on PUT operations.\n\nPopulated by the system.\n\nRead-only.\n\nMore info: http://kubernetes.io/docs/user-guide/identifiers#uids"
+        }
+      }
+    },
+    "spec": {
+      "type": "object",
+      "properties": {
+        "template": {
+          "type": "object",
+          "description": "A template for the current desired application state.\nChanges to `template` will cause a new Revision to be created as\ndefined in the lifecycle section. The contents of the Service's\nRevisionTemplateSpec is used to create a corresponding Configuration.",
+          "properties": {
+            "metadata": {
+              "type": "object",
+              "description": "Standard object's metadata.",
+              "properties": {
+                "annotations": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "type": "string"
+                  },
+                  "description": "Annotations is an unstructured key value map stored with\na resource that may be set by external tools to store and retrieve\narbitrary metadata. They are not queryable and should be preserved\nwhen modifying objects.\n\nMore info: http://kubernetes.io/docs/user-guide/annotations"
+                },
+                "clusterName": {
+                  "type": "string",
+                  "description": "The name of the cluster which the object belongs to. This\nis used to distinguish resources with same name and namespace in different\nclusters. This field is not set anywhere right now and apiserver is\ngoing to ignore it if set in create or update request."
+                },
+                "creationTimestamp": {
+                  "format": "date-time",
+                  "type": ["string", "null"],
+                  "description": "CreationTimestamp is a timestamp representing the server\ntime when this object was created. It is not guaranteed to be set\nin happens-before order across separate operations. Clients may not\nset this value. It is represented in RFC3339 form and is in UTC.\n2020-10-28T15:00:00.05Z (YYYY-MM-DDTHH:MM:SS:MMZ)\n\nPopulated by the system.\n\nRead-only.\n\nNull for lists.\n\nMore info: https://git.k8s.io/community/contributors/devel/api-conventions.md#metadata",
+                  "nullable": true
+                },
+                "deletionGracePeriodSeconds": {
+                  "format": "int64",
+                  "type": "integer",
+                  "description": "Number of seconds allowed for this object to gracefully\nterminate before it will be removed from the system. Only set when\ndeletionTimestamp is also set.\n\nMay only be shortened.\n\nRead-only."
+                },
+                "deletionTimestamp": {
+                  "format": "date-time",
+                  "type": "string",
+                  "description": "DeletionTimestamp is RFC 3339 date and time at which this\nresource will be deleted. This field is set by the server when a graceful\ndeletion is requested by the user, and is not directly settable by\na client. The resource is expected to be deleted (no longer visible\nfrom resource lists, and not reachable by name) after the time in\nthis field, once the finalizers list is empty. As long as the finalizers\nlist contains items, deletion is blocked. Once the deletionTimestamp\nis set, this value may not be unset or be set further into the future,\nalthough it may be shortened or the resource may be deleted prior\nto this time. For example, a user may request that a pod is deleted\nin 30 seconds. The Kubelet will react by sending a graceful termination\nsignal to the containers in the pod. After that 30 seconds, the Kubelet\nwill send a hard termination signal (SIGKILL) to the container and\nafter cleanup, remove the pod from the API. In the presence of network\npartitions, this object may still exist after this timestamp, until\nan administrator or automated process can determine the resource is\nfully terminated. \nIf not set, graceful deletion of the object has\nnot been requested.\n2020-10-28T15:00:00.05Z (YYYY-MM-DDTHH:MM:SS:MMZ)\n\nPopulated by the system when a graceful deletion is requested.\n\nRead-only.\n\nMore info: https://git.k8s.io/community/contributors/devel/api-conventions.md#metadata"
+                },
+                "finalizers": {
+                  "type": "array",
+                  "description": "Must be empty before the object is deleted from the registry.\nEach entry is an identifier for the responsible component that will\nremove the entry from the list. If the deletionTimestamp of the object\nis non-nil, entries in this list can only be removed.",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "generateName": {
+                  "type": "string",
+                  "description": "GenerateName is an optional prefix, used by the server,\nto generate a unique name ONLY IF the Name field has not been provided.\nIf this field is used, the name returned to the client will be different\nthan the name passed. This value will also be combined with a unique\nsuffix. The provided value has the same validation rules as the Name\nfield, and may be truncated by the length of the suffix required to\nmake the value unique on the server. If this field is specified and\nthe generated name exists, the server will NOT return a 409 - instead,\nit will either return 201 Created or 500 with Reason ServerTimeout\nindicating a unique name could not be found in the time allotted,\nand the client should retry (optionally after the time indicated in\nthe Retry-After header).\n\nApplied only if Name is not specified.\n\nMore info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#idempotency"
+                },
+                "generation": {
+                  "format": "int64",
+                  "type": "integer",
+                  "description": "A sequence number representing a specific generation of\nthe desired state.\n\nPopulated by the system.\n\nRead-only."
+                },
+                "labels": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "type": "string"
+                  },
+                  "description": "Map of string keys and values that can be used to organize\nand categorize (scope and select) objects. May match selectors of\nreplication controllers and services.\n\nMore info: http://kubernetes.io/docs/user-guide/labels"
+                },
+                "managedFields": {
+                  "type": "array",
+                  "description": "ManagedFields maps workflow-id and version to the set\nof fields that are managed by that workflow. This is mostly for internal\nhousekeeping, and users typically shouldn't need to set or understand\nthis field. A workflow can be the user's name, a controller's name,\nor the name of a specific apply path like `ci-cd`. The set of fields\nis always in the version that the workflow used when modifying the\nobject. \n This field is alpha and can be changed or removed without\nnotice.",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "apiVersion": {
+                        "type": "string",
+                        "description": "APIVersion defines the version of this resource that\nthis field set applies to. The format is `group/version` just\nlike the top-level APIVersion field. It is necessary to track\nthe version of a field set because it cannot be automatically\nconverted."
+                      },
+                      "fields": {
+                        "type": "object",
+                        "additionalProperties": true,
+                        "description": "Fields identifies a set of fields."
+                      },
+                      "manager": {
+                        "type": "string",
+                        "description": "Manager is an identifier of the workflow managing\nthese fields."
+                      },
+                      "operation": {
+                        "type": "string",
+                        "description": "Operation is the type of operation which lead to\nthis ManagedFieldsEntry being created. The only valid values\nfor this field are 'Apply' and 'Update'."
+                      },
+                      "time": {
+                        "format": "date-time",
+                        "type": "string",
+                        "description": "Time is timestamp of when these fields were set.\nIt should always be empty if Operation is 'Apply'"
+                      }
+                    }
+                  }
+                },
+                "name": {
+                  "type": "string",
+                  "description": "Name must be unique within a namespace. Is required when\ncreating resources, although some resources may allow a client to\nrequest the generation of an appropriate name automatically. Name\nis primarily intended for creation idempotence and configuration definition.\n\nCannot be updated.\n\nMore info: http://kubernetes.io/docs/user-guide/identifiers#names"
+                },
+                "namespace": {
+                  "type": "string",
+                  "description": "Namespace defines the space within each name must be unique.\nAn empty namespace is equivalent to the \"default\" namespace, but\n\"default\" is the canonical representation. Not all objects are required\nto be scoped to a namespace - the value of this field for those objects\nwill be empty.\n\n Must be a DNS_LABEL.\n\nCannot be updated.\n\nMore info: http://kubernetes.io/docs/user-guide/namespaces"
+                },
+                "ownerReferences": {
+                  "type": "array",
+                  "description": "List of objects depended by this object. If ALL objects\nin the list have been deleted, this object will be garbage collected.\nIf this object is managed by a controller, then an entry in this list\nwill point to this controller, with the controller field set to true.\nThere cannot be more than one managing controller.",
+                  "items": {
+                    "type": "object",
+                    "required": ["apiVersion", "kind", "name", "uid"],
+                    "properties": {
+                      "apiVersion": {
+                        "type": "string",
+                        "description": "API version of the referent."
+                      },
+                      "blockOwnerDeletion": {
+                        "type": "boolean",
+                        "description": "If true, AND if the owner has the \"foregroundDeletion\"\nfinalizer, then the owner cannot be deleted from the key-value\nstore until this reference is removed. Defaults to false. To\nset this field, a user needs \"delete\" permission of the owner,\notherwise 422 (Unprocessable Entity) will be returned."
+                      },
+                      "controller": {
+                        "type": "boolean",
+                        "description": "If true, this reference points to the managing controller."
+                      },
+                      "kind": {
+                        "type": "string",
+                        "description": "Kind of the referent. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#types-kinds"
+                      },
+                      "name": {
+                        "type": "string",
+                        "description": "Name of the referent. More info: http://kubernetes.io/docs/user-guide/identifiers#names"
+                      },
+                      "uid": {
+                        "type": "string",
+                        "description": "UID of the referent. More info: http://kubernetes.io/docs/user-guide/identifiers#uids"
+                      }
+                    }
+                  }
+                },
+                "resourceVersion": {
+                  "type": "string",
+                  "description": "An opaque value that represents the internal version of\nthis object that can be used by clients to determine when objects\nhave changed. May be used for optimistic concurrency, change detection,\nand the watch operation on a resource or set of resources. Clients\nmust treat these values as opaque and passed unmodified back to the\nserver. They may only be valid for a particular resource or set of\nresources.\n\nPopulated by the system.\n\nRead-only.\n\nMore info: https://git.k8s.io/community/contributors/devel/api-conventions.md#concurrency-control-and-consistency"
+                },
+                "selfLink": {
+                  "type": "string",
+                  "description": "SelfLink is a URL representing this object.\n\nPopulated by the system.\n\nRead-only.\n\nDEPRECATED"
+                },
+                "uid": {
+                  "type": "string",
+                  "description": "UID is the unique in time and space value for this object.\nIt is typically generated by the server on successful creation of\na resource and is not allowed to change on PUT operations.\n\nPopulated by the system.\n\nRead-only.\n\nMore info: http://kubernetes.io/docs/user-guide/identifiers#uids"
+                }
+              }
+            },
+            "spec": {
+              "type": "object",
+              "description": "Specification of the desired behavior of the pod.",
+              "properties": {
+                "containers": {
+                  "type": "array",
+                  "minItems": 1,
+                  "maxItems": 1,
+                  "description": "Specifies the parameters used to execute each\ncontainer instance corresponding to this Revision.",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "args": {
+                        "type": "array",
+                        "description": "Arguments to the entrypoint. The docker image's\nCMD is used if this is not provided.",
+                        "items": {
+                          "type": "string"
+                        }
+                      },
+                      "command": {
+                        "type": "array",
+                        "description": "Entrypoint array. Not executed within a shell.\n\nThe docker image's ENTRYPOINT is used if this is not provided.",
+                        "items": {
+                          "type": "string"
+                        }
+                      },
+                      "env": {
+                        "type": "array",
+                        "description": "As specified in Kubernetes core/v1.Container.",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "name": {
+                              "type": "string",
+                              "description": "As specified in Kubernetes core/v1.EnvVar"
+                            },
+                            "value": {
+                              "type": "string",
+                              "description": "As specified in Kubernetes core/v1.EnvVar. Must have one of value or valueFrom."
+                            },
+                            "valueFrom": {
+                              "type": "object",
+                              "description": "As specified in Kubernetes core/v1.EnvVar. Must have one of value or valueFrom.",
+                              "properties": {
+                                "configMapKeyRef": {
+                                  "type": "object",
+                                  "description": "As specified in Kubernetes core/v1.EnvVarSource.\nMust have one of configMapKeyRef or secretKeyRef.",
+                                  "properties": {
+                                    "key": {
+                                      "type": "string",
+                                      "description": "As specified in Kubernetes core/v1.ConfigMapKeySelector."
+                                    },
+                                    "name": {
+                                      "type": "string",
+                                      "description": "As specified in Kubernetes core/v1.ConfigMapKeySelector."
+                                    },
+                                    "optional": {
+                                      "type": "boolean",
+                                      "description": "As specified in Kubernetes core/v1.ConfigMapKeySelector."
+                                    }
+                                  }
+                                },
+                                "secretKeyRef": {
+                                  "type": "object",
+                                  "description": "As specified in Kubernetes core/v1.EnvVarSource.\nMust have one of configMapKeyRef or secretKeyRef.",
+                                  "properties": {
+                                    "key": {
+                                      "type": "string",
+                                      "description": "As specified in Kubernetes core/v1.SecretKeySelector."
+                                    },
+                                    "name": {
+                                      "type": "string",
+                                      "description": "As specified in Kubernetes core/v1.SecretKeySelector."
+                                    },
+                                    "optional": {
+                                      "type": "boolean",
+                                      "description": "As specified in Kubernetes core/v1.SecretKeySelector."
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      },
+                      "envFrom": {
+                        "type": "array",
+                        "description": "As specified in Kubernetes core/v1.Container.",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "configMapRef": {
+                              "type": "object",
+                              "description": "As specified in Kubernetes core/v1.EnvFromSource.",
+                              "properties": {
+                                "name": {
+                                  "type": "string",
+                                  "description": "As specified in Kubernetes core/v1.ConfigMapEnvSource."
+                                },
+                                "optional": {
+                                  "type": "boolean",
+                                  "description": "As specified in Kubernetes core/v1.ConfigMapEnvSource."
+                                }
+                              }
+                            },
+                            "prefix": {
+                              "type": "string",
+                              "description": "As specified in Kubernetes core/v1.EnvFromSource."
+                            },
+                            "secretRef": {
+                              "type": "object",
+                              "description": "As specified in Kubernetes core/v1.EnvFromSource.",
+                              "properties": {
+                                "name": {
+                                  "type": "string",
+                                  "description": "As specified in Kubernetes core/v1.SecretEnvSource."
+                                },
+                                "optional": {
+                                  "type": "boolean",
+                                  "description": "As specified in Kubernetes core/v1.SecretEnvSource."
+                                }
+                              }
+                            }
+                          }
+                        }
+                      },
+                      "image": {
+                        "type": "string",
+                        "description": "Docker image name.\n\nMore info: https://kubernetes.io/docs/concepts/containers/images\n\nThis field is optional to allow higher level config management to\ndefault or override container images in workload controllers like\nDeployments and StatefulSets."
+                      },
+                      "imagePullPolicy": {
+                        "type": "string",
+                        "description": "As specified in Kubernetes core/v1.Container.\nHowever, Knative resolves the image to a digest. The pull\npolicy will be applied against the digest of the resolved\nimage and not the image tag."
+                      },
+                      "livenessProbe": {
+                        "type": "object",
+                        "description": "As specified in Kubernetes core/v1.Container.",
+                        "properties": {
+                          "exec": {
+                            "type": "object",
+                            "description": "As specified in Kubernetes core/v1.Probe.",
+                            "properties": {
+                              "command": {
+                                "type": "array",
+                                "description": "As specified in Kubernetes core/v1.ExecAction.",
+                                "items": {
+                                  "types": "string"
+                                }
+                              }
+                            }
+                          },
+                          "failureThreshold": {
+                            "type": "string",
+                            "description": "As specified in Kubernetes core/v1.Probe."
+                          },
+                          "httpGet": {
+                            "type": "object",
+                            "description": "As specified in Kubernetes core/v1.Probe.",
+                            "properties": {
+                              "host": {
+                                "type": "string",
+                                "description": "As specified in Kubernetes core/v1.HTTPGetAction."
+                              },
+                              "httpHeaders": {
+                                "type": "object",
+                                "description": "As specified in Kubernetes core/v1.HTTPGetAction.",
+                                "properties": {
+                                  "name": {
+                                    "type": "string",
+                                    "description": "As specified in Kubernetes core/v1.HTTPHeader."
+                                  },
+                                  "value": {
+                                    "type": "string",
+                                    "description": "As specified in Kubernetes core/v1.HTTPHeader."
+                                  }
+                                }
+                              },
+                              "path": {
+                                "type": "string",
+                                "description": "As specified in Kubernetes core/v1.HTTPGetAction."
+                              },
+                              "scheme": {
+                                "type": "string",
+                                "description": "As specified in Kubernetes core/v1.HTTPGetAction."
+                              }
+                            }
+                          },
+                          "initialDelaySeconds": {
+                            "type": "integer",
+                            "description": "As specified in Kubernetes core/v1.Probe."
+                          },
+                          "successThreshold": {
+                            "type": "integer",
+                            "format": "int32",
+                            "minimum": 1,
+                            "default": 1,
+                            "description": "As specified in Kubernetes core/v1.Probe."
+                          },
+                          "tcpSocket": {
+                            "type": "object",
+                            "description": "As specified in Kubernetes core/v1.Probe.",
+                            "properties": {
+                              "host": {
+                                "type": "string",
+                                "description": "As specified in Kubernetes core/v1.TCPSocketAction."
+                              }
+                            }
+                          },
+                          "timeoutSeconds": {
+                            "type": "integer",
+                            "description": "As specified in Kubernetes core/v1.Probe.",
+                            "default": 300,
+                            "minimum": 0,
+                            "maximum": 600
+                          }
+                        }
+                      },
+                      "name": {
+                        "type": "string",
+                        "description": "Name of the container specified as a DNS_LABEL.\nEach container in a pod must have a unique name (DNS_LABEL)."
+                      },
+                      "ports": {
+                        "type": "array",
+                        "minItems": 0,
+                        "maxItems": 1,
+                        "description": "List of ports to expose from the container.\nExposing a port here gives the system additional information\nabout the network connections a container uses, but is\nprimarily informational. Not specifying a port here DOES NOT\nprevent that port from being exposed. Any port which is\nlistening on the default \"0.0.0.0\" address inside a\ncontainer will be accessible from the network.\nOnly a single port may be specified. The port\nmust be named as described in the runtime contract.",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "name": {
+                              "type": "string",
+                              "description": "Must be one of `http1` or `h2c` (if supported). Defaults to `http1`."
+                            },
+                            "containerPort": {
+                              "type": "integer",
+                              "description": "The selected port for which Knative will direct traffic to the user container."
+                            },
+                            "hostIP": {
+                              "type": "string",
+                              "description": "What host IP to bind the external port to."
+                            },
+                            "hostPort": {
+                              "type": "integer",
+                              "description": "Number of port to expose on the host. If specified, this must be a valid port\nnumber, 0 < x < 65536. If HostNetwork is specified, this must match ContainerPort.\nMost containers do not need this."
+                            },
+                            "protocol": {
+                              "type": "string",
+                              "description": "Protocol for port. Must be UDP, TCP, or SCTP. Defaults to TCP.",
+                              "enum": ["TCP", "UDP", "SCTP"]
+                            }
+                          }
+                        }
+                      },
+                      "readinessProbe": {
+                        "type": "object",
+                        "description": "As specified in Kubernetes core/v1.Container.",
+                        "properties": {
+                          "exec": {
+                            "type": "object",
+                            "description": "As specified in Kubernetes core/v1.Probe.",
+                            "properties": {
+                              "command": {
+                                "type": "array",
+                                "description": "As specified in Kubernetes core/v1.ExecAction.",
+                                "items": {
+                                  "types": "string"
+                                }
+                              }
+                            }
+                          },
+                          "failureThreshold": {
+                            "type": "string",
+                            "description": "As specified in Kubernetes core/v1.Probe."
+                          },
+                          "httpGet": {
+                            "type": "object",
+                            "description": "As specified in Kubernetes core/v1.Probe.",
+                            "properties": {
+                              "host": {
+                                "type": "string",
+                                "description": "As specified in Kubernetes core/v1.HTTPGetAction."
+                              },
+                              "httpHeaders": {
+                                "type": "object",
+                                "description": "As specified in Kubernetes core/v1.HTTPGetAction.",
+                                "properties": {
+                                  "name": {
+                                    "type": "string",
+                                    "description": "As specified in Kubernetes core/v1.HTTPHeader."
+                                  },
+                                  "value": {
+                                    "type": "string",
+                                    "description": "As specified in Kubernetes core/v1.HTTPHeader."
+                                  }
+                                }
+                              },
+                              "path": {
+                                "type": "string",
+                                "description": "As specified in Kubernetes core/v1.HTTPGetAction."
+                              },
+                              "scheme": {
+                                "type": "string",
+                                "description": "As specified in Kubernetes core/v1.HTTPGetAction."
+                              }
+                            }
+                          },
+                          "initialDelaySeconds": {
+                            "type": "integer",
+                            "description": "As specified in Kubernetes core/v1.Probe."
+                          },
+                          "successThreshold": {
+                            "type": "integer",
+                            "description": "As specified in Kubernetes core/v1.Probe."
+                          },
+                          "tcpSocket": {
+                            "type": "object",
+                            "description": "As specified in Kubernetes core/v1.Probe.",
+                            "properties": {
+                              "host": {
+                                "type": "string",
+                                "description": "As specified in Kubernetes core/v1.TCPSocketAction."
+                              }
+                            }
+                          },
+                          "timeoutSeconds": {
+                            "type": "integer",
+                            "description": "As specified in Kubernetes core/v1.Probe.",
+                            "default": 300,
+                            "minimum": 0,
+                            "maximum": 600
+                          }
+                        }
+                      },
+                      "resources": {
+                        "type": "object",
+                        "description": "As specified in Kubernetes core/v1.Container.",
+                        "properties": {
+                          "limits": {
+                            "type": "object",
+                            "description": "Must support at least cpu and memory. See Kubernetes."
+                          },
+                          "requests": {
+                            "type": "object",
+                            "description": "Must support at least cpu and memory. See Kubernetes."
+                          }
+                        }
+                      },
+                      "securityContext": {
+                        "type": "object",
+                        "description": "In `securityContext`, only `runAsUser` MAY be set.",
+                        "properties": {
+                          "runAsUser": {
+                            "type": "integer",
+                            "description": "As specified in Kubernetes core/v1.SecurityContext"
+                          }
+                        }
+                      },
+                      "terminationMessagePath": {
+                        "type": "string",
+                        "description": "As specified in Kubernetes core/v1.Container."
+                      },
+                      "terminationMessagePolicy": {
+                        "type": "string",
+                        "description": "As specified in Kubernetes core/v1.Container."
+                      },
+                      "volumeMounts": {
+                        "type": "array",
+                        "description": "`volumeMounts` MUST correspond to a volume\nand specify an absolute mount path which does not shadow\nthe runtime contract directories.",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "mountPath": {
+                              "type": "string",
+                              "description": "As specified in Kubernetes core/v1.VolumeMount."
+                            },
+                            "name": {
+                              "type": "string",
+                              "description": "As specified in Kubernetes core/v1.VolumeMount."
+                            },
+                            "subPath": {
+                              "type": "string",
+                              "description": "As specified in Kubernetes core/v1.VolumeMount."
+                            },
+                            "readOnly": {
+                              "type": "boolean",
+                              "description": "Must be true. Defaults to true.",
+                              "default": true
+                            }
+                          }
+                        }
+                      },
+                      "workingDir": {
+                        "type": "string",
+                        "description": "Container's working directory.\n\nIf not specified, the container runtime's default will\nbe used, which might be configured in the container image."
+                      }
+                    }
+                  }
+                },
+                "volumes": {
+                  "type": "array",
+                  "description": "A list of Volumes to make available to `containers[0]`.\n\nMore info: https://kubernetes.io/docs/concepts/storage/volumes",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "configMap": {
+                        "type": "object",
+                        "description": "As specified in Kubernetes core/v1.Volume.",
+                        "properties": {
+                          "defaultMode": {
+                            "type": "integer",
+                            "description": "As specified in Kubernetes core/v1.ConfigMapVolumeSource."
+                          },
+                          "items": {
+                            "type": "array",
+                            "description": "As specified in Kubernetes core/v1.ConfigMapVolumeSource.",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "key": {
+                                  "type": "string",
+                                  "description": "As specified in Kubernetes core/v1.KeyToPath."
+                                },
+                                "mode": {
+                                  "type": "integer",
+                                  "description": "As specified in Kubernetes core/v1.KeyToPath."
+                                },
+                                "path": {
+                                  "type": "string",
+                                  "description": "As specified in Kubernetes core/v1.KeyToPath."
+                                }
+                              }
+                            }
+                          },
+                          "name": {
+                            "type": "string",
+                            "description": "As specified in Kubernetes core/v1.ConfigMapVolumeSource."
+                          },
+                          "optional": {
+                            "type": "boolean",
+                            "description": "As specified in Kubernetes core/v1.ConfigMapVolumeSource."
+                          }
+                        }
+                      },
+                      "secret": {
+                        "type": "object",
+                        "description": "As specified in Kubernetes core/v1.Volume.",
+                        "properties": {
+                          "defaultMode": {
+                            "type": "integer",
+                            "description": "As specified in Kubernetes core/v1.SecretVolumeSource."
+                          },
+                          "items": {
+                            "type": "array",
+                            "description": "As specified in Kubernetes core/v1.SecretVolumeSource.",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "key": {
+                                  "type": "string",
+                                  "description": "As specified in Kubernetes core/v1.KeyToPath."
+                                },
+                                "mode": {
+                                  "type": "integer",
+                                  "description": "As specified in Kubernetes core/v1.KeyToPath."
+                                },
+                                "path": {
+                                  "type": "string",
+                                  "description": "As specified in Kubernetes core/v1.KeyToPath."
+                                }
+                              }
+                            }
+                          },
+                          "name": {
+                            "type": "string",
+                            "description": "As specified in Kubernetes core/v1.SecretVolumeSource."
+                          },
+                          "optional": {
+                            "type": "boolean",
+                            "description": "As specified in Kubernetes core/v1.SecretVolumeSource."
+                          }
+                        }
+                      },
+                      "projected": {
+                        "type": "object",
+                        "description": "As specified in Kubernetes core/v1.Volume.",
+                        "properties": {
+                          "defaultMode": {
+                            "type": "integer",
+                            "description": "As specified in Kubernetes core/v1.ProjectedVolumeSource."
+                          },
+                          "sources": {
+                            "type": "array",
+                            "description": "As specified in Kubernetes core/v1.ProjectedVolumeSource.",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "configMap": {
+                                  "type": "object",
+                                  "description": "As specified in Kubernetes core/v1.VolumeProjection.",
+                                  "properties": {
+                                    "items": {
+                                      "type": "array",
+                                      "description": "As specified in Kubernetes core/v1.ConfigMapProjection.",
+                                      "items": {
+                                        "type": "object",
+                                        "properties": {
+                                          "key": {
+                                            "type": "string",
+                                            "description": "As specified in Kubernetes core/v1.KeyToPath."
+                                          },
+                                          "mode": {
+                                            "type": "integer",
+                                            "description": "As specified in Kubernetes core/v1.KeyToPath."
+                                          },
+                                          "path": {
+                                            "type": "string",
+                                            "description": "As specified in Kubernetes core/v1.KeyToPath."
+                                          }
+                                        }
+                                      }
+                                    },
+                                    "secret": {
+                                      "type": "string",
+                                      "description": "As specified in Kubernetes core/v1.ConfigMapProjection."
+                                    },
+                                    "optional": {
+                                      "type": "boolean",
+                                      "description": "As specified in Kubernetes core/v1.ConfigMapProjection."
+                                    }
+                                  }
+                                },
+                                "secret": {
+                                  "type": "object",
+                                  "description": "As specified in Kubernetes core/v1.VolumeProjection.",
+                                  "properties": {
+                                    "items": {
+                                      "type": "array",
+                                      "description": "As specified in Kubernetes core/v1.SecretProjection.",
+                                      "items": {
+                                        "type": "object",
+                                        "properties": {
+                                          "key": {
+                                            "type": "string",
+                                            "description": "As specified in Kubernetes core/v1.KeyToPath."
+                                          },
+                                          "mode": {
+                                            "type": "integer",
+                                            "description": "As specified in Kubernetes core/v1.KeyToPath."
+                                          },
+                                          "path": {
+                                            "type": "string",
+                                            "description": "As specified in Kubernetes core/v1.KeyToPath."
+                                          }
+                                        }
+                                      }
+                                    },
+                                    "name": {
+                                      "type": "string",
+                                      "description": "As specified in Kubernetes core/v1.SecretProjection."
+                                    },
+                                    "optional": {
+                                      "type": "boolean",
+                                      "description": "As specified in Kubernetes core/v1.SecretProjection."
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "timeoutSeconds": {
+                  "format": "int64",
+                  "type": "integer",
+                  "description": "The maximum duration in seconds that the request\nrouting layer will wait for a request delivered to a container\nto progress (send network traffic).\n\nIf unspecified, a system default will be provided.",
+                  "default": 300,
+                  "minimum": 0,
+                  "maximum": 600
+                },
+                "containerConcurrency": {
+                  "format": "int64",
+                  "type": "integer",
+                  "description": "The maximum number of concurrent requests being\nhandled by a single instance of containers[0].\n\nDefaults to `0` which means concurrency to the application\nis not limited, and the system decides the target concurrency\nfor the autoscaler.",
+                  "default": 0,
+                  "maximum": 1000
+                },
+                "serviceAccountName": {
+                  "type": "string",
+                  "description": "The name of a Service Account which `containers[0]`\nshould be run as. The Service Account should be used to provide\naccess and authorization to the container."
+                },
+                "imagePullSecrets": {
+                  "type": "array",
+                  "description": "The list of secrets for pulling images from private\nrepositories.",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "name": {
+                        "type": "string",
+                        "description": "As specified in Kubernetes core/v1.LocalObjectReference."
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "traffic": {
+          "type": "array",
+          "description": "Traffic specifies how to distribute traffic over a\ncollection of Revisions belonging to the Service. If traffic is\nempty or not provided, defaults to 100% traffic to the latest\n`Ready` Revision. The contents of the Service's TrafficTarget is\nused to create a corresponding Route.",
+          "items": {
+            "type": "object",
+            "properties": {
+              "revisionName": {
+                "type": "string",
+                "description": "A specific revision to which to send this portion\nof traffic. This is mutually exclusive with configurationName."
+              },
+              "latestRevision": {
+                "type": "boolean",
+                "description": "`latestRevision` may be optionally provided to indicate\nthat the latest ready Revision of the Configuration should be used\nfor this traffic target. When provided latestRevision MUST be true\nif revisionName is empty, and it MUST be false when revisionName is non-empty."
+              },
+              "tag": {
+                "type": "string",
+                "description": "Tag is optionally used to expose a dedicated URL for\nreferencing this target exclusively. The dedicated URL MUST include\nin it the string provided by tag."
+              },
+              "percent": {
+                "type": "integer",
+                "description": "The percentage of requests which should be allocated\nfrom the main Route domain name to the specified `revisionName` or\n`configurationName`. \nAll `percent` values in `traffic` MUST sum to 100.",
+                "minimum": 0,
+                "maximum": 100
+              },
+              "url": {
+                "type": "string",
+                "description": "The URL at which the tag endpoint is reachable. It\nMUST not be taken as input, and is only provided on Status."
+              }
+            }
+          }
+        }
+      }
+    },
+    "status": {
+      "type": "object",
+      "properties": {
+        "conditions": {
+          "type": "array",
+          "description": "Used for signalling errors, see link. Conditions of type\nReady MUST be present. Conditions of type ConfigurationsReady and\nRoutesReady MAY be present.",
+          "items": {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "description": "The category of the condition, as a short, CamelCase\nword or phrase. This is the primary key of the Conditions list\nwhen viewed as a map. "
+              },
+              "status": {
+                "type": "string",
+                "description": "The last measured status of this condition.",
+                "example": ["True", "False", "Unknown"]
+              },
+              "reason": {
+                "type": "string",
+                "description": "One-word CamelCase reason for the condition's last transition."
+              },
+              "message": {
+                "type": "string",
+                "description": "Human-readable sentence describing the last transition."
+              },
+              "severity": {
+                "type": "string",
+                "description": "If present, represents the severity of the condition.\nAn empty severity represents a severity level of `Error`.",
+                "example": ["", "Warning", "Info"]
+              },
+              "lastTransitionTime": {
+                "type": "string",
+                "format": "date-time",
+                "description": "Last update time for this condition."
+              }
+            }
+          }
+        },
+        "observedGeneration": {
+          "format": "int64",
+          "type": "integer",
+          "description": "The latest `metadata.generation` that the reconciler\nhas observed. If `observedGeneration` is updated, `conditions` MUST\nbe updated with current status in the same transaction."
+        },
+        "url": {
+          "type": "string",
+          "description": "A URL holds the url that will distribute traffic over the provided\ntraffic targets. It generally has the form\n\n`http[s]://{route-name}.{route-namespace}.{cluster-level-suffix}` "
+        },
+        "address": {
+          "type": "object",
+          "description": "A duck-typed interface for loading the delivery\naddress of the destination, copied from the owned Route. The\nURL provided in address MAY only be internally-routable.",
+          "properties": {
+            "url": {
+              "type": "string",
+              "description": "A generic mechanism for a custom resource definition\nto indicate a destination for message delivery."
+            }
+          }
+        },
+        "traffic": {
+          "description": "Detailed current traffic split routing information.",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "revisionName": {
+                "type": "string",
+                "description": "A specific revision to which to send this portion\nof traffic. This is mutually exclusive with configurationName."
+              },
+              "latestRevision": {
+                "type": "boolean",
+                "description": "`latestRevision` may be optionally provided to indicate\nthat the latest ready Revision of the Configuration should be used\nfor this traffic target. When provided latestRevision MUST be true\nif revisionName is empty, and it MUST be false when revisionName is non-empty."
+              },
+              "tag": {
+                "type": "string",
+                "description": "Tag is optionally used to expose a dedicated URL for\nreferencing this target exclusively. The dedicated URL MUST include\nin it the string provided by tag."
+              },
+              "percent": {
+                "type": "integer",
+                "description": "The percentage of requests which should be allocated\nfrom the main Route domain name to the specified `revisionName` or\n`configurationName`. \nAll `percent` values in `traffic` MUST sum to 100.",
+                "minimum": 0,
+                "maximum": 100
+              },
+              "url": {
+                "type": "string",
+                "description": "The URL at which the tag endpoint is reachable. It\nMUST not be taken as input, and is only provided on Status."
+              }
+            },
+            "oneOf": [
+              {
+                "properties": {
+                  "revisionName": {
+                    "type": "string"
+                  }
+                }
+              },
+              {
+                "properties": {
+                  "configurationName": {
+                    "type": "string"
+                  }
+                }
+              }
+            ]
+          }
+        },
+        "latestReadyRevisionName": {
+          "type": "string",
+          "description": "LatestReadyRevisionName holds the name of the latest Revision stamped out\nfrom this Configuration that has had its `Ready` condition become `True`."
+        },
+        "latestCreatedRevisionName": {
+          "type": "string",
+          "description": "LatestCreatedRevisionName is the last revision that was created from this\nConfiguration. It might not be ready yet, for that use LatestReadyRevisionName."
+        }
+      }
+    }
+  }
+}

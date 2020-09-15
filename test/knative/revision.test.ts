@@ -40,7 +40,7 @@ suite('Revision class', () => {
   };
   const trafficObj: revision.Traffic[] = [
     {
-      confgiurationName: 'myConfiguration',
+      configurationName: 'myConfiguration',
       latestRevision: true,
       percent: 50,
       revisionName: 'late night rev',
