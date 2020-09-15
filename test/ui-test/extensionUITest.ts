@@ -23,6 +23,9 @@ export function extensionsUITest(): void {
       let sideBar: SideBarView;
 
       before(async () => {
+        const controls = await new ActivityBar().getViewControls();
+        // eslint-disable-next-line no-console
+        console.log(controls.map((control) => control.getTitle()));
         view = new ActivityBar().getViewControl(KNativeConstants.KNATIVE_EXTENSION_NAME);
         sideBar = await view.openView();
       });
