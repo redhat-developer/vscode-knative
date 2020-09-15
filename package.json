@@ -39,7 +39,7 @@
     "pretest": "npm run clean && npm run compile && npm run lint && node ./out/build/install-vscode.js",
     "test": "node ./out/build/unit-tests.js",
     "ui-test": "npm run compile && extest setup-and-run out/test/ui-test/allTestsSuite.js",
-    "base-ui-test": "npm run compile && extest setup-and-run out/test/ui-test/baseTestsSuite.js",
+    "base-ui-test": "npm run compile && extest setup-and-run out/test/ui-test/baseTestsSuite.js -e ~/whatever -i",
     "install-test": "npm run clean && npm run compile && node ./out/build/unit-tests.js",
     "update-deps": "node_modules/.bin/ncu --upgrade --loglevel verbose --packageFile package.json && npm update",
     "verify": "node ./out/build/verify-tools.js",
