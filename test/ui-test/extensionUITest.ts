@@ -7,8 +7,8 @@ import { cleanUpNotifications } from './common/testUtils';
  */
 export function extensionsUITest(): void {
   describe('Knative extension', () => {
-    it('should be installed among extensions view', async function context() {
-      this.timeout(5000);
+    it('should be installed among extensions', async function context() {
+      this.timeout(10000);
       const view = new ActivityBar().getViewControl('Extensions');
       const sideBar = await view.openView();
       // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
@@ -28,13 +28,13 @@ export function extensionsUITest(): void {
       });
 
       it('should be available', async function context() {
-        this.timeout(5000);
+        this.timeout(10000);
         const titlePart = sideBar.getTitlePart();
         expect(await titlePart.getTitle()).to.equal(KNativeConstants.KNATIVE_EXTENSION_BAR_NAME);
       });
 
-      it('should provide Add service, Refresh action items', async function context() {
-        this.timeout(5000);
+      it('should provide Add service, Refresh and Report Issue action items', async function context() {
+        this.timeout(10000);
         const actions = await sideBar.getTitlePart().getActions();
         expect(actions.length).to.equal(3);
         actions.forEach((action) => {
@@ -50,6 +50,19 @@ export function extensionsUITest(): void {
             }),
           );
         });
+      });
+    });
+
+    describe('Dependencies', () => {
+      it('Yaml, should be installed among extensions', async function context() {
+        this.timeout(10000);
+        const view = new ActivityBar().getViewControl('Extensions');
+        const sideBar = await view.openView();
+        // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
+        const section = (await sideBar.getContent().getSection('Installed')) as ExtensionsViewSection;
+        const item = await section.findItem(`@installed ${KNativeConstants.YAML_EXTENSION_NAME}`);
+        expect(item).to.be.an.instanceOf(ExtensionsViewItem);
+        expect(await item.getTitle()).to.equal(KNativeConstants.YAML_EXTENSION_NAME);
       });
     });
 
