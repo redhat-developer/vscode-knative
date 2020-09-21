@@ -70,23 +70,25 @@ spec:
         properties:
           apiVersion:
             type: string
-            description: "APIVersion defines the versioned schema of this representation
+            description: |
+              APIVersion defines the versioned schema of this representation
               of an object. Servers should convert recognized schemas to the latest
               internal value, and may reject unrecognized values.
-              \nMore info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources"
+              More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
             enum:
               - serving.knative.dev/v1
               - serving.knative.dev/v1alpha1
               - serving.knative.dev/v1beta1
           kind:
             type: string
-            description: "Kind is a string value representing the REST resource this
+            description: |
+              Kind is a string value representing the REST resource this
               object represents. Servers may infer this from the endpoint the client
               submits requests to.
-              \nCannot be updated. In CamelCase.
-              \nMore info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds"
+              Cannot be updated. In CamelCase.
+              More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
             enum:
-              - "Service"
+              - Service
           metadata:
             type: object
             required:
@@ -97,43 +99,48 @@ spec:
                 type: object
                 additionalProperties:
                   type: string
-                description: "Annotations is an unstructured key value map stored with
+                description: |
+                  Annotations is an unstructured key value map stored with
                   a resource that may be set by external tools to store and retrieve
                   arbitrary metadata. They are not queryable and should be preserved
                   when modifying objects.
-                  \nMore info: http://kubernetes.io/docs/user-guide/annotations"
+                  More info: http://kubernetes.io/docs/user-guide/annotations
               clusterName:
                 type: string
-                description: "The name of the cluster which the object belongs to. This
+                description: |
+                  The name of the cluster which the object belongs to. This
                   is used to distinguish resources with same name and namespace in different
                   clusters. This field is not set anywhere right now and apiserver is
-                  going to ignore it if set in create or update request."
+                  going to ignore it if set in create or update request.
               creationTimestamp:
                 format: date-time
                 type: string
-                description: "CreationTimestamp is a timestamp representing the server
+                description: |
+                  CreationTimestamp is a timestamp representing the server
                   time when this object was created. It is not guaranteed to be set
                   in happens-before order across separate operations. Clients may not
                   set this value. It is represented in RFC3339 form and is in UTC.
                   2020-10-28T15:00:00.05Z (YYYY-MM-DDTHH:MM:SS:MMZ)
-                  \nPopulated by the system.
-                  \nRead-only.
-                  \nNull for lists.
-                  \nMore info: https://git.k8s.io/community/contributors/devel/api-conventions.md#metadata"
+                  Populated by the system.
+                  Read-only.
+                  Null for lists.
+                  More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#metadata
                 nullable: true
 
               deletionGracePeriodSeconds:
                 format: int64
                 type: integer
-                description: "Number of seconds allowed for this object to gracefully
+                description: |
+                  Number of seconds allowed for this object to gracefully
                   terminate before it will be removed from the system. Only set when
                   deletionTimestamp is also set.
-                  \nMay only be shortened.
-                  \nRead-only."
+                  May only be shortened.
+                  Read-only.
               deletionTimestamp:
                 format: date-time
                 type: string
-                description: "DeletionTimestamp is RFC 3339 date and time at which this
+                description: |
+                  DeletionTimestamp is RFC 3339 date and time at which this
                   resource will be deleted. This field is set by the server when a graceful
                   deletion is requested by the user, and is not directly settable by
                   a client. The resource is expected to be deleted (no longer visible
@@ -151,21 +158,23 @@ spec:
                   an administrator or automated process can determine the resource is
                   fully terminated.
                   2020-10-28T15:00:00.05Z (YYYY-MM-DDTHH:MM:SS:MMZ)
-                  \nIf not set, graceful deletion of the object has not been requested.
-                  \nPopulated by the system when a graceful deletion is requested.
-                  \nRead-only.
-                  \nMore info: https://git.k8s.io/community/contributors/devel/api-conventions.md#metadata"
+                  If not set, graceful deletion of the object has not been requested.
+                  Populated by the system when a graceful deletion is requested.
+                  Read-only.
+                  More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#metadata
               finalizers:
                 type: array
-                description: "Must be empty before the object is deleted from the registry.
+                description: |
+                  Must be empty before the object is deleted from the registry.
                   Each entry is an identifier for the responsible component that will
                   remove the entry from the list. If the deletionTimestamp of the object
-                  is non-nil, entries in this list can only be removed."
+                  is non-nil, entries in this list can only be removed.
                 items:
                   type: string
               generateName:
                 type: string
-                description: "GenerateName is an optional prefix, used by the server,
+                description: |
+                  GenerateName is an optional prefix, used by the server,
                   to generate a unique name ONLY IF the Name field has not been provided.
                   If this field is used, the name returned to the client will be different
                   than the name passed. This value will also be combined with a unique
@@ -177,86 +186,97 @@ spec:
                   indicating a unique name could not be found in the time allotted,
                   and the client should retry (optionally after the time indicated in
                   the Retry-After header).
-                  \nApplied only if Name is not specified.
-                  \nMore info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#idempotency"
+                  Applied only if Name is not specified.
+                  More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#idempotency
               generation:
                 format: int64
                 type: integer
-                description: "A sequence number representing a specific generation of
+                description: |
+                  A sequence number representing a specific generation of
                   the desired state.
-                  \nPopulated by the system.
-                  \nRead-only."
+                  Populated by the system.
+                  Read-only.
               labels:
                 type: object
                 additionalProperties:
                   type: string
-                description: "Map of string keys and values that can be used to organize
+                description: |
+                  Map of string keys and values that can be used to organize
                   and categorize (scope and select) objects. May match selectors of
                   replication controllers and services.
-                  \nMore info: http://kubernetes.io/docs/user-guide/labels"
+                  More info: http://kubernetes.io/docs/user-guide/labels
               managedFields:
                 type: array
-                description: "ManagedFields maps workflow-id and version to the set
+                description: |
+                  ManagedFields maps workflow-id and version to the set
                   of fields that are managed by that workflow. This is mostly for internal
                   housekeeping, and users typically shouldn't need to set or understand
                   this field. A workflow can be the user's name, a controller's name,
                   or the name of a specific apply path like `ci-cd`. The set of fields
                   is always in the version that the workflow used when modifying the object.
-                  \nThis field is alpha and can be changed or removed without notice."
+                  This field is alpha and can be changed or removed without notice.
                 items:
                   type: object
                   properties:
                     apiVersion:
                       type: string
-                      description: "APIVersion defines the version of this resource that
+                      description: |
+                        APIVersion defines the version of this resource that
                         this field set applies to. The format is `group/version` just
                         like the top-level APIVersion field. It is necessary to track
                         the version of a field set because it cannot be automatically
-                        converted."
+                        converted.
                     fields:
                       type: object
                       additionalProperties: true
-                      description: "Fields identifies a set of fields."
+                      description: |
+                        Fields identifies a set of fields.
                     manager:
                       type: string
-                      description: "Manager is an identifier of the workflow managing
-                        these fields."
+                      description: |
+                        Manager is an identifier of the workflow managing
+                        these fields.
                     operation:
                       type: string
-                      description: "Operation is the type of operation which lead to
+                      description: |
+                        Operation is the type of operation which lead to
                         this ManagedFieldsEntry being created. The only valid values
-                        for this field are 'Apply' and 'Update'."
+                        for this field are 'Apply' and 'Update'.
                     time:
                       format: date-time
                       type: string
-                      description: "Time is timestamp of when these fields were set.
+                      description: |
+                        Time is timestamp of when these fields were set.
                         It should always be empty if Operation is 'Apply'
-                        2020-10-28T15:00:00.05Z (YYYY-MM-DDTHH:MM:SS:MMZ)"
+                        2020-10-28T15:00:00.05Z (YYYY-MM-DDTHH:MM:SS:MMZ)
               name:
                 type: string
-                description: "Name must be unique within a namespace. Is required when
+                description: |
+                  Name must be unique within a namespace. Is required when
                   creating resources, although some resources may allow a client to
                   request the generation of an appropriate name automatically. Name
                   is primarily intended for creation idempotence and configuration definition.
-                  \nCannot be updated.
-                  \nMore info: http://kubernetes.io/docs/user-guide/identifiers#names"
+                  Cannot be updated.
+                  More info: http://kubernetes.io/docs/user-guide/identifiers#names
               namespace:
                 type: string
-                description: "Namespace defines the space within each name must be unique.
-                  An empty namespace is equivalent to the \"default\" namespace, but
-                  \"default\" is the canonical representation. Not all objects are required
+                description: |
+                  Namespace defines the space within each name must be unique.
+                  An empty namespace is equivalent to the \?default\? namespace, but
+                  \?default\? is the canonical representation. Not all objects are required
                   to be scoped to a namespace - the value of this field for those objects
                   will be empty.
-                  \n Must be a DNS_LABEL.
-                  \nCannot be updated.
-                  \nMore info: http://kubernetes.io/docs/user-guide/namespaces"
+                  Must be a DNS_LABEL.
+                  Cannot be updated.
+                  More info: http://kubernetes.io/docs/user-guide/namespaces
               ownerReferences:
                 type: array
-                description: "List of objects depended by this object. If ALL objects
+                description: |
+                  List of objects depended by this object. If ALL objects
                   in the list have been deleted, this object will be garbage collected.
                   If this object is managed by a controller, then an entry in this list
                   will point to this controller, with the controller field set to true.
-                  There cannot be more than one managing controller."
+                  There cannot be more than one managing controller.
                 items:
                   type: object
                   required:
@@ -267,106 +287,122 @@ spec:
                   properties:
                     apiVersion:
                       type: string
-                      description: "API version of the referent."
+                      description: |
+                        API version of the referent.
                     blockOwnerDeletion:
                       type: boolean
-                      description: "If true, AND if the owner has the \"foregroundDeletion\"
+                      description: |
+                        If true, AND if the owner has the \?foregroundDeletion\?
                         finalizer, then the owner cannot be deleted from the key-value
                         store until this reference is removed. Defaults to false. To
-                        set this field, a user needs \"delete\" permission of the owner,
-                        otherwise 422 (Unprocessable Entity) will be returned."
+                        set this field, a user needs \?delete\? permission of the owner,
+                        otherwise 422 (Unprocessable Entity) will be returned.
                     controller:
                       type: boolean
-                      description: "If true, this reference points to the managing controller."
+                      description: |
+                        If true, this reference points to the managing controller.
                     kind:
                       type: string
-                      description: "Kind of the referent. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#types-kinds"
+                      description: |
+                        Kind of the referent. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#types-kinds
                     name:
                       type: string
-                      description: "Name of the referent. More info: http://kubernetes.io/docs/user-guide/identifiers#names"
+                      description: |
+                        Name of the referent. More info: http://kubernetes.io/docs/user-guide/identifiers#names
                     uid:
                       type: string
-                      description: "UID of the referent. More info: http://kubernetes.io/docs/user-guide/identifiers#uids"
+                      description: |
+                        UID of the referent. More info: http://kubernetes.io/docs/user-guide/identifiers#uids
               resourceVersion:
                 type: string
-                description: "An opaque value that represents the internal version of
+                description: |
+                  An opaque value that represents the internal version of
                   this object that can be used by clients to determine when objects
                   have changed. May be used for optimistic concurrency, change detection,
                   and the watch operation on a resource or set of resources. Clients
                   must treat these values as opaque and passed unmodified back to the
                   server. They may only be valid for a particular resource or set of
                   resources.
-                  \nPopulated by the system.
-                  \nRead-only.
-                  \nMore info: https://git.k8s.io/community/contributors/devel/api-conventions.md#concurrency-control-and-consistency"
+                  Populated by the system.
+                  Read-only.
+                  More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#concurrency-control-and-consistency
               selfLink:
                 type: string
-                description: "SelfLink is a URL representing this object.
-                  \nPopulated by the system.
-                  \nRead-only.
-                  \nDEPRECATED"
+                description: |
+                  SelfLink is a URL representing this object.
+                  Populated by the system.
+                  Read-only.
+                  DEPRECATED
               uid:
                 type: string
-                description: "UID is the unique in time and space value for this object.
+                description: |
+                  UID is the unique in time and space value for this object.
                   It is typically generated by the server on successful creation of
                   a resource and is not allowed to change on PUT operations.
-                  \nPopulated by the system.
-                  \nRead-only.
-                  \nMore info: http://kubernetes.io/docs/user-guide/identifiers#uids"
+                  Populated by the system.
+                  Read-only.
+                  More info: http://kubernetes.io/docs/user-guide/identifiers#uids
           spec:
             type: object
             properties:
               template:
                 type: object
-                description: "A template for the current desired application state.
+                description: |
+                  A template for the current desired application state.
                   Changes to `template` will cause a new Revision to be created as
                   defined in the lifecycle section. The contents of the Service's
-                  RevisionTemplateSpec is used to create a corresponding Configuration."
+                  RevisionTemplateSpec is used to create a corresponding Configuration.
                 properties:
                   metadata:
                     type: object
-                    description: "Standard object's metadata."
+                    description: |
+                      Standard object's metadata.
                     properties:
                       annotations:
                         type: object
                         additionalProperties:
                           type: string
-                        description: "Annotations is an unstructured key value map stored with
+                        description: |
+                          Annotations is an unstructured key value map stored with
                           a resource that may be set by external tools to store and retrieve
                           arbitrary metadata. They are not queryable and should be preserved
                           when modifying objects.
-                          \nMore info: http://kubernetes.io/docs/user-guide/annotations"
+                          More info: http://kubernetes.io/docs/user-guide/annotations
                       clusterName:
                         type: string
-                        description: "The name of the cluster which the object belongs to. This
+                        description: |
+                          The name of the cluster which the object belongs to. This
                           is used to distinguish resources with same name and namespace in different
                           clusters. This field is not set anywhere right now and apiserver is
-                          going to ignore it if set in create or update request."
+                          going to ignore it if set in create or update request.
                       creationTimestamp:
                         format: date-time
                         type: string
-                        description: "CreationTimestamp is a timestamp representing the server
+                        description: |
+                          CreationTimestamp is a timestamp representing the server
                           time when this object was created. It is not guaranteed to be set
                           in happens-before order across separate operations. Clients may not
                           set this value. It is represented in RFC3339 form and is in UTC.
                           2020-10-28T15:00:00.05Z (YYYY-MM-DDTHH:MM:SS:MMZ)
-                          \nPopulated by the system.
-                          \nRead-only.
-                          \nNull for lists.
-                          \nMore info: https://git.k8s.io/community/contributors/devel/api-conventions.md#metadata"
+                          Populated by the system.
+                          Read-only.
+                          Null for lists.
+                          More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#metadata
                         nullable: true
                       deletionGracePeriodSeconds:
                         format: int64
                         type: integer
-                        description: "Number of seconds allowed for this object to gracefully
+                        description: |
+                          Number of seconds allowed for this object to gracefully
                           terminate before it will be removed from the system. Only set when
                           deletionTimestamp is also set.
-                          \nMay only be shortened.
-                          \nRead-only."
+                          May only be shortened.
+                          Read-only.
                       deletionTimestamp:
                         format: date-time
                         type: string
-                        description: "DeletionTimestamp is RFC 3339 date and time at which this
+                        description: |
+                          DeletionTimestamp is RFC 3339 date and time at which this
                           resource will be deleted. This field is set by the server when a graceful
                           deletion is requested by the user, and is not directly settable by
                           a client. The resource is expected to be deleted (no longer visible
@@ -382,23 +418,26 @@ spec:
                           after cleanup, remove the pod from the API. In the presence of network
                           partitions, this object may still exist after this timestamp, until
                           an administrator or automated process can determine the resource is
-                          fully terminated. \nIf not set, graceful deletion of the object has
+                          fully terminated.
+                          If not set, graceful deletion of the object has
                           not been requested.
                           2020-10-28T15:00:00.05Z (YYYY-MM-DDTHH:MM:SS:MMZ)
-                          \nPopulated by the system when a graceful deletion is requested.
-                          \nRead-only.
-                          \nMore info: https://git.k8s.io/community/contributors/devel/api-conventions.md#metadata"
+                          Populated by the system when a graceful deletion is requested.
+                          Read-only.
+                          More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#metadata
                       finalizers:
                         type: array
-                        description: "Must be empty before the object is deleted from the registry.
+                        description: |
+                          Must be empty before the object is deleted from the registry.
                           Each entry is an identifier for the responsible component that will
                           remove the entry from the list. If the deletionTimestamp of the object
-                          is non-nil, entries in this list can only be removed."
+                          is non-nil, entries in this list can only be removed.
                         items:
                           type: string
                       generateName:
                         type: string
-                        description: "GenerateName is an optional prefix, used by the server,
+                        description: |
+                          GenerateName is an optional prefix, used by the server,
                           to generate a unique name ONLY IF the Name field has not been provided.
                           If this field is used, the name returned to the client will be different
                           than the name passed. This value will also be combined with a unique
@@ -410,87 +449,99 @@ spec:
                           indicating a unique name could not be found in the time allotted,
                           and the client should retry (optionally after the time indicated in
                           the Retry-After header).
-                          \nApplied only if Name is not specified.
-                          \nMore info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#idempotency"
+                          Applied only if Name is not specified.
+                          More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#idempotency
                       generation:
                         format: int64
                         type: integer
-                        description: "A sequence number representing a specific generation of
+                        description: |
+                          A sequence number representing a specific generation of
                           the desired state.
-                          \nPopulated by the system.
-                          \nRead-only."
+                          Populated by the system.
+                          Read-only.
                       labels:
                         type: object
                         additionalProperties:
                           type: string
-                        description: "Map of string keys and values that can be used to organize
+                        description: |
+                          Map of string keys and values that can be used to organize
                           and categorize (scope and select) objects. May match selectors of
                           replication controllers and services.
-                          \nMore info: http://kubernetes.io/docs/user-guide/labels"
+                          More info: http://kubernetes.io/docs/user-guide/labels
                       managedFields:
                         type: array
-                        description: "ManagedFields maps workflow-id and version to the set
+                        description: |
+                          ManagedFields maps workflow-id and version to the set
                           of fields that are managed by that workflow. This is mostly for internal
                           housekeeping, and users typically shouldn't need to set or understand
                           this field. A workflow can be the user's name, a controller's name,
                           or the name of a specific apply path like `ci-cd`. The set of fields
                           is always in the version that the workflow used when modifying the
-                          object. \n This field is alpha and can be changed or removed without
-                          notice."
+                          object.
+                          This field is alpha and can be changed or removed without
+                          notice.
                         items:
                           type: object
                           properties:
                             apiVersion:
                               type: string
-                              description: "APIVersion defines the version of this resource that
+                              description: |
+                                APIVersion defines the version of this resource that
                                 this field set applies to. The format is `group/version` just
                                 like the top-level APIVersion field. It is necessary to track
                                 the version of a field set because it cannot be automatically
-                                converted."
+                                converted.
                             fields:
                               type: object
                               additionalProperties: true
-                              description: "Fields identifies a set of fields."
+                              description: |
+                                Fields identifies a set of fields.
                             manager:
                               type: string
-                              description: "Manager is an identifier of the workflow managing
-                                these fields."
+                              description: |
+                                Manager is an identifier of the workflow managing
+                                these fields.
                             operation:
                               type: string
-                              description: "Operation is the type of operation which lead to
+                              description: |
+                                Operation is the type of operation which lead to
                                 this ManagedFieldsEntry being created. The only valid values
-                                for this field are 'Apply' and 'Update'."
+                                for this field are 'Apply' and 'Update'.
                             time:
                               format: date-time
                               type: string
-                              description: "Time is timestamp of when these fields were set.
+                              description: |
+                                Time is timestamp of when these fields were set.
                                 It should always be empty if Operation is 'Apply'
-                                2020-10-28T15:00:00.05Z (YYYY-MM-DDTHH:MM:SS:MMZ)"
+                                2020-10-28T15:00:00.05Z (YYYY-MM-DDTHH:MM:SS:MMZ)
                       name:
                         type: string
-                        description: "Name must be unique within a namespace. Is required when
+                        description: |
+                          Name must be unique within a namespace. Is required when
                           creating resources, although some resources may allow a client to
                           request the generation of an appropriate name automatically. Name
                           is primarily intended for creation idempotence and configuration definition.
-                          \nCannot be updated.
-                          \nMore info: http://kubernetes.io/docs/user-guide/identifiers#names"
+                          Cannot be updated.
+                          More info: http://kubernetes.io/docs/user-guide/identifiers#names
                       namespace:
                         type: string
-                        description: "Namespace defines the space within each name must be unique.
-                          An empty namespace is equivalent to the \"default\" namespace, but
-                          \"default\" is the canonical representation. Not all objects are required
+                        description: |
+                          Namespace defines the space within each name must be unique.
+                          An empty namespace is equivalent to the \?default\? namespace, but
+                          \?default\? is the canonical representation. Not all objects are required
                           to be scoped to a namespace - the value of this field for those objects
                           will be empty.
-                          \n Must be a DNS_LABEL.
-                          \nCannot be updated.
-                          \nMore info: http://kubernetes.io/docs/user-guide/namespaces"
+                           Must be a DNS_LABEL.
+                          Cannot be updated.
+                          More info: http://kubernetes.io/docs/user-guide/namespaces
                       ownerReferences:
                         type: array
-                        description: "List of objects depended by this object. If ALL objects
+                        description: |
+                          List of objects depended by this object. If ALL objects
                           in the list have been deleted, this object will be garbage collected.
                           If this object is managed by a controller, then an entry in this list
                           will point to this controller, with the controller field set to true.
-                          There cannot be more than one managing controller."
+                          There cannot be more than one managing controller.
                         items:
                           type: object
                           required:
@@ -501,602 +552,741 @@ spec:
                           properties:
                             apiVersion:
                               type: string
-                              description: "API version of the referent."
+                              description: |
+                                API version of the referent.
                             blockOwnerDeletion:
                               type: boolean
-                              description: "If true, AND if the owner has the \"foregroundDeletion\"
+                              description: |
+                                If true, AND if the owner has the \?foregroundDeletion\?
                                 finalizer, then the owner cannot be deleted from the key-value
                                 store until this reference is removed. Defaults to false. To
-                                set this field, a user needs \"delete\" permission of the owner,
-                                otherwise 422 (Unprocessable Entity) will be returned."
+                                set this field, a user needs \?delete\? permission of the owner,
+                                otherwise 422 (Unprocessable Entity) will be returned.
                             controller:
                               type: boolean
-                              description: "If true, this reference points to the managing controller."
+                              description: |
+                                If true, this reference points to the managing controller.
                             kind:
                               type: string
-                              description: "Kind of the referent. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#types-kinds"
+                              description: |
+                                Kind of the referent. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#types-kinds
                             name:
                               type: string
-                              description: "Name of the referent. More info: http://kubernetes.io/docs/user-guide/identifiers#names"
+                              description: |
+                                Name of the referent. More info: http://kubernetes.io/docs/user-guide/identifiers#names
                             uid:
                               type: string
-                              description: "UID of the referent. More info: http://kubernetes.io/docs/user-guide/identifiers#uids"
+                              description: |
+                                UID of the referent. More info: http://kubernetes.io/docs/user-guide/identifiers#uids
                       resourceVersion:
                         type: string
-                        description: "An opaque value that represents the internal version of
+                        description: |
+                          An opaque value that represents the internal version of
                           this object that can be used by clients to determine when objects
                           have changed. May be used for optimistic concurrency, change detection,
                           and the watch operation on a resource or set of resources. Clients
                           must treat these values as opaque and passed unmodified back to the
                           server. They may only be valid for a particular resource or set of
                           resources.
-                          \nPopulated by the system.
-                          \nRead-only.
-                          \nMore info: https://git.k8s.io/community/contributors/devel/api-conventions.md#concurrency-control-and-consistency"
+                          Populated by the system.
+                          Read-only.
+                          More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#concurrency-control-and-consistency
                       selfLink:
                         type: string
-                        description: "SelfLink is a URL representing this object.
-                          \nPopulated by the system.
-                          \nRead-only.
-                          \nDEPRECATED"
+                        description: |
+                          SelfLink is a URL representing this object.
+                          Populated by the system.
+                          Read-only.
+                          DEPRECATED
                       uid:
                         type: string
-                        description: "UID is the unique in time and space value for this object.
+                        description: |
+                          UID is the unique in time and space value for this object.
                           It is typically generated by the server on successful creation of
                           a resource and is not allowed to change on PUT operations.
-                          \nPopulated by the system.
-                          \nRead-only.
-                          \nMore info: http://kubernetes.io/docs/user-guide/identifiers#uids"
+                          Populated by the system.
+                          Read-only.
+                          More info: http://kubernetes.io/docs/user-guide/identifiers#uids
                   spec:
                     type: object
-                    description: "Specification of the desired behavior of the pod."
+                    description: |
+                      Specification of the desired behavior of the pod.
                     properties:
                       containers:
                         type: array
                         minItems: 1
                         maxItems: 1
-                        description: "Specifies the parameters used to execute each
-                          container instance corresponding to this Revision."
+                        description: |
+                          Specifies the parameters used to execute each
+                          container instance corresponding to this Revision.
                         items:
                           type: object
                           properties:
                             args:
                               type: array
-                              description: "Arguments to the entrypoint. The docker image's
-                                CMD is used if this is not provided."
+                              description: |
+                                Arguments to the entrypoint. The docker image's
+                                CMD is used if this is not provided.
                               items:
                                 type: string
                             command:
                               type: array
-                              description: "Entrypoint array. Not executed within a shell.
-                                \nThe docker image's ENTRYPOINT is used if this is not provided."
+                              description: |
+                                Entrypoint array. Not executed within a shell.
+                                The docker image's ENTRYPOINT is used if this is not provided.
                               items:
                                 type: string
                             env:
                               type: array
-                              description: "As specified in Kubernetes core/v1.Container."
+                              description: |
+                                As specified in Kubernetes core/v1.Container.
                               items:
                                 type: object
                                 properties:
                                   name:
                                     type: string
-                                    description: "As specified in Kubernetes core/v1.EnvVar"
+                                    description: |
+                                      As specified in Kubernetes core/v1.EnvVar
                                   value:
                                     type: string
-                                    description: "As specified in Kubernetes core/v1.EnvVar. Must have one of value or valueFrom."
+                                    description: |
+                                      As specified in Kubernetes core/v1.EnvVar. Must have one of value or valueFrom.
                                   valueFrom:
                                     type: object
-                                    description: "As specified in Kubernetes core/v1.EnvVar. Must have one of value or valueFrom."
+                                    description: |
+                                      As specified in Kubernetes core/v1.EnvVar. Must have one of value or valueFrom.
                                     properties:
                                       configMapKeyRef:
                                         type: object
-                                        description: "As specified in Kubernetes core/v1.EnvVarSource.
-                                          Must have one of configMapKeyRef or secretKeyRef."
+                                        description: |
+                                          As specified in Kubernetes core/v1.EnvVarSource.
+                                          Must have one of configMapKeyRef or secretKeyRef.
                                         properties:
                                           key:
                                             type: string
-                                            description: "As specified in Kubernetes core/v1.ConfigMapKeySelector."
+                                            description: |
+                                              As specified in Kubernetes core/v1.ConfigMapKeySelector.
                                           name:
                                             type: string
-                                            description: "As specified in Kubernetes core/v1.ConfigMapKeySelector."
+                                            description: |
+                                              As specified in Kubernetes core/v1.ConfigMapKeySelector.
                                           optional:
                                             type: boolean
-                                            description: "As specified in Kubernetes core/v1.ConfigMapKeySelector."
+                                            description: |
+                                              As specified in Kubernetes core/v1.ConfigMapKeySelector.
                                       secretKeyRef:
                                         type: object
-                                        description: "As specified in Kubernetes core/v1.EnvVarSource.
-                                          Must have one of configMapKeyRef or secretKeyRef."
+                                        description: |
+                                          As specified in Kubernetes core/v1.EnvVarSource.
+                                          Must have one of configMapKeyRef or secretKeyRef.
                                         properties:
                                           key:
                                             type: string
-                                            description: "As specified in Kubernetes core/v1.SecretKeySelector."
+                                            description: |
+                                              As specified in Kubernetes core/v1.SecretKeySelector.
                                           name:
                                             type: string
-                                            description: "As specified in Kubernetes core/v1.SecretKeySelector."
+                                            description: |
+                                              As specified in Kubernetes core/v1.SecretKeySelector.
                                           optional:
                                             type: boolean
-                                            description: "As specified in Kubernetes core/v1.SecretKeySelector."
+                                            description: |
+                                              As specified in Kubernetes core/v1.SecretKeySelector.
                             envFrom:
                               type: array
-                              description: "As specified in Kubernetes core/v1.Container."
+                              description: |
+                                As specified in Kubernetes core/v1.Container.
                               items:
                                 type: object
                                 properties:
                                   configMapRef:
                                     type: object
-                                    description: "As specified in Kubernetes core/v1.EnvFromSource."
+                                    description: |
+                                      As specified in Kubernetes core/v1.EnvFromSource.
                                     properties:
                                       name:
                                         type: string
-                                        description: "As specified in Kubernetes core/v1.ConfigMapEnvSource."
+                                        description: |
+                                          As specified in Kubernetes core/v1.ConfigMapEnvSource.
                                       optional:
                                         type: boolean
-                                        description: "As specified in Kubernetes core/v1.ConfigMapEnvSource."
+                                        description: |
+                                          As specified in Kubernetes core/v1.ConfigMapEnvSource.
                                   prefix:
                                     type: string
-                                    description: "As specified in Kubernetes core/v1.EnvFromSource."
+                                    description: |
+                                      As specified in Kubernetes core/v1.EnvFromSource.
                                   secretRef:
                                     type: object
-                                    description: "As specified in Kubernetes core/v1.EnvFromSource."
+                                    description: |
+                                      As specified in Kubernetes core/v1.EnvFromSource.
                                     properties:
                                       name:
                                         type: string
-                                        description: "As specified in Kubernetes core/v1.SecretEnvSource."
+                                        description: |
+                                          As specified in Kubernetes core/v1.SecretEnvSource.
                                       optional:
                                         type: boolean
-                                        description: "As specified in Kubernetes core/v1.SecretEnvSource."
+                                        description: |
+                                          As specified in Kubernetes core/v1.SecretEnvSource.
                             image:
                               type: string
-                              description: "Docker image name.
-                                \nMore info: https://kubernetes.io/docs/concepts/containers/images
-                                \nThis field is optional to allow higher level config management to
+                              description: |
+                                Docker image name.
+                                More info: https://kubernetes.io/docs/concepts/containers/images
+                                This field is optional to allow higher level config management to
                                 default or override container images in workload controllers like
-                                Deployments and StatefulSets."
+                                Deployments and StatefulSets.
                             imagePullPolicy:
                               type: string
-                              description: "As specified in Kubernetes core/v1.Container.
+                              description: |
+                                As specified in Kubernetes core/v1.Container.
                                 However, Knative resolves the image to a digest. The pull
                                 policy will be applied against the digest of the resolved
-                                image and not the image tag."
+                                image and not the image tag.
                             livenessProbe:
                               type: object
-                              description: "As specified in Kubernetes core/v1.Container."
+                              description: |
+                                As specified in Kubernetes core/v1.Container.
                               properties:
                                 exec:
                                   type: object
-                                  description: "As specified in Kubernetes core/v1.Probe."
+                                  description: |
+                                    As specified in Kubernetes core/v1.Probe.
                                   properties:
                                     command:
                                       type: array
-                                      description: "As specified in Kubernetes core/v1.ExecAction."
+                                      description: |
+                                        As specified in Kubernetes core/v1.ExecAction.
                                       items:
                                         types: string
                                 failureThreshold:
                                   type: string
-                                  description: "As specified in Kubernetes core/v1.Probe."
+                                  description: |
+                                    As specified in Kubernetes core/v1.Probe.
                                 httpGet:
                                   type: object
-                                  description: "As specified in Kubernetes core/v1.Probe."
+                                  description: |
+                                    As specified in Kubernetes core/v1.Probe.
                                   properties:
                                     host:
                                       type: string
-                                      description: "As specified in Kubernetes core/v1.HTTPGetAction."
+                                      description: |
+                                        As specified in Kubernetes core/v1.HTTPGetAction.
                                     httpHeaders:
                                       type: object
-                                      description: "As specified in Kubernetes core/v1.HTTPGetAction."
+                                      description: |
+                                        As specified in Kubernetes core/v1.HTTPGetAction.
                                       properties:
                                         name:
                                           type: string
-                                          description: "As specified in Kubernetes core/v1.HTTPHeader."
+                                          description: |
+                                            As specified in Kubernetes core/v1.HTTPHeader.
                                         value:
                                           type: string
-                                          description: "As specified in Kubernetes core/v1.HTTPHeader."
+                                          description: |
+                                            As specified in Kubernetes core/v1.HTTPHeader.
                                     path:
                                       type: string
-                                      description: "As specified in Kubernetes core/v1.HTTPGetAction."
+                                      description: |
+                                        As specified in Kubernetes core/v1.HTTPGetAction.
                                     scheme:
                                       type: string
-                                      description: "As specified in Kubernetes core/v1.HTTPGetAction."
+                                      description: |
+                                        As specified in Kubernetes core/v1.HTTPGetAction.
                                 initialDelaySeconds:
                                   type: integer
-                                  description: "As specified in Kubernetes core/v1.Probe."
+                                  description: |
+                                    As specified in Kubernetes core/v1.Probe.
                                 successThreshold:
-                                  type: integer
                                   format: int32
+                                  type: integer
                                   minimum: 1
                                   default: 1
-                                  description: "As specified in Kubernetes core/v1.Probe."
+                                  description: |
+                                    As specified in Kubernetes core/v1.Probe.
                                 tcpSocket:
                                   type: object
-                                  description: "As specified in Kubernetes core/v1.Probe."
+                                  description: |
+                                    As specified in Kubernetes core/v1.Probe.
                                   properties:
                                     host:
                                       type: string
-                                      description: "As specified in Kubernetes core/v1.TCPSocketAction."
+                                      description: |
+                                        As specified in Kubernetes core/v1.TCPSocketAction.
                                 timeoutSeconds:
                                   type: integer
-                                  description: "As specified in Kubernetes core/v1.Probe."
+                                  description: |
+                                    As specified in Kubernetes core/v1.Probe.
                                   default: 300
                                   minimum: 0
                                   maximum: 600
                             name:
                               type: string
-                              description: "Name of the container specified as a DNS_LABEL.
-                                Each container in a pod must have a unique name (DNS_LABEL)."
+                              description: |
+                                Name of the container specified as a DNS_LABEL.
+                                Each container in a pod must have a unique name (DNS_LABEL).
                             ports:
                               type: array
                               minItems: 0
                               maxItems: 1
-                              description: "List of ports to expose from the container.
+                              description: |
+                                List of ports to expose from the container.
                                 Exposing a port here gives the system additional information
                                 about the network connections a container uses, but is
                                 primarily informational. Not specifying a port here DOES NOT
                                 prevent that port from being exposed. Any port which is
-                                listening on the default \"0.0.0.0\" address inside a
+                                listening on the default \?0.0.0.0\? address inside a
                                 container will be accessible from the network.
                                 Only a single port may be specified. The port
-                                must be named as described in the runtime contract."
+                                must be named as described in the runtime contract.
                               items:
                                 type: object
                                 properties:
                                   name:
                                     type: string
-                                    description: "Must be one of `http1` or `h2c` (if supported). Defaults to `http1`."
+                                    description: |
+                                      Must be one of `http1` or `h2c` (if supported). Defaults to `http1`.
                                   containerPort:
                                     type: integer
-                                    description: "The selected port for which Knative will direct traffic to the user container."
+                                    description: |
+                                      The selected port for which Knative will direct traffic to the user container.
                                   hostIP:
                                     type: string
-                                    description: "What host IP to bind the external port to."
+                                    description: |
+                                      What host IP to bind the external port to.
                                   hostPort:
                                     type: integer
-                                    description: "Number of port to expose on the host. If specified, this must be a valid port
+                                    description: |
+                                      Number of port to expose on the host. If specified, this must be a valid port
                                       number, 0 < x < 65536. If HostNetwork is specified, this must match ContainerPort.
-                                      Most containers do not need this."
+                                      Most containers do not need this.
                                   protocol:
                                     type: string
-                                    description: "Protocol for port. Must be UDP, TCP, or SCTP. Defaults to TCP."
+                                    description: |
+                                      Protocol for port. Must be UDP, TCP, or SCTP. Defaults to TCP.
                                     enum:
-                                    - "TCP"
-                                    - "UDP"
-                                    - "SCTP"
+                                    - TCP
+                                    - UDP
+                                    - SCTP
                             readinessProbe:
                               type: object
-                              description: "As specified in Kubernetes core/v1.Container."
+                              description: |
+                                As specified in Kubernetes core/v1.Container.
                               properties:
                                 exec:
                                   type: object
-                                  description: "As specified in Kubernetes core/v1.Probe."
+                                  description: |
+                                    As specified in Kubernetes core/v1.Probe.
                                   properties:
                                     command:
                                       type: array
-                                      description: "As specified in Kubernetes core/v1.ExecAction."
+                                      description: |
+                                        As specified in Kubernetes core/v1.ExecAction.
                                       items:
                                         types: string
                                 failureThreshold:
                                   type: string
-                                  description: "As specified in Kubernetes core/v1.Probe."
+                                  description: |
+                                    As specified in Kubernetes core/v1.Probe.
                                 httpGet:
                                   type: object
-                                  description: "As specified in Kubernetes core/v1.Probe."
+                                  description: |
+                                    As specified in Kubernetes core/v1.Probe.
                                   properties:
                                     host:
                                       type: string
-                                      description: "As specified in Kubernetes core/v1.HTTPGetAction."
+                                      description: |
+                                        As specified in Kubernetes core/v1.HTTPGetAction.
                                     httpHeaders:
                                       type: object
-                                      description: "As specified in Kubernetes core/v1.HTTPGetAction."
+                                      description: |
+                                        As specified in Kubernetes core/v1.HTTPGetAction.
                                       properties:
                                         name:
                                           type: string
-                                          description: "As specified in Kubernetes core/v1.HTTPHeader."
+                                          description: |
+                                            As specified in Kubernetes core/v1.HTTPHeader.
                                         value:
                                           type: string
-                                          description: "As specified in Kubernetes core/v1.HTTPHeader."
+                                          description: |
+                                            As specified in Kubernetes core/v1.HTTPHeader.
                                     path:
                                       type: string
-                                      description: "As specified in Kubernetes core/v1.HTTPGetAction."
+                                      description: |
+                                        As specified in Kubernetes core/v1.HTTPGetAction.
                                     scheme:
                                       type: string
-                                      description: "As specified in Kubernetes core/v1.HTTPGetAction."
+                                      description: |
+                                        As specified in Kubernetes core/v1.HTTPGetAction.
                                 initialDelaySeconds:
                                   type: integer
-                                  description: "As specified in Kubernetes core/v1.Probe."
+                                  description: |
+                                    As specified in Kubernetes core/v1.Probe.
                                 successThreshold:
                                   type: integer
-                                  description: "As specified in Kubernetes core/v1.Probe."
+                                  description: |
+                                    As specified in Kubernetes core/v1.Probe.
                                 tcpSocket:
                                   type: object
-                                  description: "As specified in Kubernetes core/v1.Probe."
+                                  description: |
+                                    As specified in Kubernetes core/v1.Probe.
                                   properties:
                                     host:
                                       type: string
-                                      description: "As specified in Kubernetes core/v1.TCPSocketAction."
+                                      description: |
+                                        As specified in Kubernetes core/v1.TCPSocketAction.
                                 timeoutSeconds:
                                   type: integer
-                                  description: "As specified in Kubernetes core/v1.Probe."
+                                  description: |
+                                    As specified in Kubernetes core/v1.Probe.
                                   default: 300
                                   minimum: 0
                                   maximum: 600
                             resources:
                               type: object
-                              description: "As specified in Kubernetes core/v1.Container."
+                              description: |
+                                As specified in Kubernetes core/v1.Container.
                               properties:
                                 limits:
                                   type: object
-                                  description: "Must support at least cpu and memory. See Kubernetes."
+                                  description: |
+                                    Must support at least cpu and memory. See Kubernetes.
                                 requests:
                                   type: object
-                                  description: "Must support at least cpu and memory. See Kubernetes."
+                                  description: |
+                                    Must support at least cpu and memory. See Kubernetes.
                             securityContext:
                               type: object
-                              description: "In `securityContext`, only `runAsUser` MAY be set."
+                              description: |
+                                In `securityContext`, only `runAsUser` MAY be set.
                               properties:
                                 runAsUser:
                                   type: integer
-                                  description: "As specified in Kubernetes core/v1.SecurityContext"
+                                  description: |
+                                    As specified in Kubernetes core/v1.SecurityContext
                             terminationMessagePath:
                               type: string
-                              description: "As specified in Kubernetes core/v1.Container."
+                              description: |
+                                As specified in Kubernetes core/v1.Container.
                             terminationMessagePolicy:
                               type: string
-                              description: "As specified in Kubernetes core/v1.Container."
+                              description: |
+                                As specified in Kubernetes core/v1.Container.
                             volumeMounts:
                               type: array
-                              description: "`volumeMounts` MUST correspond to a volume
+                              description: |
+                                `volumeMounts` MUST correspond to a volume
                                 and specify an absolute mount path which does not shadow
-                                the runtime contract directories."
+                                the runtime contract directories.
                               items:
                                 type: object
                                 properties:
                                   mountPath:
                                     type: string
-                                    description: "As specified in Kubernetes core/v1.VolumeMount."
+                                    description: |
+                                      As specified in Kubernetes core/v1.VolumeMount.
                                   name:
                                     type: string
-                                    description: "As specified in Kubernetes core/v1.VolumeMount."
+                                    description: |
+                                      As specified in Kubernetes core/v1.VolumeMount.
                                   subPath:
                                     type: string
-                                    description: "As specified in Kubernetes core/v1.VolumeMount."
+                                    description: |
+                                      As specified in Kubernetes core/v1.VolumeMount.
                                   readOnly:
                                     type: boolean
-                                    description: "Must be true. Defaults to true."
+                                    description: |
+                                      Must be true. Defaults to true.
                                     default: true
                             workingDir:
                               type: string
-                              description: "Container's working directory.
-                                \nIf not specified, the container runtime's default will
-                                be used, which might be configured in the container image."
+                              description: |
+                                Container's working directory.
+                                If not specified, the container runtime's default will
+                                be used, which might be configured in the container image.
                       volumes:
                         type: array
-                        description: "A list of Volumes to make available to `containers[0]`.
-                          \nMore info: https://kubernetes.io/docs/concepts/storage/volumes"
+                        description: |
+                          A list of Volumes to make available to `containers[0]`.
+                          More info: https://kubernetes.io/docs/concepts/storage/volumes
                         items:
                           type: object
                           properties:
                             configMap:
                               type: object
-                              description: "As specified in Kubernetes core/v1.Volume."
+                              description: |
+                                As specified in Kubernetes core/v1.Volume.
                               properties:
                                 defaultMode:
                                   type: integer
-                                  description: "As specified in Kubernetes core/v1.ConfigMapVolumeSource."
+                                  description: |
+                                    As specified in Kubernetes core/v1.ConfigMapVolumeSource.
                                 items:
                                   type: array
-                                  description: "As specified in Kubernetes core/v1.ConfigMapVolumeSource."
+                                  description: |
+                                    As specified in Kubernetes core/v1.ConfigMapVolumeSource.
                                   items:
                                     type: object
                                     properties:
                                       key:
                                         type: string
-                                        description: "As specified in Kubernetes core/v1.KeyToPath."
+                                        description: |
+                                          As specified in Kubernetes core/v1.KeyToPath.
                                       mode:
                                         type: integer
-                                        description: "As specified in Kubernetes core/v1.KeyToPath."
+                                        description: |
+                                          As specified in Kubernetes core/v1.KeyToPath.
                                       path:
                                         type: string
-                                        description: "As specified in Kubernetes core/v1.KeyToPath."
+                                        description: |
+                                          As specified in Kubernetes core/v1.KeyToPath.
                                 name:
                                   type: string
-                                  description: "As specified in Kubernetes core/v1.ConfigMapVolumeSource."
+                                  description: |
+                                    As specified in Kubernetes core/v1.ConfigMapVolumeSource.
                                 optional:
                                   type: boolean
-                                  description: "As specified in Kubernetes core/v1.ConfigMapVolumeSource."
+                                  description: |
+                                    As specified in Kubernetes core/v1.ConfigMapVolumeSource.
                             secret:
                               type: object
-                              description: "As specified in Kubernetes core/v1.Volume."
+                              description: |
+                                As specified in Kubernetes core/v1.Volume.
                               properties:
                                 defaultMode:
                                   type: integer
-                                  description: "As specified in Kubernetes core/v1.SecretVolumeSource."
+                                  description: |
+                                    As specified in Kubernetes core/v1.SecretVolumeSource.
                                 items:
                                   type: array
-                                  description: "As specified in Kubernetes core/v1.SecretVolumeSource."
+                                  description: |
+                                    As specified in Kubernetes core/v1.SecretVolumeSource.
                                   items:
                                     type: object
                                     properties:
                                       key:
                                         type: string
-                                        description: "As specified in Kubernetes core/v1.KeyToPath."
+                                        description: |
+                                          As specified in Kubernetes core/v1.KeyToPath.
                                       mode:
                                         type: integer
-                                        description: "As specified in Kubernetes core/v1.KeyToPath."
+                                        description: |
+                                          As specified in Kubernetes core/v1.KeyToPath.
                                       path:
                                         type: string
-                                        description: "As specified in Kubernetes core/v1.KeyToPath."
+                                        description: |
+                                          As specified in Kubernetes core/v1.KeyToPath.
                                 name:
                                   type: string
-                                  description: "As specified in Kubernetes core/v1.SecretVolumeSource."
+                                  description: |
+                                    As specified in Kubernetes core/v1.SecretVolumeSource.
                                 optional:
                                   type: boolean
-                                  description: "As specified in Kubernetes core/v1.SecretVolumeSource."
+                                  description: |
+                                    As specified in Kubernetes core/v1.SecretVolumeSource.
                             projected:
                               type: object
-                              description: "As specified in Kubernetes core/v1.Volume."
+                              description: |
+                                As specified in Kubernetes core/v1.Volume.
                               properties:
                                 defaultMode:
                                   type: integer
-                                  description: "As specified in Kubernetes core/v1.ProjectedVolumeSource."
+                                  description: |
+                                    As specified in Kubernetes core/v1.ProjectedVolumeSource.
                                 sources:
                                   type: array
-                                  description: "As specified in Kubernetes core/v1.ProjectedVolumeSource."
+                                  description: |
+                                    As specified in Kubernetes core/v1.ProjectedVolumeSource.
                                   items:
                                     type: object
                                     properties:
                                       configMap:
                                         type: object
-                                        description: "As specified in Kubernetes core/v1.VolumeProjection."
+                                        description: |
+                                          As specified in Kubernetes core/v1.VolumeProjection.
                                         properties:
                                           items:
                                             type: array
-                                            description: "As specified in Kubernetes core/v1.ConfigMapProjection."
+                                            description: |
+                                              As specified in Kubernetes core/v1.ConfigMapProjection.
                                             items:
                                               type: object
                                               properties:
                                                 key:
                                                   type: string
-                                                  description: "As specified in Kubernetes core/v1.KeyToPath."
+                                                  description: |
+                                                    As specified in Kubernetes core/v1.KeyToPath.
                                                 mode:
                                                   type: integer
-                                                  description: "As specified in Kubernetes core/v1.KeyToPath."
+                                                  description: |
+                                                    As specified in Kubernetes core/v1.KeyToPath.
                                                 path:
                                                   type: string
-                                                  description: "As specified in Kubernetes core/v1.KeyToPath."
+                                                  description: |
+                                                    As specified in Kubernetes core/v1.KeyToPath.
                                           secret:
                                             type: string
-                                            description: "As specified in Kubernetes core/v1.ConfigMapProjection."
+                                            description: |
+                                              As specified in Kubernetes core/v1.ConfigMapProjection.
                                           optional:
                                             type: boolean
-                                            description: "As specified in Kubernetes core/v1.ConfigMapProjection."
+                                            description: |
+                                              As specified in Kubernetes core/v1.ConfigMapProjection.
                                       secret:
                                         type: object
-                                        description: "As specified in Kubernetes core/v1.VolumeProjection."
+                                        description: |
+                                          As specified in Kubernetes core/v1.VolumeProjection.
                                         properties:
                                           items:
                                             type: array
-                                            description: "As specified in Kubernetes core/v1.SecretProjection."
+                                            description: |
+                                              As specified in Kubernetes core/v1.SecretProjection.
                                             items:
                                               type: object
                                               properties:
                                                 key:
                                                   type: string
-                                                  description: "As specified in Kubernetes core/v1.KeyToPath."
+                                                  description: |
+                                                    As specified in Kubernetes core/v1.KeyToPath.
                                                 mode:
                                                   type: integer
-                                                  description: "As specified in Kubernetes core/v1.KeyToPath."
+                                                  description: |
+                                                    As specified in Kubernetes core/v1.KeyToPath.
                                                 path:
                                                   type: string
-                                                  description: "As specified in Kubernetes core/v1.KeyToPath."
+                                                  description: |
+                                                    As specified in Kubernetes core/v1.KeyToPath.
                                           name:
                                             type: string
-                                            description: "As specified in Kubernetes core/v1.SecretProjection."
+                                            description: |
+                                              As specified in Kubernetes core/v1.SecretProjection.
                                           optional:
                                             type: boolean
-                                            description: "As specified in Kubernetes core/v1.SecretProjection."
+                                            description: |
+                                              As specified in Kubernetes core/v1.SecretProjection.
                       timeoutSeconds:
                         format: int64
                         type: integer
-                        description: "The maximum duration in seconds that the request
+                        description: |
+                          The maximum duration in seconds that the request
                           routing layer will wait for a request delivered to a container
                           to progress (send network traffic).
-                          \nIf unspecified, a system default will be provided."
+                          If unspecified, a system default will be provided.
                         default: 300
                         minimum: 0
                         maximum: 600
                       containerConcurrency:
                         format: int64
                         type: integer
-                        description: "The maximum number of concurrent requests being
+                        description: |
+                          The maximum number of concurrent requests being
                           handled by a single instance of containers[0].
-                          \nDefaults to `0` which means concurrency to the application
+                          Defaults to `0` which means concurrency to the application
                           is not limited, and the system decides the target concurrency
-                          for the autoscaler."
+                          for the autoscaler.
                         default: 0
                         maximum: 1000
                       serviceAccountName:
                         type: string
-                        description: "The name of a Service Account which `containers[0]`
+                        description: |
+                          The name of a Service Account which `containers[0]`
                           should be run as. The Service Account should be used to provide
-                          access and authorization to the container."
+                          access and authorization to the container.
                       imagePullSecrets:
                         type: array
-                        description: "The list of secrets for pulling images from private
-                          repositories."
+                        description: |
+                          The list of secrets for pulling images from private
+                          repositories.
                         items:
                           type: object
                           properties:
                             name:
                               type: string
-                              description: "As specified in Kubernetes core/v1.LocalObjectReference."
+                              description: |
+                                As specified in Kubernetes core/v1.LocalObjectReference.
               traffic:
                 type: array
-                description: "Traffic specifies how to distribute traffic over a
+                description: |
+                  Traffic specifies how to distribute traffic over a
                   collection of Revisions belonging to the Service. If traffic is
                   empty or not provided, defaults to 100% traffic to the latest
                   `Ready` Revision. The contents of the Service's TrafficTarget is
-                  used to create a corresponding Route."
+                  used to create a corresponding Route.
                 items:
                   type: object
                   properties:
                     revisionName:
                       type: string
-                      description: "A specific revision to which to send this portion
-                        of traffic. This is mutually exclusive with configurationName."
+                      description: |
+                        A specific revision to which to send this portion
+                        of traffic. This is mutually exclusive with configurationName.
                     latestRevision:
                       type: boolean
-                      description: "`latestRevision` may be optionally provided to indicate
+                      description: |
+                        `latestRevision` may be optionally provided to indicate
                         that the latest ready Revision of the Configuration should be used
                         for this traffic target. When provided latestRevision MUST be true
-                        if revisionName is empty, and it MUST be false when revisionName is non-empty."
+                        if revisionName is empty, and it MUST be false when revisionName is non-empty.
                     tag:
                       type: string
-                      description: "Tag is optionally used to expose a dedicated URL for
+                      description: |
+                        Tag is optionally used to expose a dedicated URL for
                         referencing this target exclusively. The dedicated URL MUST include
-                        in it the string provided by tag."
+                        in it the string provided by tag.
                     percent:
                       type: integer
-                      description: "The percentage of requests which should be allocated
+                      description: |
+                        The percentage of requests which should be allocated
                         from the main Route domain name to the specified `revisionName` or
-                        `configurationName`. \nAll `percent` values in `traffic` MUST sum to 100."
+                        `configurationName`.
+                        All `percent` values in `traffic` MUST sum to 100.
                       minimum: 0
                       maximum: 100
                     url:
                       type: string
-                      description: "The URL at which the tag endpoint is reachable. It
-                        MUST not be taken as input, and is only provided on Status."
+                      description: |
+                        The URL at which the tag endpoint is reachable. It
+                        MUST not be taken as input, and is only provided on Status.
           status:
             type: object
             properties:
               conditions:
                 type: array
-                description: "Used for signalling errors, see link. Conditions of type
+                description: |
+                  Used for signalling errors, see link. Conditions of type
                   Ready MUST be present. Conditions of type ConfigurationsReady and
-                  RoutesReady MAY be present."
+                  RoutesReady MAY be present.
                 items:
                   type: object
                   properties:
                     type:
                       type: string
-                      description: "The category of the condition, as a short, CamelCase
+                      description: |
+                        The category of the condition, as a short, CamelCase
                         word or phrase. This is the primary key of the Conditions list
-                        when viewed as a map. "
+                        when viewed as a map.
                     status:
                       type: string
-                      description: "The last measured status of this condition."
+                      description: |
+                        The last measured status of this condition.
                       example:
                       - "True"
                       - "False"
                       - "Unknown"
                     reason:
                       type: string
-                      description: "One-word CamelCase reason for the condition's last transition."
+                      description: |
+                        One-word CamelCase reason for the condition's last transition.
                     message:
                       type: string
-                      description: "Human-readable sentence describing the last transition."
+                      description: |
+                        Human-readable sentence describing the last transition.
                     severity:
                       type: string
-                      description: "If present, represents the severity of the condition.
-                        An empty severity represents a severity level of `Error`."
+                      description: |
+                        If present, represents the severity of the condition.
+                        An empty severity represents a severity level of `Error`.
                       example:
                       - ""
                       - "Warning"
@@ -1104,69 +1294,82 @@ spec:
                     lastTransitionTime:
                       format: date-time
                       type: string
-                      description: "Last update time for this condition.
-                        2020-10-28T15:00:00.05Z (YYYY-MM-DDTHH:MM:SS:MMZ)"
+                      description: |
+                        Last update time for this condition.
+                        2020-10-28T15:00:00.05Z (YYYY-MM-DDTHH:MM:SS:MMZ)
               observedGeneration:
                 format: int64
                 type: integer
-                description: "The latest `metadata.generation` that the reconciler
+                description: |
+                  The latest `metadata.generation` that the reconciler
                   has observed. If `observedGeneration` is updated, `conditions` MUST
-                  be updated with current status in the same transaction."
+                  be updated with current status in the same transaction.
               url:
                 type: string
-                description: "A URL holds the url that will distribute traffic over the provided
+                description: |
+                  A URL holds the url that will distribute traffic over the provided
                   traffic targets. It generally has the form
-                  \n`http[s]://{route-name}.{route-namespace}.{cluster-level-suffix}`"
+                  `http[s]://{route-name}.{route-namespace}.{cluster-level-suffix}`
               address:
                 type: object
-                description: "A duck-typed interface for loading the delivery
+                description: |
+                  A duck-typed interface for loading the delivery
                   address of the destination, copied from the owned Route. The
-                  URL provided in address MAY only be internally-routable."
+                  URL provided in address MAY only be internally-routable.
                 properties:
                   url:
                     type: string
-                    description: "A generic mechanism for a custom resource definition
-                      to indicate a destination for message delivery."
+                    description: |
+                      A generic mechanism for a custom resource definition
+                      to indicate a destination for message delivery.
               traffic:
-                description: "Detailed current traffic split routing information."
+                description: |
+                  Detailed current traffic split routing information.
                 type: array
                 items:
                   type: object
                   properties:
                     revisionName:
                       type: string
-                      description: "A specific revision to which to send this portion
-                        of traffic. This is mutually exclusive with configurationName."
+                      description: |
+                        A specific revision to which to send this portion
+                        of traffic. This is mutually exclusive with configurationName.
                     configurationName:
                       type: string
-                      description: "ConfigurationName of a configuration to whose latest revision
+                      description: |
+                        ConfigurationName of a configuration to whose latest revision
                         we will send this portion of traffic. When the `status.latestReadyRevisionName`
                         of the referenced configuration changes, we will automatically migrate traffic
                         from the prior `latest ready` revision to the new one.  This field is never
                         set in Route's status, only its spec.
-                        \nThis is mutually exclusive with RevisionName."
+                        This is mutually exclusive with RevisionName.
                     latestRevision:
                       type: boolean
-                      description: "`latestRevision` may be optionally provided to indicate
+                      description: |
+                        `latestRevision` may be optionally provided to indicate
                         that the latest ready Revision of the Configuration should be used
                         for this traffic target. When provided latestRevision MUST be true
-                        if revisionName is empty, and it MUST be false when revisionName is non-empty."
+                        if revisionName is empty, and it MUST be false when revisionName is non-empty.
                     tag:
                       type: string
-                      description: "Tag is optionally used to expose a dedicated URL for
+                      description: |
+                        Tag is optionally used to expose a dedicated URL for
                         referencing this target exclusively. The dedicated URL MUST include
-                        in it the string provided by tag."
+                        in it the string provided by tag.
                     percent:
                       type: integer
-                      description: "The percentage of requests which should be allocated
+                      description: |
+                        The percentage of requests which should be allocated
                         from the main Route domain name to the specified `revisionName` or
-                        `configurationName`. \nAll `percent` values in `traffic` MUST sum to 100."
+                        `configurationName`.
+                        All `percent` values in `traffic` MUST sum to 100.
                       minimum: 0
                       maximum: 100
                     url:
                       type: string
-                      description: "The URL at which the tag endpoint is reachable. It
-                        MUST not be taken as input, and is only provided on Status."
+                      description: |
+                        The URL at which the tag endpoint is reachable. It
+                        MUST not be taken as input, and is only provided on Status.
                   oneOf:
                     - properties:
                         revisionName:
@@ -1176,12 +1379,14 @@ spec:
                           type: string
               latestReadyRevisionName:
                 type: string
-                description: "LatestReadyRevisionName holds the name of the latest Revision stamped out
-                  \nfrom this Configuration that has had its `Ready` condition become `True`."
+                description: |
+                  LatestReadyRevisionName holds the name of the latest Revision stamped out
+                  from this Configuration that has had its `Ready` condition become `True`.
               latestCreatedRevisionName:
                 type: string
-                description: "LatestCreatedRevisionName is the last revision that was created from this
-                  Configuration. It might not be ready yet, for that use LatestReadyRevisionName."
+                description: |
+                  LatestCreatedRevisionName is the last revision that was created from this
+                  Configuration. It might not be ready yet, for that use LatestReadyRevisionName.
   names:
     kind: Service
     plural: services
