@@ -15,7 +15,7 @@ import { KN_READONLY_SCHEME } from './knativeReadonlyProvider';
  * @param outputFormat
  * @param editable
  */
-export function openTreeItemInEditor(treeItem: KnativeTreeItem, outputFormat: string, editable: boolean): void {
+export async function openTreeItemInEditor(treeItem: KnativeTreeItem, outputFormat: string, editable: boolean): Promise<void> {
   const schema: string = editable ? KN_RESOURCE_SCHEME : KN_READONLY_SCHEME;
   const contextValue: string = treeItem.contextValue.includes('_')
     ? treeItem.contextValue.substr(0, treeItem.contextValue.indexOf('_'))
@@ -23,10 +23,12 @@ export function openTreeItemInEditor(treeItem: KnativeTreeItem, outputFormat: st
   const name: string = treeItem.getName();
   const uri = vfsUri(schema, contextValue, name, outputFormat);
 
-  vscode.workspace.openTextDocument(uri).then(
+  await vscode.workspace.openTextDocument(uri).then(
     (doc) => {
       if (doc) {
         vscode.window.showTextDocument(doc, { preserveFocus: true, preview: true });
+      } else {
+        throw Error(`Error loading resource located at ${uri}`);
       }
     },
     (err) => vscode.window.showErrorMessage(`Error loading document: ${err}`),
