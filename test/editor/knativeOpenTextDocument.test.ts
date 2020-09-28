@@ -3,14 +3,12 @@ import * as chai from 'chai';
 import * as sinonChai from 'sinon-chai';
 import * as sinon from 'sinon';
 import * as yaml from 'yaml';
-import { expect } from 'chai';
 import { fail } from 'assert';
 import { ContextType } from '../../src/cli/config';
+import * as virtualfs from '../../src/cli/virtualfs';
 import { openTreeItemInEditor } from '../../src/editor/knativeOpenTextDocument';
 import { KnativeTreeItem } from '../../src/tree/knativeTreeItem';
 import { Service } from '../../src/knative/service';
-
-import virtualfs = require('../../src/cli/virtualfs');
 
 chai.use(sinonChai);
 
@@ -169,22 +167,20 @@ status:
 
   test('should open a Service tree item in the editor', async () => {
     // help stub to verify that we called virtualfs.vfsUri
-    const vfsUriStub = sandbox.stub(virtualfs, 'vfsUri');
-    vfsUriStub.returns(uriObject);
+    sandbox.stub(virtualfs, 'vfsUri').returns(uriObject);
     // creates a stub that resolves to mock text doc object, and we will spy on
-    const stubOpenTextDoc = sandbox.stub(vscode.workspace, 'openTextDocument');
-    stubOpenTextDoc.resolves(textDocumentObject);
+    const stubOpenTextDoc = sandbox.stub(vscode.workspace, 'openTextDocument').resolves(textDocumentObject);
     // spies on inner promises (void) functions
     const spyShowTextDoc = sandbox.spy(vscode.window, 'showTextDocument');
     const spyShowError = sandbox.spy(vscode.window, 'showErrorMessage');
-    // calling real openTreeItemInEditor funtion with stubbed inner calls
+    // calling real openTreeItemInEditor function with stubbed inner calls
     await openTreeItemInEditor(testServiceTreeItem, 'yaml', false);
     // verify first promise calls and args
     sinon.assert.calledOnce(stubOpenTextDoc);
     sinon.assert.calledWith(stubOpenTextDoc, sinon.match(uriObject));
     // verify inner promise call and passed arguments
     sinon.assert.calledOnce(spyShowTextDoc);
-    expect(spyShowTextDoc.firstCall.args.length).to.eq(2);
+    chai.expect(spyShowTextDoc.firstCall.args.length).to.eq(2);
     sinon.assert.calledWith(spyShowTextDoc, sinon.match(textDocumentObject), sinon.match(showTextDocOptions));
     // verify that no show error was reached in the code
     sinon.assert.notCalled(spyShowError);
@@ -204,33 +200,33 @@ status:
       await openTreeItemInEditor(testServiceTreeItem, 'yaml', false);
       fail('Expected Error was not thrown when there is no doc when opening a Service tree item in editor');
     } catch (error) {
-      expect(error).to.be.instanceOf(Error);
-      expect(error.message).to.include('Error loading resource located at');
+      chai.expect(error).to.be.instanceOf(Error);
+      chai.expect(error.message).to.include('Error loading resource located at');
     }
     sinon.assert.notCalled(spyShowTextDoc);
     sinon.assert.notCalled(spyShowError);
   });
-  test('should not attempt to open a modified Service tree item in the editor when there is no doc', async () => {
+  test('should  throw an error when attempting to open a modified Service tree item in the editor when there is no doc', async () => {
     sandbox.stub(vscode.workspace, 'openTextDocument').resolves(null);
     const spyShowTextDoc = sandbox.spy(vscode.window, 'showTextDocument');
     try {
       await openTreeItemInEditor(testServiceTreeItemModified, 'yaml', true);
       fail('Expected Error was not thrown when there is no doc when opening a Service tree item in editor');
     } catch (error) {
-      expect(error).to.be.instanceOf(Error);
-      expect(error.message).to.include('Error loading resource located at');
+      chai.expect(error).to.be.instanceOf(Error);
+      chai.expect(error.message).to.include('Error loading resource located at');
     }
     sinon.assert.notCalled(spyShowTextDoc);
   });
-  test('should throw and error when the promise is rejected trying to open a Service tree item in the editor', async () => {
-    sandbox.stub(vscode.workspace, 'openTextDocument').rejects('myerror');
+  test('should throw an error when the promise is rejected trying to open a Service tree item in the editor', async () => {
+    sandbox.stub(vscode.workspace, 'openTextDocument').rejects('myError');
     const spyShowTextDoc = sandbox.spy(vscode.window, 'showTextDocument');
     const stubShowError = sandbox.stub(vscode.window, 'showErrorMessage');
     await openTreeItemInEditor(testServiceTreeItem, 'yaml', false);
     sinon.assert.notCalled(spyShowTextDoc);
     sinon.assert.calledOnce(stubShowError);
     const showErrorArgs = stubShowError.firstCall.args;
-    expect(showErrorArgs.length).to.eq(1);
-    expect(showErrorArgs[0]).to.include('Error loading document: myerror');
+    chai.expect(showErrorArgs.length).to.eq(1);
+    chai.expect(showErrorArgs[0]).to.include('Error loading document: myError');
   });
 });
