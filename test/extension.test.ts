@@ -14,14 +14,13 @@ import { deactivate } from '../src/extension';
 import * as otd from '../src/editor/knativeOpenTextDocument';
 
 const { assert } = referee;
-// const { expect } = chai;
 chai.use(sinonChai);
 
 suite('Knative extension', () => {
   const sandbox = sinon.createSandbox();
 
   beforeEach(() => {
-    //
+    sandbox.stub(vscode.window, 'showErrorMessage').resolves();
   });
 
   teardown(() => {
@@ -530,9 +529,8 @@ status:
     null,
   );
 
-  // const exampleRevisionTreeItems = [example75w7vTreeItem, exampleG4hm8TreeItem, example2fvz4TreeItem];
-
   const image = vscode.Uri.parse('http://example-a-serverless-example.apps.devcluster.openshift.com');
+  const imageTagged = vscode.Uri.parse('http://current-example-a-serverless-example.apps.devcluster.openshift.com');
   test('should be present', () => {
     assert(vscode.extensions.getExtension('redhat.vscode-knative'));
   });
@@ -559,7 +557,7 @@ status:
 
   test('should call the command to open a Revision when a Revision is the treeItem', async () => {
     const executeCommandStub = sandbox.stub(vscode.commands, 'executeCommand');
-    executeCommandStub.withArgs('vscode.open', image).resolves();
+    executeCommandStub.withArgs('vscode.open', imageTagged).resolves();
     executeCommandStub.callThrough();
     await vscode.commands.executeCommand('knative.service.open-in-browser', example75w7vTreeItem);
     sinon.assert.calledTwice(executeCommandStub);
@@ -567,7 +565,6 @@ status:
 
   test('should NOT call the command to open a Revision when a Revision is the treeItem but does not have Traffic', async () => {
     const executeCommandStub = sandbox.stub(vscode.commands, 'executeCommand');
-    executeCommandStub.withArgs('vscode.open', image).resolves();
     executeCommandStub.callThrough();
     await vscode.commands.executeCommand('knative.service.open-in-browser', exampleG4hm8TreeItem);
     sinon.assert.calledOnce(executeCommandStub);
@@ -575,7 +572,6 @@ status:
 
   test('should NOT call the command to open a Revision when a Revision is the treeItem but does not have a Tag', async () => {
     const executeCommandStub = sandbox.stub(vscode.commands, 'executeCommand');
-    executeCommandStub.withArgs('vscode.open', image).resolves();
     executeCommandStub.callThrough();
     await vscode.commands.executeCommand('knative.service.open-in-browser', example2fvz4TreeItem);
     sinon.assert.calledOnce(executeCommandStub);
