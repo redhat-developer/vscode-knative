@@ -140,6 +140,7 @@ suite('VirtualFileSystem', () => {
   };
 
   beforeEach(() => {
+    sandbox.stub(window, 'showErrorMessage').resolves();
     revertFS = rewiredVFS.__set__('fs', fsMock);
   });
 
@@ -183,7 +184,6 @@ suite('VirtualFileSystem', () => {
       sandbox.stub(workspace, 'workspaceFolders').value(oneWSFolders);
       const fileStat: FileStat = await knvfs.stat(_uriLocalFile);
       assert.equals(fileStat, fstat);
-      sandbox.restore();
     });
     test('should throw an error if it can not find the workspace file.', async () => {
       sandbox.stub(workspace, 'workspaceFolders').value(emptyWSFolders);
@@ -194,7 +194,6 @@ suite('VirtualFileSystem', () => {
         error = err;
       }
       assert(error);
-      sandbox.restore();
     });
     test('should throw an error if the uri is not of type File.', async () => {
       sandbox.stub(workspace, 'workspaceFolders').value(notFileWSFolders);
@@ -205,14 +204,12 @@ suite('VirtualFileSystem', () => {
         error = err;
       }
       assert(error);
-      sandbox.restore();
     });
     test('should return the file stat information for a file if multiple files are passed in to it.', async () => {
       sandbox.stub(workspace, 'workspaceFolders').value(multipleWSFolders);
       sandbox.stub(window, 'showWorkspaceFolderPick').resolves(multipleWSFolders[0]);
       const fileStat: FileStat = await knvfs.stat(_uriLocalFile);
       assert.equals(fileStat, fstat);
-      sandbox.restore();
     });
   });
 
@@ -225,13 +222,11 @@ suite('VirtualFileSystem', () => {
       sandbox.stub(workspace, 'workspaceFolders').value(oneWSFolders);
       const foundFiles: [string, FileType][] = await knvfs.readDirectory(null);
       assert.equals(foundFiles, files);
-      sandbox.restore();
     });
     test('should return a list of files when no sub-folder is provided.', async () => {
       sandbox.stub(workspace, 'workspaceFolders').value(oneWSFolders);
       const foundPath = await rewiredVFS.getFilePathAsync();
       assert.equals(foundPath, _uriWorkspaceRoot.fsPath);
-      sandbox.restore();
     });
     test('should throw an error if it can not find the workspace folder.', async () => {
       sandbox.stub(workspace, 'workspaceFolders').value(emptyWSFolders);
@@ -242,7 +237,6 @@ suite('VirtualFileSystem', () => {
         error = err;
       }
       assert(error);
-      sandbox.restore();
     });
     test('should throw an error if the uri is not of type File.', async () => {
       sandbox.stub(workspace, 'workspaceFolders').value(notFileWSFolders);
@@ -253,14 +247,12 @@ suite('VirtualFileSystem', () => {
         error = err;
       }
       assert(error);
-      sandbox.restore();
     });
     test('should return a list of files if multiple folders are found.', async () => {
       sandbox.stub(workspace, 'workspaceFolders').value(multipleWSFolders);
       sandbox.stub(window, 'showWorkspaceFolderPick').resolves(multipleWSFolders[0]);
       const foundFiles: [string, FileType][] = await knvfs.readDirectory(_uriLocalFile);
       assert.equals(foundFiles, files);
-      sandbox.restore();
     });
   });
   suite('Create Directory', () => {
@@ -271,7 +263,6 @@ suite('VirtualFileSystem', () => {
       await knvfs.createDirectory(null);
       sinon.assert.calledOnce(spyExists);
       sinon.assert.notCalled(spyMkDir);
-      sandbox.restore();
     });
     test('should NOT create a directory if is no workspace.', async () => {
       const spyExists = sandbox.spy(fsMock, 'existsSync');
@@ -286,7 +277,6 @@ suite('VirtualFileSystem', () => {
       sinon.assert.calledOnce(spyExists);
       sinon.assert.calledOnce(spyMkDir);
       assert(error);
-      sandbox.restore();
     });
   });
   suite('Read File', () => {
@@ -625,6 +615,7 @@ status:
     });
     test('should return the content of a external yaml file from a single folder for a Revision.', async () => {
       sandbox.restore();
+      sandbox.stub(window, 'showErrorMessage').resolves();
       sandbox.stub(workspace, 'workspaceFolders').value(oneWSFolders);
       sandbox.stub(knvfs.knExecutor, 'execute').resolves(cedRevision);
       const testContent: Uint8Array | Thenable<Uint8Array> = Buffer.from(example75w7vYaml, 'utf8');
@@ -633,6 +624,7 @@ status:
     });
     test('should return the content of a external yaml file from a single folder for a Tagged Revision.', async () => {
       sandbox.restore();
+      sandbox.stub(window, 'showErrorMessage').resolves();
       sandbox.stub(workspace, 'workspaceFolders').value(oneWSFolders);
       sandbox.stub(knvfs.knExecutor, 'execute').resolves(cedRevision);
       const testContent: Uint8Array | Thenable<Uint8Array> = Buffer.from(example75w7vYaml, 'utf8');
@@ -661,6 +653,7 @@ status:
     });
     test('should throw an error if fetching the yaml has an error.', async () => {
       sandbox.restore();
+      sandbox.stub(window, 'showErrorMessage').resolves();
       sandbox.stub(workspace, 'workspaceFolders').value(oneWSFolders);
       sandbox.stub(knvfs.knExecutor, 'execute').resolves(cedError);
       let error;
@@ -695,35 +688,30 @@ status:
       sandbox.stub(workspace, 'workspaceFolders').value(oneWSFolders);
       await knvfs.writeFile(_uriLocalFile, Buffer.from(testLocalServiceContent), { create: true, overwrite: true });
       sinon.assert.calledOnce(spyWrite);
-      sandbox.restore();
     });
     test('should write a yaml file to folder in a workspace when no sub-folder is provided.', async () => {
       const spyWrite = sandbox.spy(fsMock, 'writeFileSync');
       sandbox.stub(workspace, 'workspaceFolders').value(oneWSFolders);
       await rewiredVFS.saveAsync(_uriLocalFile, 'utf8');
       sinon.assert.calledOnce(spyWrite);
-      sandbox.restore();
     });
     test('should NOT write a yaml file to folder if it can not find the workspace file.', async () => {
       const spyWrite = sandbox.spy(fsMock, 'writeFileSync');
       sandbox.stub(workspace, 'workspaceFolders').value(emptyWSFolders);
       await knvfs.writeFile(_uriLocalFile, Buffer.from(testLocalServiceContent), { create: true, overwrite: true });
       sinon.assert.notCalled(spyWrite);
-      sandbox.restore();
     });
     test('should NOT write a yaml file to folder if the uri is not of type File.', async () => {
       const spyWrite = sandbox.spy(fsMock, 'writeFileSync');
       sandbox.stub(workspace, 'workspaceFolders').value(notFileWSFolders);
       await knvfs.writeFile(_uriLocalFile, Buffer.from(testLocalServiceContent), { create: true, overwrite: true });
       sinon.assert.notCalled(spyWrite);
-      sandbox.restore();
     });
     test('should NOT write a yaml file to folder if it is a Revision.', async () => {
       const spyWrite = sandbox.spy(fsMock, 'writeFileSync');
       sandbox.stub(workspace, 'workspaceFolders').value(oneWSFolders);
       await knvfs.writeFile(_uriLocalRevisionFile, Buffer.from(testLocalRevisionContent), { create: true, overwrite: true });
       sinon.assert.notCalled(spyWrite);
-      sandbox.restore();
     });
     test('should write a yaml file to folder in a workspace, if given mulitple workspaces.', async () => {
       const spyWrite = sandbox.spy(fsMock, 'writeFileSync');
@@ -731,7 +719,6 @@ status:
       sandbox.stub(window, 'showWorkspaceFolderPick').resolves(multipleWSFolders[0]);
       await knvfs.writeFile(_uriLocalFile, Buffer.from(testLocalServiceContent), { create: true, overwrite: true });
       sinon.assert.calledOnce(spyWrite);
-      sandbox.restore();
     });
   });
   suite('Delete File', () => {
@@ -742,7 +729,6 @@ status:
       await knvfs.delete(_uriLocalFile, { recursive: false });
       sinon.assert.calledOnce(spyExists);
       sinon.assert.calledOnce(spyUnlink);
-      sandbox.restore();
     });
     test('should throw an error if it can not find the workspace folder while trying delete a yaml file to folder in a workspace.', async () => {
       sandbox.stub(workspace, 'workspaceFolders').value(oneWSFolders);
@@ -753,7 +739,6 @@ status:
         error = err;
       }
       assert(error);
-      sandbox.restore();
     });
     test('should not delete a yaml file to folder in a workspace if it cant find it.', async () => {
       const spyExists = sandbox.spy(fsMock, 'existsSync');
@@ -762,7 +747,6 @@ status:
       await knvfs.delete(_uriExternalFile, { recursive: false });
       sinon.assert.calledOnce(spyExists);
       sinon.assert.notCalled(spyUnlink);
-      sandbox.restore();
     });
   });
   suite('Rename File', () => {
@@ -773,7 +757,6 @@ status:
       await knvfs.rename(_uriLocalFile, _uriLocalFile, { overwrite: false });
       sinon.assert.calledOnce(spyExists);
       sinon.assert.calledOnce(spyRename);
-      sandbox.restore();
     });
     test('should throw an error if it can not find the workspace folder while trying to rename a yaml file to folder in a workspace.', async () => {
       sandbox.stub(workspace, 'workspaceFolders').value(oneWSFolders);
@@ -784,7 +767,6 @@ status:
         error = err;
       }
       assert(error);
-      sandbox.restore();
     });
     test('should not rename a yaml file in folder in a workspace if it cant find it.', async () => {
       const spyExists = sandbox.spy(fsMock, 'existsSync');
@@ -793,7 +775,6 @@ status:
       await knvfs.rename(_uriExternalFile, _uriExternalFile, { overwrite: false });
       sinon.assert.calledOnce(spyExists);
       sinon.assert.notCalled(spyRename);
-      sandbox.restore();
     });
   });
 });

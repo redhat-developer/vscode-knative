@@ -496,7 +496,7 @@ export class ServiceDataProvider implements TreeDataProvider<KnativeTreeItem> {
       files = await this.knvfs.readDirectoryAsync();
     } catch (err) {
       // eslint-disable-next-line no-console
-      console.log(`serviceDataProvider.isNodeModifiedLocally Error trying to read directory.\n ${err}`);
+      // console.log(`serviceDataProvider.isNodeModifiedLocally Error trying to read directory.\n ${err}`);
       // throw err;
       return null;
     }

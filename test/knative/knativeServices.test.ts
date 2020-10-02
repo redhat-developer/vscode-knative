@@ -1,3 +1,4 @@
+import * as vscode from 'vscode';
 import * as chai from 'chai';
 import * as sinonChai from 'sinon-chai';
 import * as sinon from 'sinon';
@@ -25,12 +26,14 @@ suite('Knative Services', () => {
   let service: Service;
   let revision: Revision;
   beforeEach(async () => {
+    sandbox.stub(vscode.window, 'showErrorMessage').resolves();
     sandbox
       .stub(serviceDataProvider.knExecutor, 'execute')
       .resolves({ error: undefined, stdout: JSON.stringify(singleServiceData) });
     serviceTreeItems = await serviceDataProvider.getChildren();
     service = serviceTreeItems[0].getKnativeItem() as Service;
     sandbox.restore();
+    sandbox.stub(vscode.window, 'showErrorMessage').resolves();
     sandbox
       .stub(serviceDataProvider.knExecutor, 'execute')
       .resolves({ error: undefined, stdout: JSON.stringify(singleServiceRevisionData) });
@@ -43,7 +46,7 @@ suite('Knative Services', () => {
   });
 
   suite('Getting an instance', () => {
-    test('should return an instance of the singlton', () => {
+    test('should return an instance of the singleton', () => {
       const instance: KnativeServices = KnativeServices.Instance;
       assert.equals(instance, ksvc);
     });

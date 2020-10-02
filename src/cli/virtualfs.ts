@@ -53,6 +53,8 @@ export function vfsUri(
 
 export async function showWorkspaceFolderPick(): Promise<WorkspaceFolder | undefined> {
   if (!workspace.workspaceFolders) {
+    // eslint-disable-next-line no-console
+    console.log('This command requires an open Workspace folder');
     window.showErrorMessage('This command requires an open Workspace folder.', { modal: true }, 'OK');
     return undefined;
   }
@@ -156,13 +158,14 @@ export class KnativeResourceVirtualFileSystemProvider implements FileSystemProvi
   async createDirectoryAsync(_uri: Uri): Promise<void> {
     const dir = await getFilePathAsync(this.yamlDirName, null);
 
+    // eslint-disable-next-line no-useless-catch
     try {
       if (!fs.existsSync(dir)) {
         fs.mkdirSync(dir);
       }
     } catch (err) {
       // eslint-disable-next-line no-console
-      console.log(`Error while createDirectoryAsync() ${err}`);
+      // console.log(`Error while createDirectoryAsync() ${err}`);
       throw err;
     }
   }

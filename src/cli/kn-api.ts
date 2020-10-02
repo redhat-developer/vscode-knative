@@ -294,7 +294,7 @@ export class KnAPI {
       return detectedVersion;
     } catch (error) {
       // eslint-disable-next-line no-console
-      console.log(`GetVersion had an error: ${error}`);
+      // console.log(`GetVersion had an error: ${error}`);
       return undefined;
     }
   }

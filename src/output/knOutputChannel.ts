@@ -43,10 +43,6 @@ export class KnOutputChannel implements OutputChannel {
     if (!textData.endsWith('\n')) {
       this.channel.append('\n');
     }
-    // eslint-disable-next-line no-console
-    console.log(
-      `vscode.workspace.getConfiguration('knative') = ${JSON.stringify(vscode.workspace.getConfiguration('knative'), null, 2)}`,
-    );
     if (vscode.workspace.getConfiguration('knative').get<boolean>('showChannelOnOutput')) {
       this.channel.show();
     }

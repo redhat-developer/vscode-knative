@@ -578,12 +578,14 @@ status:
   const exampleRevisionTreeItems = [example75w7vTreeItem, exampleG4hm8TreeItem, example2fvz4TreeItem];
 
   beforeEach(async () => {
+    sandbox.stub(vscode.window, 'showErrorMessage').resolves();
     sandbox
       .stub(serviceDataProvider.knExecutor, 'execute')
       .resolves({ error: undefined, stdout: JSON.stringify(singleServiceData) });
     serviceTreeItems = await serviceDataProvider.getServices();
     // service = serviceTreeItems[0].getKnativeItem() as Service;
     sandbox.restore();
+    sandbox.stub(vscode.window, 'showErrorMessage').resolves();
     sandbox
       .stub(serviceDataProvider.knExecutor, 'execute')
       .resolves({ error: undefined, stdout: JSON.stringify(singleServiceRevisionData) });
@@ -632,6 +634,7 @@ status:
   suite('Getting Tree Children', () => {
     test('should return the No Services node when KN execute returns "No Services found"', async () => {
       sandbox.restore();
+      sandbox.stub(vscode.window, 'showErrorMessage').resolves();
       sandbox.stub(serviceDataProvider.knExecutor, 'execute').resolves({ error: undefined, stdout: 'No services found.' });
       const result = await serviceDataProvider.getChildren();
       expect(result).to.have.lengthOf(1);
@@ -641,6 +644,7 @@ status:
     });
     test('should return a single Service tree node when called from root with one Service', async () => {
       sandbox.restore();
+      sandbox.stub(vscode.window, 'showErrorMessage').resolves();
       sandbox
         .stub(serviceDataProvider.knExecutor, 'execute')
         .resolves({ error: undefined, stdout: JSON.stringify(singleServiceData) });
@@ -653,6 +657,7 @@ status:
     });
     test('should return a single Revision tree node', async () => {
       sandbox.restore();
+      sandbox.stub(vscode.window, 'showErrorMessage').resolves();
       sandbox.stub(serviceDataProvider, `getRevisions`).resolves(exampleRevisionTreeItems);
       const result = await serviceDataProvider.getChildren(testServiceTreeItem);
       expect(result).to.have.lengthOf(3);
@@ -688,6 +693,7 @@ status:
   suite('Getting Revision', () => {
     test('should NOT run getRevisionData a second time if the CliExitData has an Error', async () => {
       sandbox.restore();
+      sandbox.stub(vscode.window, 'showErrorMessage').resolves();
       sandbox.stub(sdp.knExecutor, 'execute').resolves({ error: 'Sending an error for this test.', stdout: '' });
       const spy = sandbox.spy(sdp, 'getRevisionData');
       await sdp.getRevisions(serviceTreeItems[0]);
@@ -695,6 +701,7 @@ status:
     });
     test('should run getRevisionData a second time if the CliExitData has no data and no error', async () => {
       sandbox.restore();
+      sandbox.stub(vscode.window, 'showErrorMessage').resolves();
       const stub = sandbox.stub(sdp.knExecutor, 'execute');
       stub.onCall(0).resolves({ error: undefined, stdout: '' });
       stub.resolves({ error: undefined, stdout: JSON.stringify(singleServiceRevisionData) });
@@ -704,6 +711,7 @@ status:
     });
     test('should throw an error when the promise rejects when trying to get Revision data', async () => {
       sandbox.restore();
+      sandbox.stub(vscode.window, 'showErrorMessage').resolves();
       const spy = sandbox.spy(sdp, 'getRevisionData');
       const stub = sandbox.stub(sdp.knExecutor, 'execute');
       stub.rejects('In a test, rejecting a promise to get Revisions');
@@ -717,6 +725,7 @@ status:
   suite('Getting Services', () => {
     test('should return a list of Services', async () => {
       sandbox.restore();
+      sandbox.stub(vscode.window, 'showErrorMessage').resolves();
       const spy = sandbox.spy(sdp, 'getServicesList');
       sandbox.stub(sdp.knExecutor, 'execute').resolves({ error: undefined, stdout: JSON.stringify(singleServiceData) });
       sandbox.stub(sdp, 'isNodeModifiedLocally').resolves(false);
@@ -726,6 +735,7 @@ status:
     });
     test('should rerun the List command if it does not get complete data, then return a list of Services', async () => {
       sandbox.restore();
+      sandbox.stub(vscode.window, 'showErrorMessage').resolves();
       const spy = sandbox.spy(sdp, 'getServicesList');
       sandbox.stub(sdp, 'isNodeModifiedLocally').resolves(false);
       const stub = sandbox.stub(sdp.knExecutor, 'execute');
