@@ -50,12 +50,27 @@ export class ServiceDataProvider implements TreeDataProvider<KnativeTreeItem> {
 
   stopRefresh: NodeJS.Timeout;
 
+  /**
+   * Start a refresh of the tree that happens every 60 seconds
+   */
   pollRefresh = (): void => {
     this.stopRefresh = setInterval(() => {
+      // eslint-disable-next-line no-console
+      // console.log(`ServiceDataProvider.pollRefresh`);
       this.refresh();
-    }, 60000);
+    }, workspace.getConfiguration('knative').get<number>('pollRefreshDelay') * 1000);
   };
 
+  /**
+   * Stop the polling refresh
+   */
+  stopPollRefresh = (): void => {
+    clearInterval(this.stopRefresh);
+  };
+
+  /**
+   * Listen for a Service to be modified and Refresh the tree.
+   */
   vfsListener = (event: FileChangeEvent[]): void => {
     // eslint-disable-next-line no-console
     console.log(`ServiceDataProvider.vfsListener event ${event[0].type}, ${event[0].uri.path}`);

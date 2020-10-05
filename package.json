@@ -318,6 +318,18 @@
           "default": 0,
           "description": "Output verbosity level (value between 0 and 9) for Knative Create, Push and Watch commands in output channel and integrated terminal."
         },
+        "knative.pollRefresh": {
+          "title": "Turn on Poll Refresh",
+          "type": "boolean",
+          "default": false,
+          "description": "Turn on the Polling of Refresh. This will call Refresh on the tree once a minute. \nRequires VSCode restart to take effect."
+        },
+        "knative.pollRefreshDelay": {
+          "title": "Set Poll Refresh Delay",
+          "type": "number",
+          "default": 60,
+          "description": "Set the Refresh polling delay in seconds. How often do you want it to check for an update? \nRequires VSCode restart to take effect."
+        },
         "knative.showChannelOnOutput": {
           "title": "Show channel on output",
           "type": "boolean",

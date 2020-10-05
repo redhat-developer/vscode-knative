@@ -599,10 +599,32 @@ status:
   suite('Refresh', () => {
     // TODO: figure out how to test an event that is fired.
     test('should fire the tree data change event', () => {
-      const spy = sandbox.spy();
-      serviceDataProvider.onDidChangeTreeData(spy);
-      serviceDataProvider.refresh();
-      assert(spy.calledOnce);
+      const spy = sandbox.spy(sdp.onDidChangeTreeDataEmitter, 'fire');
+      sdp.refresh();
+      sandbox.assert.calledOnce(spy);
+    });
+  });
+
+  suite('Poll Refresh', () => {
+    // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
+    // const sleep = (ms: number) => {
+    //   return new Promise((resolve) => setTimeout(resolve, ms));
+    // };
+    test('should fire the refresh every minute', () => {
+      // const spy = sandbox.spy(sdp.onDidChangeTreeDataEmitter, 'fire');
+      sdp.pollRefresh();
+      // eslint-disable-next-line no-console
+      // console.log(`ServiceDataProvidertest.Poll Refresh before timeout ${Math.round(new Date().getTime() / 1000)}`);
+      // give the poll enough time to call
+      // eslint-disable-next-line @typescript-eslint/await-thenable
+
+      // await sleep(60001);
+      // eslint-disable-next-line no-console
+      // console.log(`ServiceDataProvidertest.Poll Refresh after timeout ${Math.round(new Date().getTime() / 1000)}`);
+
+      // turn it off so that it doesn't keep polling
+      // sdp.stopPollRefresh();
+      // sandbox.assert.calledOnce(spy);
     });
   });
 

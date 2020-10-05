@@ -34,7 +34,11 @@ export class KnOutputChannel implements OutputChannel {
   }
 
   /**
-   * Take JSON, clean it up, and display it in the output channel.
+   * Take and display it in the output channel.
+   *
+   * If it has `--token=xxx` convert it to `--token= *****`.
+   *
+   * Open the Knative Output channel if set in config.
    * @param text
    */
   public print(text: string): void {
