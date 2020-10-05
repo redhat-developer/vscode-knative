@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See LICENSE file in the project root for license information.
  *-----------------------------------------------------------------------------------------------*/
 
-import { commands, Disposable, extensions, TreeView, Uri, version, window } from 'vscode';
+import { commands, Disposable, extensions, TreeView, Uri, version, window, workspace } from 'vscode';
 import * as path from 'path';
 import { Platform } from '../util/platform';
 import { KnativeTreeItem } from './knativeTreeItem';
@@ -50,7 +50,9 @@ export class ServiceExplorer implements Disposable {
       this.fsw[l - 1].emitter.on('file-changed', () => this.treeDataProvider.refresh());
     });
 
-    // this.treeDataProvider.pollRefresh();
+    if (workspace.getConfiguration('knative').get<boolean>('pollRefresh')) {
+      this.treeDataProvider.pollRefresh();
+    }
 
     // Initialize the tree/explorer view by linking the reference in the package.json to this class.
     this.treeView = window.createTreeView('knativeProjectExplorerServices', { treeDataProvider: this.treeDataProvider });

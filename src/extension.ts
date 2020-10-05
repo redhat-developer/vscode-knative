@@ -19,7 +19,6 @@ import { ServiceExplorer } from './tree/serviceExplorer';
  * @param extensionContext
  */
 export function activate(extensionContext: vscode.ExtensionContext): void {
-  // eslint-disable-next-line no-new
   const serviceExplorer = new ServiceExplorer();
   // register a content provider for the knative readonly scheme
   const knReadonlyProvider = new KnativeReadonlyProvider(serviceExplorer.treeDataProvider.knvfs);
