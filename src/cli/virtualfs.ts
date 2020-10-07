@@ -53,8 +53,6 @@ export function vfsUri(
 
 export async function showWorkspaceFolderPick(): Promise<WorkspaceFolder | undefined> {
   if (!workspace.workspaceFolders) {
-    // eslint-disable-next-line no-console
-    console.log('This command requires an open Workspace folder');
     window.showErrorMessage('This command requires an open Workspace folder.', { modal: true }, 'OK');
     return undefined;
   }
