@@ -309,9 +309,9 @@ export class ServiceDataProvider implements TreeDataProvider<KnativeTreeItem> {
   }
 
   // eslint-disable-next-line class-methods-use-this
-  validateUrl(message: string, value: string): string | null {
-    return validator.default.isURL(value) ? null : message;
-  }
+  // validateUrl(message: string, value: string): string | null {
+  //   return validator.default.isURL(value) ? null : message;
+  // }
 
   // eslint-disable-next-line class-methods-use-this
   async getUrl(): Promise<string | null> {
