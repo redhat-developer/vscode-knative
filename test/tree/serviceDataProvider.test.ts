@@ -781,13 +781,27 @@ status:
       sinon.assert.calledOnce(spy);
       assert.equals(result[0], testServiceTreeItem);
     });
-    test('should rerun the List command if it does not get complete data, then return a list of Services', async () => {
+
+    test('should return a list of Services, even if they are modified', async () => {
+      sandbox.restore();
+      sandbox.stub(vscode.window, 'showErrorMessage').resolves();
+      const spy = sandbox.spy(sdp, 'getServicesList');
+      sandbox.stub(sdp.knExecutor, 'execute').resolves({ error: undefined, stdout: JSON.stringify(singleServiceData) });
+      sandbox.stub(sdp, 'isNodeModifiedLocally').resolves(true);
+      const result: KnativeTreeItem = await sdp.getServices();
+      sinon.assert.calledOnce(spy);
+      assert.equals(result[0], testServiceTreeItemModified);
+    });
+
+    test(`should rerun the List command if it does not get complete data, when is no Conditions, then return a list of Services`, async () => {
       sandbox.restore();
       sandbox.stub(vscode.window, 'showErrorMessage').resolves();
       const spy = sandbox.spy(sdp, 'getServicesList');
       sandbox.stub(sdp, 'isNodeModifiedLocally').resolves(false);
       const stub = sandbox.stub(sdp.knExecutor, 'execute');
-      stub.onCall(0).resolves({ error: undefined, stdout: JSON.stringify(singleServiceIncompleteData) });
+      const incompleteData = JSON.parse(JSON.stringify(singleServiceData));
+      delete incompleteData.items[0].status.conditions;
+      stub.onCall(0).resolves({ error: undefined, stdout: JSON.stringify(incompleteData) });
       stub.resolves({ error: undefined, stdout: JSON.stringify(singleServiceData) });
       const result: KnativeTreeItem = await sdp.getServices();
       sinon.assert.calledTwice(spy);
