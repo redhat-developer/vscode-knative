@@ -145,6 +145,8 @@ export class ServiceDataProvider implements TreeDataProvider<KnativeTreeItem> {
     // Get the raw data from the cli call.
     const result: CliExitData = await this.knExecutor.execute(KnAPI.listRevisionsForService(parentService.getName()));
     // Confirm we got data where we expect it, if not get it again.
+    // If it is not ready yet, it will return no data and an undefined error.
+    // We need to keep checking until it returns data or an error.
     if ((result.stdout === '' || result.stdout === null) && result.error === undefined) {
       return this.getRevisionData(parentService);
     }
