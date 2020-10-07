@@ -869,4 +869,12 @@ status:
       sinon.assert.calledOnce(stubRemoveRevision);
     });
   });
+  suite('Get URL', () => {
+    test('should return a URL string from the user', async () => {
+      sandbox.restore();
+      sandbox.stub(vscode.window, 'showInputBox').resolves('some/url');
+      const result: string = await sdp.getUrl();
+      assert.equals('some/url', result);
+    });
+  });
 });
