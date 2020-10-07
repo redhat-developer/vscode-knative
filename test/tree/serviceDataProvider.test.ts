@@ -6,7 +6,6 @@ import * as sinonChai from 'sinon-chai';
 import * as referee from '@sinonjs/referee';
 import * as yaml from 'yaml';
 import { URL } from 'url';
-import * as singleServiceIncompleteData from './singleServiceIncompleteServiceList.json';
 import * as singleServiceData from './singleServiceServiceList.json';
 import * as singleServiceRevisionData from './singleServiceRevisionList.json';
 import { ContextType } from '../../src/cli/config';
@@ -806,6 +805,68 @@ status:
       const result: KnativeTreeItem = await sdp.getServices();
       sinon.assert.calledTwice(spy);
       assert.equals(result[0], testServiceTreeItem);
+    });
+  });
+  suite('Delete Feature', () => {
+    test('should not delete anything if deletion modal is not confirmed', async () => {
+      sandbox.restore();
+      sandbox.stub(vscode.window, 'showErrorMessage').resolves();
+      sandbox.stub(vscode.window, 'showInformationMessage').resolves(undefined);
+      const stubExecute = sandbox.stub(sdp.knExecutor, 'execute').resolves();
+      const stubRemoveService = sandbox.stub(sdp.ksvc, 'removeService');
+      const stubRemoveRevision = sandbox.stub(sdp.ksvc, 'removeRevision');
+      await sdp.deleteFeature(testServiceTreeItem);
+      sinon.assert.notCalled(stubExecute);
+      sinon.assert.notCalled(stubRemoveService);
+      sinon.assert.notCalled(stubRemoveRevision);
+    });
+    test('should delete a Service if deletion modal is confirmed on Service node', async () => {
+      sandbox.restore();
+      sandbox.stub(vscode.window, 'showErrorMessage').resolves();
+      const stubShowInformationMessage = (sandbox.stub(vscode.window, 'showInformationMessage') as unknown) as sinon.SinonStub<
+        [string, vscode.MessageOptions, ...string[]],
+        Thenable<string>
+      >;
+      stubShowInformationMessage.resolves('Delete');
+      const stubExecute = sandbox.stub(sdp.knExecutor, 'execute').resolves();
+      const stubRemoveService = sandbox.stub(sdp.ksvc, 'removeService');
+      const stubRemoveRevision = sandbox.stub(sdp.ksvc, 'removeRevision');
+      await sdp.deleteFeature(testServiceTreeItem);
+      sinon.assert.calledOnce(stubExecute);
+      sinon.assert.calledOnce(stubRemoveService);
+      sinon.assert.notCalled(stubRemoveRevision);
+    });
+    test('should delete a Revision if deletion modal is confirmed on Revision node', async () => {
+      sandbox.restore();
+      sandbox.stub(vscode.window, 'showErrorMessage').resolves();
+      const stubShowInformationMessage = (sandbox.stub(vscode.window, 'showInformationMessage') as unknown) as sinon.SinonStub<
+        [string, vscode.MessageOptions, ...string[]],
+        Thenable<string>
+      >;
+      stubShowInformationMessage.resolves('Delete');
+      const stubExecute = sandbox.stub(sdp.knExecutor, 'execute').resolves();
+      const stubRemoveService = sandbox.stub(sdp.ksvc, 'removeService');
+      const stubRemoveRevision = sandbox.stub(sdp.ksvc, 'removeRevision');
+      await sdp.deleteFeature(exampleG4hm8TreeItem);
+      sinon.assert.calledOnce(stubExecute);
+      sinon.assert.notCalled(stubRemoveService);
+      sinon.assert.calledOnce(stubRemoveRevision);
+    });
+    test('should delete a Revision if deletion modal is confirmed on a Tagged Revision node', async () => {
+      sandbox.restore();
+      sandbox.stub(vscode.window, 'showErrorMessage').resolves();
+      const stubShowInformationMessage = (sandbox.stub(vscode.window, 'showInformationMessage') as unknown) as sinon.SinonStub<
+        [string, vscode.MessageOptions, ...string[]],
+        Thenable<string>
+      >;
+      stubShowInformationMessage.resolves('Delete');
+      const stubExecute = sandbox.stub(sdp.knExecutor, 'execute').resolves();
+      const stubRemoveService = sandbox.stub(sdp.ksvc, 'removeService');
+      const stubRemoveRevision = sandbox.stub(sdp.ksvc, 'removeRevision');
+      await sdp.deleteFeature(example75w7vTreeItem);
+      sinon.assert.calledOnce(stubExecute);
+      sinon.assert.notCalled(stubRemoveService);
+      sinon.assert.calledOnce(stubRemoveRevision);
     });
   });
 });

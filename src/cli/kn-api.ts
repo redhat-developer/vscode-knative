@@ -223,7 +223,8 @@ export class KnAPI {
    * @param name - the Name of the Service to be deleted.
    */
   static deleteFeature(contextValue: string, name: string): CliCommand {
-    return knCliCommand([contextValue, 'delete', name]);
+    const context = contextValue.split('_');
+    return knCliCommand([context[0], 'delete', name]);
   }
 
   /**

@@ -239,7 +239,7 @@ export class ServiceDataProvider implements TreeDataProvider<KnativeTreeItem> {
     // Make sure there is Status info in the Service to confirm that it has finished being created.
     services.find((s): boolean => {
       if (
-        s?.details?.status?.conditions === undefined ||
+        s.details.status.conditions === undefined ||
         s.details.status.traffic === undefined ||
         s.details.status.conditions[0].status !== 'True'
       ) {
@@ -300,7 +300,7 @@ export class ServiceDataProvider implements TreeDataProvider<KnativeTreeItem> {
       this.refresh();
       if (node.contextValue === 'service') {
         this.ksvc.removeService(node.getName());
-      } else if (node.contextValue === 'revision') {
+      } else if (node.contextValue === 'revision' || node.contextValue === 'revision_tagged') {
         this.ksvc.removeRevision(node.getName());
       }
       return null;
