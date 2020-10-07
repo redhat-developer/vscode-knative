@@ -214,6 +214,21 @@ status:
     null,
     null,
   );
+  const testServiceModified: Service = new Service(
+    'example',
+    'http://example-a-serverless-example.apps.devcluster.openshift.com',
+    jsonServiceContentUnfiltered,
+  );
+  testServiceModified.modified = true;
+  const testServiceTreeItemModified: KnativeTreeItem = new KnativeTreeItem(
+    null,
+    testServiceModified,
+    'example',
+    ContextType.SERVICE_MODIFIED,
+    vscode.TreeItemCollapsibleState.Expanded,
+    null,
+    null,
+  );
 
   const example75w7vYaml = `apiVersion: serving.knative.dev/v1
 kind: Revision
@@ -316,7 +331,7 @@ status:
   serviceName: example-75w7v
   `;
   const example75w7vJson = yaml.parse(example75w7vYaml);
-  const example75w7vRevision: Revision = new Revision('example-g4hm8', 'example', example75w7vJson, [
+  const example75w7vRevision: Revision = new Revision('example-75w7v', 'example', example75w7vJson, [
     {
       tag: null,
       revisionName: 'example-75w7v',
@@ -555,7 +570,7 @@ status:
   serviceName: example-2fvz4
     `;
   const example2fvz4Json = yaml.parse(example2fvz4Yaml);
-  const example2fvz4Revision: Revision = new Revision('example-g4hm8', 'example', example2fvz4Json, [
+  const example2fvz4Revision: Revision = new Revision('example-2fvz4', 'example', example2fvz4Json, [
     {
       tag: 'old',
       revisionName: 'example-2fvz4',
@@ -682,6 +697,17 @@ status:
       sandbox.stub(vscode.window, 'showErrorMessage').resolves();
       sandbox.stub(serviceDataProvider, `getRevisions`).resolves(exampleRevisionTreeItems);
       const result = await serviceDataProvider.getChildren(testServiceTreeItem);
+      expect(result).to.have.lengthOf(3);
+      expect(result[0].description).equals('latest current ');
+      expect(result[0].label).equals('example-75w7v (100%)');
+      expect(result[0].getName()).equals('example-75w7v');
+      expect(result[0].tooltip).equals('Revision: example-75w7v');
+    });
+    test('should return a single Revision tree node when', async () => {
+      sandbox.restore();
+      sandbox.stub(vscode.window, 'showErrorMessage').resolves();
+      sandbox.stub(serviceDataProvider, `getRevisions`).resolves(exampleRevisionTreeItems);
+      const result = await serviceDataProvider.getChildren(testServiceTreeItemModified);
       expect(result).to.have.lengthOf(3);
       expect(result[0].description).equals('latest current ');
       expect(result[0].label).equals('example-75w7v (100%)');
