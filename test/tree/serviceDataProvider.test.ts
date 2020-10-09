@@ -9,15 +9,16 @@ import { URL } from 'url';
 import * as singleServiceData from './singleServiceServiceList.json';
 import * as singleServiceRevisionData from './singleServiceRevisionList.json';
 import { ContextType } from '../../src/cli/config';
+import * as vfs from '../../src/cli/virtualfs';
 import { KnativeItem } from '../../src/knative/knativeItem';
 import { Revision } from '../../src/knative/revision';
-import { Service } from '../../src/knative/service';
+import { Service, CreateService } from '../../src/knative/service';
 import { KnativeTreeItem } from '../../src/tree/knativeTreeItem';
 import { ServiceDataProvider } from '../../src/tree/serviceDataProvider';
 
 import rewire = require('rewire');
 
-const svcdp = rewire('../../src/tree/serviceDataProvider');
+const rewiredServiceDataProvider = rewire('../../src/tree/serviceDataProvider');
 
 const { assert } = referee;
 const { expect } = chai;
@@ -25,7 +26,7 @@ chai.use(sinonChai);
 
 suite('ServiceDataProvider', () => {
   const sandbox = sinon.createSandbox();
-  const sdp = new svcdp.ServiceDataProvider();
+  const sdp = new rewiredServiceDataProvider.ServiceDataProvider();
   const serviceDataProvider: ServiceDataProvider = new ServiceDataProvider();
   let serviceTreeItems: KnativeTreeItem[];
   // let revisionTreeItems: KnativeTreeItem[];
@@ -769,6 +770,7 @@ status:
       // assert(spy.threw());
     });
   });
+
   suite('Getting Services', () => {
     test('should return a list of Services', async () => {
       sandbox.restore();
@@ -807,6 +809,7 @@ status:
       assert.equals(result[0], testServiceTreeItem);
     });
   });
+
   suite('Delete Feature', () => {
     test('should not delete anything if deletion modal is not confirmed', async () => {
       sandbox.restore();
@@ -820,6 +823,7 @@ status:
       sinon.assert.notCalled(stubRemoveService);
       sinon.assert.notCalled(stubRemoveRevision);
     });
+
     test('should delete a Service if deletion modal is confirmed on Service node', async () => {
       sandbox.restore();
       sandbox.stub(vscode.window, 'showErrorMessage').resolves();
@@ -836,6 +840,7 @@ status:
       sinon.assert.calledOnce(stubRemoveService);
       sinon.assert.notCalled(stubRemoveRevision);
     });
+
     test('should delete a Revision if deletion modal is confirmed on Revision node', async () => {
       sandbox.restore();
       sandbox.stub(vscode.window, 'showErrorMessage').resolves();
@@ -852,6 +857,7 @@ status:
       sinon.assert.notCalled(stubRemoveService);
       sinon.assert.calledOnce(stubRemoveRevision);
     });
+
     test('should delete a Revision if deletion modal is confirmed on a Tagged Revision node', async () => {
       sandbox.restore();
       sandbox.stub(vscode.window, 'showErrorMessage').resolves();
@@ -869,12 +875,255 @@ status:
       sinon.assert.calledOnce(stubRemoveRevision);
     });
   });
+
   suite('Get URL', () => {
     test('should return a URL string from the user', async () => {
       sandbox.restore();
       sandbox.stub(vscode.window, 'showInputBox').resolves('some/url');
       const result: string = await sdp.getUrl();
       assert.equals('some/url', result);
+    });
+  });
+
+  suite('Get Name', () => {
+    let showInformationMessageIndex = 0;
+    const windowMock = {
+      showInputBox: function showInputBox(
+        options?: { value: string; ignoreFocusOut: boolean; prompt: string; validateInput: () => string | null },
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        token?: vscode.CancellationToken,
+      ): Thenable<string | undefined> {
+        const input = new Promise<string>((resolve, reject) => {
+          if (options.validateInput()) {
+            resolve(options.value);
+          } else {
+            reject();
+          }
+        });
+        return input;
+      },
+      showInformationMessage: function showInformationMessage(
+        message: string,
+        options: vscode.MessageOptions,
+        ...items: string[]
+      ): Thenable<string | undefined> {
+        const input = new Promise<string>((resolve, reject) => {
+          if (message) {
+            resolve(items[showInformationMessageIndex]);
+          } else {
+            reject();
+          }
+        });
+        return input;
+      },
+    };
+
+    let revertIB;
+    beforeEach(() => {
+      sandbox.restore();
+      revertIB = rewiredServiceDataProvider.__set__('vscode.window', windowMock);
+    });
+
+    teardown(() => {
+      revertIB();
+      sandbox.restore();
+    });
+
+    test('should provide a default name based on the image', async () => {
+      const serviceExpected: CreateService = {
+        name: `knative-tutorial-greeter:quarkus`,
+        image: `quay.io/test-group/knative-tutorial-greeter:quarkus`,
+        force: false,
+      };
+      sandbox.stub(sdp.ksvc, 'findService').returns(undefined);
+      showInformationMessageIndex = 0;
+      const result: CreateService = await sdp.getName(`quay.io/test-group/knative-tutorial-greeter:quarkus`);
+      assert.equals(result, serviceExpected);
+    });
+
+    test('should ask for a new name if the default is used and overwrite the original', async () => {
+      const serviceExpected: CreateService = {
+        name: `knative-tutorial-greeter:quarkus`,
+        image: `quay.io/test-group/knative-tutorial-greeter:quarkus`,
+        force: true,
+      };
+      sandbox.stub(sdp.ksvc, 'findService').returns(true);
+      showInformationMessageIndex = 0;
+      const result: CreateService = await sdp.getName(`quay.io/test-group/knative-tutorial-greeter:quarkus`);
+      assert.equals(result, serviceExpected);
+    });
+
+    test('should ask for a new name if the default is used and change to a new name', async () => {
+      const serviceExpected: CreateService = {
+        name: `knative-tutorial-greeter:quarkus`,
+        image: `quay.io/test-group/knative-tutorial-greeter:quarkus`,
+        force: false,
+      };
+      sandbox.stub(sdp.ksvc, 'findService').returns(true);
+      showInformationMessageIndex = 1;
+      const result: CreateService = await sdp.getName(`quay.io/test-group/knative-tutorial-greeter:quarkus`);
+      assert.equals(result, serviceExpected);
+    });
+
+    test('should return null if there is no name', async () => {
+      sandbox.stub(sdp.ksvc, 'findService').returns(undefined);
+      showInformationMessageIndex = 1;
+      sandbox.stub(windowMock, 'showInputBox').resolves(null);
+      const result: CreateService = await sdp.getName('not/a/valid/url');
+      assert.equals(result, null);
+    });
+  });
+
+  suite('Add Service', () => {
+    test('should take user input, add Service to cluster, and return it as a tree item', async () => {
+      const serviceToCreate: CreateService = {
+        name: `knative-tutorial-greeter`,
+        image: `quay.io/test-group/knative-tutorial-greeter:quarkus`,
+        force: false,
+      };
+      const _uriExternalFile = vscode.Uri.parse(
+        'knmsx://loadknativecore/service-knative-tutorial-greeter.yaml?contextValue%3Dservice%26name%3Dknative-tutorial-greeter%26_%3D1594328823824',
+      );
+      const files: [string, vscode.FileType][] = [
+        [
+          `knmsx://loadknativecore/service-knative-tutorial-greeter.yaml?contextValue%3Dservice%26name%3Dknative-tutorial-greeter%26_%3D1594328823824`,
+          1,
+        ],
+      ];
+      sandbox.restore();
+      sandbox.stub(vscode.window, 'showErrorMessage').resolves();
+      sandbox.stub(sdp, 'getUrl').resolves(`quay.io/test-group/knative-tutorial-greeter:quarkus`);
+      sandbox.stub(sdp, 'getName').resolves(serviceToCreate);
+      sandbox.stub(sdp.ksvc, 'addService').returns(undefined);
+      sandbox.stub(sdp.knvfs, 'readDirectoryAsync').resolves(files);
+      sandbox.stub(vfs, 'vfsUri').returns(_uriExternalFile);
+      sandbox.stub(sdp.knvfs, 'writeFile').returns(undefined);
+      sandbox.stub(vfs, 'getFilePathAsync').resolves('true');
+      sandbox.stub(sdp.knExecutor, 'execute').resolves({ error: undefined, stdout: JSON.stringify(singleServiceData) });
+      const stubDelete = sandbox.stub(sdp.knvfs, 'delete').resolves();
+      const result: KnativeTreeItem[] = await sdp.addService();
+      sinon.assert.calledOnce(stubDelete);
+      assert.isUndefined(result);
+    });
+
+    test('should return undefined if there is a failure to create the the service', async () => {
+      const serviceToCreate: CreateService = {
+        name: `knative-tutorial-greeter`,
+        image: `quay.io/test-group/knative-tutorial-greeter:quarkus`,
+        force: false,
+      };
+      const _uriExternalFile = vscode.Uri.parse(
+        'knmsx://loadknativecore/service-knative-tutorial-greeter.yaml?contextValue%3Dservice%26name%3Dknative-tutorial-greeter%26_%3D1594328823824',
+      );
+      const files: [string, vscode.FileType][] = [
+        [
+          `knmsx://loadknativecore/service-knative-tutorial-greeter.yaml?contextValue%3Dservice%26name%3Dknative-tutorial-greeter%26_%3D1594328823824`,
+          1,
+        ],
+      ];
+      sandbox.restore();
+      sandbox.stub(vscode.window, 'showErrorMessage').resolves();
+      sandbox.stub(sdp, 'getUrl').resolves(`quay.io/test-group/knative-tutorial-greeter:quarkus`);
+      sandbox.stub(sdp, 'getName').resolves(serviceToCreate);
+      sandbox.stub(sdp.ksvc, 'addService').returns(undefined);
+      sandbox.stub(sdp.knvfs, 'readDirectoryAsync').resolves(files);
+      sandbox.stub(vfs, 'vfsUri').returns(_uriExternalFile);
+      sandbox.stub(sdp.knvfs, 'writeFile').returns(undefined);
+      sandbox.stub(vfs, 'getFilePathAsync').resolves('true');
+      sandbox.stub(sdp.knExecutor, 'execute').rejects();
+      const stubDelete = sandbox.stub(sdp.knvfs, 'delete').resolves();
+      const result: KnativeTreeItem[] = await sdp.addService();
+      sinon.assert.calledOnce(stubDelete);
+      assert.isUndefined(result);
+    });
+
+    test('should return null if the new file can not be found', async () => {
+      const serviceToCreate: CreateService = {
+        name: `knative-tutorial-greeter`,
+        image: `quay.io/test-group/knative-tutorial-greeter:quarkus`,
+        force: false,
+      };
+      const _uriExternalFile = vscode.Uri.parse(
+        'knmsx://loadknativecore/service-knative-tutorial-greeter.yaml?contextValue%3Dservice%26name%3Dknative-tutorial-greeter%26_%3D1594328823824',
+      );
+      const files: [string, vscode.FileType][] = [
+        [
+          `knmsx://loadknativecore/service-knative-tutorial-greeter.yaml?contextValue%3Dservice%26name%3Dknative-tutorial-greeter%26_%3D1594328823824`,
+          1,
+        ],
+      ];
+      sandbox.restore();
+      sandbox.stub(vscode.window, 'showErrorMessage').resolves();
+      sandbox.stub(sdp, 'getUrl').resolves(`quay.io/test-group/knative-tutorial-greeter:quarkus`);
+      sandbox.stub(sdp, 'getName').resolves(serviceToCreate);
+      sandbox.stub(sdp.ksvc, 'addService').returns(undefined);
+      sandbox.stub(sdp.knvfs, 'readDirectoryAsync').resolves(files);
+      sandbox.stub(vfs, 'vfsUri').returns(_uriExternalFile);
+      sandbox.stub(sdp.knvfs, 'writeFile').returns(undefined);
+      sandbox.stub(vfs, 'getFilePathAsync').resolves();
+      const stubDelete = sandbox.stub(sdp.knvfs, 'delete').resolves();
+      const result: KnativeTreeItem[] = await sdp.addService();
+      sinon.assert.notCalled(stubDelete);
+      assert.equals(result, null);
+    });
+    test('should throw an error if there is no workspace open', async () => {
+      const serviceToCreate: CreateService = {
+        name: `knative-tutorial-greeter`,
+        image: `quay.io/test-group/knative-tutorial-greeter:quarkus`,
+        force: false,
+      };
+      sandbox.restore();
+      sandbox.stub(vscode.window, 'showErrorMessage').resolves();
+      sandbox.stub(sdp, 'getUrl').resolves(`quay.io/test-group/knative-tutorial-greeter:quarkus`);
+      sandbox.stub(sdp, 'getName').resolves(serviceToCreate);
+      sandbox.stub(sdp.ksvc, 'addService').returns(undefined);
+      sandbox.stub(sdp.knvfs, 'readDirectoryAsync').rejects();
+      const stubDelete = sandbox.stub(sdp.knvfs, 'delete').resolves();
+      const result: KnativeTreeItem[] = await sdp.addService();
+      sinon.assert.notCalled(stubDelete);
+      assert.equals(result, null);
+    });
+    test('should return undefined if the file being created already exists', async () => {
+      const serviceToCreate: CreateService = {
+        name: `knative-tutorial-greeter`,
+        image: `quay.io/test-group/knative-tutorial-greeter:quarkus`,
+        force: false,
+      };
+      const files: [string, vscode.FileType][] = [[`knmsx://loadknativecore/service-knative-tutorial-greeter.yaml`, 1]];
+      sandbox.restore();
+      sandbox.stub(vscode.window, 'showErrorMessage').resolves();
+      sandbox.stub(sdp, 'getUrl').resolves(`quay.io/test-group/knative-tutorial-greeter:quarkus`);
+      sandbox.stub(sdp, 'getName').resolves(serviceToCreate);
+      sandbox.stub(sdp.ksvc, 'addService').returns(undefined);
+      sandbox.stub(sdp.knvfs, 'readDirectoryAsync').resolves(files);
+      const stubDelete = sandbox.stub(sdp.knvfs, 'delete').resolves();
+      const result: KnativeTreeItem[] = await sdp.addService();
+      sinon.assert.notCalled(stubDelete);
+      assert.isUndefined(result);
+    });
+    test('should return null if no image string is provided', async () => {
+      sandbox.restore();
+      sandbox.stub(vscode.window, 'showErrorMessage').resolves();
+      sandbox.stub(sdp, 'getUrl').resolves();
+      const stubDelete = sandbox.stub(sdp.knvfs, 'delete').resolves();
+      const result: KnativeTreeItem[] = await sdp.addService();
+      sinon.assert.notCalled(stubDelete);
+      assert.equals(result, null);
+    });
+    test('should return null if no name string is provided', async () => {
+      const serviceToCreate: CreateService = {
+        name: ``,
+        image: `quay.io/test-group/knative-tutorial-greeter:quarkus`,
+        force: false,
+      };
+      sandbox.restore();
+      sandbox.stub(vscode.window, 'showErrorMessage').resolves();
+      sandbox.stub(sdp, 'getUrl').resolves(`quay.io/test-group/knative-tutorial-greeter:quarkus`);
+      sandbox.stub(sdp, 'getName').resolves(serviceToCreate);
+      const stubDelete = sandbox.stub(sdp.knvfs, 'delete').resolves();
+      const result: KnativeTreeItem[] = await sdp.addService();
+      sinon.assert.notCalled(stubDelete);
+      assert.equals(result, null);
     });
   });
 });
