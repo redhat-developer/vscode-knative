@@ -13,10 +13,10 @@ import {
   TreeItem,
   TreeItemCollapsibleState,
   Uri,
-  window,
   workspace,
 } from 'vscode';
-import * as validator from 'validator';
+import * as vscode from 'vscode';
+// import * as validator from 'validator';
 import * as path from 'path';
 import * as yaml from 'yaml';
 import { KnativeTreeItem, compareNodes } from './knativeTreeItem';
@@ -28,7 +28,8 @@ import { ContextType } from '../cli/config';
 import { Service, CreateService, UpdateService } from '../knative/service';
 import { Revision, Items, Traffic } from '../knative/revision';
 import { KnativeServices } from '../knative/knativeServices';
-import { KnativeResourceVirtualFileSystemProvider, getFilePathAsync, vfsUri, KN_RESOURCE_SCHEME } from '../cli/virtualfs';
+import { KnativeResourceVirtualFileSystemProvider, KN_RESOURCE_SCHEME } from '../cli/virtualfs';
+import * as vfs from '../cli/virtualfs';
 import { KnOutputChannel, OutputChannel } from '../output/knOutputChannel';
 
 export class ServiceDataProvider implements TreeDataProvider<KnativeTreeItem> {
@@ -165,7 +166,7 @@ export class ServiceDataProvider implements TreeDataProvider<KnativeTreeItem> {
       result = await this.getRevisionData(parentService);
     } catch (err) {
       // Catch the Rejected Promise of the Execute to list Revisions.
-      window.showErrorMessage(
+      vscode.window.showErrorMessage(
         `Caught an error getting the Revision for ${parentService.getName()}.\n ${err}`,
         { modal: true },
         'OK',
@@ -175,7 +176,7 @@ export class ServiceDataProvider implements TreeDataProvider<KnativeTreeItem> {
 
     if (result.error) {
       // If we get an error back and not data, tell the user and stop processing it.
-      window.showErrorMessage(
+      vscode.window.showErrorMessage(
         `Failed to get the Revision for ${parentService.getName()}.\n ${result.error}`,
         { modal: true },
         'OK',
@@ -294,7 +295,7 @@ export class ServiceDataProvider implements TreeDataProvider<KnativeTreeItem> {
   }
 
   public async deleteFeature(node: KnativeTreeItem): Promise<void> {
-    const response = await window.showInformationMessage(`Please confirm deletion.`, { modal: true }, 'Delete');
+    const response = await vscode.window.showInformationMessage(`Please confirm deletion.`, { modal: true }, 'Delete');
     if (response === 'Delete') {
       await this.knExecutor.execute(KnAPI.deleteFeature(node.contextValue, node.getName()));
       this.refresh();
@@ -317,7 +318,7 @@ export class ServiceDataProvider implements TreeDataProvider<KnativeTreeItem> {
   async getUrl(): Promise<string | null> {
     // const createUrl: QuickPickItem = { label: `$(plus) Provide new URL...` };
     // const clusterItems: QuickPickItem[] = [{ label: 'tag-portal-v1' }];
-    // const choice = await window.showQuickPick([createUrl, ...clusterItems], {
+    // const choice = await vscode.window.showQuickPick([createUrl, ...clusterItems], {
     //   placeHolder: 'Provide Image URL to connect',
     //   ignoreFocusOut: true,
     // });
@@ -325,13 +326,13 @@ export class ServiceDataProvider implements TreeDataProvider<KnativeTreeItem> {
     //   return null;
     // }
     // return choice.label === createUrl.label
-    //   ? window.showInputBox({
+    //   ? vscode.window.showInputBox({
     //       ignoreFocusOut: true,
     //       prompt: 'Enter an Image URL',
     //       validateInput: (value: string) => serviceDataProvider.validateUrl('Invalid URL provided', value),
     //     })
     //   : choice.label;
-    return window.showInputBox({
+    return vscode.window.showInputBox({
       ignoreFocusOut: true,
       prompt: 'Enter an Image URL',
       // validateInput: (value: string) => serviceDataProvider.validateUrl('Invalid URL provided', value),
@@ -341,17 +342,18 @@ export class ServiceDataProvider implements TreeDataProvider<KnativeTreeItem> {
   // eslint-disable-next-line class-methods-use-this
   private async getName(image: string): Promise<CreateService | null> {
     const imageSplit: string[] = image.split('/');
+    // Take the name from the image after the last slash
     const imageName: string = imageSplit[imageSplit.length - 1];
     let force = false;
 
-    const name: string = await window.showInputBox({
+    const name: string = await vscode.window.showInputBox({
       value: imageName,
       ignoreFocusOut: true,
       prompt: 'Enter a Name for the Service',
       validateInput: async (nameUsed: string) => {
         const found: Service = this.ksvc.findService(nameUsed);
         if (found) {
-          const response = await window.showInformationMessage(
+          const response = await vscode.window.showInformationMessage(
             `That name has already been used. Do you want to overwrite the Service?`,
             { modal: true },
             'Yes',
@@ -398,6 +400,7 @@ export class ServiceDataProvider implements TreeDataProvider<KnativeTreeItem> {
     const serviceName = serveObj.name;
     let files: [string, FileType][];
     try {
+      // Add the dir if missing or read it and fetch the files in it
       files = await this.knvfs.readDirectoryAsync();
     } catch (err) {
       // eslint-disable-next-line no-console
@@ -406,30 +409,34 @@ export class ServiceDataProvider implements TreeDataProvider<KnativeTreeItem> {
       return null;
     }
     let filePath = '';
+    // Get the name off the end of the path, then check it against the name being added
     files.forEach((loc): void => {
-      // eslint-disable-next-line @typescript-eslint/prefer-string-starts-ends-with
       const fileName = loc[0].slice(loc[0].lastIndexOf(path.sep) + 1);
       if (fileName === `service-${serviceName}.yaml`) {
         [filePath] = loc;
       }
     });
+    // Check if the file exists
     if (filePath === '') {
-      // The file doesn't exist, so write it
-      const newUri = vfsUri(KN_RESOURCE_SCHEME, 'service', serviceName, 'yaml');
-      // eslint-disable-next-line prettier/prettier
+      // The file doesn't exist, make a virtual URI for it.
+      const newUri = vfs.vfsUri(KN_RESOURCE_SCHEME, 'service', serviceName, 'yaml');
+      // Create the base yaml for creating a Service.
       const stringContent = yaml.parse(
         `apiVersion: serving.knative.dev/v1\nkind: Service\nmetadata:\n  name: ${serveObj.name}\nspec:\n  template:\n    spec:\n      containers:\n      - image: ${serveObj.image}`,
       );
       const yamlContent = yaml.stringify(stringContent);
+      // Read the string version of the yaml into a file
       await this.knvfs.writeFile(newUri, Buffer.from(yamlContent, 'utf8'), {
         create: true,
         overwrite: false,
       });
-      filePath = await getFilePathAsync('.knative', newUri.path);
+      // Get the path for the newly created file.
+      filePath = await vfs.getFilePathAsync('.knative', newUri.path);
       if (!filePath) {
         // We couldn't make or find the location to write the temp file.
         return null;
       }
+      // Create the Service with kubectl apply
       try {
         await this.knExecutor.execute(KubectlAPI.applyYAML(filePath, { override: true }));
       } catch (err) {
@@ -450,7 +457,7 @@ export class ServiceDataProvider implements TreeDataProvider<KnativeTreeItem> {
   }
 
   public async addTag(node: KnativeTreeItem): Promise<KnativeTreeItem[]> {
-    const tagName: string = await window.showInputBox({
+    const tagName: string = await vscode.window.showInputBox({
       ignoreFocusOut: true,
       prompt: 'Enter a Tag name',
     });
@@ -543,7 +550,7 @@ export class ServiceDataProvider implements TreeDataProvider<KnativeTreeItem> {
       }
       if (typeof result.stdout === 'string' && result.stdout.search('unchanged') > 0) {
         // Delete the local YAML file that was uploaded.
-        const response = await window.showInformationMessage(
+        const response = await vscode.window.showInformationMessage(
           `The file is unchanged.\nDo you want to delete the local copy?`,
           { modal: true },
           'Delete',
@@ -555,7 +562,7 @@ export class ServiceDataProvider implements TreeDataProvider<KnativeTreeItem> {
         // Delete the local YAML file that was uploaded.
         let response = 'Delete';
         if (!workspace.getConfiguration('knative').get<boolean>('disableCheckForDeletingLocal')) {
-          response = await window.showInformationMessage(
+          response = await vscode.window.showInformationMessage(
             `The file was uploaded. Do you want to delete the local copy and download the updated version?`,
             { modal: true },
             'Delete',
@@ -569,7 +576,7 @@ export class ServiceDataProvider implements TreeDataProvider<KnativeTreeItem> {
       if (typeof error === 'string' && error.search('validation failed') > 0) {
         // eslint-disable-next-line @typescript-eslint/prefer-string-starts-ends-with
         const fileName = error.slice(error.lastIndexOf('validation failed:'));
-        window.showErrorMessage(
+        vscode.window.showErrorMessage(
           `The YAMl file failed validation with the following error.\n\n${fileName}`,
           { modal: true },
           'OK',
@@ -581,7 +588,7 @@ export class ServiceDataProvider implements TreeDataProvider<KnativeTreeItem> {
       } else {
         // eslint-disable-next-line no-console
         console.log(`updateServiceFromYaml error = ${error}`);
-        await window.showErrorMessage(`There was an error while uploading the YAML. `, { modal: true }, 'OK');
+        await vscode.window.showErrorMessage(`There was an error while uploading the YAML. `, { modal: true }, 'OK');
       }
     }
     // Refresh the list to read the update
@@ -592,7 +599,7 @@ export class ServiceDataProvider implements TreeDataProvider<KnativeTreeItem> {
     const fileURI = await this.getLocalYamlPathForNode(node);
 
     // Delete the local YAML file that was uploaded.
-    const response = await window.showInformationMessage(
+    const response = await vscode.window.showInformationMessage(
       `Are you sure you want to delete the local copy.`,
       { modal: true },
       'Delete',

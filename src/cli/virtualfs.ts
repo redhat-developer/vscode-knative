@@ -85,6 +85,12 @@ export async function saveAsync(uri: Uri, content: Uint8Array, subFolder?: strin
   }
 }
 
+/**
+ * Build a `path` based on the root folder and the arguments passed in.
+ * @param subFolder
+ * @param fileName
+ * @returns `Promise<string>` of the path generated
+ */
 export async function getFilePathAsync(subFolder?: string, fileName?: string): Promise<string> {
   const rootPath = await selectRootFolder();
   if (!rootPath) {
@@ -139,6 +145,11 @@ export class KnativeResourceVirtualFileSystemProvider implements FileSystemProvi
     return this.readDirectoryAsync();
   }
 
+  /**
+   * Add the directory if missing.
+   *
+   * Return an array of the array of `[path, fileType]` for the files in the dir.
+   */
   async readDirectoryAsync(): Promise<[string, FileType][]> {
     const files: [string, FileType][] = [];
     await this.createDirectoryAsync(null);
@@ -153,6 +164,10 @@ export class KnativeResourceVirtualFileSystemProvider implements FileSystemProvi
     return this.createDirectoryAsync(_uri);
   }
 
+  /**
+   * If directory does not already exist, create it.
+   * @param _uri Ignored. May be used in the future.
+   */
   async createDirectoryAsync(_uri: Uri): Promise<void> {
     const dir = await getFilePathAsync(this.yamlDirName, null);
 
