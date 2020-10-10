@@ -456,6 +456,11 @@ export class ServiceDataProvider implements TreeDataProvider<KnativeTreeItem> {
     // return this.insertAndRevealService(createKnObj(serveObj.name));
   }
 
+  /**
+   * Get a tag name and add it to the Revision
+   * @param node Revision KnativeTreeItem
+   * @returns undefined if successful and null if failed
+   */
   public async addTag(node: KnativeTreeItem): Promise<KnativeTreeItem[]> {
     const tagName: string = await vscode.window.showInputBox({
       ignoreFocusOut: true,
@@ -468,10 +473,6 @@ export class ServiceDataProvider implements TreeDataProvider<KnativeTreeItem> {
 
     const serveObj: UpdateService = { name: serviceName, tag: tagContent };
 
-    if (!serveObj.name) {
-      return null;
-    }
-
     // Get the raw data from the cli call.
     const result: CliExitData = await this.knExecutor.execute(KnAPI.updateService(serveObj));
     const service: Service = new Service(serveObj.name, serveObj.image);
@@ -481,9 +482,11 @@ export class ServiceDataProvider implements TreeDataProvider<KnativeTreeItem> {
     if (result.error) {
       // TODO: handle the error
       // check the kind of errors we can get back
+      return null;
     }
     this.refresh();
     // return this.insertAndRevealService(createKnObj(serveObj.name));
+    return undefined;
   }
 
   public async getLocalYamlPathForNode(node: KnativeTreeItem): Promise<string> {
