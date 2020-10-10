@@ -1155,6 +1155,33 @@ status:
     });
   });
 
+  suite('Get local YAML path', () => {
+    test('should return the path for a tree node', async () => {
+      const expectedPath = '/home/user/code/service-example.yaml';
+      const files: [string, vscode.FileType][] = [[`/home/user/code/service-example.yaml`, 1]];
+      sandbox.restore();
+      sandbox.stub(vscode.window, 'showErrorMessage').resolves();
+      sandbox.stub(sdp.knvfs, 'readDirectoryAsync').resolves(files);
+      const result: KnativeTreeItem[] = await sdp.getLocalYamlPathForNode(testServiceTreeItemModified);
+      assert.equals(result, expectedPath);
+    });
+    test('should return an empty string if file is not found', async () => {
+      const files: [string, vscode.FileType][] = [[`/home/user/code/service-different.yaml`, 1]];
+      sandbox.restore();
+      sandbox.stub(vscode.window, 'showErrorMessage').resolves();
+      sandbox.stub(sdp.knvfs, 'readDirectoryAsync').resolves(files);
+      const result: KnativeTreeItem[] = await sdp.getLocalYamlPathForNode(testServiceTreeItemModified);
+      assert.equals(result, '');
+    });
+    test('should return null if no files are found', async () => {
+      sandbox.restore();
+      sandbox.stub(vscode.window, 'showErrorMessage').resolves();
+      sandbox.stub(sdp.knvfs, 'readDirectoryAsync').rejects();
+      const result: KnativeTreeItem[] = await sdp.getLocalYamlPathForNode(testServiceTreeItemModified);
+      assert.equals(result, null);
+    });
+  });
+
   suite('2', () => {
     test('should ', async () => {
       // sandbox.restore();
