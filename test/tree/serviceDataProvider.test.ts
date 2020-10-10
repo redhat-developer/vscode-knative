@@ -1126,4 +1126,45 @@ status:
       assert.equals(result, null);
     });
   });
+
+  suite('Add Tag', () => {
+    test('should get a tag name and add it to the Revision', async () => {
+      sandbox.restore();
+      sandbox.stub(vscode.window, 'showErrorMessage').resolves();
+      sandbox.stub(vscode.window, 'showInputBox').resolves('testTag');
+      // const spy = sandbox.spy(sdp, 'getServicesList');
+      sandbox.stub(sdp.knExecutor, 'execute').resolves({ error: undefined, stdout: JSON.stringify(singleServiceData) });
+      // sandbox.stub(sdp, 'isNodeModifiedLocally').resolves(false);
+      const stubUpdate = sandbox.stub(sdp.ksvc, 'updateService').returns(undefined);
+      const result: KnativeTreeItem[] = await sdp.addTag(exampleG4hm8TreeItem);
+      sinon.assert.calledOnce(stubUpdate);
+      assert.isUndefined(result);
+    });
+
+    test('should get a tag name and add it to the Revision', async () => {
+      sandbox.restore();
+      sandbox.stub(vscode.window, 'showErrorMessage').resolves();
+      sandbox.stub(vscode.window, 'showInputBox').resolves('testTag');
+      // const spy = sandbox.spy(sdp, 'getServicesList');
+      sandbox.stub(sdp.knExecutor, 'execute').resolves({ error: 'failed to update', stdout: undefined });
+      // sandbox.stub(sdp, 'isNodeModifiedLocally').resolves(false);
+      const stubUpdate = sandbox.stub(sdp.ksvc, 'updateService').returns(undefined);
+      const result: KnativeTreeItem[] = await sdp.addTag(exampleG4hm8TreeItem);
+      sinon.assert.calledOnce(stubUpdate);
+      assert.equals(result, null);
+    });
+  });
+
+  suite('2', () => {
+    test('should ', async () => {
+      // sandbox.restore();
+      // sandbox.stub(vscode.window, 'showErrorMessage').resolves();
+      // const spy = sandbox.spy(sdp, 'getServicesList');
+      // sandbox.stub(sdp.knExecutor, 'execute').resolves({ error: undefined, stdout: JSON.stringify(singleServiceData) });
+      // sandbox.stub(sdp, 'isNodeModifiedLocally').resolves(false);
+      // const result: KnativeTreeItem = await sdp.getServices();
+      // sinon.assert.calledOnce(spy);
+      // assert.equals(result[0], testServiceTreeItem);
+    });
+  });
 });
