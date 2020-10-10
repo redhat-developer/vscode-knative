@@ -1182,16 +1182,29 @@ status:
     });
   });
 
-  suite('2', () => {
-    test('should ', async () => {
-      // sandbox.restore();
-      // sandbox.stub(vscode.window, 'showErrorMessage').resolves();
-      // const spy = sandbox.spy(sdp, 'getServicesList');
-      // sandbox.stub(sdp.knExecutor, 'execute').resolves({ error: undefined, stdout: JSON.stringify(singleServiceData) });
-      // sandbox.stub(sdp, 'isNodeModifiedLocally').resolves(false);
-      // const result: KnativeTreeItem = await sdp.getServices();
-      // sinon.assert.calledOnce(spy);
-      // assert.equals(result[0], testServiceTreeItem);
+  suite('Modified Locally', () => {
+    test('should return true if the file is found locally', async () => {
+      const files: [string, vscode.FileType][] = [[`/home/user/code/service-example.yaml`, 1]];
+      sandbox.restore();
+      sandbox.stub(vscode.window, 'showErrorMessage').resolves();
+      sandbox.stub(sdp.knvfs, 'readDirectoryAsync').resolves(files);
+      const result: boolean = await sdp.isNodeModifiedLocally('example');
+      assert.equals(result, true);
+    });
+    test('should return false if file is not found', async () => {
+      const files: [string, vscode.FileType][] = [[`/home/user/code/service-different.yaml`, 1]];
+      sandbox.restore();
+      sandbox.stub(vscode.window, 'showErrorMessage').resolves();
+      sandbox.stub(sdp.knvfs, 'readDirectoryAsync').resolves(files);
+      const result: boolean = await sdp.isNodeModifiedLocally('example');
+      assert.equals(result, false);
+    });
+    test('should return null if no files are found', async () => {
+      sandbox.restore();
+      sandbox.stub(vscode.window, 'showErrorMessage').resolves();
+      sandbox.stub(sdp.knvfs, 'readDirectoryAsync').rejects();
+      const result: boolean = await sdp.isNodeModifiedLocally('example');
+      assert.equals(result, null);
     });
   });
 });
