@@ -1358,4 +1358,48 @@ status:
       sinon.assert.notCalled(stubDelete);
     });
   });
+
+  suite('Delete Local yaml', () => {
+    test('should ask to Delete a tree node, then delete when delete is selected', async () => {
+      const file = `/home/loadknativecore/service-example.yaml`;
+      sandbox.restore();
+      sandbox.stub(vscode.window, 'showErrorMessage').resolves();
+      sandbox.stub(sdp, 'getLocalYamlPathForNode').resolves(file);
+      const stubShowInformationMessage = (sandbox.stub(vscode.window, 'showInformationMessage') as unknown) as sinon.SinonStub<
+        [string, vscode.MessageOptions, ...string[]],
+        Thenable<string>
+      >;
+      stubShowInformationMessage.resolves('Delete');
+      const stubDelete = sandbox.stub(sdp.knvfs, 'delete').resolves();
+      await sdp.deleteLocalYaml();
+      sinon.assert.calledOnce(stubDelete);
+    });
+
+    test('should ask to Delete a tree node, then delete when delete is NOT selected', async () => {
+      const file = `/home/loadknativecore/service-example.yaml`;
+      sandbox.restore();
+      sandbox.stub(vscode.window, 'showErrorMessage').resolves();
+      sandbox.stub(sdp, 'getLocalYamlPathForNode').resolves(file);
+      const stubShowInformationMessage = (sandbox.stub(vscode.window, 'showInformationMessage') as unknown) as sinon.SinonStub<
+        [string, vscode.MessageOptions, ...string[]],
+        Thenable<string>
+      >;
+      stubShowInformationMessage.resolves(undefined);
+      const stubDelete = sandbox.stub(sdp.knvfs, 'delete').resolves();
+      await sdp.deleteLocalYaml();
+      sinon.assert.notCalled(stubDelete);
+    });
+  });
+
+  suite('Require login', () => {
+    test('should check if the error is one of the expected errors', async () => {
+      sandbox.restore();
+      sandbox.stub(vscode.window, 'showErrorMessage').resolves();
+      sandbox
+        .stub(serviceDataProvider.knExecutor, 'execute')
+        .resolves({ error: 'Please log in to the cluster', stdout: undefined, stderr: 'Please log in to the cluster' });
+      const result: boolean = await serviceDataProvider.requireLogin();
+      assert.equals(result, true);
+    });
+  });
 });
