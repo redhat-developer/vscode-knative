@@ -1207,4 +1207,155 @@ status:
       assert.equals(result, null);
     });
   });
+
+  suite('Update Service from yaml', () => {
+    const workspaceConfigurationMock = {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      get: function get<T>(section: string): T | undefined {
+        return null;
+      },
+    };
+    // const workspaceMock = {
+    //   getConfiguration: function getConfiguration(
+    //     // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    //     section?: string | undefined,
+    //     // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    //     scope?: vscode.ConfigurationScope | null,
+    //   ): vscode.WorkspaceConfiguration {
+    //     const get = (string): boolean => {
+    //       return true;
+    //     };
+    //     const has = (): boolean => {
+    //       return true;
+    //     };
+    //     const inspect = (): boolean => {
+    //       return true;
+    //     };
+    //     const update = (): boolean => {
+    //       return true;
+    //     };
+    //     const config = { get, has, inspect, update}
+    //     return config;
+    //   },
+    // };
+
+    // let revertIB;
+    let revertIB2;
+    beforeEach(() => {
+      sandbox.restore();
+      // revertIB = rewiredServiceDataProvider.__set__('vscode.workspace', workspaceMock);
+      revertIB2 = rewiredServiceDataProvider.__set__('vscode.WorkspaceConfiguration', workspaceConfigurationMock);
+    });
+
+    teardown(() => {
+      // revertIB();
+      revertIB2();
+      sandbox.restore();
+    });
+
+    test('should upload the yaml and then delete it', async () => {
+      const file = `/home/loadknativecore/service-example.yaml`;
+      sandbox.restore();
+      sandbox.stub(vscode.window, 'showErrorMessage').resolves();
+      sandbox.stub(sdp, 'getLocalYamlPathForNode').resolves(file);
+      sandbox.stub(sdp.knExecutor, 'execute').resolves({ error: undefined, stdout: JSON.stringify(singleServiceData) });
+      // const stubGetConfig = (sandbox.stub(vscode.workspace, 'getConfiguration') as unknown) as sinon.SinonStub<
+      //   [string?, vscode.ConfigurationScope?],
+      //   vscode.WorkspaceConfiguration
+      // >;
+      // stubGetConfig.returns({
+      //   disableCheckForDeletingLocal: true,
+      //   outputVerbosityLevel: 0,
+      //   pollRefresh: false,
+      //   pollRefreshDelay: 60,
+      //   showChannelOnOutput: false,
+      //   get(section),
+      //   has(section: string),
+      //   inspect(section: string)
+      // });
+      sandbox.stub(workspaceConfigurationMock, 'get').returns(true);
+      const stubShowInformationMessage = (sandbox.stub(vscode.window, 'showInformationMessage') as unknown) as sinon.SinonStub<
+        [string, vscode.MessageOptions, ...string[]],
+        Thenable<string>
+      >;
+      stubShowInformationMessage.resolves('Delete');
+      const stubDelete = sandbox.stub(sdp.knvfs, 'delete').resolves();
+      await sdp.updateServiceFromYaml();
+      sinon.assert.calledOnce(stubDelete);
+    });
+
+    test('should ask to Delete a Service if it was unchanged, then delete when delete is selected', async () => {
+      const file = `/home/loadknativecore/service-example.yaml`;
+      sandbox.restore();
+      sandbox.stub(vscode.window, 'showErrorMessage').resolves();
+      sandbox.stub(sdp, 'getLocalYamlPathForNode').resolves(file);
+      sandbox.stub(sdp.knExecutor, 'execute').resolves({ error: undefined, stdout: 'The Service is unchanged' });
+      const stubShowInformationMessage = (sandbox.stub(vscode.window, 'showInformationMessage') as unknown) as sinon.SinonStub<
+        [string, vscode.MessageOptions, ...string[]],
+        Thenable<string>
+      >;
+      stubShowInformationMessage.resolves('Delete');
+      const stubDelete = sandbox.stub(sdp.knvfs, 'delete').resolves();
+      await sdp.updateServiceFromYaml();
+      sinon.assert.calledOnce(stubDelete);
+    });
+
+    test('should ask to Delete a Service if it was unchanged, then delete when delete is NOT selected', async () => {
+      const file = `/home/loadknativecore/service-example.yaml`;
+      sandbox.restore();
+      sandbox.stub(vscode.window, 'showErrorMessage').resolves();
+      sandbox.stub(sdp, 'getLocalYamlPathForNode').resolves(file);
+      sandbox.stub(sdp.knExecutor, 'execute').resolves({ error: undefined, stdout: 'The Service is unchanged' });
+      const stubShowInformationMessage = (sandbox.stub(vscode.window, 'showInformationMessage') as unknown) as sinon.SinonStub<
+        [string, vscode.MessageOptions, ...string[]],
+        Thenable<string>
+      >;
+      stubShowInformationMessage.resolves(undefined);
+      const stubDelete = sandbox.stub(sdp.knvfs, 'delete').resolves();
+      await sdp.updateServiceFromYaml();
+      sinon.assert.notCalled(stubDelete);
+    });
+
+    test('should catch a validation error, display it, and not update or delete', async () => {
+      const file = `/home/loadknativecore/service-example.yaml`;
+      sandbox.restore();
+      sandbox.stub(sdp, 'getLocalYamlPathForNode').resolves(file);
+      sandbox
+        .stub(sdp.knExecutor, 'execute')
+        .resolves({ error: 'There was a validation failed error xyz should be abc', stdout: undefined });
+      const stubErrorMessage = sandbox.stub(vscode.window, 'showErrorMessage').resolves();
+      const stubDelete = sandbox.stub(sdp.knvfs, 'delete').resolves();
+      await sdp.updateServiceFromYaml();
+      sinon.assert.calledOnce(stubErrorMessage);
+      sinon.assert.notCalled(stubDelete);
+    });
+
+    test('should catch an undefined warning and not update or delete', async () => {
+      const file = `/home/loadknativecore/service-example.yaml`;
+      sandbox.restore();
+      sandbox.stub(sdp, 'getLocalYamlPathForNode').resolves(file);
+      sandbox
+        .stub(sdp.knExecutor, 'execute')
+        .resolves({ error: 'There was an undefinedWarning something went wrong', stdout: undefined });
+      const stubErrorMessage = sandbox.stub(vscode.window, 'showErrorMessage').resolves();
+      const stubDelete = sandbox.stub(sdp.knvfs, 'delete').resolves();
+      await sdp.updateServiceFromYaml();
+      sinon.assert.notCalled(stubErrorMessage);
+      sinon.assert.notCalled(stubDelete);
+    });
+
+    test('should catch any error, display it, and not update or delete', async () => {
+      const file = `/home/loadknativecore/service-example.yaml`;
+      sandbox.restore();
+      sandbox.stub(sdp, 'getLocalYamlPathForNode').resolves(file);
+      sandbox
+        .stub(sdp.knExecutor, 'execute')
+        .resolves({ error: 'There was some error but it was not validation related', stdout: undefined });
+      const stubErrorMessage = sandbox.stub(vscode.window, 'showErrorMessage').resolves();
+      const stubDelete = sandbox.stub(sdp.knvfs, 'delete').resolves();
+      await sdp.updateServiceFromYaml();
+      sinon.assert.calledOnce(stubErrorMessage);
+      sinon.assert.notCalled(stubDelete);
+    });
+  });
 });

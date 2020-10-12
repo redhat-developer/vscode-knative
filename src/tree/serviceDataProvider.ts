@@ -13,7 +13,6 @@ import {
   TreeItem,
   TreeItemCollapsibleState,
   Uri,
-  workspace,
 } from 'vscode';
 import * as vscode from 'vscode';
 // import * as validator from 'validator';
@@ -59,7 +58,7 @@ export class ServiceDataProvider implements TreeDataProvider<KnativeTreeItem> {
       // eslint-disable-next-line no-console
       // console.log(`ServiceDataProvider.pollRefresh`);
       this.refresh();
-    }, workspace.getConfiguration('knative').get<number>('pollRefreshDelay') * 1000);
+    }, vscode.workspace.getConfiguration('knative').get<number>('pollRefreshDelay') * 1000);
   };
 
   /**
@@ -502,8 +501,8 @@ export class ServiceDataProvider implements TreeDataProvider<KnativeTreeItem> {
       return null;
     }
     let fileURI = '';
+    // Find a path with a matching name and set it and return it
     files.forEach((loc): void => {
-      // eslint-disable-next-line @typescript-eslint/prefer-string-starts-ends-with
       const fileName = loc[0].slice(loc[0].lastIndexOf(path.sep) + 1);
       if (fileName === `service-${serviceName}.yaml`) {
         [fileURI] = loc;
@@ -528,8 +527,8 @@ export class ServiceDataProvider implements TreeDataProvider<KnativeTreeItem> {
       return null;
     }
     let isFileFound = false;
+    // Look for a path with a matching name and set the flag to true
     files.forEach((loc): void => {
-      // eslint-disable-next-line @typescript-eslint/prefer-string-starts-ends-with
       const fileName = loc[0].slice(loc[0].lastIndexOf(path.sep) + 1);
       if (fileName === `service-${serviceName}.yaml`) {
         isFileFound = true;
@@ -538,6 +537,10 @@ export class ServiceDataProvider implements TreeDataProvider<KnativeTreeItem> {
     return isFileFound;
   }
 
+  /**
+   * Get the local yaml for the node and use Apply to update the cluster
+   * @param node Service KnativeTreeItem
+   */
   public async updateServiceFromYaml(node: KnativeTreeItem): Promise<void> {
     const fileURI = await this.getLocalYamlPathForNode(node);
 
@@ -564,7 +567,7 @@ export class ServiceDataProvider implements TreeDataProvider<KnativeTreeItem> {
       } else {
         // Delete the local YAML file that was uploaded.
         let response = 'Delete';
-        if (!workspace.getConfiguration('knative').get<boolean>('disableCheckForDeletingLocal')) {
+        if (!vscode.workspace.getConfiguration('knative').get<boolean>('disableCheckForDeletingLocal')) {
           response = await vscode.window.showInformationMessage(
             `The file was uploaded. Do you want to delete the local copy and download the updated version?`,
             { modal: true },
