@@ -3,7 +3,8 @@
  *  Licensed under the MIT License. See LICENSE file in the project root for license information.
  *-----------------------------------------------------------------------------------------------*/
 
-import { commands, Disposable, extensions, TreeView, Uri, version, window, workspace } from 'vscode';
+import { Disposable, extensions, TreeView, Uri, version, window, workspace } from 'vscode';
+import * as vscode from 'vscode';
 import * as path from 'path';
 import { Platform } from '../util/platform';
 import { KnativeTreeItem } from './knativeTreeItem';
@@ -11,14 +12,13 @@ import { ServiceDataProvider } from './serviceDataProvider';
 import { WatchUtil, FileContentChangeNotifier } from '../util/watch';
 
 const kubeConfigFolder: string = path.join(Platform.getUserHomePath(), '.kube');
-
+const kubeconfigParam: string[][] = [[kubeConfigFolder, 'config']];
 const kubeconfigEnv: string = process.env.KUBECONFIG;
 let kubeconfigList: string[] = [];
 // check to make sure there is an ENV for KUBECONFIG
 if (kubeconfigEnv) {
   kubeconfigList = kubeconfigEnv.split(path.delimiter);
 }
-const kubeconfigParam: string[][] = [[kubeConfigFolder, 'config']];
 kubeconfigList.forEach((value): void => {
   const kubeconfigSplit: string[] = value.split(path.sep);
   const kubeconfigFileName: string = kubeconfigSplit.pop();
@@ -26,20 +26,23 @@ kubeconfigList.forEach((value): void => {
   kubeconfigParam.push([kubeconfigDir, kubeconfigFileName]);
 });
 
-function issueUrl(): string {
-  const { packageJSON } = extensions.getExtension('redhat.vscode-knative');
-  const body = [`VS Code version: ${version}`, `OS: ${Platform.OS}`, `Extension version: ${packageJSON.version}`].join('\n');
-  return `${packageJSON.bugs}/new?labels=kind/bug&title=&body=**Environment**\n${body}\n**Description**`;
-}
-
-async function reportIssue(): Promise<unknown> {
-  return commands.executeCommand('vscode.open', Uri.parse(issueUrl()));
-}
-
 export class ServiceExplorer implements Disposable {
-  private treeView: TreeView<KnativeTreeItem>;
+  public treeView: TreeView<KnativeTreeItem>;
 
-  private fsw: FileContentChangeNotifier[] = [];
+  // eslint-disable-next-line class-methods-use-this
+  public issueUrl(): string {
+    const { packageJSON } = extensions.getExtension('redhat.vscode-knative');
+    const body = [`VS Code version: ${version}`, `OS: ${Platform.OS}`, `Extension version: ${packageJSON.version}`].join('\n');
+    return `${packageJSON.bugs}/new?labels=kind/bug&title=&body=**Environment**\n${body}\n**Description**`;
+  }
+
+  public async reportIssue(): Promise<unknown> {
+    return vscode.commands.executeCommand('vscode.open', Uri.parse(this.issueUrl()));
+  }
+
+  public fsw: FileContentChangeNotifier[] = [];
+
+  public registeredCommands: Disposable[] = [];
 
   public treeDataProvider: ServiceDataProvider;
 
@@ -57,24 +60,30 @@ export class ServiceExplorer implements Disposable {
     // Initialize the tree/explorer view by linking the reference in the package.json to this class.
     this.treeView = window.createTreeView('knativeProjectExplorerServices', { treeDataProvider: this.treeDataProvider });
 
-    commands.registerCommand('service.output', () => this.treeDataProvider.showOutputChannel());
-    commands.registerCommand('service.explorer.create', () => this.treeDataProvider.addService());
-    commands.registerCommand('service.explorer.delete', (treeItem: KnativeTreeItem) =>
-      this.treeDataProvider.deleteFeature(treeItem),
-    );
-    commands.registerCommand('service.explorer.tag', (treeItem: KnativeTreeItem) => this.treeDataProvider.addTag(treeItem));
-    commands.registerCommand('service.explorer.apply', (treeItem: KnativeTreeItem) =>
-      this.treeDataProvider.updateServiceFromYaml(treeItem),
-    );
-    commands.registerCommand('service.explorer.deleteLocal', (treeItem: KnativeTreeItem) =>
-      this.treeDataProvider.deleteLocalYaml(treeItem),
-    );
-    commands.registerCommand('service.explorer.refresh', () => this.treeDataProvider.refresh());
-    commands.registerCommand('service.explorer.reportIssue', () => reportIssue());
+    this.registeredCommands = [
+      vscode.commands.registerCommand('service.output', () => this.treeDataProvider.showOutputChannel()),
+      vscode.commands.registerCommand('service.explorer.create', () => this.treeDataProvider.addService()),
+      vscode.commands.registerCommand('service.explorer.delete', (treeItem: KnativeTreeItem) =>
+        this.treeDataProvider.deleteFeature(treeItem),
+      ),
+      vscode.commands.registerCommand('service.explorer.tag', (treeItem: KnativeTreeItem) =>
+        this.treeDataProvider.addTag(treeItem),
+      ),
+      vscode.commands.registerCommand('service.explorer.apply', (treeItem: KnativeTreeItem) =>
+        this.treeDataProvider.updateServiceFromYaml(treeItem),
+      ),
+      vscode.commands.registerCommand('service.explorer.deleteLocal', (treeItem: KnativeTreeItem) =>
+        this.treeDataProvider.deleteLocalYaml(treeItem),
+      ),
+      vscode.commands.registerCommand('service.explorer.refresh', () => this.treeDataProvider.refresh()),
+      vscode.commands.registerCommand('service.explorer.reportIssue', () => this.reportIssue()),
+    ];
   }
 
   dispose(): void {
-    // this.fsw.watcher.close();
+    this.registeredCommands.forEach((command) => {
+      command.dispose();
+    });
     this.fsw.forEach((value) => {
       value.watcher.close();
     });
