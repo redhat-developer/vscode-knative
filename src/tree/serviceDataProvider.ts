@@ -587,9 +587,12 @@ export class ServiceDataProvider implements TreeDataProvider<KnativeTreeItem> {
           { modal: true },
           'OK',
         );
-      } else if (typeof error === 'string' && error.search('undefinedWarning') > 0) {
+      } else if (
+        typeof error === 'string' &&
+        (error.search(/undefinedWarning/gm) >= 0 || error.search(/undefined.+Warning/gm) >= 0)
+      ) {
         // eslint-disable-next-line no-console
-        console.log(`updateServiceFromYaml error = ${error}`);
+        console.log(`updateServiceFromYaml undefinedWarning; error = ${error}`);
         // do nothing it was a warning
       } else {
         // eslint-disable-next-line no-console

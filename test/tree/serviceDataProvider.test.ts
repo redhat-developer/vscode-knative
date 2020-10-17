@@ -1330,13 +1330,27 @@ status:
       sinon.assert.notCalled(stubDelete);
     });
 
-    test('should catch an undefined warning and not update or delete', async () => {
+    test('should catch an undefined warning and not delete', async () => {
       const file = `/home/loadknativecore/service-example.yaml`;
       sandbox.restore();
       sandbox.stub(sdp, 'getLocalYamlPathForNode').resolves(file);
       sandbox
         .stub(sdp.knExecutor, 'execute')
-        .resolves({ error: 'There was an undefinedWarning something went wrong', stdout: undefined });
+        .resolves({ error: 'undefinedWarning: There was something that went wrong', stdout: undefined });
+      const stubErrorMessage = sandbox.stub(vscode.window, 'showErrorMessage').resolves();
+      const stubDelete = sandbox.stub(sdp.knvfs, 'delete').resolves();
+      await sdp.updateServiceFromYaml();
+      sinon.assert.notCalled(stubErrorMessage);
+      sinon.assert.notCalled(stubDelete);
+    });
+
+    test('should catch an undefined warning that is broken in spelling and not delete', async () => {
+      const file = `/home/loadknativecore/service-example.yaml`;
+      sandbox.restore();
+      sandbox.stub(sdp, 'getLocalYamlPathForNode').resolves(file);
+      sandbox
+        .stub(sdp.knExecutor, 'execute')
+        .resolves({ error: 'undefinedThere wasWarning something that went wrong', stdout: undefined });
       const stubErrorMessage = sandbox.stub(vscode.window, 'showErrorMessage').resolves();
       const stubDelete = sandbox.stub(sdp.knvfs, 'delete').resolves();
       await sdp.updateServiceFromYaml();
