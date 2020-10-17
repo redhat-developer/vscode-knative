@@ -5,6 +5,13 @@ All notable changes to the "vscode-knative" extension will be documented in this
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 0.8.1 (2020/10/17)
+
+-  Update `kn` from 0.14.0 to 0.18.1
+-  Update `kubectl` from 1.18.3 to 1.18.8
+-  Fix bug; Error thrown when modifying a Service for the first time.
+-  Fix bug; Allow deleting of tagged Revisions
+
 ## 0.8.0 (2020/09/15)
 
 -  Add schema validation for Service YAML files.
