@@ -1189,7 +1189,9 @@ status:
 
   suite('Modified Locally', () => {
     test('should return true if the file is found locally', async () => {
-      const files: [string, vscode.FileType][] = [[`${path.sep}home${path.sep}user${path.sep}code${path.sep}service-example.yaml`, 1]];
+      const files: [string, vscode.FileType][] = [
+        [`${path.sep}home${path.sep}user${path.sep}code${path.sep}service-example.yaml`, 1],
+      ];
       sandbox.restore();
       sandbox.stub(vscode.window, 'showErrorMessage').resolves();
       sandbox.stub(sdp.knvfs, 'readDirectoryAsync').resolves(files);
@@ -1197,7 +1199,9 @@ status:
       assert.equals(result, true);
     });
     test('should return false if file is not found', async () => {
-      const files: [string, vscode.FileType][] = [[`${path.sep}home${path.sep}user${path.sep}code${path.sep}service-different.yaml`, 1]];
+      const files: [string, vscode.FileType][] = [
+        [`${path.sep}home${path.sep}user${path.sep}code${path.sep}service-different.yaml`, 1],
+      ];
       sandbox.restore();
       sandbox.stub(vscode.window, 'showErrorMessage').resolves();
       sandbox.stub(sdp.knvfs, 'readDirectoryAsync').resolves(files);
