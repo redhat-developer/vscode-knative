@@ -1,6 +1,7 @@
 import * as vscode from 'vscode';
 import * as chai from 'chai';
 import { beforeEach } from 'mocha';
+import * as path from 'path';
 import * as sinon from 'sinon';
 import * as sinonChai from 'sinon-chai';
 import * as referee from '@sinonjs/referee';
@@ -1089,7 +1090,9 @@ status:
         image: `quay.io/test-group/knative-tutorial-greeter:quarkus`,
         force: false,
       };
-      const files: [string, vscode.FileType][] = [[`knmsx://loadknativecore/service-knative-tutorial-greeter.yaml`, 1]];
+      const files: [string, vscode.FileType][] = [
+        [`knmsx:${path.sep}${path.sep}loadknativecore${path.sep}service-knative-tutorial-greeter.yaml`, 1],
+      ];
       sandbox.restore();
       sandbox.stub(vscode.window, 'showErrorMessage').resolves();
       sandbox.stub(sdp, 'getUrl').resolves(`quay.io/test-group/knative-tutorial-greeter:quarkus`);
@@ -1157,8 +1160,10 @@ status:
 
   suite('Get local YAML path', () => {
     test('should return the path for a tree node', async () => {
-      const expectedPath = '/home/user/code/service-example.yaml';
-      const files: [string, vscode.FileType][] = [[`/home/user/code/service-example.yaml`, 1]];
+      const expectedPath = `${path.sep}home${path.sep}user${path.sep}code${path.sep}service-example.yaml`;
+      const files: [string, vscode.FileType][] = [
+        [`${path.sep}home${path.sep}user${path.sep}code${path.sep}service-example.yaml`, 1],
+      ];
       sandbox.restore();
       sandbox.stub(vscode.window, 'showErrorMessage').resolves();
       sandbox.stub(sdp.knvfs, 'readDirectoryAsync').resolves(files);
@@ -1184,7 +1189,7 @@ status:
 
   suite('Modified Locally', () => {
     test('should return true if the file is found locally', async () => {
-      const files: [string, vscode.FileType][] = [[`/home/user/code/service-example.yaml`, 1]];
+      const files: [string, vscode.FileType][] = [[`${path.sep}home${path.sep}user${path.sep}code${path.sep}service-example.yaml`, 1]];
       sandbox.restore();
       sandbox.stub(vscode.window, 'showErrorMessage').resolves();
       sandbox.stub(sdp.knvfs, 'readDirectoryAsync').resolves(files);
@@ -1192,7 +1197,7 @@ status:
       assert.equals(result, true);
     });
     test('should return false if file is not found', async () => {
-      const files: [string, vscode.FileType][] = [[`/home/user/code/service-different.yaml`, 1]];
+      const files: [string, vscode.FileType][] = [[`${path.sep}home${path.sep}user${path.sep}code${path.sep}service-different.yaml`, 1]];
       sandbox.restore();
       sandbox.stub(vscode.window, 'showErrorMessage').resolves();
       sandbox.stub(sdp.knvfs, 'readDirectoryAsync').resolves(files);
