@@ -46,22 +46,29 @@ const CONTEXT_DATA = {
     description: 'modified',
     getChildren: (): undefined[] => [],
   },
-  route: {
-    icon: 'RTE.svg',
-    tooltip: 'Route: {name}',
-    description: '',
-    getChildren: (): undefined[] => [],
-  },
-  event: {
-    icon: 'EVT.svg',
-    tooltip: 'Event: {name}',
-    description: '',
-    getChildren: (): undefined[] => [],
-  },
+  // route: {
+  //   icon: 'RTE.svg',
+  //   tooltip: 'Route: {name}',
+  //   description: '',
+  //   getChildren: (): undefined[] => [],
+  // },
+  // event: {
+  //   icon: 'EVT.svg',
+  //   tooltip: 'Event: {name}',
+  //   description: '',
+  //   getChildren: (): undefined[] => [],
+  // },
 };
 
 /**
- * Compare the context type first, then compare the label.
+ * The Sort compare function will compare the context type first, then compare the label.
+ *
+ * All non-undefined array elements are sorted according to the return value of the compare function (all undefined elements are sorted to the end of the array, with no call to compareFunction). If a and b are two elements being compared, then:
+ *
+ * If compareFunction(a, b) returns less than 0, sort a to an index lower than b (i.e. a comes first).
+ * If compareFunction(a, b) returns 0, leave a and b unchanged with respect to each other, but sorted with respect to all different elements. Note: the ECMAscript standard does not guarantee this behavior, thus, not all browsers (e.g. Mozilla versions dating back to at least 2003) respect this.
+ * If compareFunction(a, b) returns greater than 0, sort b to an index lower than a (i.e. b comes first).
+ * compareFunction(a, b) must always return the same value when given a specific pair of elements a and b as its two arguments. If inconsistent results are returned, then the sort order is undefined.
  *
  * @param a TreeObject
  * @param b TreeObject
@@ -124,20 +131,20 @@ export class KnativeTreeItem extends TreeItem {
     }
   }
 
-  private explorerPath: string;
+  // private explorerPath: string;
 
-  get path(): string {
-    if (!this.explorerPath) {
-      let parent: KnativeTreeItem;
-      const segments: string[] = [];
-      do {
-        segments.splice(0, 0, this.getName());
-        parent = this.getParent();
-      } while (parent);
-      this.explorerPath = path.join(...segments);
-    }
-    return this.explorerPath;
-  }
+  // get path(): string {
+  //   if (!this.explorerPath) {
+  //     let parent: KnativeTreeItem;
+  //     const segments: string[] = [];
+  //     do {
+  //       segments.splice(0, 0, this.getName());
+  //       parent = this.getParent();
+  //     } while (parent);
+  //     this.explorerPath = path.join(...segments);
+  //   }
+  //   return this.explorerPath;
+  // }
 
   get iconPath(): Uri {
     return Uri.file(path.join(__dirname, '../../../images/context', CONTEXT_DATA[this.contextValue].icon));
