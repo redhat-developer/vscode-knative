@@ -14,6 +14,8 @@ function knCliCommand(cmdArguments: string[]): CliCommand {
 //   return createCliCommand('oc', ...ocArguments);
 // }
 
+type op = Array<Array<string>>;
+
 /**
  * A series of commands for the knative cli `kn`.
  */
@@ -298,5 +300,255 @@ export class KnAPI {
       // console.log(`GetVersion had an error: ${error}`);
       return undefined;
     }
+  }
+
+  /**
+   * Return the list of all Knative Event Sources in JSON format in the current namespace.
+   */
+  static listSources(): CliCommand {
+    const a = ['source', 'list', '-o', 'json'];
+    return knCliCommand(a);
+  }
+
+  /**
+   * Return the list of all Knative Event Sources in JSON format in the current namespace.
+   */
+  static listSourceTypes(): CliCommand {
+    const a = ['source', 'list-types', '-o', 'json'];
+    return knCliCommand(a);
+  }
+
+  /**
+   * Create an Event Source.
+   *
+   * @param sourceType
+   * @param name
+   * @param options
+   */
+  static createSource(sourceType: string, name: string, options?: op): CliCommand {
+    const a = ['source', sourceType, 'create', name];
+    // Add each option flag and value to the command string.
+    if (options) {
+      options.forEach((option: string[]) => {
+        a.push(option[0]);
+        a.push(option[1]);
+      });
+    }
+    return knCliCommand(a);
+  }
+
+  /**
+   * Update an Event Source.
+   *
+   * @param sourceType
+   * @param name
+   * @param options
+   */
+  static updateSource(sourceType: string, name: string, options?: op): CliCommand {
+    const a = ['source', sourceType, 'update', name];
+    // Add each option flag and value to the command string.
+    if (options) {
+      options.forEach((option: string[]) => {
+        a.push(option[0]);
+        a.push(option[1]);
+      });
+    }
+    return knCliCommand(a);
+  }
+
+  /**
+   * Delete an Event Source.
+   *
+   * @param sourceType
+   * @param name
+   */
+  static deleteSource(sourceType: string, name: string): CliCommand {
+    const a = ['source', sourceType, 'delete', name];
+    return knCliCommand(a);
+  }
+
+  /**
+   * Describe an Event Source.
+   *
+   * @param sourceType
+   * @param name
+   */
+  static describeSource(sourceType: string, name: string): CliCommand {
+    const a = ['source', sourceType, 'describe', name];
+    return knCliCommand(a);
+  }
+
+  /**
+   * Return the list of all Knative Event Subscriptions in JSON format in the current namespace.
+   */
+  static listSubscriptions(): CliCommand {
+    const a = ['subscription', 'list', '-o', 'json'];
+    return knCliCommand(a);
+  }
+
+  /**
+   * Create an Event Subscription.
+   *
+   * @param name
+   * @param options
+   */
+  static createSubscription(name: string, options?: op): CliCommand {
+    const a = ['subscription', 'create', name];
+    // Add each option flag and value to the command string.
+    if (options) {
+      options.forEach((option: string[]) => {
+        a.push(option[0]);
+        a.push(option[1]);
+      });
+    }
+    return knCliCommand(a);
+  }
+
+  /**
+   * Update an Event Subscription.
+   *
+   * @param name
+   * @param options
+   */
+  static updateSubscription(name: string, options?: op): CliCommand {
+    const a = ['subscription', 'update', name];
+    // Add each option flag and value to the command string.
+    if (options) {
+      options.forEach((option: string[]) => {
+        a.push(option[0]);
+        a.push(option[1]);
+      });
+    }
+    return knCliCommand(a);
+  }
+
+  /**
+   * Delete an Event Subscription.
+   *
+   * @param name
+   */
+  static deleteSubscription(name: string): CliCommand {
+    const a = ['subscription', 'delete', name];
+    return knCliCommand(a);
+  }
+
+  /**
+   * Return the list of all Knative Event Triggers in JSON format in the current namespace.
+   */
+  static listTriggers(): CliCommand {
+    const a = ['trigger', 'list', '-o', 'json'];
+    return knCliCommand(a);
+  }
+
+  /**
+   * Create an Event Trigger.
+   *
+   * @param name
+   * @param options
+   */
+  static createTrigger(name: string, options?: op): CliCommand {
+    const a = ['trigger', 'create', name];
+    // Add each option flag and value to the command string.
+    if (options) {
+      options.forEach((option: string[]) => {
+        a.push(option[0]);
+        a.push(option[1]);
+      });
+    }
+    return knCliCommand(a);
+  }
+
+  /**
+   * Update an Event Trigger.
+   *
+   * @param name
+   * @param options
+   */
+  static updateTrigger(name: string, options?: op): CliCommand {
+    const a = ['trigger', 'update', name];
+    // Add each option flag and value to the command string.
+    if (options) {
+      options.forEach((option: string[]) => {
+        a.push(option[0]);
+        a.push(option[1]);
+      });
+    }
+    return knCliCommand(a);
+  }
+
+  /**
+   * Delete an Event Trigger.
+   *
+   * @param name
+   */
+  static deleteTrigger(name: string): CliCommand {
+    const a = ['trigger', 'delete', name];
+    return knCliCommand(a);
+  }
+
+  /**
+   * Return the list of all Knative Event Brokers in JSON format in the current namespace.
+   */
+  static listBrokers(): CliCommand {
+    const a = ['broker', 'list', '-o', 'json'];
+    return knCliCommand(a);
+  }
+
+  /**
+   * Create an Event Broker.
+   *
+   * @param name
+   * @param options
+   */
+  static createBroker(name: string): CliCommand {
+    const a = ['broker', 'create', name];
+    return knCliCommand(a);
+  }
+
+  /**
+   * Delete an Event Broker.
+   *
+   * @param name
+   */
+  static deleteBroker(name: string): CliCommand {
+    const a = ['broker', 'delete', name];
+    return knCliCommand(a);
+  }
+
+  /**
+   * Return the list of all Knative Event Channels in JSON format in the current namespace.
+   */
+  static listChannels(): CliCommand {
+    const a = ['channel', 'list', '-o', 'json'];
+    return knCliCommand(a);
+  }
+
+  /**
+   * Return the list of all Knative Event Channels in JSON format in the current namespace.
+   */
+  static listChannelTypes(): CliCommand {
+    const a = ['channel', 'list-types', '-o', 'json'];
+    return knCliCommand(a);
+  }
+
+  /**
+   * Create an Event Channel.
+   *
+   * @param name
+   * @param options
+   */
+  static createChannel(name: string): CliCommand {
+    const a = ['channel', 'create', name];
+    return knCliCommand(a);
+  }
+
+  /**
+   * Delete an Event Channel.
+   *
+   * @param name
+   */
+  static deleteChannel(name: string): CliCommand {
+    const a = ['channel', 'delete', name];
+    return knCliCommand(a);
   }
 }
