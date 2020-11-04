@@ -1,6 +1,7 @@
 import * as vscode from 'vscode';
 import * as chai from 'chai';
 import { beforeEach } from 'mocha';
+import * as pth from 'path';
 import * as sinon from 'sinon';
 import * as sinonChai from 'sinon-chai';
 import * as referee from '@sinonjs/referee';
@@ -757,7 +758,8 @@ status:
   test('should get the icon path', () => {
     const revPath = exampleA75w7vTreeItemModified.iconPath;
     const localDir = __dirname;
-    assert.equals(revPath, vscode.Uri.file(`${localDir.substring(0, localDir.search('out/test'))}images/context/REV.svg`));
+    const search = localDir.search(`out${pth.sep}test`);
+    assert.equals(revPath, vscode.Uri.file(`${localDir.substring(0, search)}images${pth.sep}context${pth.sep}REV.svg`));
   });
 
   test('should get the tooltip', () => {
