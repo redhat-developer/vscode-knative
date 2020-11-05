@@ -67,7 +67,7 @@ export function extensionsUITest(): void {
     });
 
     after(async function context() {
-      this.timeout(5000);
+      this.timeout(8000);
       const sideBar = await new ActivityBar().getViewControl('Extensions').openView();
       const titlePart = sideBar.getTitlePart();
       const actionButton = await titlePart.getAction('Clear Extensions Search Results');

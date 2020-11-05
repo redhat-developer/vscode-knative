@@ -1,3 +1,5 @@
+/* eslint-disable no-console */
+/* eslint-disable no-return-await */
 import { expect, assert } from 'chai';
 import { ActivityBar, VSBrowser, NotificationType, WebDriver } from 'vscode-extension-tester';
 import { KNativeConstants } from './common/constants';
@@ -9,12 +11,16 @@ import { getNotifications, cleanUpNotifications } from './common/testUtils';
 export function knativeInitializationUITest(): void {
   let driver: WebDriver;
 
-  before(async () => {
+  before(() => {
     driver = VSBrowser.instance.driver;
-    await cleanUpNotifications();
   });
 
   describe('Knative view', () => {
+    before(async function setup() {
+      this.timeout(10000);
+      await cleanUpNotifications();
+    });
+
     it('should be ready for usage, requires access to the cluster', async function context() {
       this.timeout(10000);
       const view = new ActivityBar().getViewControl(KNativeConstants.KNATIVE_EXTENSION_NAME);

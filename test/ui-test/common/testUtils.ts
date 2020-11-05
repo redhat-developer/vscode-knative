@@ -3,6 +3,15 @@ import { Notification, VSBrowser, NotificationType, Workbench, SideBarView } fro
 /**
  * @author Ondrej Dockal <odockal@redhat.com>
  */
+export async function getNotifications(...types: NotificationType[]): Promise<Notification[]> {
+  const center = await new Workbench().openNotificationsCenter();
+  const notifications = [];
+  types.map(async (type) => {
+    notifications.push(...(await center.getNotifications(type)));
+  });
+  return notifications;
+}
+
 export async function cleanUpNotifications(): Promise<void> {
   // clean up notifications
   const nc = await new Workbench().openNotificationsCenter();
@@ -25,15 +34,6 @@ export async function findNotification(text: string): Promise<Notification | und
     }
   });
   return undefined;
-}
-
-export async function getNotifications(...types: NotificationType[]): Promise<Notification[]> {
-  const center = await new Workbench().openNotificationsCenter();
-  const notifications = [];
-  types.map(async (type) => {
-    notifications.push(...(await center.getNotifications(type)));
-  });
-  return notifications;
 }
 
 export async function notificationExists(text: string): Promise<boolean> {
