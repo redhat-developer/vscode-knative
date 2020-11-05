@@ -147,7 +147,13 @@ export class KnativeTreeItem extends TreeItem {
   // }
 
   get iconPath(): Uri {
-    return Uri.file(path.join(__dirname, '../../../images/context', CONTEXT_DATA[this.contextValue].icon));
+    return Uri.file(
+      path.join(
+        __dirname,
+        `..${path.sep}..${path.sep}..${path.sep}images${path.sep}context`,
+        CONTEXT_DATA[this.contextValue].icon,
+      ),
+    );
   }
 
   get tooltip(): string {
