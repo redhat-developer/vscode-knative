@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
 import * as chai from 'chai';
 import { beforeEach } from 'mocha';
-import * as pth from 'path';
+import * as path from 'path';
 import * as sinon from 'sinon';
 import * as sinonChai from 'sinon-chai';
 import * as referee from '@sinonjs/referee';
@@ -758,28 +758,31 @@ status:
   test('should get the icon path', () => {
     const revPath = exampleA75w7vTreeItemModified.iconPath;
     const localDir = __dirname;
-    const search = localDir.search(`out${pth.sep}test`);
-    assert.equals(revPath, vscode.Uri.file(`${localDir.substring(0, search)}images${pth.sep}context${pth.sep}REV.svg`));
+    // use regex for search since the backslash for windows needs to be escaped in a regex string
+    const expected = vscode.Uri.file(
+      `${localDir.substring(0, localDir.search(/out.test/))}images${path.sep}context${path.sep}REV.svg`,
+    );
+    assert.equals(revPath, expected);
   });
 
   test('should get the tooltip', () => {
-    const expected = exampleB75w7vTreeItem.tooltip;
-    assert.equals(expected, `Revision: exampleB-75w7v`);
+    const tested = exampleB75w7vTreeItem.tooltip;
+    assert.equals(tested, `Revision: exampleB-75w7v`);
   });
 
   test('should get the description, it should be the tags for a Revision', () => {
-    const expected = exampleB75w7vTreeItem.description;
-    assert.equals(expected, 'latest current ');
+    const tested = exampleB75w7vTreeItem.description;
+    assert.equals(tested, 'latest current ');
   });
 
   test('should get the description and it should be blank when not modified', () => {
-    const expected = testServiceATreeItem.description;
-    assert.equals(expected, '');
+    const tested = testServiceATreeItem.description;
+    assert.equals(tested, '');
   });
 
   test('should get the description and it should modified when modified', () => {
-    const expected = testServiceATreeItemModified.description;
-    assert.equals(expected, 'modified');
+    const tested = testServiceATreeItemModified.description;
+    assert.equals(tested, 'modified');
   });
 
   test('should get the command for selected tree item and return undefined if No Service Found', () => {
@@ -792,18 +795,18 @@ status:
       null,
       null,
     );
-    const expected = noServiceFoundTreeItem.command;
-    assert.isUndefined(expected);
+    const tested = noServiceFoundTreeItem.command;
+    assert.isUndefined(tested);
   });
 
   test('should get the command for selected tree item and return Edit if modified', () => {
-    const expected = testServiceATreeItemModified.command;
-    assert.equals(expected.command, 'service.explorer.edit');
+    const tested = testServiceATreeItemModified.command;
+    assert.equals(tested.command, 'service.explorer.edit');
   });
 
   test('should get the command for selected tree item and return Describe if NOT modified', () => {
-    const expected = testServiceATreeItem.command;
-    assert.equals(expected.command, 'service.explorer.openFile');
+    const tested = testServiceATreeItem.command;
+    assert.equals(tested.command, 'service.explorer.openFile');
   });
 
   test('should get the children of Not Found', () => {
@@ -816,27 +819,27 @@ status:
       null,
       null,
     );
-    const expected = noServiceFoundTreeItem.getChildren();
-    assert.equals(expected, []);
+    const tested = noServiceFoundTreeItem.getChildren();
+    assert.equals(tested, []);
   });
 
   test('should get the children of Revision', () => {
-    const expected = exampleA2fvz4TreeItemNoTraffic.getChildren();
-    assert.equals(expected, []);
+    const tested = exampleA2fvz4TreeItemNoTraffic.getChildren();
+    assert.equals(tested, []);
   });
 
   test('should get the children of Tagged Revision', () => {
-    const expected = exampleA75w7vTreeItemModified.getChildren();
-    assert.equals(expected, []);
+    const tested = exampleA75w7vTreeItemModified.getChildren();
+    assert.equals(tested, []);
   });
 
   test('should get the children of Service', () => {
-    const expected = testServiceATreeItem.getChildren();
-    assert.equals(expected, []);
+    const tested = testServiceATreeItem.getChildren();
+    assert.equals(tested, []);
   });
 
   test('should get the children of a Modified Service', () => {
-    const expected = testServiceATreeItemModified.getChildren();
-    assert.equals(expected, []);
+    const tested = testServiceATreeItemModified.getChildren();
+    assert.equals(tested, []);
   });
 });
