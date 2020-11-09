@@ -1,19 +1,33 @@
 import { expect } from 'chai';
-import { ActivityBar, ExtensionsViewSection, ExtensionsViewItem, ViewControl, SideBarView } from 'vscode-extension-tester';
+import {
+  ActivityBar,
+  ExtensionsViewSection,
+  ExtensionsViewItem,
+  ViewControl,
+  SideBarView,
+  WebDriver,
+  VSBrowser,
+} from 'vscode-extension-tester';
 import { KNativeConstants } from './common/constants';
 import { cleanUpNotifications } from './common/testUtils';
 /**
  * @author Ondrej Dockal <odockal@redhat.com>
  */
 export function extensionsUITest(): void {
+  let driver: WebDriver;
+
+  before(() => {
+    driver = VSBrowser.instance.driver;
+  });
+
   describe('Knative extension', () => {
     it('should be installed among extensions', async function context() {
       this.timeout(10000);
       const view = new ActivityBar().getViewControl('Extensions');
       const sideBar = await view.openView();
-      // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
-      const section = (await sideBar.getContent().getSection('Installed')) as ExtensionsViewSection;
-      const item = await section.findItem(`@installed ${KNativeConstants.KNATIVE_EXTENSION_NAME}`);
+      const section = await sideBar.getContent().getSection('Installed');
+      driver.wait(async () => !(await sideBar.getContent().hasProgress()), 3000);
+      const item = await (section as ExtensionsViewSection).findItem(`@installed ${KNativeConstants.KNATIVE_EXTENSION_NAME}`);
       expect(item).to.be.an.instanceOf(ExtensionsViewItem);
       expect(await item.getTitle()).to.equal(KNativeConstants.KNATIVE_EXTENSION_NAME);
     });
@@ -59,14 +73,16 @@ export function extensionsUITest(): void {
         const view = new ActivityBar().getViewControl('Extensions');
         const sideBar = await view.openView();
         // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
-        const section = (await sideBar.getContent().getSection('Installed')) as ExtensionsViewSection;
+        const sectionContent = sideBar.getContent();
+        const section = (await sectionContent.getSection('Installed')) as ExtensionsViewSection;
+        driver.wait(async () => !(await sideBar.getContent().hasProgress()), 3000);
         const item = await section.findItem(`@installed ${KNativeConstants.YAML_EXTENSION_NAME}`);
         expect(item).to.be.an.instanceOf(ExtensionsViewItem);
         expect(await item.getTitle()).to.equal(KNativeConstants.YAML_EXTENSION_NAME);
       });
     });
 
-    after(async function context() {
+    after(async function afterContext() {
       this.timeout(8000);
       const sideBar = await new ActivityBar().getViewControl('Extensions').openView();
       const titlePart = sideBar.getTitlePart();

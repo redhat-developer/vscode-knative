@@ -1,5 +1,3 @@
-/* eslint-disable no-console */
-/* eslint-disable no-return-await */
 import { expect, assert } from 'chai';
 import { ActivityBar, VSBrowser, NotificationType, WebDriver } from 'vscode-extension-tester';
 import { KNativeConstants } from './common/constants';
@@ -11,16 +9,13 @@ import { getNotifications, cleanUpNotifications } from './common/testUtils';
 export function knativeInitializationUITest(): void {
   let driver: WebDriver;
 
-  before(() => {
+  before(async function setup() {
+    this.timeout(10000);
+    await cleanUpNotifications();
     driver = VSBrowser.instance.driver;
   });
 
   describe('Knative view', () => {
-    before(async function setup() {
-      this.timeout(10000);
-      await cleanUpNotifications();
-    });
-
     it('should be ready for usage, requires access to the cluster', async function context() {
       this.timeout(10000);
       const view = new ActivityBar().getViewControl(KNativeConstants.KNATIVE_EXTENSION_NAME);
@@ -34,9 +29,9 @@ export function knativeInitializationUITest(): void {
       } catch (error) {
         assert.fail(`Error notification appeared during cluster loading`);
       }
-      const content = sideBar.getContent();
-      expect(await content.getText()).to.equal(KNativeConstants.NO_SERVICE_FOUND);
-      const sections = await content.getSections();
+      driver.wait(async () => !(await sideBar.getContent().hasProgress()), 3000);
+      expect(await sideBar.getContent().getText()).to.equal(KNativeConstants.NO_SERVICE_FOUND);
+      const sections = await sideBar.getContent().getSections();
       expect(sections.length).to.equal(1);
       const section = sections[0];
       expect(await section.getTitle()).to.equal(KNativeConstants.KNATIVE_EXTENSION_NAME);
