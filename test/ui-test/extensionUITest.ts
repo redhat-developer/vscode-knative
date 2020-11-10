@@ -1,4 +1,5 @@
 import { expect } from 'chai';
+import { DialogHandler } from 'vscode-extension-tester-native';
 import {
   ActivityBar,
   ExtensionsViewSection,
@@ -92,8 +93,14 @@ export function extensionsUITest(): void {
     });
 
     after(async function afterContext() {
-      this.timeout(5000);
+      this.timeout(10000);
       // handle possible native dialog about user not logged into cluster
+      try {
+        const dialog = await DialogHandler.getOpenDialog();
+        await dialog.confirm();
+      } catch (error) {
+        // no dialog appeared, no action
+      }
       await cleanUpNotifications();
     });
   });
