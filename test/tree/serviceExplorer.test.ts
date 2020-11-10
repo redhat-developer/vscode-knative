@@ -9,15 +9,15 @@ import { URL } from 'url';
 import { ContextType } from '../../src/cli/config';
 import { Revision } from '../../src/knative/revision';
 import { Service } from '../../src/knative/service';
-import { KnativeTreeItem } from '../../src/tree/knativeTreeItem';
-import { ServiceExplorer } from '../../src/tree/serviceExplorer';
+import { ServingTreeItem } from '../../src/tree/servingTreeItem';
+import { ServingExplorer } from '../../src/tree/servingExplorer';
 
 const { assert } = referee;
 chai.use(sinonChai);
 
-let serviceExplorer: ServiceExplorer;
+let servingExplorer: ServingExplorer;
 
-suite('ServiceExplorer', () => {
+suite('ServingExplorer', () => {
   const sandbox = sinon.createSandbox();
 
   beforeEach(() => {
@@ -151,7 +151,7 @@ status:
     jsonServiceContentUnfiltered,
   );
   testService.modified = false;
-  const testServiceTreeItem: KnativeTreeItem = new KnativeTreeItem(
+  const testServiceTreeItem: ServingTreeItem = new ServingTreeItem(
     null,
     testService,
     'example',
@@ -166,7 +166,7 @@ status:
     jsonServiceContentUnfiltered,
   );
   testServiceModified.modified = true;
-  const testServiceTreeItemModified: KnativeTreeItem = new KnativeTreeItem(
+  const testServiceTreeItemModified: ServingTreeItem = new ServingTreeItem(
     null,
     testServiceModified,
     'example',
@@ -295,7 +295,7 @@ status:
       url: new URL('http://current-example-a-serverless-example.apps.devcluster.openshift.com'),
     },
   ]);
-  const example75w7vTreeItem: KnativeTreeItem = new KnativeTreeItem(
+  const example75w7vTreeItem: ServingTreeItem = new ServingTreeItem(
     testServiceTreeItem,
     example75w7vRevision,
     'example-75w7v',
@@ -306,70 +306,70 @@ status:
   );
 
   test('should add registered commands to', () => {
-    // This test allows us to create a new ServiceExplorer after the one in Extension is called
+    // This test allows us to create a new ServingExplorer after the one in Extension is called
     // giving the extension test enough time to dispose of it. Otherwise we would have 2 registered
-    // commands for each one in ServiceExplorer.
-    serviceExplorer = new ServiceExplorer();
-    assert.equals(serviceExplorer.registeredCommands.length, 8);
+    // commands for each one in ServingExplorer.
+    servingExplorer = new ServingExplorer();
+    assert.equals(servingExplorer.registeredCommands.length, 8);
   });
 
   test('should connect the output command to showing the knative output channel', async () => {
-    const stub = sandbox.stub(serviceExplorer.treeDataProvider, 'showOutputChannel').returns(null);
+    const stub = sandbox.stub(servingExplorer.treeDataProvider, 'showOutputChannel').returns(null);
     await vscode.commands.executeCommand('service.output');
     sinon.assert.calledOnce(stub);
   });
 
   test('should connect the output command to adding a Service', async () => {
-    const stub = sandbox.stub(serviceExplorer.treeDataProvider, 'addService').returns(null);
+    const stub = sandbox.stub(servingExplorer.treeDataProvider, 'addService').returns(null);
     await vscode.commands.executeCommand('service.explorer.create');
     sinon.assert.calledOnce(stub);
   });
 
   test('should connect the output command to deleting a Service', async () => {
-    const stub = sandbox.stub(serviceExplorer.treeDataProvider, 'deleteFeature').resolves();
+    const stub = sandbox.stub(servingExplorer.treeDataProvider, 'deleteFeature').resolves();
     await vscode.commands.executeCommand('service.explorer.delete', testServiceTreeItem);
     sinon.assert.calledOnce(stub);
   });
 
   test('should connect the output command to adding a tag to a Revision', async () => {
-    const stub = sandbox.stub(serviceExplorer.treeDataProvider, 'addTag').resolves();
+    const stub = sandbox.stub(servingExplorer.treeDataProvider, 'addTag').resolves();
     await vscode.commands.executeCommand('service.explorer.tag', example75w7vTreeItem);
     sinon.assert.calledOnce(stub);
   });
 
   test('should connect the output command to updating a service from yaml', async () => {
-    const stub = sandbox.stub(serviceExplorer.treeDataProvider, 'updateServiceFromYaml').resolves();
+    const stub = sandbox.stub(servingExplorer.treeDataProvider, 'updateServiceFromYaml').resolves();
     await vscode.commands.executeCommand('service.explorer.apply', testServiceTreeItemModified);
     sinon.assert.calledOnce(stub);
   });
 
   test('should connect the output command to deleting a local Service yaml', async () => {
-    const stub = sandbox.stub(serviceExplorer.treeDataProvider, 'deleteLocalYaml').resolves();
+    const stub = sandbox.stub(servingExplorer.treeDataProvider, 'deleteLocalYaml').resolves();
     await vscode.commands.executeCommand('service.explorer.deleteLocal', testServiceTreeItemModified);
     sinon.assert.calledOnce(stub);
   });
 
   test('should connect the output command to refreshing the tree', async () => {
-    const stub = sandbox.stub(serviceExplorer.treeDataProvider, 'refresh').returns(null);
+    const stub = sandbox.stub(servingExplorer.treeDataProvider, 'refresh').returns(null);
     await vscode.commands.executeCommand('service.explorer.refresh');
     sinon.assert.calledOnce(stub);
   });
 
   test('should connect the output command to reporting an issue', async () => {
-    const stub = sandbox.stub(serviceExplorer, 'reportIssue').resolves();
+    const stub = sandbox.stub(servingExplorer, 'reportIssue').resolves();
     await vscode.commands.executeCommand('service.explorer.reportIssue');
     sinon.assert.calledOnce(stub);
   });
 
   test('should open a browser with a link to report an issue', async () => {
     const executeCommandStub = sandbox.stub(vscode.commands, 'executeCommand').resolves();
-    await serviceExplorer.reportIssue();
+    await servingExplorer.reportIssue();
     sinon.assert.calledOnce(executeCommandStub);
   });
 
   test('should reveal the tree view', async () => {
-    const stub = sandbox.stub(serviceExplorer.treeView, 'reveal').resolves();
-    await serviceExplorer.reveal(testServiceTreeItem);
+    const stub = sandbox.stub(servingExplorer.treeView, 'reveal').resolves();
+    await servingExplorer.reveal(testServiceTreeItem);
     sinon.assert.calledOnce(stub);
   });
 });

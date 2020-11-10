@@ -18,7 +18,7 @@ import * as vscode from 'vscode';
 // import * as validator from 'validator';
 import * as path from 'path';
 import * as yaml from 'yaml';
-import { KnativeTreeItem, compareNodes } from './knativeTreeItem';
+import { ServingTreeItem, compareNodes } from './servingTreeItem';
 import { Execute, loadItems } from '../cli/execute';
 import { CliExitData } from '../cli/cmdCli';
 import { KnAPI } from '../cli/kn-api';
@@ -31,20 +31,20 @@ import { KnativeResourceVirtualFileSystemProvider, KN_RESOURCE_SCHEME } from '..
 import * as vfs from '../cli/virtualfs';
 import { KnOutputChannel, OutputChannel } from '../output/knOutputChannel';
 
-export class ServiceDataProvider implements TreeDataProvider<KnativeTreeItem> {
+export class ServingDataProvider implements TreeDataProvider<ServingTreeItem> {
   public knExecutor = new Execute();
 
   public knvfs = new KnativeResourceVirtualFileSystemProvider();
 
   private knOutputChannel: OutputChannel = new KnOutputChannel();
 
-  private onDidChangeTreeDataEmitter: EventEmitter<KnativeTreeItem | undefined | null> = new EventEmitter<
-    KnativeTreeItem | undefined | null
+  private onDidChangeTreeDataEmitter: EventEmitter<ServingTreeItem | undefined | null> = new EventEmitter<
+    ServingTreeItem | undefined | null
   >();
 
-  readonly onDidChangeTreeData: Event<KnativeTreeItem | undefined | null> = this.onDidChangeTreeDataEmitter.event;
+  readonly onDidChangeTreeData: Event<ServingTreeItem | undefined | null> = this.onDidChangeTreeDataEmitter.event;
 
-  refresh(target?: KnativeTreeItem): void {
+  refresh(target?: ServingTreeItem): void {
     this.onDidChangeTreeDataEmitter.fire(target);
   }
 
@@ -56,7 +56,7 @@ export class ServiceDataProvider implements TreeDataProvider<KnativeTreeItem> {
   pollRefresh = (): void => {
     this.stopRefresh = setInterval(() => {
       // eslint-disable-next-line no-console
-      // console.log(`ServiceDataProvider.pollRefresh`);
+      // console.log(`ServingDataProvider.pollRefresh`);
       this.refresh();
     }, vscode.workspace.getConfiguration('knative').get<number>('pollRefreshDelay') * 1000);
   };
@@ -73,7 +73,7 @@ export class ServiceDataProvider implements TreeDataProvider<KnativeTreeItem> {
    */
   vfsListener = (event: FileChangeEvent[]): void => {
     // eslint-disable-next-line no-console
-    console.log(`ServiceDataProvider.vfsListener event ${event[0].type}, ${event[0].uri.path}`);
+    console.log(`ServingDataProvider.vfsListener event ${event[0].type}, ${event[0].uri.path}`);
     this.refresh();
   };
 
@@ -93,7 +93,7 @@ export class ServiceDataProvider implements TreeDataProvider<KnativeTreeItem> {
    * @param element TreeObject
    */
   // eslint-disable-next-line class-methods-use-this
-  getTreeItem(element: KnativeTreeItem): TreeItem | Thenable<TreeItem> {
+  getTreeItem(element: ServingTreeItem): TreeItem | Thenable<TreeItem> {
     return element;
   }
 
@@ -109,18 +109,18 @@ export class ServiceDataProvider implements TreeDataProvider<KnativeTreeItem> {
    *
    * @param element TreeObject
    */
-  getChildren(element?: KnativeTreeItem): ProviderResult<KnativeTreeItem[]> {
-    let children: ProviderResult<KnativeTreeItem[]>;
+  getChildren(element?: ServingTreeItem): ProviderResult<ServingTreeItem[]> {
+    let children: ProviderResult<ServingTreeItem[]>;
     if (element && (element.contextValue === 'service' || element.contextValue === 'service_modified')) {
       children = this.getRevisions(element);
     } else {
-      children = this.getServices() as ProviderResult<KnativeTreeItem[]>;
+      children = this.getServices() as ProviderResult<ServingTreeItem[]>;
     }
     return children;
   }
 
   // eslint-disable-next-line class-methods-use-this
-  getParent?(element: KnativeTreeItem): KnativeTreeItem {
+  getParent?(element: ServingTreeItem): ServingTreeItem {
     return element.getParent();
   }
 
@@ -139,9 +139,9 @@ export class ServiceDataProvider implements TreeDataProvider<KnativeTreeItem> {
    * The Revision data may not have finished getting created when this call comes.
    * So check if it is there and call it again until it is finished.
    *
-   * @param parentService: KnativeTreeItem
+   * @param parentService: ServingTreeItem
    */
-  private async getRevisionData(parentService: KnativeTreeItem): Promise<CliExitData> {
+  private async getRevisionData(parentService: ServingTreeItem): Promise<CliExitData> {
     // Get the raw data from the cli call.
     const result: CliExitData = await this.knExecutor.execute(KnAPI.listRevisionsForService(parentService.getName()));
     // Confirm we got data where we expect it, if not get it again.
@@ -159,7 +159,7 @@ export class ServiceDataProvider implements TreeDataProvider<KnativeTreeItem> {
    *
    * @param parentService
    */
-  public async getRevisions(parentService: KnativeTreeItem): Promise<KnativeTreeItem[]> {
+  public async getRevisions(parentService: ServingTreeItem): Promise<ServingTreeItem[]> {
     let result: CliExitData;
     try {
       result = await this.getRevisionData(parentService);
@@ -199,13 +199,13 @@ export class ServiceDataProvider implements TreeDataProvider<KnativeTreeItem> {
     );
 
     // Create the Revision tree item for each one found.
-    const revisionTreeObjects: KnativeTreeItem[] = revisions.map<KnativeTreeItem>((value) => {
+    const revisionTreeObjects: ServingTreeItem[] = revisions.map<ServingTreeItem>((value) => {
       let context = ContextType.REVISION;
       if (value.traffic && value.traffic.find((val) => val.tag)) {
         context = ContextType.REVISION_TAGGED;
       }
 
-      const obj: KnativeTreeItem = new KnativeTreeItem(
+      const obj: ServingTreeItem = new ServingTreeItem(
         parentService,
         value,
         value.name,
@@ -259,13 +259,13 @@ export class ServiceDataProvider implements TreeDataProvider<KnativeTreeItem> {
   /**
    * The Service is the highest level of the tree for Knative. This method sets it at the root if not already done.
    */
-  public async getServices(): Promise<KnativeTreeItem[]> {
+  public async getServices(): Promise<ServingTreeItem[]> {
     const services = await this.getServicesList();
 
     // Pull out the name of the service from the raw data.
     // Create an empty state message when there is no Service.
     if (services.length === 0) {
-      return [new KnativeTreeItem(null, null, 'No Service Found', ContextType.NONE, TreeItemCollapsibleState.None, null, null)];
+      return [new ServingTreeItem(null, null, 'No Service Found', ContextType.NONE, TreeItemCollapsibleState.None, null, null)];
     }
     const iterator = services.values();
 
@@ -276,8 +276,8 @@ export class ServiceDataProvider implements TreeDataProvider<KnativeTreeItem> {
 
     // Convert the fetch Services into TreeItems
     const children = services
-      .map<KnativeTreeItem>((value) => {
-        const obj: KnativeTreeItem = new KnativeTreeItem(
+      .map<ServingTreeItem>((value) => {
+        const obj: ServingTreeItem = new ServingTreeItem(
           null,
           value,
           value.name,
@@ -293,7 +293,7 @@ export class ServiceDataProvider implements TreeDataProvider<KnativeTreeItem> {
     return children;
   }
 
-  public async deleteFeature(node: KnativeTreeItem): Promise<void> {
+  public async deleteFeature(node: ServingTreeItem): Promise<void> {
     const response = await vscode.window.showInformationMessage(`Please confirm deletion.`, { modal: true }, 'Delete');
     if (response === 'Delete') {
       await this.knExecutor.execute(KnAPI.deleteFeature(node.contextValue, node.getName()));
@@ -328,13 +328,13 @@ export class ServiceDataProvider implements TreeDataProvider<KnativeTreeItem> {
     //   ? vscode.window.showInputBox({
     //       ignoreFocusOut: true,
     //       prompt: 'Enter an Image URL',
-    //       validateInput: (value: string) => serviceDataProvider.validateUrl('Invalid URL provided', value),
+    //       validateInput: (value: string) => servingDataProvider.validateUrl('Invalid URL provided', value),
     //     })
     //   : choice.label;
     return vscode.window.showInputBox({
       ignoreFocusOut: true,
       prompt: 'Enter an Image URL',
-      // validateInput: (value: string) => serviceDataProvider.validateUrl('Invalid URL provided', value),
+      // validateInput: (value: string) => servingDataProvider.validateUrl('Invalid URL provided', value),
     });
   }
 
@@ -375,7 +375,7 @@ export class ServiceDataProvider implements TreeDataProvider<KnativeTreeItem> {
     return service;
   }
 
-  public async addService(): Promise<KnativeTreeItem[]> {
+  public async addService(): Promise<ServingTreeItem[]> {
     const image: string = await this.getUrl();
 
     if (!image) {
@@ -403,7 +403,7 @@ export class ServiceDataProvider implements TreeDataProvider<KnativeTreeItem> {
       files = await this.knvfs.readDirectoryAsync();
     } catch (err) {
       // eslint-disable-next-line no-console
-      console.log(`serviceDataProvider.addService Error trying to read directory.\n ${err}`);
+      console.log(`servingDataProvider.addService Error trying to read directory.\n ${err}`);
       // throw err;
       return null;
     }
@@ -457,10 +457,10 @@ export class ServiceDataProvider implements TreeDataProvider<KnativeTreeItem> {
 
   /**
    * Get a tag name and add it to the Revision
-   * @param node Revision KnativeTreeItem
+   * @param node Revision ServingTreeItem
    * @returns undefined if successful and null if failed
    */
-  public async addTag(node: KnativeTreeItem): Promise<KnativeTreeItem[]> {
+  public async addTag(node: ServingTreeItem): Promise<ServingTreeItem[]> {
     const tagName: string = await vscode.window.showInputBox({
       ignoreFocusOut: true,
       prompt: 'Enter a Tag name',
@@ -488,7 +488,7 @@ export class ServiceDataProvider implements TreeDataProvider<KnativeTreeItem> {
     return undefined;
   }
 
-  public async getLocalYamlPathForNode(node: KnativeTreeItem): Promise<string> {
+  public async getLocalYamlPathForNode(node: ServingTreeItem): Promise<string> {
     // get local URL for YAML file
     const serviceName = node.getName();
     let files: [string, FileType][];
@@ -496,7 +496,7 @@ export class ServiceDataProvider implements TreeDataProvider<KnativeTreeItem> {
       files = await this.knvfs.readDirectoryAsync();
     } catch (err) {
       // eslint-disable-next-line no-console
-      console.log(`serviceDataProvider.getLocalYamlPathForNode Error trying to read directory.\n ${err}`);
+      console.log(`servingDataProvider.getLocalYamlPathForNode Error trying to read directory.\n ${err}`);
       // throw err;
       return null;
     }
@@ -522,7 +522,7 @@ export class ServiceDataProvider implements TreeDataProvider<KnativeTreeItem> {
       files = await this.knvfs.readDirectoryAsync();
     } catch (err) {
       // eslint-disable-next-line no-console
-      // console.log(`serviceDataProvider.isNodeModifiedLocally Error trying to read directory.\n ${err}`);
+      // console.log(`servingDataProvider.isNodeModifiedLocally Error trying to read directory.\n ${err}`);
       // throw err;
       return null;
     }
@@ -539,9 +539,9 @@ export class ServiceDataProvider implements TreeDataProvider<KnativeTreeItem> {
 
   /**
    * Get the local yaml for the node and use Apply to update the cluster
-   * @param node Service KnativeTreeItem
+   * @param node Service ServingTreeItem
    */
-  public async updateServiceFromYaml(node: KnativeTreeItem): Promise<void> {
+  public async updateServiceFromYaml(node: ServingTreeItem): Promise<void> {
     const fileURI = await this.getLocalYamlPathForNode(node);
 
     try {
@@ -604,7 +604,7 @@ export class ServiceDataProvider implements TreeDataProvider<KnativeTreeItem> {
     this.refresh();
   }
 
-  public async deleteLocalYaml(node: KnativeTreeItem): Promise<void> {
+  public async deleteLocalYaml(node: ServingTreeItem): Promise<void> {
     const fileURI = await this.getLocalYamlPathForNode(node);
 
     // Delete the local YAML file that was uploaded.

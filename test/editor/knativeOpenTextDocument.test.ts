@@ -7,7 +7,7 @@ import { fail } from 'assert';
 import { ContextType } from '../../src/cli/config';
 import * as virtualfs from '../../src/cli/virtualfs';
 import { openTreeItemInEditor } from '../../src/editor/knativeOpenTextDocument';
-import { KnativeTreeItem } from '../../src/tree/knativeTreeItem';
+import { ServingTreeItem } from '../../src/tree/servingTreeItem';
 import { Service } from '../../src/knative/service';
 
 chai.use(sinonChai);
@@ -141,7 +141,7 @@ status:
     jsonServiceContentUnfiltered,
   );
   testService.modified = false;
-  const testServiceTreeItem: KnativeTreeItem = new KnativeTreeItem(
+  const testServiceTreeItem: ServingTreeItem = new ServingTreeItem(
     null,
     testService,
     'example',
@@ -151,7 +151,7 @@ status:
     null,
   );
   testService.modified = true;
-  const testServiceTreeItemModified: KnativeTreeItem = new KnativeTreeItem(
+  const testServiceTreeItemModified: ServingTreeItem = new ServingTreeItem(
     null,
     testService,
     'example',

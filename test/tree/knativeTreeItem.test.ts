@@ -10,12 +10,12 @@ import { URL } from 'url';
 import { ContextType } from '../../src/cli/config';
 import { Revision } from '../../src/knative/revision';
 import { Service } from '../../src/knative/service';
-import { compareNodes, KnativeTreeItem } from '../../src/tree/knativeTreeItem';
+import { compareNodes, ServingTreeItem } from '../../src/tree/servingTreeItem';
 
 const { assert } = referee;
 chai.use(sinonChai);
 
-suite('KnativeTreeItem', () => {
+suite('ServingTreeItem', () => {
   const sandbox = sinon.createSandbox();
   beforeEach(() => {
     sandbox.stub(vscode.window, 'showErrorMessage').resolves();
@@ -148,7 +148,7 @@ status:
     jsonServiceAContentUnfiltered,
   );
   testServiceA.modified = false;
-  const testServiceATreeItem: KnativeTreeItem = new KnativeTreeItem(
+  const testServiceATreeItem: ServingTreeItem = new ServingTreeItem(
     null,
     testServiceA,
     'exampleA',
@@ -163,7 +163,7 @@ status:
     jsonServiceAContentUnfiltered,
   );
   testServiceAModified.modified = true;
-  const testServiceATreeItemModified: KnativeTreeItem = new KnativeTreeItem(
+  const testServiceATreeItemModified: ServingTreeItem = new ServingTreeItem(
     null,
     testServiceAModified,
     'exampleA',
@@ -300,7 +300,7 @@ status:
       url: new URL('http://old-exampleA-a-serverless-exampleA.apps.devcluster.openshift.com'),
     },
   ]);
-  const exampleA75w7vTreeItemModified: KnativeTreeItem = new KnativeTreeItem(
+  const exampleA75w7vTreeItemModified: ServingTreeItem = new ServingTreeItem(
     testServiceATreeItemModified,
     exampleA75w7vRevision,
     'exampleA-75w7v',
@@ -412,7 +412,7 @@ status:
     `;
   const exampleA2fvz4Json = yaml.parse(exampleA2fvz4Yaml);
   const exampleA2fvz4Revision: Revision = new Revision('exampleA-2fvz4', 'exampleA', exampleA2fvz4Json);
-  const exampleA2fvz4TreeItemNoTraffic: KnativeTreeItem = new KnativeTreeItem(
+  const exampleA2fvz4TreeItemNoTraffic: ServingTreeItem = new ServingTreeItem(
     testServiceATreeItem,
     exampleA2fvz4Revision,
     'exampleA-2fvz4',
@@ -546,7 +546,7 @@ status:
     jsonServiceBContentUnfiltered,
   );
   testServiceB.modified = false;
-  const testServiceBTreeItem: KnativeTreeItem = new KnativeTreeItem(
+  const testServiceBTreeItem: ServingTreeItem = new ServingTreeItem(
     null,
     testServiceB,
     'exampleB',
@@ -561,7 +561,7 @@ status:
     jsonServiceBContentUnfiltered,
   );
   testServiceBModified.modified = true;
-  const testServiceBTreeItemModified: KnativeTreeItem = new KnativeTreeItem(
+  const testServiceBTreeItemModified: ServingTreeItem = new ServingTreeItem(
     null,
     testServiceBModified,
     'exampleB',
@@ -690,7 +690,7 @@ status:
       url: new URL('http://current-exampleB-a-serverless-exampleB.apps.devcluster.openshift.com'),
     },
   ]);
-  const exampleB75w7vTreeItem: KnativeTreeItem = new KnativeTreeItem(
+  const exampleB75w7vTreeItem: ServingTreeItem = new ServingTreeItem(
     testServiceBTreeItem,
     exampleB75w7vRevision,
     'exampleB-75w7v',
@@ -721,7 +721,7 @@ status:
   });
 
   test('should compare 2 nodes and return a positive number when the first has no context', () => {
-    const NoServiceContextTreeItem: KnativeTreeItem = new KnativeTreeItem(
+    const NoServiceContextTreeItem: ServingTreeItem = new ServingTreeItem(
       null,
       testServiceB,
       'exampleB',
@@ -736,7 +736,7 @@ status:
   });
 
   test('should compare 2 nodes and return a negative number when the second has no context', () => {
-    const NoServiceContextTreeItem: KnativeTreeItem = new KnativeTreeItem(
+    const NoServiceContextTreeItem: ServingTreeItem = new ServingTreeItem(
       null,
       testServiceB,
       'exampleB',
@@ -786,7 +786,7 @@ status:
   });
 
   test('should get the command for selected tree item and return undefined if No Service Found', () => {
-    const noServiceFoundTreeItem = new KnativeTreeItem(
+    const noServiceFoundTreeItem = new ServingTreeItem(
       null,
       null,
       'No Service Found',
@@ -810,7 +810,7 @@ status:
   });
 
   test('should get the children of Not Found', () => {
-    const noServiceFoundTreeItem = new KnativeTreeItem(
+    const noServiceFoundTreeItem = new ServingTreeItem(
       null,
       null,
       'No Service Found',

@@ -14,23 +14,23 @@ import * as vfs from '../../src/cli/virtualfs';
 import { KnativeItem } from '../../src/knative/knativeItem';
 import { Revision } from '../../src/knative/revision';
 import { Service, CreateService } from '../../src/knative/service';
-import { KnativeTreeItem } from '../../src/tree/knativeTreeItem';
-import { ServiceDataProvider } from '../../src/tree/serviceDataProvider';
+import { ServingTreeItem } from '../../src/tree/servingTreeItem';
+import { ServingDataProvider } from '../../src/tree/servingDataProvider';
 
 import rewire = require('rewire');
 
-const rewiredServiceDataProvider = rewire('../../src/tree/serviceDataProvider');
+const rewiredServingDataProvider = rewire('../../src/tree/servingDataProvider');
 
 const { assert } = referee;
 const { expect } = chai;
 chai.use(sinonChai);
 
-suite('ServiceDataProvider', () => {
+suite('ServingDataProvider', () => {
   const sandbox = sinon.createSandbox();
-  const sdp = new rewiredServiceDataProvider.ServiceDataProvider();
-  const serviceDataProvider: ServiceDataProvider = new ServiceDataProvider();
-  let serviceTreeItems: KnativeTreeItem[];
-  // let revisionTreeItems: KnativeTreeItem[];
+  const sdp = new rewiredServingDataProvider.ServingDataProvider();
+  const servingDataProvider: ServingDataProvider = new ServingDataProvider();
+  let serviceTreeItems: ServingTreeItem[];
+  // let revisionTreeItems: ServingTreeItem[];
   // let service: Service;
   // let revision: Revision;
 
@@ -206,7 +206,7 @@ status:
     jsonServiceContentUnfiltered,
   );
   testService.modified = false;
-  const testServiceTreeItem: KnativeTreeItem = new KnativeTreeItem(
+  const testServiceTreeItem: ServingTreeItem = new ServingTreeItem(
     null,
     testService,
     'example',
@@ -221,7 +221,7 @@ status:
     jsonServiceContentUnfiltered,
   );
   testServiceModified.modified = true;
-  const testServiceTreeItemModified: KnativeTreeItem = new KnativeTreeItem(
+  const testServiceTreeItemModified: ServingTreeItem = new ServingTreeItem(
     null,
     testServiceModified,
     'example',
@@ -350,7 +350,7 @@ status:
       url: new URL('http://current-example-a-serverless-example.apps.devcluster.openshift.com'),
     },
   ]);
-  const example75w7vTreeItem: KnativeTreeItem = new KnativeTreeItem(
+  const example75w7vTreeItem: ServingTreeItem = new ServingTreeItem(
     testServiceTreeItem,
     example75w7vRevision,
     'example-75w7v',
@@ -460,7 +460,7 @@ status:
     `;
   const exampleG4hm8Json = yaml.parse(exampleG4hm8Yaml);
   const exampleG4hm8Revision: Revision = new Revision('example-g4hm8', 'example', exampleG4hm8Json);
-  const exampleG4hm8TreeItem: KnativeTreeItem = new KnativeTreeItem(
+  const exampleG4hm8TreeItem: ServingTreeItem = new ServingTreeItem(
     testServiceTreeItem,
     exampleG4hm8Revision,
     'example-g4hm8',
@@ -581,7 +581,7 @@ status:
       url: new URL('http://old-example-a-serverless-example.apps.devcluster.openshift.com'),
     },
   ]);
-  const example2fvz4TreeItem: KnativeTreeItem = new KnativeTreeItem(
+  const example2fvz4TreeItem: ServingTreeItem = new ServingTreeItem(
     testServiceTreeItem,
     example2fvz4Revision,
     'example-2fvz4',
@@ -596,16 +596,16 @@ status:
   beforeEach(async () => {
     sandbox.stub(vscode.window, 'showErrorMessage').resolves();
     sandbox
-      .stub(serviceDataProvider.knExecutor, 'execute')
+      .stub(servingDataProvider.knExecutor, 'execute')
       .resolves({ error: undefined, stdout: JSON.stringify(singleServiceData) });
-    serviceTreeItems = await serviceDataProvider.getServices();
+    serviceTreeItems = await servingDataProvider.getServices();
     // service = serviceTreeItems[0].getKnativeItem() as Service;
     sandbox.restore();
     sandbox.stub(vscode.window, 'showErrorMessage').resolves();
     sandbox
-      .stub(serviceDataProvider.knExecutor, 'execute')
+      .stub(servingDataProvider.knExecutor, 'execute')
       .resolves({ error: undefined, stdout: JSON.stringify(singleServiceRevisionData) });
-    // revisionTreeItems = await serviceDataProvider.getRevisions(serviceTreeItems[0]);
+    // revisionTreeItems = await servingDataProvider.getRevisions(serviceTreeItems[0]);
     // revision = revisionTreeItems[0].getKnativeItem() as Revision;
   });
   teardown(() => {
@@ -630,13 +630,13 @@ status:
       // const spy = sandbox.spy(sdp.onDidChangeTreeDataEmitter, 'fire');
       sdp.pollRefresh();
       // eslint-disable-next-line no-console
-      // console.log(`ServiceDataProvidertest.Poll Refresh before timeout ${Math.round(new Date().getTime() / 1000)}`);
+      // console.log(`ServingDataProvidertest.Poll Refresh before timeout ${Math.round(new Date().getTime() / 1000)}`);
       // give the poll enough time to call
       // eslint-disable-next-line @typescript-eslint/await-thenable
 
       // await sleep(60001);
       // eslint-disable-next-line no-console
-      // console.log(`ServiceDataProvidertest.Poll Refresh after timeout ${Math.round(new Date().getTime() / 1000)}`);
+      // console.log(`ServingDataProvidertest.Poll Refresh after timeout ${Math.round(new Date().getTime() / 1000)}`);
 
       // turn it off so that it doesn't keep polling
       // sdp.stopPollRefresh();
@@ -655,7 +655,7 @@ status:
   suite('Getting a Tree Item', () => {
     test('should return the specific tree element requested', async () => {
       const parentKnativeItem: KnativeItem = new Service('example', 'quay.io/rhdevelopers/knative-tutorial-greeter:quarkus');
-      const parent: KnativeTreeItem = new KnativeTreeItem(
+      const parent: ServingTreeItem = new ServingTreeItem(
         null,
         parentKnativeItem,
         'example',
@@ -664,7 +664,7 @@ status:
         null,
         null,
       );
-      const item: vscode.TreeItem = await serviceDataProvider.getTreeItem(parent);
+      const item: vscode.TreeItem = await servingDataProvider.getTreeItem(parent);
       assert.equals(item, parent);
     });
   });
@@ -673,8 +673,8 @@ status:
     test('should return the No Services node when KN execute returns "No Services found"', async () => {
       sandbox.restore();
       sandbox.stub(vscode.window, 'showErrorMessage').resolves();
-      sandbox.stub(serviceDataProvider.knExecutor, 'execute').resolves({ error: undefined, stdout: 'No services found.' });
-      const result = await serviceDataProvider.getChildren();
+      sandbox.stub(servingDataProvider.knExecutor, 'execute').resolves({ error: undefined, stdout: 'No services found.' });
+      const result = await servingDataProvider.getChildren();
       expect(result).to.have.lengthOf(1);
       expect(result[0].description).equals('');
       expect(result[0].label).equals('No Service Found');
@@ -684,9 +684,9 @@ status:
       sandbox.restore();
       sandbox.stub(vscode.window, 'showErrorMessage').resolves();
       sandbox
-        .stub(serviceDataProvider.knExecutor, 'execute')
+        .stub(servingDataProvider.knExecutor, 'execute')
         .resolves({ error: undefined, stdout: JSON.stringify(singleServiceData) });
-      const result = await serviceDataProvider.getChildren();
+      const result = await servingDataProvider.getChildren();
       expect(result).to.have.lengthOf(1);
       expect(result[0].description).equals('');
       expect(result[0].label).equals('example');
@@ -696,8 +696,8 @@ status:
     test('should return a single Revision tree node', async () => {
       sandbox.restore();
       sandbox.stub(vscode.window, 'showErrorMessage').resolves();
-      sandbox.stub(serviceDataProvider, `getRevisions`).resolves(exampleRevisionTreeItems);
-      const result = await serviceDataProvider.getChildren(testServiceTreeItem);
+      sandbox.stub(servingDataProvider, `getRevisions`).resolves(exampleRevisionTreeItems);
+      const result = await servingDataProvider.getChildren(testServiceTreeItem);
       expect(result).to.have.lengthOf(3);
       expect(result[0].description).equals('latest current ');
       expect(result[0].label).equals('example-75w7v (100%)');
@@ -707,8 +707,8 @@ status:
     test('should return a single Revision tree node when', async () => {
       sandbox.restore();
       sandbox.stub(vscode.window, 'showErrorMessage').resolves();
-      sandbox.stub(serviceDataProvider, `getRevisions`).resolves(exampleRevisionTreeItems);
-      const result = await serviceDataProvider.getChildren(testServiceTreeItemModified);
+      sandbox.stub(servingDataProvider, `getRevisions`).resolves(exampleRevisionTreeItems);
+      const result = await servingDataProvider.getChildren(testServiceTreeItemModified);
       expect(result).to.have.lengthOf(3);
       expect(result[0].description).equals('latest current ');
       expect(result[0].label).equals('example-75w7v (100%)');
@@ -720,7 +720,7 @@ status:
   suite('Getting a Parent Item', () => {
     test('should return null for a Service', () => {
       const parentKnativeItem: Service = new Service('example', 'quay.io/rhdevelopers/knative-tutorial-greeter:quarkus');
-      const parent: KnativeTreeItem = new KnativeTreeItem(
+      const parent: ServingTreeItem = new ServingTreeItem(
         null,
         parentKnativeItem,
         'example',
@@ -729,12 +729,12 @@ status:
         null,
         null,
       );
-      const item: KnativeTreeItem = serviceDataProvider.getParent(parent);
+      const item: ServingTreeItem = servingDataProvider.getParent(parent);
       assert.equals(item, null);
     });
     test('should return the Service of the Revision', async () => {
-      const result = await serviceDataProvider.getRevisions(serviceTreeItems[0]);
-      const item: KnativeTreeItem = serviceDataProvider.getParent(result[0]);
+      const result = await servingDataProvider.getRevisions(serviceTreeItems[0]);
+      const item: ServingTreeItem = servingDataProvider.getParent(result[0]);
       assert.equals(item, serviceTreeItems[0]);
     });
   });
@@ -779,7 +779,7 @@ status:
       const spy = sandbox.spy(sdp, 'getServicesList');
       sandbox.stub(sdp.knExecutor, 'execute').resolves({ error: undefined, stdout: JSON.stringify(singleServiceData) });
       sandbox.stub(sdp, 'isNodeModifiedLocally').resolves(false);
-      const result: KnativeTreeItem = await sdp.getServices();
+      const result: ServingTreeItem = await sdp.getServices();
       sinon.assert.calledOnce(spy);
       assert.equals(result[0], testServiceTreeItem);
     });
@@ -790,7 +790,7 @@ status:
       const spy = sandbox.spy(sdp, 'getServicesList');
       sandbox.stub(sdp.knExecutor, 'execute').resolves({ error: undefined, stdout: JSON.stringify(singleServiceData) });
       sandbox.stub(sdp, 'isNodeModifiedLocally').resolves(true);
-      const result: KnativeTreeItem = await sdp.getServices();
+      const result: ServingTreeItem = await sdp.getServices();
       sinon.assert.calledOnce(spy);
       assert.equals(result[0], testServiceTreeItemModified);
     });
@@ -805,7 +805,7 @@ status:
       delete incompleteData.items[0].status.conditions;
       stub.onCall(0).resolves({ error: undefined, stdout: JSON.stringify(incompleteData) });
       stub.resolves({ error: undefined, stdout: JSON.stringify(singleServiceData) });
-      const result: KnativeTreeItem = await sdp.getServices();
+      const result: ServingTreeItem = await sdp.getServices();
       sinon.assert.calledTwice(spy);
       assert.equals(result[0], testServiceTreeItem);
     });
@@ -922,7 +922,7 @@ status:
     let revertIB;
     beforeEach(() => {
       sandbox.restore();
-      revertIB = rewiredServiceDataProvider.__set__('vscode.window', windowMock);
+      revertIB = rewiredServingDataProvider.__set__('vscode.window', windowMock);
     });
 
     teardown(() => {
@@ -1002,7 +1002,7 @@ status:
       sandbox.stub(vfs, 'getFilePathAsync').resolves('true');
       sandbox.stub(sdp.knExecutor, 'execute').resolves({ error: undefined, stdout: JSON.stringify(singleServiceData) });
       const stubDelete = sandbox.stub(sdp.knvfs, 'delete').resolves();
-      const result: KnativeTreeItem[] = await sdp.addService();
+      const result: ServingTreeItem[] = await sdp.addService();
       sinon.assert.calledOnce(stubDelete);
       assert.isUndefined(result);
     });
@@ -1033,7 +1033,7 @@ status:
       sandbox.stub(vfs, 'getFilePathAsync').resolves('true');
       sandbox.stub(sdp.knExecutor, 'execute').rejects();
       const stubDelete = sandbox.stub(sdp.knvfs, 'delete').resolves();
-      const result: KnativeTreeItem[] = await sdp.addService();
+      const result: ServingTreeItem[] = await sdp.addService();
       sinon.assert.calledOnce(stubDelete);
       assert.isUndefined(result);
     });
@@ -1063,7 +1063,7 @@ status:
       sandbox.stub(sdp.knvfs, 'writeFile').returns(undefined);
       sandbox.stub(vfs, 'getFilePathAsync').resolves();
       const stubDelete = sandbox.stub(sdp.knvfs, 'delete').resolves();
-      const result: KnativeTreeItem[] = await sdp.addService();
+      const result: ServingTreeItem[] = await sdp.addService();
       sinon.assert.notCalled(stubDelete);
       assert.equals(result, null);
     });
@@ -1080,7 +1080,7 @@ status:
       sandbox.stub(sdp.ksvc, 'addService').returns(undefined);
       sandbox.stub(sdp.knvfs, 'readDirectoryAsync').rejects();
       const stubDelete = sandbox.stub(sdp.knvfs, 'delete').resolves();
-      const result: KnativeTreeItem[] = await sdp.addService();
+      const result: ServingTreeItem[] = await sdp.addService();
       sinon.assert.notCalled(stubDelete);
       assert.equals(result, null);
     });
@@ -1100,7 +1100,7 @@ status:
       sandbox.stub(sdp.ksvc, 'addService').returns(undefined);
       sandbox.stub(sdp.knvfs, 'readDirectoryAsync').resolves(files);
       const stubDelete = sandbox.stub(sdp.knvfs, 'delete').resolves();
-      const result: KnativeTreeItem[] = await sdp.addService();
+      const result: ServingTreeItem[] = await sdp.addService();
       sinon.assert.notCalled(stubDelete);
       assert.isUndefined(result);
     });
@@ -1109,7 +1109,7 @@ status:
       sandbox.stub(vscode.window, 'showErrorMessage').resolves();
       sandbox.stub(sdp, 'getUrl').resolves();
       const stubDelete = sandbox.stub(sdp.knvfs, 'delete').resolves();
-      const result: KnativeTreeItem[] = await sdp.addService();
+      const result: ServingTreeItem[] = await sdp.addService();
       sinon.assert.notCalled(stubDelete);
       assert.equals(result, null);
     });
@@ -1124,7 +1124,7 @@ status:
       sandbox.stub(sdp, 'getUrl').resolves(`quay.io/test-group/knative-tutorial-greeter:quarkus`);
       sandbox.stub(sdp, 'getName').resolves(serviceToCreate);
       const stubDelete = sandbox.stub(sdp.knvfs, 'delete').resolves();
-      const result: KnativeTreeItem[] = await sdp.addService();
+      const result: ServingTreeItem[] = await sdp.addService();
       sinon.assert.notCalled(stubDelete);
       assert.equals(result, null);
     });
@@ -1139,7 +1139,7 @@ status:
       sandbox.stub(sdp.knExecutor, 'execute').resolves({ error: undefined, stdout: JSON.stringify(singleServiceData) });
       // sandbox.stub(sdp, 'isNodeModifiedLocally').resolves(false);
       const stubUpdate = sandbox.stub(sdp.ksvc, 'updateService').returns(undefined);
-      const result: KnativeTreeItem[] = await sdp.addTag(exampleG4hm8TreeItem);
+      const result: ServingTreeItem[] = await sdp.addTag(exampleG4hm8TreeItem);
       sinon.assert.calledOnce(stubUpdate);
       assert.isUndefined(result);
     });
@@ -1152,7 +1152,7 @@ status:
       sandbox.stub(sdp.knExecutor, 'execute').resolves({ error: 'failed to update', stdout: undefined });
       // sandbox.stub(sdp, 'isNodeModifiedLocally').resolves(false);
       const stubUpdate = sandbox.stub(sdp.ksvc, 'updateService').returns(undefined);
-      const result: KnativeTreeItem[] = await sdp.addTag(exampleG4hm8TreeItem);
+      const result: ServingTreeItem[] = await sdp.addTag(exampleG4hm8TreeItem);
       sinon.assert.calledOnce(stubUpdate);
       assert.equals(result, null);
     });
@@ -1167,7 +1167,7 @@ status:
       sandbox.restore();
       sandbox.stub(vscode.window, 'showErrorMessage').resolves();
       sandbox.stub(sdp.knvfs, 'readDirectoryAsync').resolves(files);
-      const result: KnativeTreeItem[] = await sdp.getLocalYamlPathForNode(testServiceTreeItemModified);
+      const result: ServingTreeItem[] = await sdp.getLocalYamlPathForNode(testServiceTreeItemModified);
       assert.equals(result, expectedPath);
     });
     test('should return an empty string if file is not found', async () => {
@@ -1175,14 +1175,14 @@ status:
       sandbox.restore();
       sandbox.stub(vscode.window, 'showErrorMessage').resolves();
       sandbox.stub(sdp.knvfs, 'readDirectoryAsync').resolves(files);
-      const result: KnativeTreeItem[] = await sdp.getLocalYamlPathForNode(testServiceTreeItemModified);
+      const result: ServingTreeItem[] = await sdp.getLocalYamlPathForNode(testServiceTreeItemModified);
       assert.equals(result, '');
     });
     test('should return null if no files are found', async () => {
       sandbox.restore();
       sandbox.stub(vscode.window, 'showErrorMessage').resolves();
       sandbox.stub(sdp.knvfs, 'readDirectoryAsync').rejects();
-      const result: KnativeTreeItem[] = await sdp.getLocalYamlPathForNode(testServiceTreeItemModified);
+      const result: ServingTreeItem[] = await sdp.getLocalYamlPathForNode(testServiceTreeItemModified);
       assert.equals(result, null);
     });
   });
@@ -1252,8 +1252,8 @@ status:
     let revertIB2;
     beforeEach(() => {
       sandbox.restore();
-      // revertIB = rewiredServiceDataProvider.__set__('vscode.workspace', workspaceMock);
-      revertIB2 = rewiredServiceDataProvider.__set__('vscode.WorkspaceConfiguration', workspaceConfigurationMock);
+      // revertIB = rewiredServingDataProvider.__set__('vscode.workspace', workspaceMock);
+      revertIB2 = rewiredServingDataProvider.__set__('vscode.WorkspaceConfiguration', workspaceConfigurationMock);
     });
 
     teardown(() => {
@@ -1419,9 +1419,9 @@ status:
       sandbox.restore();
       sandbox.stub(vscode.window, 'showErrorMessage').resolves();
       sandbox
-        .stub(serviceDataProvider.knExecutor, 'execute')
+        .stub(servingDataProvider.knExecutor, 'execute')
         .resolves({ error: 'Please log in to the cluster', stdout: undefined, stderr: 'Please log in to the cluster' });
-      const result: boolean = await serviceDataProvider.requireLogin();
+      const result: boolean = await servingDataProvider.requireLogin();
       assert.equals(result, true);
     });
   });

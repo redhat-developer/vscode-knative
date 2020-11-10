@@ -5,7 +5,7 @@
 
 import * as vscode from 'vscode';
 import { vfsUri, KN_RESOURCE_SCHEME } from '../cli/virtualfs';
-import { KnativeTreeItem } from '../tree/knativeTreeItem';
+import { ServingTreeItem } from '../tree/servingTreeItem';
 import { KN_READONLY_SCHEME } from './knativeReadonlyProvider';
 
 /**
@@ -15,7 +15,7 @@ import { KN_READONLY_SCHEME } from './knativeReadonlyProvider';
  * @param outputFormat
  * @param editable
  */
-export async function openTreeItemInEditor(treeItem: KnativeTreeItem, outputFormat: string, editable: boolean): Promise<void> {
+export async function openTreeItemInEditor(treeItem: ServingTreeItem, outputFormat: string, editable: boolean): Promise<void> {
   const schema: string = editable ? KN_RESOURCE_SCHEME : KN_READONLY_SCHEME;
   const contextValue: string = treeItem.contextValue.includes('_')
     ? treeItem.contextValue.substr(0, treeItem.contextValue.indexOf('_'))

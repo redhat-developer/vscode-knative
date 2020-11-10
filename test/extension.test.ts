@@ -7,7 +7,7 @@ import { beforeEach } from 'mocha';
 import * as yaml from 'yaml';
 import { URL } from 'url';
 import { ContextType } from '../src/cli/config';
-import { KnativeTreeItem } from '../src/tree/knativeTreeItem';
+import { ServingTreeItem } from '../src/tree/servingTreeItem';
 import { Revision } from '../src/knative/revision';
 import { Service } from '../src/knative/service';
 import { deactivate } from '../src/extension';
@@ -150,7 +150,7 @@ status:
     jsonServiceContentUnfiltered,
   );
   testService.modified = false;
-  const testServiceTreeItem: KnativeTreeItem = new KnativeTreeItem(
+  const testServiceTreeItem: ServingTreeItem = new ServingTreeItem(
     null,
     testService,
     'example',
@@ -160,7 +160,7 @@ status:
     null,
   );
   testService.modified = true;
-  const testServiceTreeItemModified: KnativeTreeItem = new KnativeTreeItem(
+  const testServiceTreeItemModified: ServingTreeItem = new ServingTreeItem(
     null,
     testService,
     'example',
@@ -288,7 +288,7 @@ status:
       url: new URL('http://current-example-a-serverless-example.apps.devcluster.openshift.com'),
     },
   ]);
-  const example75w7vTreeItem: KnativeTreeItem = new KnativeTreeItem(
+  const example75w7vTreeItem: ServingTreeItem = new ServingTreeItem(
     testServiceTreeItem,
     example75w7vRevision,
     'example-75w7v',
@@ -398,7 +398,7 @@ status:
     `;
   const exampleG4hm8Json = yaml.parse(exampleG4hm8Yaml);
   const exampleG4hm8Revision: Revision = new Revision('example-g4hm8', 'example', exampleG4hm8Json);
-  const exampleG4hm8TreeItem: KnativeTreeItem = new KnativeTreeItem(
+  const exampleG4hm8TreeItem: ServingTreeItem = new ServingTreeItem(
     testServiceTreeItem,
     exampleG4hm8Revision,
     'example-g4hm8',
@@ -519,7 +519,7 @@ status:
       url: new URL('http://old-example-a-serverless-example.apps.devcluster.openshift.com'),
     },
   ]);
-  const example2fvz4TreeItem: KnativeTreeItem = new KnativeTreeItem(
+  const example2fvz4TreeItem: ServingTreeItem = new ServingTreeItem(
     testServiceTreeItem,
     example2fvz4Revision,
     'example-2fvz4',
