@@ -19,7 +19,7 @@ import { ServingDataProvider } from '../../src/servingTree/servingDataProvider';
 
 import rewire = require('rewire');
 
-const rewiredServingDataProvider = rewire('../../src/tree/servingDataProvider');
+const rewiredServingDataProvider = rewire('../../src/servingTree/servingDataProvider');
 
 const { assert } = referee;
 const { expect } = chai;
