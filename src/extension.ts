@@ -9,8 +9,8 @@ import { openTreeItemInEditor } from './editor/knativeOpenTextDocument';
 import { KnativeReadonlyProvider, KN_READONLY_SCHEME } from './editor/knativeReadonlyProvider';
 import { Revision } from './knative/revision';
 import { Service } from './knative/service';
-import { KnativeTreeItem } from './tree/knativeTreeItem';
-import { ServiceExplorer } from './tree/serviceExplorer';
+import { ServingTreeItem } from './tree/servingTreeItem';
+import { ServingExplorer } from './tree/servingExplorer';
 
 let disposable: vscode.Disposable[];
 
@@ -21,15 +21,15 @@ let disposable: vscode.Disposable[];
  * @param extensionContext
  */
 export function activate(extensionContext: vscode.ExtensionContext): void {
-  const serviceExplorer = new ServiceExplorer();
+  const servingExplorer = new ServingExplorer();
   // register a content provider for the knative readonly scheme
-  const knReadonlyProvider = new KnativeReadonlyProvider(serviceExplorer.treeDataProvider.knvfs);
+  const knReadonlyProvider = new KnativeReadonlyProvider(servingExplorer.treeDataProvider.knvfs);
 
   // The command has been defined in the package.json file.
   // Now provide the implementation of the command with registerCommand.
   // The commandId parameter must match the command field in package.json.
   disposable = [
-    vscode.commands.registerCommand('knative.service.open-in-browser', (treeItem: KnativeTreeItem) => {
+    vscode.commands.registerCommand('knative.service.open-in-browser', (treeItem: ServingTreeItem) => {
       const item = treeItem.getKnativeItem();
       if (item instanceof Service) {
         vscode.commands.executeCommand('vscode.open', vscode.Uri.parse(item.image));
@@ -48,20 +48,20 @@ export function activate(extensionContext: vscode.ExtensionContext): void {
       }
     }),
     vscode.workspace.registerTextDocumentContentProvider(KN_READONLY_SCHEME, knReadonlyProvider),
-    vscode.commands.registerCommand('service.explorer.openFile', (treeItem: KnativeTreeItem) =>
+    vscode.commands.registerCommand('service.explorer.openFile', (treeItem: ServingTreeItem) =>
       openTreeItemInEditor(treeItem, vscode.workspace.getConfiguration('vs-knative')['vs-knative.outputFormat'], false),
     ),
 
-    vscode.commands.registerCommand('service.explorer.edit', (treeItem: KnativeTreeItem) =>
+    vscode.commands.registerCommand('service.explorer.edit', (treeItem: ServingTreeItem) =>
       openTreeItemInEditor(treeItem, vscode.workspace.getConfiguration('vs-knative')['vs-knative.outputFormat'], true),
     ),
 
     // Temporarily loaded resource providers
-    vscode.workspace.registerFileSystemProvider(KN_RESOURCE_SCHEME, serviceExplorer.treeDataProvider.knvfs, {
+    vscode.workspace.registerFileSystemProvider(KN_RESOURCE_SCHEME, servingExplorer.treeDataProvider.knvfs, {
       /* TODO: case sensitive? */
     }),
 
-    serviceExplorer,
+    servingExplorer,
   ];
 
   // extensionContext.subscriptions.push(disposable);

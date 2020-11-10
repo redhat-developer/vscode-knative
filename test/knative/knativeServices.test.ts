@@ -4,10 +4,10 @@ import * as sinonChai from 'sinon-chai';
 import * as sinon from 'sinon';
 import * as referee from '@sinonjs/referee';
 import { beforeEach } from 'mocha';
-import { ServiceDataProvider } from '../../src/tree/serviceDataProvider';
+import { ServingDataProvider } from '../../src/tree/servingDataProvider';
 import * as singleServiceData from '../tree/singleServiceServiceList.json';
 import * as singleServiceRevisionData from '../tree/singleServiceRevisionList.json';
-import { KnativeTreeItem } from '../../src/tree/knativeTreeItem';
+import { ServingTreeItem } from '../../src/tree/servingTreeItem';
 import { KnativeServices } from '../../src/knative/knativeServices';
 import { Revision } from '../../src/knative/revision';
 import { Service } from '../../src/knative/service';
@@ -17,27 +17,27 @@ chai.use(sinonChai);
 
 suite('Knative Services', () => {
   const sandbox = sinon.createSandbox();
-  const serviceDataProvider = new ServiceDataProvider();
+  const servingDataProvider = new ServingDataProvider();
 
   const ksvc: KnativeServices = KnativeServices.Instance;
 
-  let serviceTreeItems: KnativeTreeItem[];
-  let revisionTreeItems: KnativeTreeItem[];
+  let serviceTreeItems: ServingTreeItem[];
+  let revisionTreeItems: ServingTreeItem[];
   let service: Service;
   let revision: Revision;
   beforeEach(async () => {
     sandbox.stub(vscode.window, 'showErrorMessage').resolves();
     sandbox
-      .stub(serviceDataProvider.knExecutor, 'execute')
+      .stub(servingDataProvider.knExecutor, 'execute')
       .resolves({ error: undefined, stdout: JSON.stringify(singleServiceData) });
-    serviceTreeItems = await serviceDataProvider.getChildren();
+    serviceTreeItems = await servingDataProvider.getChildren();
     service = serviceTreeItems[0].getKnativeItem() as Service;
     sandbox.restore();
     sandbox.stub(vscode.window, 'showErrorMessage').resolves();
     sandbox
-      .stub(serviceDataProvider.knExecutor, 'execute')
+      .stub(servingDataProvider.knExecutor, 'execute')
       .resolves({ error: undefined, stdout: JSON.stringify(singleServiceRevisionData) });
-    revisionTreeItems = await serviceDataProvider.getRevisions(serviceTreeItems[0]);
+    revisionTreeItems = await servingDataProvider.getRevisions(serviceTreeItems[0]);
     revision = revisionTreeItems[0].getKnativeItem() as Revision;
   });
 
