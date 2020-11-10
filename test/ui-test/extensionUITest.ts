@@ -25,64 +25,28 @@ export function extensionsUITest(): void {
       this.timeout(10000);
       const view = new ActivityBar().getViewControl('Extensions');
       const sideBar = await view.openView();
-      const section = await sideBar.getContent().getSection('Installed');
-      driver.wait(async () => !(await sideBar.getContent().hasProgress()), 3000);
-      const item = await (section as ExtensionsViewSection).findItem(`@installed ${KNativeConstants.KNATIVE_EXTENSION_NAME}`);
+      const section = (await sideBar.getContent().getSection('Installed')) as ExtensionsViewSection;
+      const item = await driver.wait(async () => {
+        return section.findItem(`@installed ${KNativeConstants.KNATIVE_EXTENSION_NAME}`);
+      }, 3000);
       expect(item).to.be.an.instanceOf(ExtensionsViewItem);
       expect(await item.getTitle()).to.equal(KNativeConstants.KNATIVE_EXTENSION_NAME);
     });
-
-    describe('Knative Activity Bar', () => {
-      let view: ViewControl;
-      let sideBar: SideBarView;
-
-      before(async () => {
-        view = new ActivityBar().getViewControl(KNativeConstants.KNATIVE_EXTENSION_NAME);
-        sideBar = await view.openView();
-      });
-
-      it('should be available', async function context() {
-        this.timeout(10000);
-        const titlePart = sideBar.getTitlePart();
-        expect(await titlePart.getTitle()).to.equal(KNativeConstants.KNATIVE_EXTENSION_BAR_NAME);
-      });
-
-      it('should provide Add service, Refresh and Report Issue action items', async function context() {
-        this.timeout(10000);
-        const actions = await sideBar.getTitlePart().getActions();
-        expect(actions.length).to.equal(3);
-        actions.forEach((action) => {
-          // eslint-disable-next-line max-nested-callbacks
-          expect(action.getTitle()).to.satisfy((title) =>
-            [
-              KNativeConstants.ACTION_ITEM_ADD_SERVICE,
-              KNativeConstants.ACTION_ITEM_REFRESH,
-              KNativeConstants.ACTION_ITEM_REPORT_ISSUE,
-              // eslint-disable-next-line max-nested-callbacks
-            ].some((expectedTitle) => {
-              return title.includes(expectedTitle);
-            }),
-          );
-        });
-      });
-    });
-
-    describe('Dependencies', () => {
+    describe('dependencies', () => {
       it('Yaml, should be installed among extensions', async function context() {
         this.timeout(10000);
         const view = new ActivityBar().getViewControl('Extensions');
         const sideBar = await view.openView();
-        // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
-        const sectionContent = sideBar.getContent();
-        const section = (await sectionContent.getSection('Installed')) as ExtensionsViewSection;
-        driver.wait(async () => !(await sideBar.getContent().hasProgress()), 3000);
-        const item = await section.findItem(`@installed ${KNativeConstants.YAML_EXTENSION_NAME}`);
+        const section = (await sideBar.getContent().getSection('Installed')) as ExtensionsViewSection;
+        const item = await driver.wait(async () => {
+          return section.findItem(`@installed ${KNativeConstants.YAML_EXTENSION_NAME}`);
+        }, 3000);
         expect(item).to.be.an.instanceOf(ExtensionsViewItem);
         expect(await item.getTitle()).to.equal(KNativeConstants.YAML_EXTENSION_NAME);
       });
     });
 
-    after(async function afterContext() {
+    afterEach(async function afterContext() {
       this.timeout(8000);
       const sideBar = await new ActivityBar().getViewControl('Extensions').openView();
       const titlePart = sideBar.getTitlePart();
@@ -90,7 +54,46 @@ export function extensionsUITest(): void {
       if (await actionButton.isEnabled()) {
         await actionButton.click();
       }
+    });
+  });
 
+  describe('Knative Activity Bar', () => {
+    let view: ViewControl;
+    let sideBar: SideBarView;
+
+    before(async () => {
+      view = new ActivityBar().getViewControl(KNativeConstants.KNATIVE_EXTENSION_NAME);
+      sideBar = await view.openView();
+    });
+
+    it('should be available', async function context() {
+      this.timeout(10000);
+      const titlePart = sideBar.getTitlePart();
+      expect(await titlePart.getTitle()).to.equal(KNativeConstants.KNATIVE_EXTENSION_BAR_NAME);
+    });
+
+    it('should provide Add service, Refresh and Report Issue action items', async function context() {
+      this.timeout(10000);
+      const actions = await sideBar.getTitlePart().getActions();
+      expect(actions.length).to.equal(3);
+      actions.forEach((action) => {
+        // eslint-disable-next-line max-nested-callbacks
+        expect(action.getTitle()).to.satisfy((title) =>
+          [
+            KNativeConstants.ACTION_ITEM_ADD_SERVICE,
+            KNativeConstants.ACTION_ITEM_REFRESH,
+            KNativeConstants.ACTION_ITEM_REPORT_ISSUE,
+            // eslint-disable-next-line max-nested-callbacks
+          ].some((expectedTitle) => {
+            return title.includes(expectedTitle);
+          }),
+        );
+      });
+    });
+
+    after(async function afterContext() {
+      this.timeout(5000);
+      // handle possible native dialog about user not logged into cluster
       await cleanUpNotifications();
     });
   });
