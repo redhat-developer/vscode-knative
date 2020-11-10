@@ -10,7 +10,7 @@ import { URL } from 'url';
 import { ContextType } from '../../src/cli/config';
 import { Revision } from '../../src/knative/revision';
 import { Service } from '../../src/knative/service';
-import { compareNodes, ServingTreeItem } from '../../src/tree/servingTreeItem';
+import { compareNodes, ServingTreeItem } from '../../src/servingTree/servingTreeItem';
 
 const { assert } = referee;
 chai.use(sinonChai);

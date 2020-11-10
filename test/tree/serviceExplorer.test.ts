@@ -9,8 +9,8 @@ import { URL } from 'url';
 import { ContextType } from '../../src/cli/config';
 import { Revision } from '../../src/knative/revision';
 import { Service } from '../../src/knative/service';
-import { ServingTreeItem } from '../../src/tree/servingTreeItem';
-import { ServingExplorer } from '../../src/tree/servingExplorer';
+import { ServingTreeItem } from '../../src/servingTree/servingTreeItem';
+import { ServingExplorer } from '../../src/servingTree/servingExplorer';
 
 const { assert } = referee;
 chai.use(sinonChai);

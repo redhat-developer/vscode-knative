@@ -5,7 +5,7 @@
 
 import * as vscode from 'vscode';
 import { vfsUri, KN_RESOURCE_SCHEME } from '../cli/virtualfs';
-import { ServingTreeItem } from '../tree/servingTreeItem';
+import { ServingTreeItem } from '../servingTree/servingTreeItem';
 import { KN_READONLY_SCHEME } from './knativeReadonlyProvider';
 
 /**

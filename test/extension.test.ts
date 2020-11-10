@@ -7,7 +7,7 @@ import { beforeEach } from 'mocha';
 import * as yaml from 'yaml';
 import { URL } from 'url';
 import { ContextType } from '../src/cli/config';
-import { ServingTreeItem } from '../src/tree/servingTreeItem';
+import { ServingTreeItem } from '../src/servingTree/servingTreeItem';
 import { Revision } from '../src/knative/revision';
 import { Service } from '../src/knative/service';
 import { deactivate } from '../src/extension';

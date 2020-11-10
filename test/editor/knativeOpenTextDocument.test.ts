@@ -7,7 +7,7 @@ import { fail } from 'assert';
 import { ContextType } from '../../src/cli/config';
 import * as virtualfs from '../../src/cli/virtualfs';
 import { openTreeItemInEditor } from '../../src/editor/knativeOpenTextDocument';
-import { ServingTreeItem } from '../../src/tree/servingTreeItem';
+import { ServingTreeItem } from '../../src/servingTree/servingTreeItem';
 import { Service } from '../../src/knative/service';
 
 chai.use(sinonChai);

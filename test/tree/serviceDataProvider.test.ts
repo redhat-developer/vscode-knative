@@ -14,8 +14,8 @@ import * as vfs from '../../src/cli/virtualfs';
 import { KnativeItem } from '../../src/knative/knativeItem';
 import { Revision } from '../../src/knative/revision';
 import { Service, CreateService } from '../../src/knative/service';
-import { ServingTreeItem } from '../../src/tree/servingTreeItem';
-import { ServingDataProvider } from '../../src/tree/servingDataProvider';
+import { ServingTreeItem } from '../../src/servingTree/servingTreeItem';
+import { ServingDataProvider } from '../../src/servingTree/servingDataProvider';
 
 import rewire = require('rewire');
 

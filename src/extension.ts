@@ -9,8 +9,8 @@ import { openTreeItemInEditor } from './editor/knativeOpenTextDocument';
 import { KnativeReadonlyProvider, KN_READONLY_SCHEME } from './editor/knativeReadonlyProvider';
 import { Revision } from './knative/revision';
 import { Service } from './knative/service';
-import { ServingTreeItem } from './tree/servingTreeItem';
-import { ServingExplorer } from './tree/servingExplorer';
+import { ServingTreeItem } from './servingTree/servingTreeItem';
+import { ServingExplorer } from './servingTree/servingExplorer';
 
 let disposable: vscode.Disposable[];
 

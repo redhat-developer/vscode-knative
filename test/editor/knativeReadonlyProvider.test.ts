@@ -4,7 +4,7 @@ import * as sinonChai from 'sinon-chai';
 import * as sinon from 'sinon';
 import * as referee from '@sinonjs/referee';
 import { KnativeReadonlyProvider } from '../../src/editor/knativeReadonlyProvider';
-import { ServingDataProvider } from '../../src/tree/servingDataProvider';
+import { ServingDataProvider } from '../../src/servingTree/servingDataProvider';
 
 const { assert } = referee;
 chai.use(sinonChai);
