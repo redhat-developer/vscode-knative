@@ -9,9 +9,10 @@ import { getNotifications, cleanUpNotifications } from './common/testUtils';
 export function knativeInitializationUITest(): void {
   let driver: WebDriver;
 
-  before(async () => {
-    driver = VSBrowser.instance.driver;
+  before(async function setup() {
+    this.timeout(10000);
     await cleanUpNotifications();
+    driver = VSBrowser.instance.driver;
   });
 
   describe('Knative view', () => {
@@ -28,9 +29,9 @@ export function knativeInitializationUITest(): void {
       } catch (error) {
         assert.fail(`Error notification appeared during cluster loading`);
       }
-      const content = sideBar.getContent();
-      expect(await content.getText()).to.equal(KNativeConstants.NO_SERVICE_FOUND);
-      const sections = await content.getSections();
+      driver.wait(async () => !(await sideBar.getContent().hasProgress()), 3000);
+      expect(await sideBar.getContent().getText()).to.equal(KNativeConstants.NO_SERVICE_FOUND);
+      const sections = await sideBar.getContent().getSections();
       expect(sections.length).to.equal(1);
       const section = sections[0];
       expect(await section.getTitle()).to.equal(KNativeConstants.KNATIVE_EXTENSION_NAME);

@@ -116,7 +116,7 @@
     "source-map-support": "^0.5.16",
     "tmp": "0.1.0",
     "typescript": "^3.8.3",
-    "vscode-extension-tester": "^3.1.0",
+    "vscode-extension-tester": "^3.2.2",
     "vscode-extension-tester-native": "^3.0.0",
     "walker": "^1.0.7"
   },
