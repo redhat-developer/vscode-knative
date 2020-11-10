@@ -7,6 +7,7 @@ import * as vscode from 'vscode';
 import { KN_RESOURCE_SCHEME } from './cli/virtualfs';
 import { openTreeItemInEditor } from './editor/knativeOpenTextDocument';
 import { KnativeReadonlyProvider, KN_READONLY_SCHEME } from './editor/knativeReadonlyProvider';
+import { EventingExplorer } from './eventingTree/eventingExplorer';
 import { Revision } from './knative/revision';
 import { Service } from './knative/service';
 import { ServingTreeItem } from './servingTree/servingTreeItem';
@@ -24,6 +25,8 @@ export function activate(extensionContext: vscode.ExtensionContext): void {
   const servingExplorer = new ServingExplorer();
   // register a content provider for the knative readonly scheme
   const knReadonlyProvider = new KnativeReadonlyProvider(servingExplorer.treeDataProvider.knvfs);
+
+  const eventingExplorer = new EventingExplorer();
 
   // The command has been defined in the package.json file.
   // Now provide the implementation of the command with registerCommand.
@@ -62,6 +65,7 @@ export function activate(extensionContext: vscode.ExtensionContext): void {
     }),
 
     servingExplorer,
+    eventingExplorer,
   ];
 
   // extensionContext.subscriptions.push(disposable);

@@ -7,8 +7,8 @@ import { Disposable, extensions, TreeView, Uri, version, window, workspace } fro
 import * as vscode from 'vscode';
 import * as path from 'path';
 import { Platform } from '../util/platform';
-import { ServingTreeItem } from './servingTreeItem';
-import { ServingDataProvider } from './servingDataProvider';
+import { EventingTreeItem } from './eventingTreeItem';
+import { EventingDataProvider } from './eventingDataProvider';
 import { WatchUtil, FileContentChangeNotifier } from '../util/watch';
 
 const kubeConfigFolder: string = path.join(Platform.getUserHomePath(), '.kube');
@@ -26,8 +26,8 @@ kubeconfigList.forEach((value): void => {
   kubeconfigParam.push([kubeconfigDir, kubeconfigFileName]);
 });
 
-export class ServingExplorer implements Disposable {
-  public treeView: TreeView<ServingTreeItem>;
+export class EventingExplorer implements Disposable {
+  public treeView: TreeView<EventingTreeItem>;
 
   // eslint-disable-next-line class-methods-use-this
   public issueUrl(): string {
@@ -44,10 +44,10 @@ export class ServingExplorer implements Disposable {
 
   public registeredCommands: Disposable[] = [];
 
-  public treeDataProvider: ServingDataProvider;
+  public treeDataProvider: EventingDataProvider;
 
   public constructor() {
-    this.treeDataProvider = new ServingDataProvider();
+    this.treeDataProvider = new EventingDataProvider();
     kubeconfigParam.forEach((params) => {
       const l = this.fsw.push(WatchUtil.watchFileForContextChange(params[0], params[1]));
       this.fsw[l - 1].emitter.on('file-changed', () => this.treeDataProvider.refresh());
@@ -58,21 +58,21 @@ export class ServingExplorer implements Disposable {
     }
 
     // Initialize the tree/explorer view by linking the reference in the package.json to this class.
-    this.treeView = window.createTreeView('knativeServingProjectExplorer', { treeDataProvider: this.treeDataProvider });
+    this.treeView = window.createTreeView('knativeEventingProjectExplorer', { treeDataProvider: this.treeDataProvider });
 
     this.registeredCommands = [
       vscode.commands.registerCommand('service.output', () => this.treeDataProvider.showOutputChannel()),
       vscode.commands.registerCommand('service.explorer.create', () => this.treeDataProvider.addService()),
-      vscode.commands.registerCommand('service.explorer.delete', (treeItem: ServingTreeItem) =>
+      vscode.commands.registerCommand('service.explorer.delete', (treeItem: EventingTreeItem) =>
         this.treeDataProvider.deleteFeature(treeItem),
       ),
-      vscode.commands.registerCommand('service.explorer.tag', (treeItem: ServingTreeItem) =>
+      vscode.commands.registerCommand('service.explorer.tag', (treeItem: EventingTreeItem) =>
         this.treeDataProvider.addTag(treeItem),
       ),
-      vscode.commands.registerCommand('service.explorer.apply', (treeItem: ServingTreeItem) =>
+      vscode.commands.registerCommand('service.explorer.apply', (treeItem: EventingTreeItem) =>
         this.treeDataProvider.updateServiceFromYaml(treeItem),
       ),
-      vscode.commands.registerCommand('service.explorer.deleteLocal', (treeItem: ServingTreeItem) =>
+      vscode.commands.registerCommand('service.explorer.deleteLocal', (treeItem: EventingTreeItem) =>
         this.treeDataProvider.deleteLocalYaml(treeItem),
       ),
       vscode.commands.registerCommand('service.explorer.refresh', () => this.treeDataProvider.refresh()),
@@ -90,7 +90,7 @@ export class ServingExplorer implements Disposable {
     this.treeView.dispose();
   }
 
-  public async reveal(item: ServingTreeItem): Promise<void> {
+  public async reveal(item: EventingTreeItem): Promise<void> {
     await this.treeView.reveal(item);
   }
 }
