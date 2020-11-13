@@ -9,7 +9,7 @@ import * as yaml from 'yaml';
 import { URL } from 'url';
 import * as singleServiceData from './singleServiceServiceList.json';
 import * as singleServiceRevisionData from './singleServiceRevisionList.json';
-import { ContextType } from '../../src/cli/config';
+import { ServingContextType } from '../../src/cli/config';
 import * as vfs from '../../src/cli/virtualfs';
 import { KnativeItem } from '../../src/knative/knativeItem';
 import { Revision } from '../../src/knative/revision';
@@ -210,7 +210,7 @@ status:
     null,
     testService,
     'example',
-    ContextType.SERVICE,
+    ServingContextType.SERVICE,
     vscode.TreeItemCollapsibleState.Expanded,
     null,
     null,
@@ -225,7 +225,7 @@ status:
     null,
     testServiceModified,
     'example',
-    ContextType.SERVICE_MODIFIED,
+    ServingContextType.SERVICE_MODIFIED,
     vscode.TreeItemCollapsibleState.Expanded,
     null,
     null,
@@ -354,7 +354,7 @@ status:
     testServiceTreeItem,
     example75w7vRevision,
     'example-75w7v',
-    ContextType.REVISION_TAGGED,
+    ServingContextType.REVISION_TAGGED,
     vscode.TreeItemCollapsibleState.None,
     null,
     null,
@@ -464,7 +464,7 @@ status:
     testServiceTreeItem,
     exampleG4hm8Revision,
     'example-g4hm8',
-    ContextType.REVISION,
+    ServingContextType.REVISION,
     vscode.TreeItemCollapsibleState.None,
     null,
     null,
@@ -585,7 +585,7 @@ status:
     testServiceTreeItem,
     example2fvz4Revision,
     'example-2fvz4',
-    ContextType.REVISION_TAGGED,
+    ServingContextType.REVISION_TAGGED,
     vscode.TreeItemCollapsibleState.None,
     null,
     null,
@@ -659,7 +659,7 @@ status:
         null,
         parentKnativeItem,
         'example',
-        ContextType.SERVICE,
+        ServingContextType.SERVICE,
         vscode.TreeItemCollapsibleState.None,
         null,
         null,
@@ -724,7 +724,7 @@ status:
         null,
         parentKnativeItem,
         'example',
-        ContextType.SERVICE,
+        ServingContextType.SERVICE,
         vscode.TreeItemCollapsibleState.None,
         null,
         null,

@@ -124,7 +124,7 @@
     "redhat.vscode-yaml"
   ],
   "activationEvents": [
-    "onView:knativeProjectExplorerServices",
+    "onView:knativeServingProjectExplorer",
     "onCommand:knative.service.list",
     "onCommand:service.explorer.delete",
     "onCommand:service.explorer.edit",
@@ -238,49 +238,49 @@
       "view/item/context": [
         {
           "command": "service.explorer.edit",
-          "when": "view == knativeProjectExplorerServices && viewItem == service",
+          "when": "view == knativeServingProjectExplorer && viewItem == service",
           "group": "inline"
         },
         {
           "command": "knative.service.open-in-browser",
-          "when": "view == knativeProjectExplorerServices && viewItem == service || viewItem == revision_tagged",
+          "when": "view == knativeServingProjectExplorer && viewItem == service || viewItem == revision_tagged",
           "group": "c0"
         },
         {
           "command": "service.explorer.apply",
-          "when": "view == knativeProjectExplorerServices && viewItem == service_modified",
+          "when": "view == knativeServingProjectExplorer && viewItem == service_modified",
           "group": "c1"
         },
         {
           "command": "service.explorer.deleteLocal",
-          "when": "view == knativeProjectExplorerServices && viewItem == service_modified",
+          "when": "view == knativeServingProjectExplorer && viewItem == service_modified",
           "group": "c1"
         },
         {
           "command": "service.explorer.delete",
-          "when": "view == knativeProjectExplorerServices && viewItem == service || viewItem =~ /revision.*/g",
+          "when": "view == knativeServingProjectExplorer && viewItem == service || viewItem =~ /revision.*/g",
           "group": "c2"
         },
         {
           "command": "service.explorer.tag",
-          "when": "view == knativeProjectExplorerServices && viewItem == service || viewItem =~ /revision.*/g",
+          "when": "view == knativeServingProjectExplorer && viewItem == service || viewItem =~ /revision.*/g",
           "group": "c2"
         }
       ],
       "view/title": [
         {
           "command": "service.explorer.create",
-          "when": "view == knativeProjectExplorerServices",
+          "when": "view == knativeServingProjectExplorer",
           "group": "navigation@0"
         },
         {
           "command": "service.explorer.refresh",
-          "when": "view == knativeProjectExplorerServices",
+          "when": "view == knativeServingProjectExplorer",
           "group": "navigation@1"
         },
         {
           "command": "service.explorer.reportIssue",
-          "when": "view == knativeProjectExplorerServices",
+          "when": "view == knativeServingProjectExplorer",
           "group": "navigation@2"
         }
       ]
@@ -297,8 +297,8 @@
     "views": {
       "knative-explorer": [
         {
-          "id": "knativeProjectExplorerServices",
-          "name": "Knative"
+          "id": "knativeServingProjectExplorer",
+          "name": "Serving"
         }
       ]
     },
