@@ -11,7 +11,7 @@ export const enum Kind {
   LocalConfig,
 }
 
-export enum ContextType {
+export enum ServingContextType {
   NONE = 'none',
   REVISION = 'revision',
   REVISION_TAGGED = 'revision_tagged',

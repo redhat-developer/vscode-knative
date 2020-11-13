@@ -23,7 +23,7 @@ import { Execute, loadItems } from '../cli/execute';
 import { CliExitData } from '../cli/cmdCli';
 import { KnAPI } from '../cli/kn-api';
 import { KubectlAPI } from '../cli/kubectl-api';
-import { ContextType } from '../cli/config';
+import { ServingContextType } from '../cli/config';
 import { Service, CreateService, UpdateService } from '../knative/service';
 import { Revision, Items, Traffic } from '../knative/revision';
 import { KnativeServices } from '../knative/knativeServices';
@@ -200,9 +200,9 @@ export class ServingDataProvider implements TreeDataProvider<ServingTreeItem> {
 
     // Create the Revision tree item for each one found.
     const revisionTreeObjects: ServingTreeItem[] = revisions.map<ServingTreeItem>((value) => {
-      let context = ContextType.REVISION;
+      let context = ServingContextType.REVISION;
       if (value.traffic && value.traffic.find((val) => val.tag)) {
-        context = ContextType.REVISION_TAGGED;
+        context = ServingContextType.REVISION_TAGGED;
       }
 
       const obj: ServingTreeItem = new ServingTreeItem(
@@ -265,7 +265,9 @@ export class ServingDataProvider implements TreeDataProvider<ServingTreeItem> {
     // Pull out the name of the service from the raw data.
     // Create an empty state message when there is no Service.
     if (services.length === 0) {
-      return [new ServingTreeItem(null, null, 'No Service Found', ContextType.NONE, TreeItemCollapsibleState.None, null, null)];
+      return [
+        new ServingTreeItem(null, null, 'No Service Found', ServingContextType.NONE, TreeItemCollapsibleState.None, null, null),
+      ];
     }
     const iterator = services.values();
 
@@ -281,7 +283,7 @@ export class ServingDataProvider implements TreeDataProvider<ServingTreeItem> {
           null,
           value,
           value.name,
-          value.modified ? ContextType.SERVICE_MODIFIED : ContextType.SERVICE,
+          value.modified ? ServingContextType.SERVICE_MODIFIED : ServingContextType.SERVICE,
           TreeItemCollapsibleState.Expanded,
           null,
           null,

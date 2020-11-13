@@ -6,7 +6,7 @@ import * as sinonChai from 'sinon-chai';
 import * as referee from '@sinonjs/referee';
 import * as yaml from 'yaml';
 import { URL } from 'url';
-import { ContextType } from '../../src/cli/config';
+import { ServingContextType } from '../../src/cli/config';
 import { Revision } from '../../src/knative/revision';
 import { Service } from '../../src/knative/service';
 import { ServingTreeItem } from '../../src/servingTree/servingTreeItem';
@@ -155,7 +155,7 @@ status:
     null,
     testService,
     'example',
-    ContextType.SERVICE,
+    ServingContextType.SERVICE,
     vscode.TreeItemCollapsibleState.Expanded,
     null,
     null,
@@ -170,7 +170,7 @@ status:
     null,
     testServiceModified,
     'example',
-    ContextType.SERVICE_MODIFIED,
+    ServingContextType.SERVICE_MODIFIED,
     vscode.TreeItemCollapsibleState.Expanded,
     null,
     null,
@@ -299,7 +299,7 @@ status:
     testServiceTreeItem,
     example75w7vRevision,
     'example-75w7v',
-    ContextType.REVISION_TAGGED,
+    ServingContextType.REVISION_TAGGED,
     vscode.TreeItemCollapsibleState.None,
     null,
     null,

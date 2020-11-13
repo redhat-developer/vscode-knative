@@ -6,7 +6,7 @@ import * as referee from '@sinonjs/referee';
 import { beforeEach } from 'mocha';
 import * as yaml from 'yaml';
 import { URL } from 'url';
-import { ContextType } from '../src/cli/config';
+import { ServingContextType } from '../src/cli/config';
 import { ServingTreeItem } from '../src/servingTree/servingTreeItem';
 import { Revision } from '../src/knative/revision';
 import { Service } from '../src/knative/service';
@@ -154,7 +154,7 @@ status:
     null,
     testService,
     'example',
-    ContextType.SERVICE,
+    ServingContextType.SERVICE,
     vscode.TreeItemCollapsibleState.Expanded,
     null,
     null,
@@ -164,7 +164,7 @@ status:
     null,
     testService,
     'example',
-    ContextType.SERVICE_MODIFIED,
+    ServingContextType.SERVICE_MODIFIED,
     vscode.TreeItemCollapsibleState.Expanded,
     null,
     null,
@@ -292,7 +292,7 @@ status:
     testServiceTreeItem,
     example75w7vRevision,
     'example-75w7v',
-    ContextType.REVISION_TAGGED,
+    ServingContextType.REVISION_TAGGED,
     vscode.TreeItemCollapsibleState.None,
     null,
     null,
@@ -402,7 +402,7 @@ status:
     testServiceTreeItem,
     exampleG4hm8Revision,
     'example-g4hm8',
-    ContextType.REVISION,
+    ServingContextType.REVISION,
     vscode.TreeItemCollapsibleState.None,
     null,
     null,
@@ -523,7 +523,7 @@ status:
     testServiceTreeItem,
     example2fvz4Revision,
     'example-2fvz4',
-    ContextType.REVISION_TAGGED,
+    ServingContextType.REVISION_TAGGED,
     vscode.TreeItemCollapsibleState.None,
     null,
     null,

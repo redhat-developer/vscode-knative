@@ -4,7 +4,7 @@ import * as sinonChai from 'sinon-chai';
 import * as sinon from 'sinon';
 import * as yaml from 'yaml';
 import { fail } from 'assert';
-import { ContextType } from '../../src/cli/config';
+import { ServingContextType } from '../../src/cli/config';
 import * as virtualfs from '../../src/cli/virtualfs';
 import { openTreeItemInEditor } from '../../src/editor/knativeOpenTextDocument';
 import { ServingTreeItem } from '../../src/servingTree/servingTreeItem';
@@ -145,7 +145,7 @@ status:
     null,
     testService,
     'example',
-    ContextType.SERVICE,
+    ServingContextType.SERVICE,
     vscode.TreeItemCollapsibleState.Expanded,
     null,
     null,
@@ -155,7 +155,7 @@ status:
     null,
     testService,
     'example',
-    ContextType.SERVICE_MODIFIED,
+    ServingContextType.SERVICE_MODIFIED,
     vscode.TreeItemCollapsibleState.Expanded,
     null,
     null,

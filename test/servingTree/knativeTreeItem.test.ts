@@ -7,7 +7,7 @@ import * as sinonChai from 'sinon-chai';
 import * as referee from '@sinonjs/referee';
 import * as yaml from 'yaml';
 import { URL } from 'url';
-import { ContextType } from '../../src/cli/config';
+import { ServingContextType } from '../../src/cli/config';
 import { Revision } from '../../src/knative/revision';
 import { Service } from '../../src/knative/service';
 import { compareNodes, ServingTreeItem } from '../../src/servingTree/servingTreeItem';
@@ -152,7 +152,7 @@ status:
     null,
     testServiceA,
     'exampleA',
-    ContextType.SERVICE,
+    ServingContextType.SERVICE,
     vscode.TreeItemCollapsibleState.Expanded,
     null,
     null,
@@ -167,7 +167,7 @@ status:
     null,
     testServiceAModified,
     'exampleA',
-    ContextType.SERVICE_MODIFIED,
+    ServingContextType.SERVICE_MODIFIED,
     vscode.TreeItemCollapsibleState.Expanded,
     null,
     null,
@@ -304,7 +304,7 @@ status:
     testServiceATreeItemModified,
     exampleA75w7vRevision,
     'exampleA-75w7v',
-    ContextType.REVISION_TAGGED,
+    ServingContextType.REVISION_TAGGED,
     vscode.TreeItemCollapsibleState.None,
     null,
     null,
@@ -416,7 +416,7 @@ status:
     testServiceATreeItem,
     exampleA2fvz4Revision,
     'exampleA-2fvz4',
-    ContextType.REVISION,
+    ServingContextType.REVISION,
     vscode.TreeItemCollapsibleState.None,
     null,
     null,
@@ -550,7 +550,7 @@ status:
     null,
     testServiceB,
     'exampleB',
-    ContextType.SERVICE,
+    ServingContextType.SERVICE,
     vscode.TreeItemCollapsibleState.Expanded,
     null,
     null,
@@ -565,7 +565,7 @@ status:
     null,
     testServiceBModified,
     'exampleB',
-    ContextType.SERVICE_MODIFIED,
+    ServingContextType.SERVICE_MODIFIED,
     vscode.TreeItemCollapsibleState.Expanded,
     null,
     null,
@@ -694,7 +694,7 @@ status:
     testServiceBTreeItem,
     exampleB75w7vRevision,
     'exampleB-75w7v',
-    ContextType.REVISION_TAGGED,
+    ServingContextType.REVISION_TAGGED,
     vscode.TreeItemCollapsibleState.None,
     null,
     null,
@@ -790,7 +790,7 @@ status:
       null,
       null,
       'No Service Found',
-      ContextType.NONE,
+      ServingContextType.NONE,
       vscode.TreeItemCollapsibleState.None,
       null,
       null,
@@ -814,7 +814,7 @@ status:
       null,
       null,
       'No Service Found',
-      ContextType.NONE,
+      ServingContextType.NONE,
       vscode.TreeItemCollapsibleState.None,
       null,
       null,

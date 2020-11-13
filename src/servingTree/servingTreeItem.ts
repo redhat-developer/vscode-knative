@@ -5,7 +5,7 @@
 
 import { ProviderResult, TreeItemCollapsibleState, Uri, TreeItem, Command } from 'vscode';
 import * as path from 'path';
-import { ContextType } from '../cli/config';
+import { ServingContextType } from '../cli/config';
 import { KnativeItem } from '../knative/knativeItem';
 import { Revision, Traffic } from '../knative/revision';
 
@@ -96,7 +96,7 @@ export class ServingTreeItem extends TreeItem {
     private parent: ServingTreeItem,
     public readonly item: KnativeItem,
     public readonly label: string,
-    public readonly contextValue: ContextType,
+    public readonly contextValue: ServingContextType,
     public readonly collapsibleState: TreeItemCollapsibleState = Collapsed,
     public contextPath?: Uri,
     public readonly compType?: string,
