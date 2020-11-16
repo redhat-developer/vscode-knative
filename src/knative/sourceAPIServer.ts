@@ -3,10 +3,13 @@
  *  Licensed under the MIT License. See LICENSE file in the project root for license information.
  *-----------------------------------------------------------------------------------------------*/
 
+// import { Sink } from './event';
 import { KnativeItem } from './knativeItem';
 
-export class Trigger extends KnativeItem {
-  constructor(public name: string, public details?: Items) {
+export type sourceOptions = Array<Array<string>>;
+
+export class SourceAPIServer extends KnativeItem {
+  constructor(public name: string, public resource: string, public sink: string, public details?: Items) {
     super();
   }
 
@@ -18,13 +21,18 @@ export class Trigger extends KnativeItem {
 
   modified?: boolean;
 
-  static JSONToTrigger(value: Items): Trigger {
-    const trigger = new Trigger(value.metadata.name, value);
-    return trigger;
+  static JSONToSource(value: Items): SourceAPIServer {
+    const source = new SourceAPIServer(
+      value.metadata.name,
+      value.spec.resources[0].controllerSelector.name,
+      value.spec.sink.ref.name,
+      value,
+    );
+    return source;
   }
 }
 
-export interface JSONTrigger {
+export interface JSONSource {
   apiVersion: string;
   items?: Items[] | null;
   kind: string;
@@ -40,20 +48,17 @@ export interface Metadata {
   annotations: Annotations;
   creationTimestamp: string;
   generation: number;
-  labels: Labels;
   managedFields?: ManagedFields[] | null;
   name: string;
   namespace: string;
   resourceVersion: string;
   selfLink: string;
   uid: string;
+  finalizers?: string[] | null;
 }
 export interface Annotations {
-  'eventing.knative.dev/creator': string;
-  'eventing.knative.dev/lastModifier': string;
-}
-export interface Labels {
-  'eventing.knative.dev/broker': string;
+  'sources.knative.dev/creator': string;
+  'sources.knative.dev/lastModifier': string;
 }
 export interface ManagedFields {
   apiVersion: string;
@@ -69,14 +74,31 @@ export interface FieldsV1 {
   'f:status'?: {} | null;
 }
 export interface Spec {
-  broker: string;
-  filter: {};
-  subscriber: Subscriber;
+  mode?: string | null;
+  resources?: Resources[] | null;
+  serviceAccountName?: string | null;
+  sink: Sink;
+  jsonData?: string | null;
+  schedule?: string | null;
+  subject?: RefOrSubject | null;
 }
-export interface Subscriber {
-  ref: Ref;
+export interface Resources {
+  apiVersion: string;
+  controller: boolean;
+  controllerSelector: ControllerSelector;
+  kind: string;
+  labelSelector: {};
 }
-export interface Ref {
+export interface ControllerSelector {
+  apiVersion: string;
+  kind: string;
+  name: string;
+  uid: string;
+}
+export interface Sink {
+  ref: RefOrSubject;
+}
+export interface RefOrSubject {
   apiVersion: string;
   kind: string;
   name: string;
@@ -85,10 +107,16 @@ export interface Ref {
 export interface Status {
   conditions?: Conditions[] | null;
   observedGeneration: number;
-  subscriberUri: string;
+  sinkUri: string;
+  ceAttributes?: CeAttributes[] | null;
 }
 export interface Conditions {
   lastTransitionTime: string;
   status: string;
+  type: string;
+  message?: string | null;
+}
+export interface CeAttributes {
+  source: string;
   type: string;
 }

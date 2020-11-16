@@ -125,6 +125,8 @@
   ],
   "activationEvents": [
     "onView:knativeServingProjectExplorer",
+    "onView:knativeEventingProjectExplorer",
+    "onCommand:eventing.explorer.refresh",
     "onCommand:knative.service.list",
     "onCommand:service.explorer.delete",
     "onCommand:service.explorer.edit",
@@ -137,6 +139,12 @@
   ],
   "contributes": {
     "commands": [
+      {
+        "command": "eventing.explorer.refresh",
+        "title": "Refresh View",
+        "category": "Knative",
+        "icon": "$(refresh)"
+      },
       {
         "command": "service.explorer.create",
         "title": "Add Service",
@@ -269,6 +277,11 @@
       ],
       "view/title": [
         {
+          "command": "eventing.explorer.refresh",
+          "when": "view == knativeEventingProjectExplorer",
+          "group": "navigation@1"
+        },
+        {
           "command": "service.explorer.create",
           "when": "view == knativeServingProjectExplorer",
           "group": "navigation@0"
@@ -299,6 +312,10 @@
         {
           "id": "knativeServingProjectExplorer",
           "name": "Serving"
+        },
+        {
+          "id": "knativeEventingProjectExplorer",
+          "name": "Eventing"
         }
       ]
     },

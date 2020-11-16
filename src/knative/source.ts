@@ -1,11 +1,38 @@
-import { Sink } from './event';
+/*-----------------------------------------------------------------------------------------------
+ *  Copyright (c) Red Hat, Inc. All rights reserved.
+ *  Licensed under the MIT License. See LICENSE file in the project root for license information.
+ *-----------------------------------------------------------------------------------------------*/
 
-export interface Source {
+// import { Sink } from './event';
+import { KnativeItem } from './knativeItem';
+
+export type sourceOptions = Array<Array<string>>;
+
+export class Source extends KnativeItem {
+  constructor(public name: string, public sourceType: string, public options?: sourceOptions, public details?: Items) {
+    super();
+  }
+
+  annotation?: Map<string, boolean>;
+
+  label?: Map<string, string>;
+
+  namespace?: string;
+
+  modified?: boolean;
+
+  static JSONToSource(value: Items): Source {
+    const source = new Source(value.metadata.name, value.kind, null, value);
+    return source;
+  }
+}
+
+export interface JSONSource {
   apiVersion: string;
-  items?: ItemsEntity[] | null;
+  items?: Items[] | null;
   kind: string;
 }
-export interface ItemsEntity {
+export interface Items {
   apiVersion: string;
   kind: string;
   metadata: Metadata;
@@ -16,7 +43,7 @@ export interface Metadata {
   annotations: Annotations;
   creationTimestamp: string;
   generation: number;
-  managedFields?: ManagedFieldsEntity[] | null;
+  managedFields?: ManagedFields[] | null;
   name: string;
   namespace: string;
   resourceVersion: string;
@@ -28,7 +55,7 @@ export interface Annotations {
   'sources.knative.dev/creator': string;
   'sources.knative.dev/lastModifier': string;
 }
-export interface ManagedFieldsEntity {
+export interface ManagedFields {
   apiVersion: string;
   fieldsType: string;
   fieldsV1: FieldsV1;
@@ -43,14 +70,14 @@ export interface FieldsV1 {
 }
 export interface Spec {
   mode?: string | null;
-  resources?: ResourcesEntity[] | null;
+  resources?: Resources[] | null;
   serviceAccountName?: string | null;
   sink: Sink;
   jsonData?: string | null;
   schedule?: string | null;
   subject?: RefOrSubject | null;
 }
-export interface ResourcesEntity {
+export interface Resources {
   apiVersion: string;
   controller: boolean;
   controllerSelector: ControllerSelector;
@@ -63,6 +90,9 @@ export interface ControllerSelector {
   name: string;
   uid: string;
 }
+export interface Sink {
+  ref: RefOrSubject;
+}
 export interface RefOrSubject {
   apiVersion: string;
   kind: string;
@@ -70,18 +100,18 @@ export interface RefOrSubject {
   namespace: string;
 }
 export interface Status {
-  conditions?: ConditionsEntity[] | null;
+  conditions?: Conditions[] | null;
   observedGeneration: number;
   sinkUri: string;
-  ceAttributes?: CeAttributesEntity[] | null;
+  ceAttributes?: CeAttributes[] | null;
 }
-export interface ConditionsEntity {
+export interface Conditions {
   lastTransitionTime: string;
   status: string;
   type: string;
   message?: string | null;
 }
-export interface CeAttributesEntity {
+export interface CeAttributes {
   source: string;
   type: string;
 }

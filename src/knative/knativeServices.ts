@@ -10,6 +10,10 @@ import { Revision } from './revision';
 type revisionService = { revision: Revision; service: Service };
 type revisionServiceIndex = { revisionIndex?: number; serviceIndex?: number };
 
+/**
+ * A singleton to hold the Services.
+ * Public methods to control the list of Services.
+ */
 export class KnativeServices {
   private static instance: KnativeServices;
 

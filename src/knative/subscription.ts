@@ -1,11 +1,44 @@
-import { Channel } from './channel';
+/*-----------------------------------------------------------------------------------------------
+ *  Copyright (c) Red Hat, Inc. All rights reserved.
+ *  Licensed under the MIT License. See LICENSE file in the project root for license information.
+ *-----------------------------------------------------------------------------------------------*/
 
-export interface Subscription {
+import { Channel } from './channel';
+import { Sink } from './event';
+import { KnativeItem } from './knativeItem';
+
+export class Subscription extends KnativeItem {
+  constructor(
+    public name: string,
+    public channel: Channel,
+    public sink: Sink,
+    public sinkDeadLetter?: Sink,
+    public sinkReply?: Sink,
+    public details?: Items,
+  ) {
+    super();
+  }
+
+  annotation?: Map<string, boolean>;
+
+  label?: Map<string, string>;
+
+  namespace?: string;
+
+  modified?: boolean;
+
+  static JSONToSubscription(value: Items): Subscription {
+    const subscription = new Subscription(value.metadata.name, value.spec.channel, null, null, null, value);
+    return subscription;
+  }
+}
+
+export interface JSONSubscription {
   apiVersion: string;
-  items?: ItemsEntity[] | null;
+  items?: Items[] | null;
   kind: string;
 }
-export interface ItemsEntity {
+export interface Items {
   apiVersion: string;
   kind: string;
   metadata: Metadata;
@@ -17,7 +50,7 @@ export interface Metadata {
   creationTimestamp: string;
   finalizers?: string[] | null;
   generation: number;
-  managedFields?: ManagedFieldsEntity[] | null;
+  managedFields?: ManagedFields[] | null;
   name: string;
   namespace: string;
   resourceVersion: string;
@@ -28,7 +61,7 @@ export interface Annotations {
   'messaging.knative.dev/creator': string;
   'messaging.knative.dev/lastModifier': string;
 }
-export interface ManagedFieldsEntity {
+export interface ManagedFields {
   apiVersion: string;
   fieldsType: string;
   fieldsV1: FieldsV1;
@@ -55,11 +88,11 @@ export interface Ref {
   namespace: string;
 }
 export interface Status {
-  conditions?: ConditionsEntity[] | null;
+  conditions?: Conditions[] | null;
   observedGeneration: number;
   physicalSubscription: PhysicalSubscription;
 }
-export interface ConditionsEntity {
+export interface Conditions {
   lastTransitionTime: string;
   status: string;
   type: string;
