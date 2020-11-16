@@ -127,6 +127,7 @@
     "onView:knativeServingProjectExplorer",
     "onView:knativeEventingProjectExplorer",
     "onCommand:eventing.explorer.refresh",
+    "onCommand:eventing.explorer.openFile",
     "onCommand:knative.service.list",
     "onCommand:service.explorer.delete",
     "onCommand:service.explorer.edit",
@@ -144,6 +145,11 @@
         "title": "Refresh View",
         "category": "Knative",
         "icon": "$(refresh)"
+      },
+      {
+        "command": "eventing.explorer.openFile",
+        "title": "Describe",
+        "category": "Knative"
       },
       {
         "command": "service.explorer.create",
@@ -214,6 +220,10 @@
     ],
     "menus": {
       "commandPalette": [
+        {
+          "command": "eventing.explorer.openFile",
+          "when": "false"
+        },
         {
           "command": "service.explorer.delete",
           "when": "false"

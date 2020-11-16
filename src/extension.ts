@@ -12,6 +12,7 @@ import { Revision } from './knative/revision';
 import { Service } from './knative/service';
 import { ServingTreeItem } from './servingTree/servingTreeItem';
 import { ServingExplorer } from './servingTree/servingExplorer';
+import { EventingTreeItem } from './eventingTree/eventingTreeItem';
 
 let disposable: vscode.Disposable[];
 
@@ -51,6 +52,10 @@ export function activate(extensionContext: vscode.ExtensionContext): void {
       }
     }),
     vscode.workspace.registerTextDocumentContentProvider(KN_READONLY_SCHEME, knReadonlyProvider),
+    vscode.commands.registerCommand('eventing.explorer.openFile', (treeItem: EventingTreeItem) =>
+      openTreeItemInEditor(treeItem, vscode.workspace.getConfiguration('vs-knative')['vs-knative.outputFormat'], false),
+    ),
+
     vscode.commands.registerCommand('service.explorer.openFile', (treeItem: ServingTreeItem) =>
       openTreeItemInEditor(treeItem, vscode.workspace.getConfiguration('vs-knative')['vs-knative.outputFormat'], false),
     ),
