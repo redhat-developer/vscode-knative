@@ -87,7 +87,11 @@ export class EventingTreeItem extends TreeItem {
     if (this.name === 'No Service Found') {
       return;
     }
-    let c: Command;
+    const c: Command = {
+      command: 'eventing.explorer.openFile',
+      title: 'Describe',
+      arguments: [this],
+    };
     return c;
   }
 
