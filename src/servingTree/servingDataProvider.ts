@@ -227,9 +227,10 @@ export class ServingDataProvider implements TreeDataProvider<ServingTreeItem> {
    * It will continue to call itself until the data is complete on the cluster.
    */
   private async getServicesList(): Promise<Service[]> {
+    let services: Service[] = [];
     // Get the raw data from the cli call.
     const result: CliExitData = await this.knExecutor.execute(KnAPI.listServices());
-    const services: Service[] = this.ksvc.addServices(loadItems(result).map((value) => Service.toService(value)));
+    services = this.ksvc.addServices(loadItems(result).map((value) => Service.toService(value)));
 
     // If there are no Services found then stop looking and we can post 'No Services Found`
     if (services.length === 0) {

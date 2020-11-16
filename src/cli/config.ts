@@ -20,6 +20,15 @@ export enum ServingContextType {
   LOGIN_REQUIRED = 'login_required',
 }
 
+export enum EventingContextType {
+  NONE = 'none',
+  BROKER = 'broker',
+  CHANNEL = 'channel',
+  SOURCE = 'source',
+  SUBSCRIPTION = 'subscription',
+  TRIGGER = 'trigger',
+}
+
 export enum ComponentType {
   LOCAL = 'local',
   GIT = 'git',

@@ -1,9 +1,35 @@
-export interface Broker {
+/*-----------------------------------------------------------------------------------------------
+ *  Copyright (c) Red Hat, Inc. All rights reserved.
+ *  Licensed under the MIT License. See LICENSE file in the project root for license information.
+ *-----------------------------------------------------------------------------------------------*/
+
+import { KnativeItem } from './knativeItem';
+
+export class Broker extends KnativeItem {
+  constructor(public name: string, public details?: Items) {
+    super();
+  }
+
+  annotation?: Map<string, boolean>;
+
+  label?: Map<string, string>;
+
+  namespace?: string;
+
+  modified?: boolean;
+
+  static JSONToBroker(value: Items): Broker {
+    const broker = new Broker(value.metadata.name, value);
+    return broker;
+  }
+}
+
+export interface JSONBroker {
   apiVersion: string;
-  items?: ItemsEntity[] | null;
+  items?: Items[] | null;
   kind: string;
 }
-export interface ItemsEntity {
+export interface Items {
   apiVersion: string;
   kind: string;
   metadata: Metadata;
@@ -15,7 +41,7 @@ export interface Metadata {
   creationTimestamp: string;
   finalizers?: string[] | null;
   generation: number;
-  managedFields?: ManagedFieldsEntity[] | null;
+  managedFields?: ManagedFields[] | null;
   name: string;
   namespace: string;
   resourceVersion: string;
@@ -27,7 +53,7 @@ export interface Annotations {
   'eventing.knative.dev/creator': string;
   'eventing.knative.dev/lastModifier': string;
 }
-export interface ManagedFieldsEntity {
+export interface ManagedFields {
   apiVersion: string;
   fieldsType: string;
   fieldsV1: FieldsV1;
@@ -51,13 +77,13 @@ export interface Config {
 }
 export interface Status {
   address: Address;
-  conditions?: ConditionsEntity[] | null;
+  conditions?: Conditions[] | null;
   observedGeneration: number;
 }
 export interface Address {
   url: string;
 }
-export interface ConditionsEntity {
+export interface Conditions {
   lastTransitionTime: string;
   status: string;
   type: string;
