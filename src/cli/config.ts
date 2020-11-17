@@ -25,6 +25,9 @@ export enum EventingContextType {
   BROKER = 'broker',
   CHANNEL = 'channel',
   SOURCE = 'source',
+  SOURCE_APISERVER = 'source_apiserver',
+  SOURCE_BINDING = 'source_binding',
+  SOURCE_PING = 'source_ping',
   SUBSCRIPTION = 'subscription',
   TRIGGER = 'trigger',
 }

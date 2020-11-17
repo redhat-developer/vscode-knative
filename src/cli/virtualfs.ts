@@ -238,10 +238,14 @@ export class KnativeResourceVirtualFileSystemProvider implements FileSystemProvi
     let ced: CliExitData;
     let cleanedCed: CliExitData;
     const feature: string = contextValue.includes('_') ? contextValue.substr(0, contextValue.indexOf('_')) : contextValue;
+    const sourceType: string =
+      // eslint-disable-next-line prefer-template
+      contextValue.includes('_') && feature === 'source' ? ' ' + contextValue.substr(contextValue.indexOf('_') + 1) : '';
+    const command = feature + sourceType;
     switch (resourceAuthority) {
       case KN_RESOURCE_AUTHORITY:
         // fetch the YAML output
-        ced = await this.knExecutor.execute(KnAPI.describeFeature(feature, name, outputFormat));
+        ced = await this.knExecutor.execute(KnAPI.describeFeature(command, name, outputFormat));
         if (contextValue === 'service' && scheme === KN_RESOURCE_SCHEME) {
           cleanedCed = this.removeServerSideYamlElements(ced);
         } else {

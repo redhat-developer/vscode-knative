@@ -100,6 +100,25 @@ export class SourceDataProvider implements TreeDataProvider<EventingTreeItem> {
     return sources;
   }
 
+  // eslint-disable-next-line class-methods-use-this
+  private getSourceType(kind: string): EventingContextType {
+    let context: EventingContextType;
+    switch (kind) {
+      case 'ApiServerSource':
+        context = EventingContextType.SOURCE_APISERVER;
+        break;
+      case 'SinkBinding':
+        context = EventingContextType.SOURCE_BINDING;
+        break;
+      case 'PingSource':
+        context = EventingContextType.SOURCE_PING;
+        break;
+      default:
+        context = EventingContextType.SOURCE;
+    }
+    return context;
+  }
+
   /**
    * The Source is the highest level of the tree for Knative. This method sets it at the root if not already done.
    */
@@ -129,7 +148,7 @@ export class SourceDataProvider implements TreeDataProvider<EventingTreeItem> {
           parent,
           value,
           value.name,
-          EventingContextType.SOURCE,
+          this.getSourceType(value.details.kind),
           TreeItemCollapsibleState.None,
           null,
           null,
