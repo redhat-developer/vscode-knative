@@ -37,6 +37,27 @@ const CONTEXT_DATA = {
     description: '',
     getChildren: (): undefined[] => [],
   },
+  // eslint-disable-next-line @typescript-eslint/camelcase
+  source_apiserver: {
+    icon: 'EVT.svg',
+    tooltip: '',
+    description: '',
+    getChildren: (): undefined[] => [],
+  },
+  // eslint-disable-next-line @typescript-eslint/camelcase
+  source_binding: {
+    icon: 'EVT.svg',
+    tooltip: '',
+    description: '',
+    getChildren: (): undefined[] => [],
+  },
+  // eslint-disable-next-line @typescript-eslint/camelcase
+  source_ping: {
+    icon: 'EVT.svg',
+    tooltip: '',
+    description: '',
+    getChildren: (): undefined[] => [],
+  },
   subscription: {
     icon: 'EVT.svg',
     tooltip: '',

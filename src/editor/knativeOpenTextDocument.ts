@@ -22,9 +22,14 @@ export async function openTreeItemInEditor(
   editable: boolean,
 ): Promise<void> {
   const schema: string = editable ? KN_RESOURCE_SCHEME : KN_READONLY_SCHEME;
-  const contextValue: string = treeItem.contextValue.includes('_')
-    ? treeItem.contextValue.substr(0, treeItem.contextValue.indexOf('_'))
-    : treeItem.contextValue;
+  let contextValue: string;
+  if (treeItem.contextValue.startsWith('source_')) {
+    contextValue = treeItem.contextValue;
+  } else {
+    contextValue = treeItem.contextValue.includes('_')
+      ? treeItem.contextValue.substr(0, treeItem.contextValue.indexOf('_'))
+      : treeItem.contextValue;
+  }
   const name: string = treeItem.getName();
   const uri = vfsUri(schema, contextValue, name, outputFormat);
 
