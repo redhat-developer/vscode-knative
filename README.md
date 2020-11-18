@@ -53,6 +53,10 @@ This extension contributes the following settings:
 
 > See [CHANGELOG](CHANGELOG.md) for details.
 
+### 0.9.0
+
+-  Add Eventing tree and display.
+
 ### 0.8.0
 
 -  Add schema validation for Service YAML files.
