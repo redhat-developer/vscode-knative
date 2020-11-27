@@ -73,25 +73,48 @@ export function extensionsUITest(): void {
       expect(await titlePart.getTitle()).to.equal(KNativeConstants.KNATIVE_EXTENSION_BAR_NAME);
     });
 
-    // TODO: update this to match changes in layout.
-    // it('should provide Add service, Refresh and Report Issue action items', async function context() {
-    //   this.timeout(10000);
-    //   const actions = await sideBar.getTitlePart().getActions();
-    //   expect(actions.length).to.equal(3);
-    //   actions.forEach((action) => {
-    //     // eslint-disable-next-line max-nested-callbacks
-    //     expect(action.getTitle()).to.satisfy((title) =>
-    //       [
-    //         KNativeConstants.ACTION_ITEM_ADD_SERVICE,
-    //         KNativeConstants.ACTION_ITEM_REFRESH,
-    //         KNativeConstants.ACTION_ITEM_REPORT_ISSUE,
-    //         // eslint-disable-next-line max-nested-callbacks
-    //       ].some((expectedTitle) => {
-    //         return title.includes(expectedTitle);
-    //       }),
-    //     );
-    //   });
-    // });
+    it('should contain Serving and Eventing sections', async function context() {
+      this.timeout(5000);
+      const content = sideBar.getContent();
+      const sections = await content.getSections();
+      expect(sections.length).to.eq(2);
+      expect(await Promise.all(sections.map(async (section) => section.getTitle()))).to.has.members([
+        KNativeConstants.SECTION_EVENTING,
+        KNativeConstants.SECTION_SERVING,
+      ]);
+    });
+
+    describe('Serving section', () => {
+      it('should provide Add service, Refresh and Report Issue action items', async function context() {
+        this.timeout(10000);
+        const sectionServing = await sideBar.getContent().getSection(KNativeConstants.SECTION_SERVING);
+        const actions = await sectionServing.getActions();
+        expect(actions.length).to.equal(3);
+        actions.forEach((action) => {
+          // eslint-disable-next-line max-nested-callbacks
+          expect(action.getLabel()).to.satisfy((title) =>
+            [
+              KNativeConstants.ACTION_ITEM_ADD_SERVICE,
+              KNativeConstants.ACTION_ITEM_REFRESH,
+              KNativeConstants.ACTION_ITEM_REPORT_ISSUE,
+              // eslint-disable-next-line max-nested-callbacks
+            ].some((expectedTitle) => {
+              return title.includes(expectedTitle);
+            }),
+          );
+        });
+      });
+    });
+
+    describe('Eventing section', () => {
+      it('should provide Refresh action items', async function context() {
+        this.timeout(10000);
+        const sectionServing = await sideBar.getContent().getSection(KNativeConstants.SECTION_EVENTING);
+        const actions = await sectionServing.getActions();
+        expect(actions.length).to.equal(1);
+        expect(actions[0].getLabel()).to.include(KNativeConstants.ACTION_ITEM_REFRESH);
+      });
+    });
 
     after(async function afterContext() {
       this.timeout(10000);

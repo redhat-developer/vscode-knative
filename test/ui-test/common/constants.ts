@@ -14,7 +14,13 @@ export class KNativeConstants {
 
   public static readonly ACTION_ITEM_ADD_SERVICE = 'Add Service';
 
-  public static readonly ACTION_ITEM_REFRESH = 'Refresh View (Shift+Alt+R)';
+  public static readonly ACTION_ITEM_REFRESH = 'Refresh View';
+
+  public static readonly ACTION_ITEM_REFRESH_LABEL = 'Refresh View (Shift+Alt+R)';
 
   public static readonly ACTION_ITEM_REPORT_ISSUE = 'Report Extension Issue on GitHub';
+
+  public static readonly SECTION_SERVING = 'Serving';
+
+  public static readonly SECTION_EVENTING = 'Eventing';
 }
