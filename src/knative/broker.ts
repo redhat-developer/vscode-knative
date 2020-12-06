@@ -6,7 +6,7 @@
 import { KnativeItem } from './knativeItem';
 
 export class Broker extends KnativeItem {
-  constructor(public name: string, public details?: Items) {
+  constructor(public name: string, public parent: string, public details?: Items) {
     super();
   }
 
@@ -19,16 +19,11 @@ export class Broker extends KnativeItem {
   modified?: boolean;
 
   static JSONToBroker(value: Items): Broker {
-    const broker = new Broker(value.metadata.name, value);
+    const broker = new Broker(value.metadata.name, 'Brokers', value);
     return broker;
   }
 }
 
-export interface JSONBroker {
-  apiVersion: string;
-  items?: Items[] | null;
-  kind: string;
-}
 export interface Items {
   apiVersion: string;
   kind: string;

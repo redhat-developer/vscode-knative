@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See LICENSE file in the project root for license information.
  *-----------------------------------------------------------------------------------------------*/
 
-import { Event, EventEmitter, ProviderResult, TreeDataProvider, TreeItem, TreeItemCollapsibleState } from 'vscode';
+import { TreeItemCollapsibleState } from 'vscode';
 import { EventingTreeItem } from './eventingTreeItem';
 import { Execute, loadItems } from '../cli/execute';
 import { CliExitData } from '../cli/cmdCli';
@@ -12,61 +12,14 @@ import { EventingContextType } from '../cli/config';
 import { compareNodes } from '../knative/knativeItem';
 import { Trigger } from '../knative/trigger';
 import { KnativeTriggers } from '../knative/knativeTriggers';
+import { KnativeEvents } from '../knative/knativeEvents';
 
-export class TriggerDataProvider implements TreeDataProvider<EventingTreeItem> {
+export class TriggerDataProvider {
   public knExecutor = new Execute();
 
-  private onDidChangeTreeDataEmitter: EventEmitter<EventingTreeItem | undefined | null> = new EventEmitter<
-    EventingTreeItem | undefined | null
-  >();
+  private kTriggers: KnativeTriggers = KnativeTriggers.Instance;
 
-  readonly onDidChangeTreeData: Event<EventingTreeItem | undefined | null> = this.onDidChangeTreeDataEmitter.event;
-
-  refresh(target?: EventingTreeItem): void {
-    this.onDidChangeTreeDataEmitter.fire(target);
-  }
-
-  /**
-   * Get the UI representation of the TreeObject.
-   *
-   * Required to fulfill the `TreeDataProvider` API.
-   * @param element TreeObject
-   */
-  // eslint-disable-next-line class-methods-use-this
-  getTreeItem(element: EventingTreeItem): TreeItem | Thenable<TreeItem> {
-    return element;
-  }
-
-  /**
-   * When the user opens the Tree View, the getChildren method will be called without
-   * an element. From there, your TreeDataProvider should return your top-level tree
-   * items. getChildren is then called for each of your top-level tree items, so that
-   * you can provide the children of those items.
-   *
-   * Get the children of the TreeObject passed in or get the root if none is passed in.
-   *
-   * Required to fulfill the `TreeDataProvider` API.
-   *
-   * @param element TreeObject
-   */
-  getChildren(element?: EventingTreeItem): ProviderResult<EventingTreeItem[]> {
-    let children: ProviderResult<EventingTreeItem[]>;
-    if (element && element.contextValue === EventingContextType.TRIGGER) {
-      children = this.getTriggers(element);
-    } else {
-      children = [
-        new EventingTreeItem(element, null, 'Empty', EventingContextType.NONE, TreeItemCollapsibleState.None, null, null),
-      ];
-    }
-    return children;
-  }
-
-  // eslint-disable-next-line class-methods-use-this
-  getParent?(element: EventingTreeItem): EventingTreeItem {
-    return element.getParent();
-  }
-
-  private ksrc: KnativeTriggers = KnativeTriggers.Instance;
+  private events: KnativeEvents = KnativeEvents.Instance;
 
   /**
    * Fetch the Trigger data
@@ -78,7 +31,7 @@ export class TriggerDataProvider implements TreeDataProvider<EventingTreeItem> {
     let triggers: Trigger[] = [];
     // Get the raw data from the cli call.
     const result: CliExitData = await this.knExecutor.execute(KnAPI.listTriggers());
-    triggers = this.ksrc.addTriggers(loadItems(result).map((value) => Trigger.JSONToTrigger(value)));
+    triggers = this.kTriggers.addTriggers(loadItems(result).map((value) => Trigger.JSONToTrigger(value)));
     // If there are no Triggers found then stop looking and we can post 'No Triggers Found`
     if (triggers.length === 0) {
       return triggers;
@@ -121,6 +74,9 @@ export class TriggerDataProvider implements TreeDataProvider<EventingTreeItem> {
         ),
       ];
     }
+
+    // Add the list of children to the parent for reference
+    this.events.addChildren(triggers);
 
     // Convert the fetch Triggers into TreeItems
     const children = triggers

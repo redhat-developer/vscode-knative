@@ -654,18 +654,18 @@ status:
 
   suite('Getting a Tree Item', () => {
     test('should return the specific tree element requested', async () => {
-      const parentKnativeItem: KnativeItem = new Service('example', 'quay.io/rhdevelopers/knative-tutorial-greeter:quarkus');
-      const parent: ServingTreeItem = new ServingTreeItem(
+      const knativeItem: KnativeItem = new Service('example', 'quay.io/rhdevelopers/knative-tutorial-greeter:quarkus');
+      const treeItem: ServingTreeItem = new ServingTreeItem(
         null,
-        parentKnativeItem,
+        knativeItem,
         'example',
         ServingContextType.SERVICE,
         vscode.TreeItemCollapsibleState.None,
         null,
         null,
       );
-      const item: vscode.TreeItem = await servingDataProvider.getTreeItem(parent);
-      assert.equals(item, parent);
+      const item: vscode.TreeItem = await servingDataProvider.getTreeItem(treeItem);
+      assert.equals(item, treeItem);
     });
   });
 
@@ -693,7 +693,7 @@ status:
       expect(result[0].getName()).equals('example');
       expect(result[0].tooltip).equals('Service: example');
     });
-    test('should return a single Revision tree node', async () => {
+    test('should return multiple Revision tree nodes', async () => {
       sandbox.restore();
       sandbox.stub(vscode.window, 'showErrorMessage').resolves();
       sandbox.stub(servingDataProvider, `getRevisions`).resolves(exampleRevisionTreeItems);
@@ -704,7 +704,7 @@ status:
       expect(result[0].getName()).equals('example-75w7v');
       expect(result[0].tooltip).equals('Revision: example-75w7v');
     });
-    test('should return a single Revision tree node when', async () => {
+    test('should return multiple Revision tree nodes when the Service is modified', async () => {
       sandbox.restore();
       sandbox.stub(vscode.window, 'showErrorMessage').resolves();
       sandbox.stub(servingDataProvider, `getRevisions`).resolves(exampleRevisionTreeItems);

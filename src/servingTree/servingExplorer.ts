@@ -48,6 +48,8 @@ export class ServingExplorer implements Disposable {
 
   public constructor() {
     this.treeDataProvider = new ServingDataProvider();
+
+    // Watch the local kubeconfig locations for changes and refresh when one changes.
     kubeconfigParam.forEach((params) => {
       const l = this.fsw.push(WatchUtil.watchFileForContextChange(params[0], params[1]));
       this.fsw[l - 1].emitter.on('file-changed', () => this.treeDataProvider.refresh());

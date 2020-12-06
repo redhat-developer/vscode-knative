@@ -3,7 +3,12 @@
  *  Licensed under the MIT License. See LICENSE file in the project root for license information.
  *-----------------------------------------------------------------------------------------------*/
 
-import { Source } from './source';
+import { GenericSource } from './genericSource';
+import { APIServerSource } from './apiServerSource';
+import { BindingSource } from './bindingSource';
+import { PingSource } from './pingSource';
+
+export type SourceTypes = GenericSource | APIServerSource | BindingSource | PingSource;
 
 /**
  * A singleton to hold the Sources.
@@ -24,7 +29,7 @@ export class KnativeSources {
     return KnativeSources.instance;
   }
 
-  private sources: Source[];
+  private sources: Array<SourceTypes>;
 
   // eslint-disable-next-line class-methods-use-this
   private updateTree(): void {
@@ -33,30 +38,30 @@ export class KnativeSources {
     // convert sources to tree objects and then sort them
   }
 
-  public getSources(): Source[] {
+  public getSources(): Array<SourceTypes> {
     return this.sources;
   }
 
-  public findSource(sourceName: string): Source {
+  public findSource(sourceName: string): SourceTypes {
     return this.sources[this.sources.findIndex((s) => s.name === sourceName)];
   }
 
-  public addSource(source: Source): Source {
+  public addSource(source: SourceTypes): SourceTypes {
     this.sources.push(source);
     // this.sources.sort(compareNodes);
     this.updateTree();
     return source;
   }
 
-  public addSources(sources: Source[]): Source[] {
+  public addSources(sources: Array<SourceTypes>): Array<SourceTypes> {
     this.sources = sources;
     // this.sources.sort(compareNodes);
     this.updateTree();
     return this.sources;
   }
 
-  public updateSource(source: Source): Source[] {
-    const updated: Source[] = this.sources.map((s) => {
+  public updateSource(source: SourceTypes): Array<SourceTypes> {
+    const updated: Array<SourceTypes> = this.sources.map((s) => {
       if (s.name === source.name) {
         return source;
       }
@@ -67,7 +72,7 @@ export class KnativeSources {
     return this.sources;
   }
 
-  public removeSource(name: string): Source[] {
+  public removeSource(name: string): Array<SourceTypes> {
     // find the index of the source passed in.
     const sourceIndex: number = this.sources.findIndex((s) => s.name === name);
     // remove the source

@@ -4,12 +4,13 @@
  *-----------------------------------------------------------------------------------------------*/
 
 import { Channel } from './channel';
-import { Sink } from './event';
+import { Sink } from './sink';
 import { KnativeItem } from './knativeItem';
 
 export class Subscription extends KnativeItem {
   constructor(
     public name: string,
+    public parent: string,
     public channel: Channel,
     public sink: Sink,
     public sinkDeadLetter?: Sink,
@@ -28,16 +29,11 @@ export class Subscription extends KnativeItem {
   modified?: boolean;
 
   static JSONToSubscription(value: Items): Subscription {
-    const subscription = new Subscription(value.metadata.name, value.spec.channel, null, null, null, value);
+    const subscription = new Subscription(value.metadata.name, 'Subscriptions', null, null, null, null, value);
     return subscription;
   }
 }
 
-export interface JSONSubscription {
-  apiVersion: string;
-  items?: Items[] | null;
-  kind: string;
-}
 export interface Items {
   apiVersion: string;
   kind: string;

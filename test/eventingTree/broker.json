@@ -1,0 +1,198 @@
+{
+  "apiVersion": "eventing.knative.dev/v1beta1",
+  "items": [
+    {
+      "apiVersion": "eventing.knative.dev/v1beta1",
+      "kind": "Broker",
+      "metadata": {
+        "annotations": {
+          "eventing.knative.dev/broker.class": "MTChannelBasedBroker",
+          "eventing.knative.dev/creator": "system:admin",
+          "eventing.knative.dev/lastModifier": "system:admin"
+        },
+        "creationTimestamp": "2020-11-16T19:54:48Z",
+        "finalizers": ["brokers.eventing.knative.dev"],
+        "generation": 1,
+        "managedFields": [
+          {
+            "apiVersion": "eventing.knative.dev/v1beta1",
+            "fieldsType": "FieldsV1",
+            "fieldsV1": {
+              "f:spec": {}
+            },
+            "manager": "kn",
+            "operation": "Update",
+            "time": "2020-11-16T19:54:48Z"
+          },
+          {
+            "apiVersion": "eventing.knative.dev/v1beta1",
+            "fieldsType": "FieldsV1",
+            "fieldsV1": {
+              "f:metadata": {
+                "f:finalizers": {
+                  ".": {},
+                  "v:\"brokers.eventing.knative.dev\"": {}
+                }
+              },
+              "f:status": {
+                ".": {},
+                "f:address": {
+                  ".": {},
+                  "f:url": {}
+                },
+                "f:conditions": {},
+                "f:observedGeneration": {}
+              }
+            },
+            "manager": "mtchannel-broker",
+            "operation": "Update",
+            "time": "2020-11-16T19:54:50Z"
+          }
+        ],
+        "name": "exampleBroker0",
+        "namespace": "josh",
+        "resourceVersion": "48128",
+        "selfLink": "/apis/eventing.knative.dev/v1beta1/namespaces/josh/brokers/exampleBroker0",
+        "uid": "5d4f1b9a-e091-4379-9de9-49f6c68d9b22"
+      },
+      "spec": {
+        "config": {
+          "apiVersion": "v1",
+          "kind": "ConfigMap",
+          "name": "config-br-default-channel",
+          "namespace": "knative-eventing"
+        }
+      },
+      "status": {
+        "address": {
+          "url": "http://broker-ingress.knative-eventing.svc.cluster.local/josh/exampleBroker0"
+        },
+        "conditions": [
+          {
+            "lastTransitionTime": "2020-11-16T19:54:50Z",
+            "status": "True",
+            "type": "Addressable"
+          },
+          {
+            "lastTransitionTime": "2020-11-16T19:54:50Z",
+            "status": "True",
+            "type": "FilterReady"
+          },
+          {
+            "lastTransitionTime": "2020-11-16T19:54:50Z",
+            "status": "True",
+            "type": "IngressReady"
+          },
+          {
+            "lastTransitionTime": "2020-11-16T19:54:50Z",
+            "status": "True",
+            "type": "Ready"
+          },
+          {
+            "lastTransitionTime": "2020-11-16T19:54:50Z",
+            "status": "True",
+            "type": "TriggerChannelReady"
+          }
+        ],
+        "observedGeneration": 1
+      }
+    },
+    {
+      "apiVersion": "eventing.knative.dev/v1beta1",
+      "kind": "Broker",
+      "metadata": {
+        "annotations": {
+          "eventing.knative.dev/broker.class": "MTChannelBasedBroker",
+          "eventing.knative.dev/creator": "system:admin",
+          "eventing.knative.dev/lastModifier": "system:admin"
+        },
+        "creationTimestamp": "2020-11-16T19:54:49Z",
+        "finalizers": ["brokers.eventing.knative.dev"],
+        "generation": 1,
+        "managedFields": [
+          {
+            "apiVersion": "eventing.knative.dev/v1beta1",
+            "fieldsType": "FieldsV1",
+            "fieldsV1": {
+              "f:spec": {}
+            },
+            "manager": "kn",
+            "operation": "Update",
+            "time": "2020-11-16T19:54:49Z"
+          },
+          {
+            "apiVersion": "eventing.knative.dev/v1beta1",
+            "fieldsType": "FieldsV1",
+            "fieldsV1": {
+              "f:metadata": {
+                "f:finalizers": {
+                  ".": {},
+                  "v:\"brokers.eventing.knative.dev\"": {}
+                }
+              },
+              "f:status": {
+                ".": {},
+                "f:address": {
+                  ".": {},
+                  "f:url": {}
+                },
+                "f:conditions": {},
+                "f:observedGeneration": {}
+              }
+            },
+            "manager": "mtchannel-broker",
+            "operation": "Update",
+            "time": "2020-11-16T19:54:50Z"
+          }
+        ],
+        "name": "exampleBroker1",
+        "namespace": "josh",
+        "resourceVersion": "48114",
+        "selfLink": "/apis/eventing.knative.dev/v1beta1/namespaces/josh/brokers/exampleBroker1",
+        "uid": "961f8b93-84b6-4b4c-944e-0e69da66f2e5"
+      },
+      "spec": {
+        "config": {
+          "apiVersion": "v1",
+          "kind": "ConfigMap",
+          "name": "config-br-default-channel",
+          "namespace": "knative-eventing"
+        }
+      },
+      "status": {
+        "address": {
+          "url": "http://broker-ingress.knative-eventing.svc.cluster.local/josh/exampleBroker1"
+        },
+        "conditions": [
+          {
+            "lastTransitionTime": "2020-11-16T19:54:50Z",
+            "status": "True",
+            "type": "Addressable"
+          },
+          {
+            "lastTransitionTime": "2020-11-16T19:54:50Z",
+            "status": "True",
+            "type": "FilterReady"
+          },
+          {
+            "lastTransitionTime": "2020-11-16T19:54:50Z",
+            "status": "True",
+            "type": "IngressReady"
+          },
+          {
+            "lastTransitionTime": "2020-11-16T19:54:50Z",
+            "status": "True",
+            "type": "Ready"
+          },
+          {
+            "lastTransitionTime": "2020-11-16T19:54:50Z",
+            "status": "True",
+            "type": "TriggerChannelReady"
+          }
+        ],
+        "observedGeneration": 1
+      }
+    }
+  ],
+  "kind": "BrokerList"
+}

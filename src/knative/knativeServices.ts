@@ -50,6 +50,9 @@ export class KnativeServices {
 
     this.services.find((s: Service) => {
       revision = s.revisions.find((r: Revision) => r.name === revisionName);
+      if (revision === undefined) {
+        return false;
+      }
       return revision.name === revisionName;
     });
 
@@ -61,6 +64,9 @@ export class KnativeServices {
 
     const service: Service = this.services.find((s: Service) => {
       revision = s.revisions.find((r: Revision) => r.name === revisionName);
+      if (revision === undefined) {
+        return false;
+      }
       return revision.name === revisionName;
     });
 
@@ -73,6 +79,9 @@ export class KnativeServices {
 
     const serviceIndex: number = this.services.findIndex((s: Service) => {
       const revision: Revision = s.revisions.find((r: Revision) => r.name === revisionName);
+      if (revision === undefined) {
+        return false;
+      }
       revisionIndex = s.revisions.findIndex((r: Revision) => r.name === revisionName);
       return revision.name === revisionName;
     });

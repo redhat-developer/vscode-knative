@@ -5,14 +5,18 @@ import * as sinon from 'sinon';
 import * as referee from '@sinonjs/referee';
 import { beforeEach } from 'mocha';
 import { ServingDataProvider } from '../../src/servingTree/servingDataProvider';
-import * as singleServiceData from '../servingTree/singleServiceServiceList.json';
-import * as singleServiceRevisionData from '../servingTree/singleServiceRevisionList.json';
+import * as multipleServiceData from '../servingTree/multipleServiceServicesList.json';
+import * as aaaServiceRevisionData from '../servingTree/aaaServiceRevisionList.json';
+import * as bbbServiceRevisionData from '../servingTree/bbbServiceRevisionList.json';
+import * as cccServiceRevisionData from '../servingTree/cccServiceRevisionList.json';
+import * as exampleServiceRevisionData from '../servingTree/singleServiceRevisionList.json';
 import { ServingTreeItem } from '../../src/servingTree/servingTreeItem';
 import { KnativeServices } from '../../src/knative/knativeServices';
 import { Revision } from '../../src/knative/revision';
 import { Service } from '../../src/knative/service';
 
 const { assert } = referee;
+const { expect } = chai;
 chai.use(sinonChai);
 
 suite('Knative Services', () => {
@@ -29,15 +33,33 @@ suite('Knative Services', () => {
     sandbox.stub(vscode.window, 'showErrorMessage').resolves();
     sandbox
       .stub(servingDataProvider.knExecutor, 'execute')
-      .resolves({ error: undefined, stdout: JSON.stringify(singleServiceData) });
+      .resolves({ error: undefined, stdout: JSON.stringify(multipleServiceData) });
     serviceTreeItems = await servingDataProvider.getChildren();
-    service = serviceTreeItems[0].getKnativeItem() as Service;
+    service = serviceTreeItems[3].getKnativeItem() as Service;
     sandbox.restore();
     sandbox.stub(vscode.window, 'showErrorMessage').resolves();
     sandbox
       .stub(servingDataProvider.knExecutor, 'execute')
-      .resolves({ error: undefined, stdout: JSON.stringify(singleServiceRevisionData) });
+      .resolves({ error: undefined, stdout: JSON.stringify(aaaServiceRevisionData) });
     revisionTreeItems = await servingDataProvider.getRevisions(serviceTreeItems[0]);
+    sandbox.restore();
+    sandbox.stub(vscode.window, 'showErrorMessage').resolves();
+    sandbox
+      .stub(servingDataProvider.knExecutor, 'execute')
+      .resolves({ error: undefined, stdout: JSON.stringify(bbbServiceRevisionData) });
+    revisionTreeItems = await servingDataProvider.getRevisions(serviceTreeItems[1]);
+    sandbox.restore();
+    sandbox.stub(vscode.window, 'showErrorMessage').resolves();
+    sandbox
+      .stub(servingDataProvider.knExecutor, 'execute')
+      .resolves({ error: undefined, stdout: JSON.stringify(cccServiceRevisionData) });
+    revisionTreeItems = await servingDataProvider.getRevisions(serviceTreeItems[2]);
+    sandbox.restore();
+    sandbox.stub(vscode.window, 'showErrorMessage').resolves();
+    sandbox
+      .stub(servingDataProvider.knExecutor, 'execute')
+      .resolves({ error: undefined, stdout: JSON.stringify(exampleServiceRevisionData) });
+    revisionTreeItems = await servingDataProvider.getRevisions(serviceTreeItems[3]);
     revision = revisionTreeItems[0].getKnativeItem() as Revision;
   });
 
@@ -53,7 +75,7 @@ suite('Knative Services', () => {
   });
   suite('Getting a Service', () => {
     test('should return a list of services from the instance', () => {
-      const returnedService: Service = ksvc.getServices()[0];
+      const returnedService: Service = ksvc.getServices()[3];
       assert.equals(service, returnedService);
     });
   });
@@ -89,22 +111,22 @@ suite('Knative Services', () => {
     test('should return an object with both service and revision using the revision name', () => {
       const returnedServiceRevision = ksvc.findRevisionAndServiceIndex('example-75w7v');
       const revisionIndex = 0;
-      const serviceIndex = 0;
+      const serviceIndex = 3;
       assert.equals({ revisionIndex, serviceIndex }, returnedServiceRevision);
     });
   });
   suite('Adding a Service', () => {
     test('should return the service added', () => {
-      const deletedService: Service[] = ksvc.removeService('example');
-      assert.equals(deletedService, []);
+      const remainingServices: Service[] = ksvc.removeService('example');
+      expect(remainingServices).to.have.lengthOf(3);
       const returnedService: Service = ksvc.addService(service);
       assert.equals(service, returnedService);
     });
   });
   suite('Adding multiple Services', () => {
     test('should return a list of services added', () => {
-      const deletedService: Service[] = ksvc.removeService('example');
-      assert.equals(deletedService, []);
+      const remainingServices: Service[] = ksvc.removeService('example');
+      expect(remainingServices).to.have.lengthOf(3);
       const returnedService: Service[] = ksvc.addServices([service]);
       assert.equals([service], returnedService);
     });
@@ -112,7 +134,7 @@ suite('Knative Services', () => {
   suite('Updating a Service', () => {
     test('should return a list of services, including the updated one', () => {
       const returnedService: Service[] = ksvc.updateService(service);
-      assert.equals([service], returnedService);
+      assert.equals(service, returnedService[3]);
     });
   });
 

@@ -1,0 +1,204 @@
+apiVersion: eventing.knative.dev/v1beta1
+items:
+  - apiVersion: eventing.knative.dev/v1beta1
+    kind: Broker
+    metadata:
+      annotations:
+        eventing.knative.dev/broker.class: MTChannelBasedBroker
+        eventing.knative.dev/creator: system:admin
+        eventing.knative.dev/lastModifier: system:admin
+      creationTimestamp: '2020-11-17T18:51:44Z'
+      finalizers:
+        - brokers.eventing.knative.dev
+      generation: 1
+      managedFields:
+        - apiVersion: eventing.knative.dev/v1beta1
+          fieldsType: FieldsV1
+          fieldsV1:
+            f:spec: {}
+          manager: kn
+          operation: Update
+          time: '2020-11-17T18:51:44Z'
+        - apiVersion: eventing.knative.dev/v1beta1
+          fieldsType: FieldsV1
+          fieldsV1:
+            f:metadata:
+              f:finalizers:
+                .: {}
+                v:"brokers.eventing.knative.dev": {}
+            f:status:
+              .: {}
+              f:address:
+                .: {}
+                f:url: {}
+              f:conditions: {}
+              f:observedGeneration: {}
+          manager: mtchannel-broker
+          operation: Update
+          time: '2020-11-17T18:51:44Z'
+      name: demobroker
+      namespace: josh
+      resourceVersion: '177965'
+      selfLink: /apis/eventing.knative.dev/v1beta1/namespaces/josh/brokers/demobroker
+      uid: 22f72ca3-2d35-476a-9031-3e0df5174515
+    spec:
+      config:
+        apiVersion: v1
+        kind: ConfigMap
+        name: config-br-default-channel
+        namespace: knative-eventing
+    status:
+      address:
+        url: http://broker-ingress.knative-eventing.svc.cluster.local/josh/demobroker
+      conditions:
+        - lastTransitionTime: '2020-11-17T18:51:44Z'
+          status: 'True'
+          type: Addressable
+        - lastTransitionTime: '2020-11-17T18:51:44Z'
+          status: 'True'
+          type: FilterReady
+        - lastTransitionTime: '2020-11-17T18:51:44Z'
+          status: 'True'
+          type: IngressReady
+        - lastTransitionTime: '2020-11-17T18:51:44Z'
+          status: 'True'
+          type: Ready
+        - lastTransitionTime: '2020-11-17T18:51:44Z'
+          status: 'True'
+          type: TriggerChannelReady
+      observedGeneration: 1
+  - apiVersion: eventing.knative.dev/v1beta1
+    kind: Broker
+    metadata:
+      annotations:
+        eventing.knative.dev/broker.class: MTChannelBasedBroker
+        eventing.knative.dev/creator: system:admin
+        eventing.knative.dev/lastModifier: system:admin
+      creationTimestamp: '2020-11-17T15:32:44Z'
+      finalizers:
+        - brokers.eventing.knative.dev
+      generation: 1
+      managedFields:
+        - apiVersion: eventing.knative.dev/v1beta1
+          fieldsType: FieldsV1
+          fieldsV1:
+            f:spec: {}
+          manager: kn
+          operation: Update
+          time: '2020-11-17T15:32:44Z'
+        - apiVersion: eventing.knative.dev/v1beta1
+          fieldsType: FieldsV1
+          fieldsV1:
+            f:metadata:
+              f:finalizers:
+                .: {}
+                v:"brokers.eventing.knative.dev": {}
+            f:status:
+              .: {}
+              f:address:
+                .: {}
+                f:url: {}
+              f:conditions: {}
+              f:observedGeneration: {}
+          manager: mtchannel-broker
+          operation: Update
+          time: '2020-11-17T15:32:45Z'
+      name: mybroker
+      namespace: josh
+      resourceVersion: '60060'
+      selfLink: /apis/eventing.knative.dev/v1beta1/namespaces/josh/brokers/mybroker
+      uid: ca998073-45b6-45db-a398-c82e392c9397
+    spec:
+      config:
+        apiVersion: v1
+        kind: ConfigMap
+        name: config-br-default-channel
+        namespace: knative-eventing
+    status:
+      address:
+        url: http://broker-ingress.knative-eventing.svc.cluster.local/josh/mybroker
+      conditions:
+        - lastTransitionTime: '2020-11-17T15:32:45Z'
+          status: 'True'
+          type: Addressable
+        - lastTransitionTime: '2020-11-17T15:32:45Z'
+          status: 'True'
+          type: FilterReady
+        - lastTransitionTime: '2020-11-17T15:32:45Z'
+          status: 'True'
+          type: IngressReady
+        - lastTransitionTime: '2020-11-17T15:32:45Z'
+          status: 'True'
+          type: Ready
+        - lastTransitionTime: '2020-11-17T15:32:45Z'
+          status: 'True'
+          type: TriggerChannelReady
+      observedGeneration: 1
+  - apiVersion: eventing.knative.dev/v1beta1
+    kind: Broker
+    metadata:
+      annotations:
+        eventing.knative.dev/broker.class: MTChannelBasedBroker
+        eventing.knative.dev/creator: system:admin
+        eventing.knative.dev/lastModifier: system:admin
+      creationTimestamp: '2020-11-17T15:32:44Z'
+      finalizers:
+        - brokers.eventing.knative.dev
+      generation: 1
+      managedFields:
+        - apiVersion: eventing.knative.dev/v1beta1
+          fieldsType: FieldsV1
+          fieldsV1:
+            f:spec: {}
+          manager: kn
+          operation: Update
+          time: '2020-11-17T15:32:44Z'
+        - apiVersion: eventing.knative.dev/v1beta1
+          fieldsType: FieldsV1
+          fieldsV1:
+            f:metadata:
+              f:finalizers:
+                .: {}
+                v:"brokers.eventing.knative.dev": {}
+            f:status:
+              .: {}
+              f:address:
+                .: {}
+                f:url: {}
+              f:conditions: {}
+              f:observedGeneration: {}
+          manager: mtchannel-broker
+          operation: Update
+          time: '2020-11-17T15:32:46Z'
+      name: mybroker1
+      namespace: josh
+      resourceVersion: '60083'
+      selfLink: /apis/eventing.knative.dev/v1beta1/namespaces/josh/brokers/mybroker1
+      uid: 81af01e4-b44d-49ff-b4d3-cdf126444f09
+    spec:
+      config:
+        apiVersion: v1
+        kind: ConfigMap
+        name: config-br-default-channel
+        namespace: knative-eventing
+    status:
+      address:
+        url: http://broker-ingress.knative-eventing.svc.cluster.local/josh/mybroker1
+      conditions:
+        - lastTransitionTime: '2020-11-17T15:32:46Z'
+          status: 'True'
+          type: Addressable
+        - lastTransitionTime: '2020-11-17T15:32:46Z'
+          status: 'True'
+          type: FilterReady
+        - lastTransitionTime: '2020-11-17T15:32:46Z'
+          status: 'True'
+          type: IngressReady
+        - lastTransitionTime: '2020-11-17T15:32:46Z'
+          status: 'True'
+          type: Ready
+        - lastTransitionTime: '2020-11-17T15:32:46Z'
+          status: 'True'
+          type: TriggerChannelReady
+      observedGeneration: 1
+kind: BrokerList
