@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See LICENSE file in the project root for license information.
  *-----------------------------------------------------------------------------------------------*/
 
-import { Event, EventEmitter, ProviderResult, TreeDataProvider, TreeItem, TreeItemCollapsibleState } from 'vscode';
+import { TreeItemCollapsibleState } from 'vscode';
 import { EventingTreeItem } from './eventingTreeItem';
 import { Execute, loadItems } from '../cli/execute';
 import { CliExitData } from '../cli/cmdCli';
@@ -12,61 +12,14 @@ import { EventingContextType } from '../cli/config';
 import { compareNodes } from '../knative/knativeItem';
 import { Channel } from '../knative/channel';
 import { KnativeChannels } from '../knative/knativeChannels';
+import { KnativeEvents } from '../knative/knativeEvents';
 
-export class ChannelDataProvider implements TreeDataProvider<EventingTreeItem> {
+export class ChannelDataProvider {
   public knExecutor = new Execute();
 
-  private onDidChangeTreeDataEmitter: EventEmitter<EventingTreeItem | undefined | null> = new EventEmitter<
-    EventingTreeItem | undefined | null
-  >();
+  private kChannels: KnativeChannels = KnativeChannels.Instance;
 
-  readonly onDidChangeTreeData: Event<EventingTreeItem | undefined | null> = this.onDidChangeTreeDataEmitter.event;
-
-  refresh(target?: EventingTreeItem): void {
-    this.onDidChangeTreeDataEmitter.fire(target);
-  }
-
-  /**
-   * Get the UI representation of the TreeObject.
-   *
-   * Required to fulfill the `TreeDataProvider` API.
-   * @param element TreeObject
-   */
-  // eslint-disable-next-line class-methods-use-this
-  getTreeItem(element: EventingTreeItem): TreeItem | Thenable<TreeItem> {
-    return element;
-  }
-
-  /**
-   * When the user opens the Tree View, the getChildren method will be called without
-   * an element. From there, your TreeDataProvider should return your top-level tree
-   * items. getChildren is then called for each of your top-level tree items, so that
-   * you can provide the children of those items.
-   *
-   * Get the children of the TreeObject passed in or get the root if none is passed in.
-   *
-   * Required to fulfill the `TreeDataProvider` API.
-   *
-   * @param element TreeObject
-   */
-  getChildren(element?: EventingTreeItem): ProviderResult<EventingTreeItem[]> {
-    let children: ProviderResult<EventingTreeItem[]>;
-    if (element && element.contextValue === EventingContextType.CHANNEL) {
-      children = this.getChannels(element);
-    } else {
-      children = [
-        new EventingTreeItem(element, null, 'Empty', EventingContextType.NONE, TreeItemCollapsibleState.None, null, null),
-      ];
-    }
-    return children;
-  }
-
-  // eslint-disable-next-line class-methods-use-this
-  getParent?(element: EventingTreeItem): EventingTreeItem {
-    return element.getParent();
-  }
-
-  private ksrc: KnativeChannels = KnativeChannels.Instance;
+  private events: KnativeEvents = KnativeEvents.Instance;
 
   /**
    * Fetch the Channel data
@@ -78,7 +31,7 @@ export class ChannelDataProvider implements TreeDataProvider<EventingTreeItem> {
     let channels: Channel[] = [];
     // Get the raw data from the cli call.
     const result: CliExitData = await this.knExecutor.execute(KnAPI.listChannels());
-    channels = this.ksrc.addChannels(loadItems(result).map((value) => Channel.JSONToChannel(value)));
+    channels = this.kChannels.addChannels(loadItems(result).map((value) => Channel.JSONToChannel(value)));
     // If there are no Channels found then stop looking and we can post 'No Channels Found`
     if (channels.length === 0) {
       return channels;
@@ -121,6 +74,9 @@ export class ChannelDataProvider implements TreeDataProvider<EventingTreeItem> {
         ),
       ];
     }
+
+    // Add the list of children to the parent for reference
+    this.events.addChildren(channels);
 
     // Convert the fetch Channels into TreeItems
     const children = channels

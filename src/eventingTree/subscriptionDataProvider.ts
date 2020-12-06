@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See LICENSE file in the project root for license information.
  *-----------------------------------------------------------------------------------------------*/
 
-import { Event, EventEmitter, ProviderResult, TreeDataProvider, TreeItem, TreeItemCollapsibleState } from 'vscode';
+import { TreeItemCollapsibleState } from 'vscode';
 import { EventingTreeItem } from './eventingTreeItem';
 import { Execute, loadItems } from '../cli/execute';
 import { CliExitData } from '../cli/cmdCli';
@@ -12,61 +12,14 @@ import { EventingContextType } from '../cli/config';
 import { compareNodes } from '../knative/knativeItem';
 import { Subscription } from '../knative/subscription';
 import { KnativeSubscriptions } from '../knative/knativeSubscriptions';
+import { KnativeEvents } from '../knative/knativeEvents';
 
-export class SubscriptionDataProvider implements TreeDataProvider<EventingTreeItem> {
+export class SubscriptionDataProvider {
   public knExecutor = new Execute();
 
-  private onDidChangeTreeDataEmitter: EventEmitter<EventingTreeItem | undefined | null> = new EventEmitter<
-    EventingTreeItem | undefined | null
-  >();
+  private kSubs: KnativeSubscriptions = KnativeSubscriptions.Instance;
 
-  readonly onDidChangeTreeData: Event<EventingTreeItem | undefined | null> = this.onDidChangeTreeDataEmitter.event;
-
-  refresh(target?: EventingTreeItem): void {
-    this.onDidChangeTreeDataEmitter.fire(target);
-  }
-
-  /**
-   * Get the UI representation of the TreeObject.
-   *
-   * Required to fulfill the `TreeDataProvider` API.
-   * @param element TreeObject
-   */
-  // eslint-disable-next-line class-methods-use-this
-  getTreeItem(element: EventingTreeItem): TreeItem | Thenable<TreeItem> {
-    return element;
-  }
-
-  /**
-   * When the user opens the Tree View, the getChildren method will be called without
-   * an element. From there, your TreeDataProvider should return your top-level tree
-   * items. getChildren is then called for each of your top-level tree items, so that
-   * you can provide the children of those items.
-   *
-   * Get the children of the TreeObject passed in or get the root if none is passed in.
-   *
-   * Required to fulfill the `TreeDataProvider` API.
-   *
-   * @param element TreeObject
-   */
-  getChildren(element?: EventingTreeItem): ProviderResult<EventingTreeItem[]> {
-    let children: ProviderResult<EventingTreeItem[]>;
-    if (element && element.contextValue === EventingContextType.SUBSCRIPTION) {
-      children = this.getSubscriptions(element);
-    } else {
-      children = [
-        new EventingTreeItem(element, null, 'Empty', EventingContextType.NONE, TreeItemCollapsibleState.None, null, null),
-      ];
-    }
-    return children;
-  }
-
-  // eslint-disable-next-line class-methods-use-this
-  getParent?(element: EventingTreeItem): EventingTreeItem {
-    return element.getParent();
-  }
-
-  private ksrc: KnativeSubscriptions = KnativeSubscriptions.Instance;
+  private events: KnativeEvents = KnativeEvents.Instance;
 
   /**
    * Fetch the Subscription data
@@ -78,7 +31,11 @@ export class SubscriptionDataProvider implements TreeDataProvider<EventingTreeIt
     let subscriptions: Subscription[] = [];
     // Get the raw data from the cli call.
     const result: CliExitData = await this.knExecutor.execute(KnAPI.listSubscriptions());
-    subscriptions = this.ksrc.addSubscriptions(loadItems(result).map((value) => Subscription.JSONToSubscription(value)));
+    subscriptions = this.kSubs.addSubscriptions(
+      loadItems(result).map((value) => {
+        return Subscription.JSONToSubscription(value);
+      }),
+    );
     // If there are no Subscriptions found then stop looking and we can post 'No Subscriptions Found`
     if (subscriptions.length === 0) {
       return subscriptions;
@@ -121,6 +78,9 @@ export class SubscriptionDataProvider implements TreeDataProvider<EventingTreeIt
         ),
       ];
     }
+
+    // Add the list of children to the parent for reference
+    this.events.addChildren(subscriptions);
 
     // Convert the fetch Subscriptions into TreeItems
     const children = subscriptions

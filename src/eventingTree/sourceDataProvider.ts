@@ -3,70 +3,27 @@
  *  Licensed under the MIT License. See LICENSE file in the project root for license information.
  *-----------------------------------------------------------------------------------------------*/
 
-import { Event, EventEmitter, ProviderResult, TreeDataProvider, TreeItem, TreeItemCollapsibleState } from 'vscode';
+import { TreeItemCollapsibleState } from 'vscode';
 import { EventingTreeItem } from './eventingTreeItem';
 import { Execute, loadItems } from '../cli/execute';
 import { CliExitData } from '../cli/cmdCli';
 import { KnAPI } from '../cli/kn-api';
 import { EventingContextType } from '../cli/config';
 import { compareNodes } from '../knative/knativeItem';
-import { Source } from '../knative/source';
-import { KnativeSources } from '../knative/knativeSources';
+import { GenericSource } from '../knative/genericSource';
+import { APIServerSource } from '../knative/apiServerSource';
+import { KnativeSources, SourceTypes } from '../knative/knativeSources';
+import { KnativeEvents } from '../knative/knativeEvents';
+import { Items } from '../knative/baseSource';
+import { BindingSource } from '../knative/bindingSource';
+import { PingSource } from '../knative/pingSource';
 
-export class SourceDataProvider implements TreeDataProvider<EventingTreeItem> {
+export class SourceDataProvider {
   public knExecutor = new Execute();
 
-  private onDidChangeTreeDataEmitter: EventEmitter<EventingTreeItem | undefined | null> = new EventEmitter<
-    EventingTreeItem | undefined | null
-  >();
+  private kSources: KnativeSources = KnativeSources.Instance;
 
-  readonly onDidChangeTreeData: Event<EventingTreeItem | undefined | null> = this.onDidChangeTreeDataEmitter.event;
-
-  refresh(target?: EventingTreeItem): void {
-    this.onDidChangeTreeDataEmitter.fire(target);
-  }
-
-  /**
-   * Get the UI representation of the TreeObject.
-   *
-   * Required to fulfill the `TreeDataProvider` API.
-   * @param element TreeObject
-   */
-  // eslint-disable-next-line class-methods-use-this
-  getTreeItem(element: EventingTreeItem): TreeItem | Thenable<TreeItem> {
-    return element;
-  }
-
-  /**
-   * When the user opens the Tree View, the getChildren method will be called without
-   * an element. From there, your TreeDataProvider should return your top-level tree
-   * items. getChildren is then called for each of your top-level tree items, so that
-   * you can provide the children of those items.
-   *
-   * Get the children of the TreeObject passed in or get the root if none is passed in.
-   *
-   * Required to fulfill the `TreeDataProvider` API.
-   *
-   * @param element TreeObject
-   */
-  getChildren(element?: EventingTreeItem): ProviderResult<EventingTreeItem[]> {
-    let children: ProviderResult<EventingTreeItem[]>;
-    if (element && element.contextValue === EventingContextType.SOURCE) {
-      children = this.getSources(element);
-    } else {
-      children = [
-        new EventingTreeItem(element, null, 'Empty', EventingContextType.NONE, TreeItemCollapsibleState.None, null, null),
-      ];
-    }
-    return children;
-  }
-
-  // eslint-disable-next-line class-methods-use-this
-  getParent?(element: EventingTreeItem): EventingTreeItem {
-    return element.getParent();
-  }
-
-  private ksrc: KnativeSources = KnativeSources.Instance;
+  private events: KnativeEvents = KnativeEvents.Instance;
 
   /**
    * Fetch the Source data
@@ -74,11 +31,26 @@ export class SourceDataProvider implements TreeDataProvider<EventingTreeItem> {
    * When creating a new Source on the cluster it takes time, however this fetch is called immediately.
    * It will continue to call itself until the data is complete on the cluster.
    */
-  private async getSourcesList(): Promise<Source[]> {
-    let sources: Source[] = [];
+  private async getSourcesList(): Promise<Array<SourceTypes>> {
+    let sources: Array<SourceTypes> = [];
     // Get the raw data from the cli call.
     const result: CliExitData = await this.knExecutor.execute(KnAPI.listSources());
-    sources = this.ksrc.addSources(loadItems(result).map((value) => Source.JSONToSource(value)));
+
+    // Figure out the source type, create that object type, and store it.
+    sources = this.kSources.addSources(
+      loadItems(result).map((value: Items) => {
+        if (value.kind === 'ApiServerSource') {
+          return APIServerSource.JSONToSource(value);
+        }
+        if (value.kind === 'SinkBinding') {
+          return BindingSource.JSONToSource(value);
+        }
+        if (value.kind === 'PingSource') {
+          return PingSource.JSONToSource(value);
+        }
+        return GenericSource.JSONToSource(value);
+      }),
+    );
     // If there are no Sources found then stop looking and we can post 'No Sources Found`
     if (sources.length === 0) {
       return sources;
@@ -140,6 +112,9 @@ export class SourceDataProvider implements TreeDataProvider<EventingTreeItem> {
         ),
       ];
     }
+
+    // Add the list of children to the parent for reference
+    this.events.addChildren(sources);
 
     // Convert the fetch Sources into TreeItems
     const children = sources

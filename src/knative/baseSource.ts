@@ -8,8 +8,8 @@ import { KnativeItem } from './knativeItem';
 
 export type sourceOptions = Array<Array<string>>;
 
-export class Source extends KnativeItem {
-  constructor(public name: string, public sourceType: string, public options?: sourceOptions, public details?: Items) {
+export class BaseSource extends KnativeItem {
+  constructor(public name: string, public parent: string, public details?: Items) {
     super();
   }
 
@@ -20,18 +20,8 @@ export class Source extends KnativeItem {
   namespace?: string;
 
   modified?: boolean;
-
-  static JSONToSource(value: Items): Source {
-    const source = new Source(value.metadata.name, value.kind, null, value);
-    return source;
-  }
 }
 
-export interface JSONSource {
-  apiVersion: string;
-  items?: Items[] | null;
-  kind: string;
-}
 export interface Items {
   apiVersion: string;
   kind: string;

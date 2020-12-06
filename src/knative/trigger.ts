@@ -6,7 +6,7 @@
 import { KnativeItem } from './knativeItem';
 
 export class Trigger extends KnativeItem {
-  constructor(public name: string, public details?: Items) {
+  constructor(public name: string, public parent: string, public details?: Items) {
     super();
   }
 
@@ -19,16 +19,11 @@ export class Trigger extends KnativeItem {
   modified?: boolean;
 
   static JSONToTrigger(value: Items): Trigger {
-    const trigger = new Trigger(value.metadata.name, value);
+    const trigger = new Trigger(value.metadata.name, 'Triggers', value);
     return trigger;
   }
 }
 
-export interface JSONTrigger {
-  apiVersion: string;
-  items?: Items[] | null;
-  kind: string;
-}
 export interface Items {
   apiVersion: string;
   kind: string;

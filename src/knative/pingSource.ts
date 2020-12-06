@@ -3,28 +3,28 @@
  *  Licensed under the MIT License. See LICENSE file in the project root for license information.
  *-----------------------------------------------------------------------------------------------*/
 
-// import { Sink } from './event';
-import { KnativeItem } from './knativeItem';
+import { BaseSource, Metadata } from './baseSource';
 
 export type sourceOptions = Array<Array<string>>;
 
-export class SourceAPIServer extends KnativeItem {
-  constructor(public name: string, public resource: string, public sink: string, public details?: Items) {
-    super();
+export class PingSource extends BaseSource {
+  constructor(
+    public name: string,
+    public parent: string,
+    public schedule: string,
+    public data: string,
+    public sink: string,
+    public details?: Items,
+  ) {
+    super(name, parent, details);
   }
 
-  annotation?: Map<string, boolean>;
-
-  label?: Map<string, string>;
-
-  namespace?: string;
-
-  modified?: boolean;
-
-  static JSONToSource(value: Items): SourceAPIServer {
-    const source = new SourceAPIServer(
+  static JSONToSource(value: Items): PingSource {
+    const source = new PingSource(
       value.metadata.name,
-      value.spec.resources[0].controllerSelector.name,
+      'Sources',
+      value.spec.schedule,
+      value.spec.jsonData,
       value.spec.sink.ref.name,
       value,
     );
@@ -32,46 +32,12 @@ export class SourceAPIServer extends KnativeItem {
   }
 }
 
-export interface JSONSource {
-  apiVersion: string;
-  items?: Items[] | null;
-  kind: string;
-}
 export interface Items {
   apiVersion: string;
   kind: string;
   metadata: Metadata;
   spec: Spec;
   status: Status;
-}
-export interface Metadata {
-  annotations: Annotations;
-  creationTimestamp: string;
-  generation: number;
-  managedFields?: ManagedFields[] | null;
-  name: string;
-  namespace: string;
-  resourceVersion: string;
-  selfLink: string;
-  uid: string;
-  finalizers?: string[] | null;
-}
-export interface Annotations {
-  'sources.knative.dev/creator': string;
-  'sources.knative.dev/lastModifier': string;
-}
-export interface ManagedFields {
-  apiVersion: string;
-  fieldsType: string;
-  fieldsV1: FieldsV1;
-  manager: string;
-  operation: string;
-  time: string;
-}
-export interface FieldsV1 {
-  'f:metadata'?: {} | null;
-  'f:spec'?: {} | null;
-  'f:status'?: {} | null;
 }
 export interface Spec {
   mode?: string | null;

@@ -1,0 +1,314 @@
+{
+  "apiVersion": "eventing.knative.dev/v1beta1",
+  "items": [
+    {
+      "apiVersion": "eventing.knative.dev/v1beta1",
+      "kind": "Trigger",
+      "metadata": {
+        "annotations": {
+          "eventing.knative.dev/creator": "system:admin",
+          "eventing.knative.dev/lastModifier": "system:admin"
+        },
+        "creationTimestamp": "2020-11-16T19:54:51Z",
+        "generation": 1,
+        "labels": {
+          "eventing.knative.dev/broker": "exampleBroker0"
+        },
+        "managedFields": [
+          {
+            "apiVersion": "eventing.knative.dev/v1beta1",
+            "fieldsType": "FieldsV1",
+            "fieldsV1": {
+              "f:spec": {
+                ".": {},
+                "f:broker": {},
+                "f:filter": {},
+                "f:subscriber": {
+                  ".": {},
+                  "f:ref": {
+                    ".": {},
+                    "f:apiVersion": {},
+                    "f:kind": {},
+                    "f:name": {},
+                    "f:namespace": {}
+                  }
+                }
+              }
+            },
+            "manager": "kn",
+            "operation": "Update",
+            "time": "2020-11-16T19:54:51Z"
+          },
+          {
+            "apiVersion": "eventing.knative.dev/v1beta1",
+            "fieldsType": "FieldsV1",
+            "fieldsV1": {
+              "f:status": {
+                ".": {},
+                "f:conditions": {},
+                "f:observedGeneration": {},
+                "f:subscriberUri": {}
+              }
+            },
+            "manager": "mtchannel-broker",
+            "operation": "Update",
+            "time": "2020-11-16T19:54:53Z"
+          }
+        ],
+        "name": "exampleTrigger0",
+        "namespace": "josh",
+        "resourceVersion": "48379",
+        "selfLink": "/apis/eventing.knative.dev/v1beta1/namespaces/josh/triggers/exampleTrigger0",
+        "uid": "38d940a2-39f3-4988-9c61-8f4866acece1"
+      },
+      "spec": {
+        "broker": "exampleBroker0",
+        "filter": {},
+        "subscriber": {
+          "ref": {
+            "apiVersion": "serving.knative.dev/v1",
+            "kind": "Service",
+            "name": "aaa",
+            "namespace": "josh"
+          }
+        }
+      },
+      "status": {
+        "observedGeneration": 1,
+        "subscriberUri": "http://aaa.josh.svc.cluster.local"
+      }
+    },
+    {
+      "apiVersion": "eventing.knative.dev/v1beta1",
+      "kind": "Trigger",
+      "metadata": {
+        "annotations": {
+          "eventing.knative.dev/creator": "system:admin",
+          "eventing.knative.dev/lastModifier": "system:admin"
+        },
+        "creationTimestamp": "2020-11-16T19:54:51Z",
+        "generation": 1,
+        "labels": {
+          "eventing.knative.dev/broker": "exampleBroker0"
+        },
+        "managedFields": [
+          {
+            "apiVersion": "eventing.knative.dev/v1beta1",
+            "fieldsType": "FieldsV1",
+            "fieldsV1": {
+              "f:spec": {
+                ".": {},
+                "f:broker": {},
+                "f:filter": {},
+                "f:subscriber": {
+                  ".": {},
+                  "f:ref": {
+                    ".": {},
+                    "f:apiVersion": {},
+                    "f:kind": {},
+                    "f:name": {},
+                    "f:namespace": {}
+                  }
+                }
+              }
+            },
+            "manager": "kn",
+            "operation": "Update",
+            "time": "2020-11-16T19:54:51Z"
+          },
+          {
+            "apiVersion": "eventing.knative.dev/v1beta1",
+            "fieldsType": "FieldsV1",
+            "fieldsV1": {
+              "f:status": {
+                ".": {},
+                "f:conditions": {},
+                "f:observedGeneration": {},
+                "f:subscriberUri": {}
+              }
+            },
+            "manager": "mtchannel-broker",
+            "operation": "Update",
+            "time": "2020-11-16T19:54:53Z"
+          }
+        ],
+        "name": "exampleTrigger1",
+        "namespace": "josh",
+        "resourceVersion": "48381",
+        "selfLink": "/apis/eventing.knative.dev/v1beta1/namespaces/josh/triggers/exampleTrigger1",
+        "uid": "8cde4473-e3e9-492d-b2de-693889bbdf6c"
+      },
+      "spec": {
+        "broker": "exampleBroker0",
+        "filter": {},
+        "subscriber": {
+          "ref": {
+            "apiVersion": "serving.knative.dev/v1",
+            "kind": "Service",
+            "name": "aaa",
+            "namespace": "josh"
+          }
+        }
+      },
+      "status": {
+        "observedGeneration": 1,
+        "subscriberUri": "http://aaa.josh.svc.cluster.local"
+      }
+    },
+    {
+      "apiVersion": "eventing.knative.dev/v1beta1",
+      "kind": "Trigger",
+      "metadata": {
+        "annotations": {
+          "eventing.knative.dev/creator": "system:admin",
+          "eventing.knative.dev/lastModifier": "system:admin"
+        },
+        "creationTimestamp": "2020-11-16T19:54:52Z",
+        "generation": 1,
+        "labels": {
+          "eventing.knative.dev/broker": "exampleBroker1"
+        },
+        "managedFields": [
+          {
+            "apiVersion": "eventing.knative.dev/v1beta1",
+            "fieldsType": "FieldsV1",
+            "fieldsV1": {
+              "f:spec": {
+                ".": {},
+                "f:broker": {},
+                "f:filter": {},
+                "f:subscriber": {
+                  ".": {},
+                  "f:ref": {
+                    ".": {},
+                    "f:apiVersion": {},
+                    "f:kind": {},
+                    "f:name": {},
+                    "f:namespace": {}
+                  }
+                }
+              }
+            },
+            "manager": "kn",
+            "operation": "Update",
+            "time": "2020-11-16T19:54:52Z"
+          },
+          {
+            "apiVersion": "eventing.knative.dev/v1beta1",
+            "fieldsType": "FieldsV1",
+            "fieldsV1": {
+              "f:status": {
+                ".": {},
+                "f:conditions": {},
+                "f:observedGeneration": {},
+                "f:subscriberUri": {}
+              }
+            },
+            "manager": "mtchannel-broker",
+            "operation": "Update",
+            "time": "2020-11-16T19:54:54Z"
+          }
+        ],
+        "name": "exampleTrigger2",
+        "namespace": "josh",
+        "resourceVersion": "48410",
+        "selfLink": "/apis/eventing.knative.dev/v1beta1/namespaces/josh/triggers/exampleTrigger2",
+        "uid": "09126c0a-153a-4797-a637-8d4183682975"
+      },
+      "spec": {
+        "broker": "exampleBroker1",
+        "filter": {},
+        "subscriber": {
+          "ref": {
+            "apiVersion": "serving.knative.dev/v1",
+            "kind": "Service",
+            "name": "aaa",
+            "namespace": "josh"
+          }
+        }
+      },
+      "status": {
+        "observedGeneration": 1,
+        "subscriberUri": "http://aaa.josh.svc.cluster.local"
+      }
+    },
+    {
+      "apiVersion": "eventing.knative.dev/v1beta1",
+      "kind": "Trigger",
+      "metadata": {
+        "annotations": {
+          "eventing.knative.dev/creator": "system:admin",
+          "eventing.knative.dev/lastModifier": "system:admin"
+        },
+        "creationTimestamp": "2020-11-16T19:54:52Z",
+        "generation": 1,
+        "labels": {
+          "eventing.knative.dev/broker": "exampleBroker1"
+        },
+        "managedFields": [
+          {
+            "apiVersion": "eventing.knative.dev/v1beta1",
+            "fieldsType": "FieldsV1",
+            "fieldsV1": {
+              "f:spec": {
+                ".": {},
+                "f:broker": {},
+                "f:filter": {},
+                "f:subscriber": {
+                  ".": {},
+                  "f:ref": {
+                    ".": {},
+                    "f:apiVersion": {},
+                    "f:kind": {},
+                    "f:name": {},
+                    "f:namespace": {}
+                  }
+                }
+              }
+            },
+            "manager": "kn",
+            "operation": "Update",
+            "time": "2020-11-16T19:54:52Z"
+          },
+          {
+            "apiVersion": "eventing.knative.dev/v1beta1",
+            "fieldsType": "FieldsV1",
+            "fieldsV1": {
+              "f:status": {
+                ".": {},
+                "f:conditions": {},
+                "f:observedGeneration": {},
+                "f:subscriberUri": {}
+              }
+            },
+            "manager": "mtchannel-broker",
+            "operation": "Update",
+            "time": "2020-11-16T19:54:54Z"
+          }
+        ],
+        "name": "exampleTrigger3",
+        "namespace": "josh",
+        "resourceVersion": "48411",
+        "selfLink": "/apis/eventing.knative.dev/v1beta1/namespaces/josh/triggers/exampleTrigger3",
+        "uid": "99eb7f81-9f17-4131-a8eb-2f0991a72b08"
+      },
+      "spec": {
+        "broker": "exampleBroker1",
+        "filter": {},
+        "subscriber": {
+          "ref": {
+            "apiVersion": "serving.knative.dev/v1",
+            "kind": "Service",
+            "name": "aaa",
+            "namespace": "josh"
+          }
+        }
+      },
+      "status": {
+        "observedGeneration": 1,
+        "subscriberUri": "http://aaa.josh.svc.cluster.local"
+      }
+    }
+  ],
+  "kind": "TriggerList"
+}

@@ -1,0 +1,379 @@
+{
+  "apiVersion": "messaging.knative.dev/v1beta1",
+  "items": [
+    {
+      "apiVersion": "messaging.knative.dev/v1beta1",
+      "kind": "Channel",
+      "metadata": {
+        "annotations": {
+          "messaging.knative.dev/creator": "system:admin",
+          "messaging.knative.dev/lastModifier": "system:admin",
+          "messaging.knative.dev/subscribable": "v1beta1"
+        },
+        "creationTimestamp": "2020-11-16T19:54:50Z",
+        "generation": 1,
+        "managedFields": [
+          {
+            "apiVersion": "messaging.knative.dev/v1beta1",
+            "fieldsType": "FieldsV1",
+            "fieldsV1": {
+              "f:spec": {
+                ".": {},
+                "f:channelTemplate": {}
+              }
+            },
+            "manager": "kn",
+            "operation": "Update",
+            "time": "2020-11-16T19:54:50Z"
+          },
+          {
+            "apiVersion": "messaging.knative.dev/v1beta1",
+            "fieldsType": "FieldsV1",
+            "fieldsV1": {
+              "f:status": {
+                ".": {},
+                "f:address": {},
+                "f:channel": {},
+                "f:conditions": {},
+                "f:observedGeneration": {},
+                "f:subscribers": {}
+              }
+            },
+            "manager": "controller",
+            "operation": "Update",
+            "time": "2020-11-16T19:54:52Z"
+          }
+        ],
+        "name": "exampleChannel0",
+        "namespace": "josh",
+        "resourceVersion": "48328",
+        "selfLink": "/apis/messaging.knative.dev/v1beta1/namespaces/josh/channels/exampleChannel0",
+        "uid": "51800e5d-5e0a-41b5-a3ef-0cf5f60c491b"
+      },
+      "spec": {
+        "channelTemplate": {
+          "apiVersion": "messaging.knative.dev/v1beta1",
+          "kind": "InMemoryChannel"
+        }
+      },
+      "status": {
+        "address": {
+          "url": "http://exampleChannel0-kn-channel.josh.svc.cluster.local"
+        },
+        "channel": {
+          "apiVersion": "messaging.knative.dev/v1beta1",
+          "kind": "InMemoryChannel",
+          "name": "exampleChannel0",
+          "namespace": "josh"
+        },
+        "conditions": [
+          {
+            "lastTransitionTime": "2020-11-16T19:54:51Z",
+            "status": "True",
+            "type": "Addressable"
+          },
+          {
+            "lastTransitionTime": "2020-11-16T19:54:52Z",
+            "status": "True",
+            "type": "BackingChannelReady"
+          },
+          {
+            "lastTransitionTime": "2020-11-16T19:54:52Z",
+            "status": "True",
+            "type": "Ready"
+          }
+        ],
+        "observedGeneration": 1,
+        "subscribers": [
+          {
+            "observedGeneration": 1,
+            "ready": "True",
+            "uid": "7a351d67-06ce-4f63-9885-601ceb0257aa"
+          }
+        ]
+      }
+    },
+    {
+      "apiVersion": "messaging.knative.dev/v1beta1",
+      "kind": "Channel",
+      "metadata": {
+        "annotations": {
+          "messaging.knative.dev/creator": "system:admin",
+          "messaging.knative.dev/lastModifier": "system:admin",
+          "messaging.knative.dev/subscribable": "v1beta1"
+        },
+        "creationTimestamp": "2020-11-16T19:54:50Z",
+        "generation": 1,
+        "managedFields": [
+          {
+            "apiVersion": "messaging.knative.dev/v1beta1",
+            "fieldsType": "FieldsV1",
+            "fieldsV1": {
+              "f:spec": {
+                ".": {},
+                "f:channelTemplate": {}
+              }
+            },
+            "manager": "kn",
+            "operation": "Update",
+            "time": "2020-11-16T19:54:50Z"
+          },
+          {
+            "apiVersion": "messaging.knative.dev/v1beta1",
+            "fieldsType": "FieldsV1",
+            "fieldsV1": {
+              "f:status": {
+                ".": {},
+                "f:address": {},
+                "f:channel": {},
+                "f:conditions": {},
+                "f:observedGeneration": {},
+                "f:subscribers": {}
+              }
+            },
+            "manager": "controller",
+            "operation": "Update",
+            "time": "2020-11-16T20:09:40Z"
+          }
+        ],
+        "name": "exampleChannel1",
+        "namespace": "josh",
+        "resourceVersion": "57792",
+        "selfLink": "/apis/messaging.knative.dev/v1beta1/namespaces/josh/channels/exampleChannel1",
+        "uid": "52d3fe8d-9c64-4171-b02a-d068e3607b03"
+      },
+      "spec": {
+        "channelTemplate": {
+          "apiVersion": "messaging.knative.dev/v1beta1",
+          "kind": "InMemoryChannel"
+        }
+      },
+      "status": {
+        "address": {
+          "url": "http://exampleChannel1-kn-channel.josh.svc.cluster.local"
+        },
+        "channel": {
+          "apiVersion": "messaging.knative.dev/v1beta1",
+          "kind": "InMemoryChannel",
+          "name": "exampleChannel1",
+          "namespace": "josh"
+        },
+        "conditions": [
+          {
+            "lastTransitionTime": "2020-11-16T19:54:51Z",
+            "status": "True",
+            "type": "Addressable"
+          },
+          {
+            "lastTransitionTime": "2020-11-16T20:09:40Z",
+            "status": "True",
+            "type": "BackingChannelReady"
+          },
+          {
+            "lastTransitionTime": "2020-11-16T20:09:40Z",
+            "status": "True",
+            "type": "Ready"
+          }
+        ],
+        "observedGeneration": 1,
+        "subscribers": [
+          {
+            "observedGeneration": 1,
+            "ready": "True",
+            "uid": "1fb5d5c0-713a-401b-86e3-7a76f9ed8e6c"
+          }
+        ]
+      }
+    },
+    {
+      "apiVersion": "messaging.knative.dev/v1beta1",
+      "kind": "Channel",
+      "metadata": {
+        "annotations": {
+          "messaging.knative.dev/creator": "system:admin",
+          "messaging.knative.dev/lastModifier": "system:admin",
+          "messaging.knative.dev/subscribable": "v1beta1"
+        },
+        "creationTimestamp": "2020-11-16T19:54:49Z",
+        "generation": 1,
+        "managedFields": [
+          {
+            "apiVersion": "messaging.knative.dev/v1beta1",
+            "fieldsType": "FieldsV1",
+            "fieldsV1": {
+              "f:spec": {
+                ".": {},
+                "f:channelTemplate": {}
+              }
+            },
+            "manager": "kn",
+            "operation": "Update",
+            "time": "2020-11-16T19:54:49Z"
+          },
+          {
+            "apiVersion": "messaging.knative.dev/v1beta1",
+            "fieldsType": "FieldsV1",
+            "fieldsV1": {
+              "f:status": {
+                ".": {},
+                "f:address": {},
+                "f:channel": {},
+                "f:conditions": {},
+                "f:observedGeneration": {},
+                "f:subscribers": {}
+              }
+            },
+            "manager": "controller",
+            "operation": "Update",
+            "time": "2020-11-16T19:54:52Z"
+          }
+        ],
+        "name": "pipe",
+        "namespace": "josh",
+        "resourceVersion": "48279",
+        "selfLink": "/apis/messaging.knative.dev/v1beta1/namespaces/josh/channels/pipe",
+        "uid": "9c83eef4-e6f1-4760-a18f-fdcbf18fc72d"
+      },
+      "spec": {
+        "channelTemplate": {
+          "apiVersion": "messaging.knative.dev/v1beta1",
+          "kind": "InMemoryChannel"
+        }
+      },
+      "status": {
+        "address": {
+          "url": "http://pipe-kn-channel.josh.svc.cluster.local"
+        },
+        "channel": {
+          "apiVersion": "messaging.knative.dev/v1beta1",
+          "kind": "InMemoryChannel",
+          "name": "pipe",
+          "namespace": "josh"
+        },
+        "conditions": [
+          {
+            "lastTransitionTime": "2020-11-16T19:54:50Z",
+            "status": "True",
+            "type": "Addressable"
+          },
+          {
+            "lastTransitionTime": "2020-11-16T19:54:52Z",
+            "status": "True",
+            "type": "BackingChannelReady"
+          },
+          {
+            "lastTransitionTime": "2020-11-16T19:54:52Z",
+            "status": "True",
+            "type": "Ready"
+          }
+        ],
+        "observedGeneration": 1,
+        "subscribers": [
+          {
+            "observedGeneration": 1,
+            "ready": "True",
+            "uid": "0f4b5f5c-c672-4461-ae39-65ba2603f158"
+          },
+          {
+            "observedGeneration": 1,
+            "ready": "True",
+            "uid": "c676e078-6e27-4a36-9aff-89317f1b6c47"
+          }
+        ]
+      }
+    },
+    {
+      "apiVersion": "messaging.knative.dev/v1beta1",
+      "kind": "Channel",
+      "metadata": {
+        "annotations": {
+          "messaging.knative.dev/creator": "system:admin",
+          "messaging.knative.dev/lastModifier": "system:admin",
+          "messaging.knative.dev/subscribable": "v1beta1"
+        },
+        "creationTimestamp": "2020-11-16T19:54:49Z",
+        "generation": 1,
+        "managedFields": [
+          {
+            "apiVersion": "messaging.knative.dev/v1beta1",
+            "fieldsType": "FieldsV1",
+            "fieldsV1": {
+              "f:spec": {
+                ".": {},
+                "f:channelTemplate": {}
+              }
+            },
+            "manager": "kn",
+            "operation": "Update",
+            "time": "2020-11-16T19:54:49Z"
+          },
+          {
+            "apiVersion": "messaging.knative.dev/v1beta1",
+            "fieldsType": "FieldsV1",
+            "fieldsV1": {
+              "f:status": {
+                ".": {},
+                "f:address": {},
+                "f:channel": {},
+                "f:conditions": {},
+                "f:observedGeneration": {},
+                "f:subscribers": {}
+              }
+            },
+            "manager": "controller",
+            "operation": "Update",
+            "time": "2020-11-16T19:54:53Z"
+          }
+        ],
+        "name": "pipe1",
+        "namespace": "josh",
+        "resourceVersion": "48345",
+        "selfLink": "/apis/messaging.knative.dev/v1beta1/namespaces/josh/channels/pipe1",
+        "uid": "c761e777-e7a8-41bb-87c7-d409a7e46d9b"
+      },
+      "spec": {
+        "channelTemplate": {
+          "apiVersion": "messaging.knative.dev/v1beta1",
+          "kind": "InMemoryChannel"
+        }
+      },
+      "status": {
+        "address": {
+          "url": "http://pipe1-kn-channel.josh.svc.cluster.local"
+        },
+        "channel": {
+          "apiVersion": "messaging.knative.dev/v1beta1",
+          "kind": "InMemoryChannel",
+          "name": "pipe1",
+          "namespace": "josh"
+        },
+        "conditions": [
+          {
+            "lastTransitionTime": "2020-11-16T19:54:52Z",
+            "status": "True",
+            "type": "Addressable"
+          },
+          {
+            "lastTransitionTime": "2020-11-16T19:54:53Z",
+            "status": "True",
+            "type": "BackingChannelReady"
+          },
+          {
+            "lastTransitionTime": "2020-11-16T19:54:53Z",
+            "status": "True",
+            "type": "Ready"
+          }
+        ],
+        "observedGeneration": 1,
+        "subscribers": [
+          {
+            "observedGeneration": 1,
+            "ready": "True",
+            "uid": "b06b54c5-953d-4a31-b93b-f2a6fbd0321d"
+          }
+        ]
+      }
+    }
+  ],
+  "kind": "ChannelList"
+}

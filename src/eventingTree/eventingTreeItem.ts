@@ -105,7 +105,19 @@ export class EventingTreeItem extends TreeItem {
   }
 
   get command(): Command {
-    if (this.name === 'No Service Found') {
+    const empty = [
+      'No Broker Found',
+      'No Channel Found',
+      'No Source Found',
+      'No Subscription Found',
+      'No Trigger Found',
+      'Brokers',
+      'Channels',
+      'Sources',
+      'Subscriptions',
+      'Triggers',
+    ];
+    if (empty.find((element) => element === this.name)) {
       return;
     }
     const c: Command = {

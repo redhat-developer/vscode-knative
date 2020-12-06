@@ -6,7 +6,7 @@
 import { KnativeItem } from './knativeItem';
 
 export class Channel extends KnativeItem {
-  constructor(public name: string, public channelType: string, public details?: Items) {
+  constructor(public name: string, public parent: string, public channelType: string, public details?: Items) {
     super();
   }
 
@@ -19,16 +19,11 @@ export class Channel extends KnativeItem {
   modified?: boolean;
 
   static JSONToChannel(value: Items): Channel {
-    const channel = new Channel(value.metadata.name, value.spec.channelTemplate.kind, value);
+    const channel = new Channel(value.metadata.name, 'Channels', value.spec.channelTemplate.kind, value);
     return channel;
   }
 }
 
-export interface JSONChannel {
-  apiVersion: string;
-  items?: Items[] | null;
-  kind: string;
-}
 export interface Items {
   apiVersion: string;
   kind: string;

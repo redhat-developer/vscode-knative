@@ -1,0 +1,295 @@
+apiVersion: eventing.knative.dev/v1beta1
+items:
+  - apiVersion: eventing.knative.dev/v1beta1
+    kind: Trigger
+    metadata:
+      annotations:
+        eventing.knative.dev/creator: system:admin
+        eventing.knative.dev/lastModifier: system:admin
+      creationTimestamp: '2020-11-17T15:32:48Z'
+      generation: 1
+      labels:
+        eventing.knative.dev/broker: mybroker
+      managedFields:
+        - apiVersion: eventing.knative.dev/v1beta1
+          fieldsType: FieldsV1
+          fieldsV1:
+            f:spec:
+              .: {}
+              f:broker: {}
+              f:filter: {}
+              f:subscriber:
+                .: {}
+                f:ref:
+                  .: {}
+                  f:apiVersion: {}
+                  f:kind: {}
+                  f:name: {}
+                  f:namespace: {}
+          manager: kn
+          operation: Update
+          time: '2020-11-17T15:32:48Z'
+        - apiVersion: eventing.knative.dev/v1beta1
+          fieldsType: FieldsV1
+          fieldsV1:
+            f:status:
+              .: {}
+              f:conditions: {}
+              f:observedGeneration: {}
+              f:subscriberUri: {}
+          manager: mtchannel-broker
+          operation: Update
+          time: '2020-11-17T15:32:50Z'
+      name: mytrigger
+      namespace: josh
+      resourceVersion: '60361'
+      selfLink: /apis/eventing.knative.dev/v1beta1/namespaces/josh/triggers/mytrigger
+      uid: 46e4553f-3263-4194-9a5a-d4b3f8608073
+    spec:
+      broker: mybroker
+      filter: {}
+      subscriber:
+        ref:
+          apiVersion: serving.knative.dev/v1
+          kind: Service
+          name: aaa
+          namespace: josh
+    status:
+      conditions:
+        - lastTransitionTime: '2020-11-17T15:32:48Z'
+          status: 'True'
+          type: BrokerReady
+        - lastTransitionTime: '2020-11-17T15:32:48Z'
+          status: 'True'
+          type: DependencyReady
+        - lastTransitionTime: '2020-11-17T15:32:50Z'
+          status: 'True'
+          type: Ready
+        - lastTransitionTime: '2020-11-17T15:32:48Z'
+          status: 'True'
+          type: SubscriberResolved
+        - lastTransitionTime: '2020-11-17T15:32:50Z'
+          status: 'True'
+          type: SubscriptionReady
+      observedGeneration: 1
+      subscriberUri: http://aaa.josh.svc.cluster.local
+  - apiVersion: eventing.knative.dev/v1beta1
+    kind: Trigger
+    metadata:
+      annotations:
+        eventing.knative.dev/creator: system:admin
+        eventing.knative.dev/lastModifier: system:admin
+      creationTimestamp: '2020-11-17T15:32:48Z'
+      generation: 1
+      labels:
+        eventing.knative.dev/broker: mybroker
+      managedFields:
+        - apiVersion: eventing.knative.dev/v1beta1
+          fieldsType: FieldsV1
+          fieldsV1:
+            f:spec:
+              .: {}
+              f:broker: {}
+              f:filter: {}
+              f:subscriber:
+                .: {}
+                f:ref:
+                  .: {}
+                  f:apiVersion: {}
+                  f:kind: {}
+                  f:name: {}
+                  f:namespace: {}
+          manager: kn
+          operation: Update
+          time: '2020-11-17T15:32:48Z'
+        - apiVersion: eventing.knative.dev/v1beta1
+          fieldsType: FieldsV1
+          fieldsV1:
+            f:status:
+              .: {}
+              f:conditions: {}
+              f:observedGeneration: {}
+              f:subscriberUri: {}
+          manager: mtchannel-broker
+          operation: Update
+          time: '2020-11-17T15:32:51Z'
+      name: mytrigger2
+      namespace: josh
+      resourceVersion: '60362'
+      selfLink: /apis/eventing.knative.dev/v1beta1/namespaces/josh/triggers/mytrigger2
+      uid: 36687771-d0dc-468d-b404-3a39f5194408
+    spec:
+      broker: mybroker
+      filter: {}
+      subscriber:
+        ref:
+          apiVersion: serving.knative.dev/v1
+          kind: Service
+          name: aaa
+          namespace: josh
+    status:
+      conditions:
+        - lastTransitionTime: '2020-11-17T15:32:48Z'
+          status: 'True'
+          type: BrokerReady
+        - lastTransitionTime: '2020-11-17T15:32:49Z'
+          status: 'True'
+          type: DependencyReady
+        - lastTransitionTime: '2020-11-17T15:32:51Z'
+          status: 'True'
+          type: Ready
+        - lastTransitionTime: '2020-11-17T15:32:48Z'
+          status: 'True'
+          type: SubscriberResolved
+        - lastTransitionTime: '2020-11-17T15:32:51Z'
+          status: 'True'
+          type: SubscriptionReady
+      observedGeneration: 1
+      subscriberUri: http://aaa.josh.svc.cluster.local
+  - apiVersion: eventing.knative.dev/v1beta1
+    kind: Trigger
+    metadata:
+      annotations:
+        eventing.knative.dev/creator: system:admin
+        eventing.knative.dev/lastModifier: system:admin
+      creationTimestamp: '2020-11-17T15:32:48Z'
+      generation: 1
+      labels:
+        eventing.knative.dev/broker: mybroker1
+      managedFields:
+        - apiVersion: eventing.knative.dev/v1beta1
+          fieldsType: FieldsV1
+          fieldsV1:
+            f:spec:
+              .: {}
+              f:broker: {}
+              f:filter: {}
+              f:subscriber:
+                .: {}
+                f:ref:
+                  .: {}
+                  f:apiVersion: {}
+                  f:kind: {}
+                  f:name: {}
+                  f:namespace: {}
+          manager: kn
+          operation: Update
+          time: '2020-11-17T15:32:48Z'
+        - apiVersion: eventing.knative.dev/v1beta1
+          fieldsType: FieldsV1
+          fieldsV1:
+            f:status:
+              .: {}
+              f:conditions: {}
+              f:observedGeneration: {}
+              f:subscriberUri: {}
+          manager: mtchannel-broker
+          operation: Update
+          time: '2020-11-17T15:32:51Z'
+      name: mytrigger3
+      namespace: josh
+      resourceVersion: '60391'
+      selfLink: /apis/eventing.knative.dev/v1beta1/namespaces/josh/triggers/mytrigger3
+      uid: 722712aa-c9f4-4276-822e-63441e743246
+    spec:
+      broker: mybroker1
+      filter: {}
+      subscriber:
+        ref:
+          apiVersion: serving.knative.dev/v1
+          kind: Service
+          name: aaa
+          namespace: josh
+    status:
+      conditions:
+        - lastTransitionTime: '2020-11-17T15:32:49Z'
+          status: 'True'
+          type: BrokerReady
+        - lastTransitionTime: '2020-11-17T15:32:49Z'
+          status: 'True'
+          type: DependencyReady
+        - lastTransitionTime: '2020-11-17T15:32:51Z'
+          status: 'True'
+          type: Ready
+        - lastTransitionTime: '2020-11-17T15:32:49Z'
+          status: 'True'
+          type: SubscriberResolved
+        - lastTransitionTime: '2020-11-17T15:32:51Z'
+          status: 'True'
+          type: SubscriptionReady
+      observedGeneration: 1
+      subscriberUri: http://aaa.josh.svc.cluster.local
+  - apiVersion: eventing.knative.dev/v1beta1
+    kind: Trigger
+    metadata:
+      annotations:
+        eventing.knative.dev/creator: system:admin
+        eventing.knative.dev/lastModifier: system:admin
+      creationTimestamp: '2020-11-17T15:32:49Z'
+      generation: 1
+      labels:
+        eventing.knative.dev/broker: mybroker1
+      managedFields:
+        - apiVersion: eventing.knative.dev/v1beta1
+          fieldsType: FieldsV1
+          fieldsV1:
+            f:spec:
+              .: {}
+              f:broker: {}
+              f:filter: {}
+              f:subscriber:
+                .: {}
+                f:ref:
+                  .: {}
+                  f:apiVersion: {}
+                  f:kind: {}
+                  f:name: {}
+                  f:namespace: {}
+          manager: kn
+          operation: Update
+          time: '2020-11-17T15:32:49Z'
+        - apiVersion: eventing.knative.dev/v1beta1
+          fieldsType: FieldsV1
+          fieldsV1:
+            f:status:
+              .: {}
+              f:conditions: {}
+              f:observedGeneration: {}
+              f:subscriberUri: {}
+          manager: mtchannel-broker
+          operation: Update
+          time: '2020-11-17T15:32:51Z'
+      name: mytrigger4
+      namespace: josh
+      resourceVersion: '60392'
+      selfLink: /apis/eventing.knative.dev/v1beta1/namespaces/josh/triggers/mytrigger4
+      uid: d6490975-3443-4646-b8b6-fd31ae0cbed6
+    spec:
+      broker: mybroker1
+      filter: {}
+      subscriber:
+        ref:
+          apiVersion: serving.knative.dev/v1
+          kind: Service
+          name: aaa
+          namespace: josh
+    status:
+      conditions:
+        - lastTransitionTime: '2020-11-17T15:32:49Z'
+          status: 'True'
+          type: BrokerReady
+        - lastTransitionTime: '2020-11-17T15:32:49Z'
+          status: 'True'
+          type: DependencyReady
+        - lastTransitionTime: '2020-11-17T15:32:51Z'
+          status: 'True'
+          type: Ready
+        - lastTransitionTime: '2020-11-17T15:32:49Z'
+          status: 'True'
+          type: SubscriberResolved
+        - lastTransitionTime: '2020-11-17T15:32:51Z'
+          status: 'True'
+          type: SubscriptionReady
+      observedGeneration: 1
+      subscriberUri: http://aaa.josh.svc.cluster.local
+kind: TriggerList

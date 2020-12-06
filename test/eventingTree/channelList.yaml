@@ -1,0 +1,262 @@
+apiVersion: messaging.knative.dev/v1beta1
+items:
+  - apiVersion: messaging.knative.dev/v1beta1
+    kind: Channel
+    metadata:
+      annotations:
+        messaging.knative.dev/creator: system:admin
+        messaging.knative.dev/lastModifier: system:admin
+        messaging.knative.dev/subscribable: v1beta1
+      creationTimestamp: '2020-11-17T15:32:45Z'
+      generation: 1
+      managedFields:
+        - apiVersion: messaging.knative.dev/v1beta1
+          fieldsType: FieldsV1
+          fieldsV1:
+            f:spec:
+              .: {}
+              f:channelTemplate: {}
+          manager: kn
+          operation: Update
+          time: '2020-11-17T15:32:45Z'
+        - apiVersion: messaging.knative.dev/v1beta1
+          fieldsType: FieldsV1
+          fieldsV1:
+            f:status:
+              .: {}
+              f:address: {}
+              f:channel: {}
+              f:conditions: {}
+              f:observedGeneration: {}
+              f:subscribers: {}
+          manager: controller
+          operation: Update
+          time: '2020-11-17T15:32:49Z'
+      name: exampleChannel0
+      namespace: josh
+      resourceVersion: '60273'
+      selfLink: /apis/messaging.knative.dev/v1beta1/namespaces/josh/channels/exampleChannel0
+      uid: 318433b2-cd12-4deb-8353-cdde1549f88f
+    spec:
+      channelTemplate:
+        apiVersion: messaging.knative.dev/v1beta1
+        kind: InMemoryChannel
+    status:
+      address:
+        url: http://exampleChannel0-kn-channel.josh.svc.cluster.local
+      channel:
+        apiVersion: messaging.knative.dev/v1beta1
+        kind: InMemoryChannel
+        name: exampleChannel0
+        namespace: josh
+      conditions:
+        - lastTransitionTime: '2020-11-17T15:32:46Z'
+          status: 'True'
+          type: Addressable
+        - lastTransitionTime: '2020-11-17T15:32:49Z'
+          status: 'True'
+          type: BackingChannelReady
+        - lastTransitionTime: '2020-11-17T15:32:49Z'
+          status: 'True'
+          type: Ready
+      observedGeneration: 1
+      subscribers:
+        - observedGeneration: 1
+          ready: 'True'
+          uid: 6e7daf15-4863-46a8-a085-d219a464aaf4
+  - apiVersion: messaging.knative.dev/v1beta1
+    kind: Channel
+    metadata:
+      annotations:
+        messaging.knative.dev/creator: system:admin
+        messaging.knative.dev/lastModifier: system:admin
+        messaging.knative.dev/subscribable: v1beta1
+      creationTimestamp: '2020-11-17T15:32:46Z'
+      generation: 1
+      managedFields:
+        - apiVersion: messaging.knative.dev/v1beta1
+          fieldsType: FieldsV1
+          fieldsV1:
+            f:spec:
+              .: {}
+              f:channelTemplate: {}
+          manager: kn
+          operation: Update
+          time: '2020-11-17T15:32:46Z'
+        - apiVersion: messaging.knative.dev/v1beta1
+          fieldsType: FieldsV1
+          fieldsV1:
+            f:status:
+              .: {}
+              f:address: {}
+              f:channel: {}
+              f:conditions: {}
+              f:observedGeneration: {}
+              f:subscribers: {}
+          manager: controller
+          operation: Update
+          time: '2020-11-17T15:32:50Z'
+      name: exampleChannel1
+      namespace: josh
+      resourceVersion: '60310'
+      selfLink: /apis/messaging.knative.dev/v1beta1/namespaces/josh/channels/exampleChannel1
+      uid: 0b2f7df2-6f65-42de-a8e6-73d13dd2b37d
+    spec:
+      channelTemplate:
+        apiVersion: messaging.knative.dev/v1beta1
+        kind: InMemoryChannel
+    status:
+      address:
+        url: http://exampleChannel1-kn-channel.josh.svc.cluster.local
+      channel:
+        apiVersion: messaging.knative.dev/v1beta1
+        kind: InMemoryChannel
+        name: exampleChannel1
+        namespace: josh
+      conditions:
+        - lastTransitionTime: '2020-11-17T15:32:46Z'
+          status: 'True'
+          type: Addressable
+        - lastTransitionTime: '2020-11-17T15:32:50Z'
+          status: 'True'
+          type: BackingChannelReady
+        - lastTransitionTime: '2020-11-17T15:32:50Z'
+          status: 'True'
+          type: Ready
+      observedGeneration: 1
+      subscribers:
+        - observedGeneration: 1
+          ready: 'True'
+          uid: 0158cf75-69ce-4e20-9d98-55999022af3f
+  - apiVersion: messaging.knative.dev/v1beta1
+    kind: Channel
+    metadata:
+      annotations:
+        messaging.knative.dev/creator: system:admin
+        messaging.knative.dev/lastModifier: system:admin
+        messaging.knative.dev/subscribable: v1beta1
+      creationTimestamp: '2020-11-17T15:32:44Z'
+      generation: 1
+      managedFields:
+        - apiVersion: messaging.knative.dev/v1beta1
+          fieldsType: FieldsV1
+          fieldsV1:
+            f:spec:
+              .: {}
+              f:channelTemplate: {}
+          manager: kn
+          operation: Update
+          time: '2020-11-17T15:32:44Z'
+        - apiVersion: messaging.knative.dev/v1beta1
+          fieldsType: FieldsV1
+          fieldsV1:
+            f:status:
+              .: {}
+              f:address: {}
+              f:channel: {}
+              f:conditions: {}
+              f:observedGeneration: {}
+              f:subscribers: {}
+          manager: controller
+          operation: Update
+          time: '2020-11-17T15:32:49Z'
+      name: pipe
+      namespace: josh
+      resourceVersion: '60265'
+      selfLink: /apis/messaging.knative.dev/v1beta1/namespaces/josh/channels/pipe
+      uid: d2467457-ffce-425e-86d7-085376e3c092
+    spec:
+      channelTemplate:
+        apiVersion: messaging.knative.dev/v1beta1
+        kind: InMemoryChannel
+    status:
+      address:
+        url: http://pipe-kn-channel.josh.svc.cluster.local
+      channel:
+        apiVersion: messaging.knative.dev/v1beta1
+        kind: InMemoryChannel
+        name: pipe
+        namespace: josh
+      conditions:
+        - lastTransitionTime: '2020-11-17T15:32:46Z'
+          status: 'True'
+          type: Addressable
+        - lastTransitionTime: '2020-11-17T15:32:49Z'
+          status: 'True'
+          type: BackingChannelReady
+        - lastTransitionTime: '2020-11-17T15:32:49Z'
+          status: 'True'
+          type: Ready
+      observedGeneration: 1
+      subscribers:
+        - observedGeneration: 1
+          ready: 'True'
+          uid: 53f1fa7f-1d1d-41b2-aecf-809b403c137a
+        - observedGeneration: 1
+          ready: 'True'
+          uid: 0cacb926-8c73-40b2-b56e-67d4adfcfede
+  - apiVersion: messaging.knative.dev/v1beta1
+    kind: Channel
+    metadata:
+      annotations:
+        messaging.knative.dev/creator: system:admin
+        messaging.knative.dev/lastModifier: system:admin
+        messaging.knative.dev/subscribable: v1beta1
+      creationTimestamp: '2020-11-17T15:32:45Z'
+      generation: 1
+      managedFields:
+        - apiVersion: messaging.knative.dev/v1beta1
+          fieldsType: FieldsV1
+          fieldsV1:
+            f:spec:
+              .: {}
+              f:channelTemplate: {}
+          manager: kn
+          operation: Update
+          time: '2020-11-17T15:32:44Z'
+        - apiVersion: messaging.knative.dev/v1beta1
+          fieldsType: FieldsV1
+          fieldsV1:
+            f:status:
+              .: {}
+              f:address: {}
+              f:channel: {}
+              f:conditions: {}
+              f:observedGeneration: {}
+              f:subscribers: {}
+          manager: controller
+          operation: Update
+          time: '2020-11-17T15:32:48Z'
+      name: pipe1
+      namespace: josh
+      resourceVersion: '60241'
+      selfLink: /apis/messaging.knative.dev/v1beta1/namespaces/josh/channels/pipe1
+      uid: 0bc56479-7b18-4d40-b882-7b5f2ba42b6b
+    spec:
+      channelTemplate:
+        apiVersion: messaging.knative.dev/v1beta1
+        kind: InMemoryChannel
+    status:
+      address:
+        url: http://pipe1-kn-channel.josh.svc.cluster.local
+      channel:
+        apiVersion: messaging.knative.dev/v1beta1
+        kind: InMemoryChannel
+        name: pipe1
+        namespace: josh
+      conditions:
+        - lastTransitionTime: '2020-11-17T15:32:46Z'
+          status: 'True'
+          type: Addressable
+        - lastTransitionTime: '2020-11-17T15:32:48Z'
+          status: 'True'
+          type: BackingChannelReady
+        - lastTransitionTime: '2020-11-17T15:32:48Z'
+          status: 'True'
+          type: Ready
+      observedGeneration: 1
+      subscribers:
+        - observedGeneration: 1
+          ready: 'True'
+          uid: b2fa8c10-3141-4902-8443-ab150f384b2c
+kind: ChannelList

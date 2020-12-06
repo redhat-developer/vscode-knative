@@ -6,33 +6,26 @@
 import {
   Event,
   EventEmitter,
-  // FileChangeEvent,
-  // FileType,
+  FileChangeEvent,
   ProviderResult,
   TreeDataProvider,
   TreeItem,
   TreeItemCollapsibleState,
-  // Uri,
 } from 'vscode';
-// import * as vscode from 'vscode';
-// import * as validator from 'validator';
-// import * as path from 'path';
-// import * as yaml from 'yaml';
+import * as vscode from 'vscode';
 import { EventingTreeItem } from './eventingTreeItem';
 import { BrokerDataProvider } from './brokerDataProvider';
 import { ChannelDataProvider } from './channelDataProvider';
 import { SourceDataProvider } from './sourceDataProvider';
 import { SubscriptionDataProvider } from './subscriptionDataProvider';
 import { TriggerDataProvider } from './triggerDataProvider';
-import { Execute } from '../cli/execute';
-// import { KubectlAPI } from '../cli/kubectl-api';
 import { EventingContextType } from '../cli/config';
 import { KnativeResourceVirtualFileSystemProvider } from '../cli/virtualfs';
-// import * as vfs from '../cli/virtualfs';
-// import { KnOutputChannel, OutputChannel } from '../output/knOutputChannel';
+import { KnativeEvents } from '../knative/knativeEvents';
+import { KEvent } from '../knative/kEvent';
 
 export class EventingDataProvider implements TreeDataProvider<EventingTreeItem> {
-  public knExecutor = new Execute();
+  private events: KnativeEvents = KnativeEvents.Instance;
 
   public brokerDataProvider = new BrokerDataProvider();
 
@@ -46,35 +39,6 @@ export class EventingDataProvider implements TreeDataProvider<EventingTreeItem> 
 
   public knvfs = new KnativeResourceVirtualFileSystemProvider();
 
-  // private knOutputChannel: OutputChannel = new KnOutputChannel();
-
-  /**
-   * 0 - Broker
-   *
-   * 1 - Channel
-   *
-   * 2 - Source
-   *
-   * 3 - Subscription
-   *
-   * 4 - Trigger
-   */
-  public eventingFolderNodes = [
-    new EventingTreeItem(null, null, 'Broker', EventingContextType.BROKER, TreeItemCollapsibleState.Expanded, null, null),
-    new EventingTreeItem(null, null, 'Channel', EventingContextType.CHANNEL, TreeItemCollapsibleState.Expanded, null, null),
-    new EventingTreeItem(null, null, 'Source', EventingContextType.SOURCE, TreeItemCollapsibleState.Expanded, null, null),
-    new EventingTreeItem(
-      null,
-      null,
-      'Subscription',
-      EventingContextType.SUBSCRIPTION,
-      TreeItemCollapsibleState.Expanded,
-      null,
-      null,
-    ),
-    new EventingTreeItem(null, null, 'Trigger', EventingContextType.TRIGGER, TreeItemCollapsibleState.Expanded, null, null),
-  ];
-
   private onDidChangeTreeDataEmitter: EventEmitter<EventingTreeItem | undefined | null> = new EventEmitter<
     EventingTreeItem | undefined | null
   >();
@@ -84,6 +48,37 @@ export class EventingDataProvider implements TreeDataProvider<EventingTreeItem> 
   refresh(target?: EventingTreeItem): void {
     this.onDidChangeTreeDataEmitter.fire(target);
   }
+
+  stopRefresh: NodeJS.Timeout;
+
+  /**
+   * Start a refresh of the tree that happens every 60 seconds
+   */
+  pollRefresh = (): void => {
+    this.stopRefresh = setInterval(() => {
+      // eslint-disable-next-line no-console
+      // console.log(`ServingDataProvider.pollRefresh`);
+      this.refresh();
+    }, vscode.workspace.getConfiguration('knative').get<number>('pollRefreshDelay') * 1000);
+  };
+
+  /**
+   * Stop the polling refresh
+   */
+  stopPollRefresh = (): void => {
+    clearInterval(this.stopRefresh);
+  };
+
+  /**
+   * Listen for a Service to be modified and Refresh the tree.
+   */
+  vfsListener = (event: FileChangeEvent[]): void => {
+    // eslint-disable-next-line no-console
+    console.log(`ServingDataProvider.vfsListener event ${event[0].type}, ${event[0].uri.path}`);
+    this.refresh();
+  };
+
+  vfsListenerSubscription = this.knvfs.onDidChangeFile(this.vfsListener);
 
   /**
    * Get the UI representation of the TreeObject.
@@ -110,39 +105,10 @@ export class EventingDataProvider implements TreeDataProvider<EventingTreeItem> 
    */
   getChildren(element?: EventingTreeItem): ProviderResult<EventingTreeItem[]> {
     let children: ProviderResult<EventingTreeItem[]>;
-    // switch (element.contextValue) {
-    //   case EventingContextType.BROKER:
-    //     children = this.brokerDataProvider.getBrokers(element);
-    //     break;
-    //   case EventingContextType.CHANNEL:
-    //     children = this.channelDataProvider.getChannels(element);
-    //     break;
-    //   case EventingContextType.SOURCE:
-    //     children = this.sourceDataProvider.getSources(element);
-    //     break;
-    //   case EventingContextType.SUBSCRIPTION:
-    //     children = this.subscriptionDataProvider.getSubscriptions(element);
-    //     break;
-    //   case EventingContextType.TRIGGER:
-    //     children = this.triggerDataProvider.getTriggers(element);
-    //     break;
-    //   default:
-    //     children = [
-    //       new EventingTreeItem(element, null, 'Empty', EventingContextType.NONE, TreeItemCollapsibleState.None, null, null),
-    //     ];
-    // }
-    if (element && element.contextValue === EventingContextType.BROKER) {
-      children = this.brokerDataProvider.getBrokers(element);
-    } else if (element && element.contextValue === EventingContextType.CHANNEL) {
-      children = this.channelDataProvider.getChannels(element);
-    } else if (element && element.contextValue === EventingContextType.SOURCE) {
-      children = this.sourceDataProvider.getSources(element);
-    } else if (element && element.contextValue === EventingContextType.SUBSCRIPTION) {
-      children = this.subscriptionDataProvider.getSubscriptions(element);
-    } else if (element && element.contextValue === EventingContextType.TRIGGER) {
-      children = this.triggerDataProvider.getTriggers(element);
+    if (element) {
+      children = this.getEventingInstances(element);
     } else {
-      children = this.eventingFolderNodes;
+      children = this.getEventingFolders();
     }
     return children;
   }
@@ -150,5 +116,103 @@ export class EventingDataProvider implements TreeDataProvider<EventingTreeItem> 
   // eslint-disable-next-line class-methods-use-this
   getParent?(element: EventingTreeItem): EventingTreeItem {
     return element.getParent();
+  }
+
+  /**
+   * The Revision is a child of Service. Every update makes a new Revision.
+   * Fetch the Revisions and associate them with their parent Services.
+   *
+   * @param parentService
+   */
+  public async getEventingInstances(parentEventFolder: EventingTreeItem): Promise<EventingTreeItem[]> {
+    let children: Promise<EventingTreeItem[]>;
+    try {
+      if (parentEventFolder.contextValue === EventingContextType.BROKER) {
+        children = this.brokerDataProvider.getBrokers(parentEventFolder);
+      }
+      if (parentEventFolder.contextValue === EventingContextType.CHANNEL) {
+        children = this.channelDataProvider.getChannels(parentEventFolder);
+      }
+      if (parentEventFolder.contextValue === EventingContextType.SOURCE) {
+        children = this.sourceDataProvider.getSources(parentEventFolder);
+      }
+      if (parentEventFolder.contextValue === EventingContextType.SUBSCRIPTION) {
+        children = this.subscriptionDataProvider.getSubscriptions(parentEventFolder);
+      }
+      if (parentEventFolder.contextValue === EventingContextType.TRIGGER) {
+        children = this.triggerDataProvider.getTriggers(parentEventFolder);
+      }
+    } catch (err) {
+      // Catch the Rejected Promise of the Execute to list Eventing data.
+      vscode.window.showErrorMessage(`Caught an error getting the Eventing data.\n ${err}`, { modal: true }, 'OK');
+      return null;
+    }
+
+    return children;
+  }
+
+  /**
+   * The Service is the highest level of the tree for Knative. This method sets it at the root if not already done.
+   */
+  public getEventingFolders(): EventingTreeItem[] {
+    const eventingConcepts = ['Brokers', 'Channels', 'Sources', 'Subscriptions', 'Triggers'];
+
+    const events: KEvent[] = eventingConcepts.map(
+      (e): KEvent => {
+        return new KEvent(e);
+      },
+    );
+
+    this.events.addEvents(events);
+
+    const eventingFolderNodes = [
+      new EventingTreeItem(
+        null,
+        events[0],
+        eventingConcepts[0],
+        EventingContextType.BROKER,
+        TreeItemCollapsibleState.Expanded,
+        null,
+        null,
+      ),
+      new EventingTreeItem(
+        null,
+        events[1],
+        eventingConcepts[1],
+        EventingContextType.CHANNEL,
+        TreeItemCollapsibleState.Expanded,
+        null,
+        null,
+      ),
+      new EventingTreeItem(
+        null,
+        events[2],
+        eventingConcepts[2],
+        EventingContextType.SOURCE,
+        TreeItemCollapsibleState.Expanded,
+        null,
+        null,
+      ),
+      new EventingTreeItem(
+        null,
+        events[3],
+        eventingConcepts[3],
+        EventingContextType.SUBSCRIPTION,
+        TreeItemCollapsibleState.Expanded,
+        null,
+        null,
+      ),
+      new EventingTreeItem(
+        null,
+        events[4],
+        eventingConcepts[4],
+        EventingContextType.TRIGGER,
+        TreeItemCollapsibleState.Expanded,
+        null,
+        null,
+      ),
+    ];
+
+    return eventingFolderNodes;
   }
 }
