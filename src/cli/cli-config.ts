@@ -112,8 +112,8 @@ async function selectTool(locations: string[], versionRange: string, versionLoca
     // eslint-disable-next-line no-restricted-syntax
     for (const location of locations) {
       // Find the first location, in a list of locations, that actually exists.
-      // This couldn't be done asyncronously because it would return a Promise, which
-      // can not be evaluated as a boolean. Therefor the syncronous method is used.
+      // This couldn't be done asynchronously because it would return a Promise, which
+      // can not be evaluated as a boolean. Therefor the synchronous method is used.
       if (fs.existsSync(location)) {
         // eslint-disable-next-line no-await-in-loop
         const locationsVersion: string = await getVersion(location);
@@ -252,7 +252,7 @@ export class CmdCliConfig {
                   fs.renameSync(toolDlLocation, toolCacheLocation);
                   // Change the file permissions if on Linux or Mac
                   if (Platform.OS !== 'win32') {
-                    fs.chmodSync(toolCacheLocation, 0o765);
+                    fs.chmodSync(toolCacheLocation, 0o755);
                   }
                   foundToolLocation = toolCacheLocation;
                 }
