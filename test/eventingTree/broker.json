@@ -49,10 +49,10 @@
             "time": "2020-11-16T19:54:50Z"
           }
         ],
-        "name": "exampleBroker0",
+        "name": "example-broker0",
         "namespace": "josh",
         "resourceVersion": "48128",
-        "selfLink": "/apis/eventing.knative.dev/v1beta1/namespaces/josh/brokers/exampleBroker0",
+        "selfLink": "/apis/eventing.knative.dev/v1beta1/namespaces/josh/brokers/example-broker0",
         "uid": "5d4f1b9a-e091-4379-9de9-49f6c68d9b22"
       },
       "spec": {
@@ -65,7 +65,7 @@
       },
       "status": {
         "address": {
-          "url": "http://broker-ingress.knative-eventing.svc.cluster.local/josh/exampleBroker0"
+          "url": "http://broker-ingress.knative-eventing.svc.cluster.local/josh/example-broker0"
         },
         "conditions": [
           {
@@ -145,10 +145,10 @@
             "time": "2020-11-16T19:54:50Z"
           }
         ],
-        "name": "exampleBroker1",
+        "name": "example-broker1",
         "namespace": "josh",
         "resourceVersion": "48114",
-        "selfLink": "/apis/eventing.knative.dev/v1beta1/namespaces/josh/brokers/exampleBroker1",
+        "selfLink": "/apis/eventing.knative.dev/v1beta1/namespaces/josh/brokers/example-broker1",
         "uid": "961f8b93-84b6-4b4c-944e-0e69da66f2e5"
       },
       "spec": {
@@ -161,7 +161,7 @@
       },
       "status": {
         "address": {
-          "url": "http://broker-ingress.knative-eventing.svc.cluster.local/josh/exampleBroker1"
+          "url": "http://broker-ingress.knative-eventing.svc.cluster.local/josh/example-broker1"
         },
         "conditions": [
           {

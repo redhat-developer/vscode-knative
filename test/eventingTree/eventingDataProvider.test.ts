@@ -70,23 +70,23 @@ suite('EventingDataProvider', () => {
     ),
   ];
 
-  const testBroker0: Broker = new Broker('exampleBroker0', 'Brokers', JSON.parse(JSON.stringify(brokerData.items[0])));
+  const testBroker0: Broker = new Broker('example-broker0', 'Brokers', JSON.parse(JSON.stringify(brokerData.items[0])));
   testBroker0.modified = false;
   const testBroker0TreeItem: EventingTreeItem = new EventingTreeItem(
     eventingFolderNodes[0],
     testBroker0,
-    'exampleBroker0',
+    'example-broker0',
     EventingContextType.BROKER,
     vscode.TreeItemCollapsibleState.Expanded,
     null,
     null,
   );
-  const testBroker1: Broker = new Broker('exampleBroker1', 'Brokers', JSON.parse(JSON.stringify(brokerData.items[1])));
+  const testBroker1: Broker = new Broker('example-broker1', 'Brokers', JSON.parse(JSON.stringify(brokerData.items[1])));
   testBroker1.modified = false;
   const testBroker1TreeItem: EventingTreeItem = new EventingTreeItem(
     eventingFolderNodes[0],
     testBroker1,
-    'exampleBroker1',
+    'example-broker1',
     EventingContextType.BROKER,
     vscode.TreeItemCollapsibleState.Expanded,
     null,
@@ -95,7 +95,7 @@ suite('EventingDataProvider', () => {
   const testBrokerTreeItems = [testBroker0TreeItem, testBroker1TreeItem];
 
   const testChannel0: Channel = new Channel(
-    'exampleChannel0',
+    'example-channel0',
     'Channels',
     'InMemoryChannel',
     JSON.parse(JSON.stringify(channelData.items[0])),
@@ -104,14 +104,14 @@ suite('EventingDataProvider', () => {
   const testChannel0TreeItem: EventingTreeItem = new EventingTreeItem(
     eventingFolderNodes[1],
     testChannel0,
-    'exampleChannel0',
+    'example-channel0',
     EventingContextType.CHANNEL,
     vscode.TreeItemCollapsibleState.Expanded,
     null,
     null,
   );
   const testChannel1: Channel = new Channel(
-    'exampleChannel1',
+    'example-channel1',
     'Channels',
     'InMemoryChannel',
     JSON.parse(JSON.stringify(channelData.items[1])),
@@ -120,7 +120,7 @@ suite('EventingDataProvider', () => {
   const testChannel1TreeItem: EventingTreeItem = new EventingTreeItem(
     eventingFolderNodes[1],
     testChannel1,
-    'exampleChannel1',
+    'example-channel1',
     EventingContextType.CHANNEL,
     vscode.TreeItemCollapsibleState.Expanded,
     null,
@@ -129,7 +129,7 @@ suite('EventingDataProvider', () => {
   const testChannelTreeItems = [testChannel0TreeItem, testChannel1TreeItem];
 
   const testSource0: GenericSource = new GenericSource(
-    'exampleSource0',
+    'example-source0',
     'Sources',
     null,
     null,
@@ -139,14 +139,14 @@ suite('EventingDataProvider', () => {
   const testSource0TreeItem: EventingTreeItem = new EventingTreeItem(
     eventingFolderNodes[2],
     testSource0,
-    'exampleSource0',
+    'example-source0',
     EventingContextType.SOURCE,
     vscode.TreeItemCollapsibleState.Expanded,
     null,
     null,
   );
   const testSource1: GenericSource = new GenericSource(
-    'exampleSource1',
+    'example-source1',
     'Sources',
     null,
     null,
@@ -156,7 +156,7 @@ suite('EventingDataProvider', () => {
   const testSource1TreeItem: EventingTreeItem = new EventingTreeItem(
     eventingFolderNodes[2],
     testSource1,
-    'exampleSource1',
+    'example-source1',
     EventingContextType.SOURCE,
     vscode.TreeItemCollapsibleState.Expanded,
     null,
@@ -165,7 +165,7 @@ suite('EventingDataProvider', () => {
   const testSourceTreeItems = [testSource0TreeItem, testSource1TreeItem];
 
   const testSubscription0: Subscription = new Subscription(
-    'exampleSubscription0',
+    'example-subscription0',
     'Subscriptions',
     testChannel0,
     null,
@@ -177,14 +177,14 @@ suite('EventingDataProvider', () => {
   const testSubscription0TreeItem: EventingTreeItem = new EventingTreeItem(
     eventingFolderNodes[3],
     testSubscription0,
-    'exampleSubscription0',
+    'example-subscription0',
     EventingContextType.SUBSCRIPTION,
     vscode.TreeItemCollapsibleState.Expanded,
     null,
     null,
   );
   const testSubscription1: Subscription = new Subscription(
-    'exampleSubscription1',
+    'example-subscription1',
     'Subscriptions',
     testChannel1,
     null,
@@ -196,7 +196,7 @@ suite('EventingDataProvider', () => {
   const testSubscription1TreeItem: EventingTreeItem = new EventingTreeItem(
     eventingFolderNodes[3],
     testSubscription1,
-    'exampleSubscription1',
+    'example-subscription1',
     EventingContextType.SUBSCRIPTION,
     vscode.TreeItemCollapsibleState.Expanded,
     null,
@@ -204,23 +204,23 @@ suite('EventingDataProvider', () => {
   );
   const testSubscriptionTreeItems = [testSubscription0TreeItem, testSubscription1TreeItem];
 
-  const testTrigger0: Trigger = new Trigger('exampleTrigger0', 'Triggers', JSON.parse(JSON.stringify(triggerData.items[0])));
+  const testTrigger0: Trigger = new Trigger('example-trigger0', 'Triggers', JSON.parse(JSON.stringify(triggerData.items[0])));
   testTrigger0.modified = false;
   const testTrigger0TreeItem: EventingTreeItem = new EventingTreeItem(
     eventingFolderNodes[4],
     testTrigger0,
-    'exampleTrigger0',
+    'example-trigger0',
     EventingContextType.TRIGGER,
     vscode.TreeItemCollapsibleState.Expanded,
     null,
     null,
   );
-  const testTrigger1: Trigger = new Trigger('exampleTrigger1', 'Triggers', JSON.parse(JSON.stringify(triggerData.items[1])));
+  const testTrigger1: Trigger = new Trigger('example-trigger1', 'Triggers', JSON.parse(JSON.stringify(triggerData.items[1])));
   testTrigger1.modified = false;
   const testTrigger1TreeItem: EventingTreeItem = new EventingTreeItem(
     eventingFolderNodes[4],
     testTrigger1,
-    'exampleTrigger1',
+    'example-trigger1',
     EventingContextType.TRIGGER,
     vscode.TreeItemCollapsibleState.Expanded,
     null,
@@ -321,8 +321,8 @@ suite('EventingDataProvider', () => {
       const result = await eventingDataProvider.getChildren(eventingFolderNodes[0]);
       expect(result).to.have.lengthOf(2);
       expect(result[0].description).equals('');
-      expect(result[0].label).equals('exampleBroker0');
-      expect(result[0].getName()).equals('exampleBroker0');
+      expect(result[0].label).equals('example-broker0');
+      expect(result[0].getName()).equals('example-broker0');
       expect(result[0].tooltip).equals('');
     });
     test('should return multiple Channel tree nodes', async () => {
@@ -332,8 +332,8 @@ suite('EventingDataProvider', () => {
       const result = await eventingDataProvider.getChildren(eventingFolderNodes[1]);
       expect(result).to.have.lengthOf(2);
       expect(result[0].description).equals('');
-      expect(result[0].label).equals('exampleChannel0');
-      expect(result[0].getName()).equals('exampleChannel0');
+      expect(result[0].label).equals('example-channel0');
+      expect(result[0].getName()).equals('example-channel0');
       expect(result[0].tooltip).equals('');
     });
     test('should return multiple Source tree nodes', async () => {
@@ -343,8 +343,8 @@ suite('EventingDataProvider', () => {
       const result = await eventingDataProvider.getChildren(eventingFolderNodes[2]);
       expect(result).to.have.lengthOf(2);
       expect(result[0].description).equals('');
-      expect(result[0].label).equals('exampleSource0');
-      expect(result[0].getName()).equals('exampleSource0');
+      expect(result[0].label).equals('example-source0');
+      expect(result[0].getName()).equals('example-source0');
       expect(result[0].tooltip).equals('');
     });
     test('should return multiple Subscription tree nodes', async () => {
@@ -354,8 +354,8 @@ suite('EventingDataProvider', () => {
       const result = await eventingDataProvider.getChildren(eventingFolderNodes[3]);
       expect(result).to.have.lengthOf(2);
       expect(result[0].description).equals('');
-      expect(result[0].label).equals('exampleSubscription0');
-      expect(result[0].getName()).equals('exampleSubscription0');
+      expect(result[0].label).equals('example-subscription0');
+      expect(result[0].getName()).equals('example-subscription0');
       expect(result[0].tooltip).equals('');
     });
     test('should return multiple Trigger tree nodes', async () => {
@@ -365,8 +365,8 @@ suite('EventingDataProvider', () => {
       const result = await eventingDataProvider.getChildren(eventingFolderNodes[4]);
       expect(result).to.have.lengthOf(2);
       expect(result[0].description).equals('');
-      expect(result[0].label).equals('exampleTrigger0');
-      expect(result[0].getName()).equals('exampleTrigger0');
+      expect(result[0].label).equals('example-trigger0');
+      expect(result[0].getName()).equals('example-trigger0');
       expect(result[0].tooltip).equals('');
     });
   });

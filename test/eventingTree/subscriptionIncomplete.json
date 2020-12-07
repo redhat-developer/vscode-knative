@@ -66,17 +66,17 @@
             "time": "2020-11-16T19:54:53Z"
           }
         ],
-        "name": "exampleSubscription0",
+        "name": "example-subscription0",
         "namespace": "josh",
         "resourceVersion": "48342",
-        "selfLink": "/apis/messaging.knative.dev/v1beta1/namespaces/josh/subscriptions/exampleTrigger0",
+        "selfLink": "/apis/messaging.knative.dev/v1beta1/namespaces/josh/subscriptions/example-trigger0",
         "uid": "7a351d67-06ce-4f63-9885-601ceb0257aa"
       },
       "spec": {
         "channel": {
           "apiVersion": "messaging.knative.dev/v1beta1",
           "kind": "Channel",
-          "name": "exampleChannel0"
+          "name": "example-channel0"
         },
         "subscriber": {
           "ref": {
@@ -184,24 +184,24 @@
             "time": "2020-11-16T20:09:40Z"
           }
         ],
-        "name": "exampleSubscription1",
+        "name": "example-subscription1",
         "namespace": "josh",
         "resourceVersion": "57802",
-        "selfLink": "/apis/messaging.knative.dev/v1beta1/namespaces/josh/subscriptions/exampleSubscription1",
+        "selfLink": "/apis/messaging.knative.dev/v1beta1/namespaces/josh/subscriptions/example-subscription1",
         "uid": "1fb5d5c0-713a-401b-86e3-7a76f9ed8e6c"
       },
       "spec": {
         "channel": {
           "apiVersion": "messaging.knative.dev/v1beta1",
           "kind": "Channel",
-          "name": "exampleChannel1"
+          "name": "example-channel1"
         },
         "delivery": {
           "deadLetterSink": {
             "ref": {
               "apiVersion": "eventing.knative.dev/v1beta1",
               "kind": "Broker",
-              "name": "exampleBroker1",
+              "name": "example-broker1",
               "namespace": "josh"
             }
           }
@@ -210,7 +210,7 @@
           "ref": {
             "apiVersion": "eventing.knative.dev/v1beta1",
             "kind": "Broker",
-            "name": "exampleBroker0",
+            "name": "example-broker0",
             "namespace": "josh"
           }
         },
@@ -226,8 +226,8 @@
       "status": {
         "observedGeneration": 1,
         "physicalSubscription": {
-          "deadLetterSinkUri": "http://broker-ingress.knative-eventing.svc.cluster.local/josh/exampleBroker1",
-          "replyUri": "http://broker-ingress.knative-eventing.svc.cluster.local/josh/exampleBroker0",
+          "deadLetterSinkUri": "http://broker-ingress.knative-eventing.svc.cluster.local/josh/example-broker1",
+          "replyUri": "http://broker-ingress.knative-eventing.svc.cluster.local/josh/example-broker0",
           "subscriberUri": "http://aaa.josh.svc.cluster.local"
         }
       }
@@ -244,8 +244,8 @@
         "finalizers": ["subscriptions.messaging.knative.dev"],
         "generation": 1,
         "labels": {
-          "eventing.knative.dev/broker": "exampleBroker0",
-          "eventing.knative.dev/trigger": "exampleTrigger0"
+          "eventing.knative.dev/broker": "example-broker0",
+          "eventing.knative.dev/trigger": "example-trigger0"
         },
         "managedFields": [
           {
@@ -325,7 +325,7 @@
             "time": "2020-11-16T19:54:53Z"
           }
         ],
-        "name": "exampleBroker0-exampleTrigger0-38d940a2-39f3-4988-9c61-8f4866acece1",
+        "name": "example-broker0-example-trigger0-38d940a2-39f3-4988-9c61-8f4866acece1",
         "namespace": "josh",
         "ownerReferences": [
           {
@@ -333,37 +333,37 @@
             "blockOwnerDeletion": true,
             "controller": true,
             "kind": "Trigger",
-            "name": "exampleTrigger0",
+            "name": "example-trigger0",
             "uid": "38d940a2-39f3-4988-9c61-8f4866acece1"
           }
         ],
         "resourceVersion": "48371",
-        "selfLink": "/apis/messaging.knative.dev/v1beta1/namespaces/josh/subscriptions/exampleBroker0-exampleTrigger0-38d940a2-39f3-4988-9c61-8f4866acece1",
+        "selfLink": "/apis/messaging.knative.dev/v1beta1/namespaces/josh/subscriptions/example-broker0-example-trigger0-38d940a2-39f3-4988-9c61-8f4866acece1",
         "uid": "40ed1393-2ada-45d9-8038-ddc929d28f36"
       },
       "spec": {
         "channel": {
           "apiVersion": "messaging.knative.dev/v1beta1",
           "kind": "InMemoryChannel",
-          "name": "exampleBroker0-kne-trigger"
+          "name": "example-broker0-kne-trigger"
         },
         "reply": {
           "ref": {
             "apiVersion": "eventing.knative.dev/v1beta1",
             "kind": "Broker",
-            "name": "exampleBroker0",
+            "name": "example-broker0",
             "namespace": "josh"
           }
         },
         "subscriber": {
-          "uri": "http://broker-filter.knative-eventing.svc.cluster.local/triggers/josh/exampleTrigger0/38d940a2-39f3-4988-9c61-8f4866acece1"
+          "uri": "http://broker-filter.knative-eventing.svc.cluster.local/triggers/josh/example-trigger0/38d940a2-39f3-4988-9c61-8f4866acece1"
         }
       },
       "status": {
         "observedGeneration": 1,
         "physicalSubscription": {
-          "replyUri": "http://broker-ingress.knative-eventing.svc.cluster.local/josh/exampleBroker0",
-          "subscriberUri": "http://broker-filter.knative-eventing.svc.cluster.local/triggers/josh/exampleTrigger0/38d940a2-39f3-4988-9c61-8f4866acece1"
+          "replyUri": "http://broker-ingress.knative-eventing.svc.cluster.local/josh/example-broker0",
+          "subscriberUri": "http://broker-filter.knative-eventing.svc.cluster.local/triggers/josh/example-trigger0/38d940a2-39f3-4988-9c61-8f4866acece1"
         }
       }
     },
@@ -379,8 +379,8 @@
         "finalizers": ["subscriptions.messaging.knative.dev"],
         "generation": 1,
         "labels": {
-          "eventing.knative.dev/broker": "exampleBroker0",
-          "eventing.knative.dev/trigger": "exampleTrigger1"
+          "eventing.knative.dev/broker": "example-broker0",
+          "eventing.knative.dev/trigger": "example-trigger1"
         },
         "managedFields": [
           {
@@ -460,7 +460,7 @@
             "time": "2020-11-16T19:54:53Z"
           }
         ],
-        "name": "exampleBroker0-exampleTrigger1-8cde4473-e3e9-492d-b2de-693889bbdf6c",
+        "name": "example-broker0-example-trigger1-8cde4473-e3e9-492d-b2de-693889bbdf6c",
         "namespace": "josh",
         "ownerReferences": [
           {
@@ -468,37 +468,37 @@
             "blockOwnerDeletion": true,
             "controller": true,
             "kind": "Trigger",
-            "name": "exampleTrigger1",
+            "name": "example-trigger1",
             "uid": "8cde4473-e3e9-492d-b2de-693889bbdf6c"
           }
         ],
         "resourceVersion": "48370",
-        "selfLink": "/apis/messaging.knative.dev/v1beta1/namespaces/josh/subscriptions/exampleBroker0-exampleTrigger1-8cde4473-e3e9-492d-b2de-693889bbdf6c",
+        "selfLink": "/apis/messaging.knative.dev/v1beta1/namespaces/josh/subscriptions/example-broker0-example-trigger1-8cde4473-e3e9-492d-b2de-693889bbdf6c",
         "uid": "d695fa7e-2daf-4a53-89d6-8367966e9bc1"
       },
       "spec": {
         "channel": {
           "apiVersion": "messaging.knative.dev/v1beta1",
           "kind": "InMemoryChannel",
-          "name": "exampleBroker0-kne-trigger"
+          "name": "example-broker0-kne-trigger"
         },
         "reply": {
           "ref": {
             "apiVersion": "eventing.knative.dev/v1beta1",
             "kind": "Broker",
-            "name": "exampleBroker0",
+            "name": "example-broker0",
             "namespace": "josh"
           }
         },
         "subscriber": {
-          "uri": "http://broker-filter.knative-eventing.svc.cluster.local/triggers/josh/exampleTrigger1/8cde4473-e3e9-492d-b2de-693889bbdf6c"
+          "uri": "http://broker-filter.knative-eventing.svc.cluster.local/triggers/josh/example-trigger1/8cde4473-e3e9-492d-b2de-693889bbdf6c"
         }
       },
       "status": {
         "observedGeneration": 1,
         "physicalSubscription": {
-          "replyUri": "http://broker-ingress.knative-eventing.svc.cluster.local/josh/exampleBroker0",
-          "subscriberUri": "http://broker-filter.knative-eventing.svc.cluster.local/triggers/josh/exampleTrigger1/8cde4473-e3e9-492d-b2de-693889bbdf6c"
+          "replyUri": "http://broker-ingress.knative-eventing.svc.cluster.local/josh/example-broker0",
+          "subscriberUri": "http://broker-filter.knative-eventing.svc.cluster.local/triggers/josh/example-trigger1/8cde4473-e3e9-492d-b2de-693889bbdf6c"
         }
       }
     },
@@ -514,8 +514,8 @@
         "finalizers": ["subscriptions.messaging.knative.dev"],
         "generation": 1,
         "labels": {
-          "eventing.knative.dev/broker": "exampleBroker1",
-          "eventing.knative.dev/trigger": "exampleTrigger3"
+          "eventing.knative.dev/broker": "example-broker1",
+          "eventing.knative.dev/trigger": "example-trigger3"
         },
         "managedFields": [
           {
@@ -595,7 +595,7 @@
             "time": "2020-11-16T19:54:54Z"
           }
         ],
-        "name": "exampleBroker1-exampleTrigger3-09126c0a-153a-4797-a637-8d4183682975",
+        "name": "example-broker1-example-trigger3-09126c0a-153a-4797-a637-8d4183682975",
         "namespace": "josh",
         "ownerReferences": [
           {
@@ -603,37 +603,37 @@
             "blockOwnerDeletion": true,
             "controller": true,
             "kind": "Trigger",
-            "name": "exampleTrigger3",
+            "name": "example-trigger3",
             "uid": "09126c0a-153a-4797-a637-8d4183682975"
           }
         ],
         "resourceVersion": "48386",
-        "selfLink": "/apis/messaging.knative.dev/v1beta1/namespaces/josh/subscriptions/exampleBroker1-exampleTrigger3-09126c0a-153a-4797-a637-8d4183682975",
+        "selfLink": "/apis/messaging.knative.dev/v1beta1/namespaces/josh/subscriptions/example-broker1-example-trigger3-09126c0a-153a-4797-a637-8d4183682975",
         "uid": "b2e1e902-0cc4-45ef-9469-2554b9af623b"
       },
       "spec": {
         "channel": {
           "apiVersion": "messaging.knative.dev/v1beta1",
           "kind": "InMemoryChannel",
-          "name": "exampleBroker1-kne-trigger"
+          "name": "example-broker1-kne-trigger"
         },
         "reply": {
           "ref": {
             "apiVersion": "eventing.knative.dev/v1beta1",
             "kind": "Broker",
-            "name": "exampleBroker1",
+            "name": "example-broker1",
             "namespace": "josh"
           }
         },
         "subscriber": {
-          "uri": "http://broker-filter.knative-eventing.svc.cluster.local/triggers/josh/exampleTrigger3/09126c0a-153a-4797-a637-8d4183682975"
+          "uri": "http://broker-filter.knative-eventing.svc.cluster.local/triggers/josh/example-trigger3/09126c0a-153a-4797-a637-8d4183682975"
         }
       },
       "status": {
         "observedGeneration": 1,
         "physicalSubscription": {
-          "replyUri": "http://broker-ingress.knative-eventing.svc.cluster.local/josh/exampleBroker1",
-          "subscriberUri": "http://broker-filter.knative-eventing.svc.cluster.local/triggers/josh/exampleTrigger3/09126c0a-153a-4797-a637-8d4183682975"
+          "replyUri": "http://broker-ingress.knative-eventing.svc.cluster.local/josh/example-broker1",
+          "subscriberUri": "http://broker-filter.knative-eventing.svc.cluster.local/triggers/josh/example-trigger3/09126c0a-153a-4797-a637-8d4183682975"
         }
       }
     },
@@ -649,8 +649,8 @@
         "finalizers": ["subscriptions.messaging.knative.dev"],
         "generation": 1,
         "labels": {
-          "eventing.knative.dev/broker": "exampleBroker1",
-          "eventing.knative.dev/trigger": "exampleTrigger4"
+          "eventing.knative.dev/broker": "example-broker1",
+          "eventing.knative.dev/trigger": "example-trigger4"
         },
         "managedFields": [
           {
@@ -730,7 +730,7 @@
             "time": "2020-11-16T19:54:54Z"
           }
         ],
-        "name": "exampleBroker1-exampleTrigger4-99eb7f81-9f17-4131-a8eb-2f0991a72b08",
+        "name": "example-broker1-example-trigger4-99eb7f81-9f17-4131-a8eb-2f0991a72b08",
         "namespace": "josh",
         "ownerReferences": [
           {
@@ -738,37 +738,37 @@
             "blockOwnerDeletion": true,
             "controller": true,
             "kind": "Trigger",
-            "name": "exampleTrigger4",
+            "name": "example-trigger4",
             "uid": "99eb7f81-9f17-4131-a8eb-2f0991a72b08"
           }
         ],
         "resourceVersion": "48387",
-        "selfLink": "/apis/messaging.knative.dev/v1beta1/namespaces/josh/subscriptions/exampleBroker1-exampleTrigger4-99eb7f81-9f17-4131-a8eb-2f0991a72b08",
+        "selfLink": "/apis/messaging.knative.dev/v1beta1/namespaces/josh/subscriptions/example-broker1-example-trigger4-99eb7f81-9f17-4131-a8eb-2f0991a72b08",
         "uid": "4abdb8e6-05b6-4872-af71-704c2ece17e0"
       },
       "spec": {
         "channel": {
           "apiVersion": "messaging.knative.dev/v1beta1",
           "kind": "InMemoryChannel",
-          "name": "exampleBroker1-kne-trigger"
+          "name": "example-broker1-kne-trigger"
         },
         "reply": {
           "ref": {
             "apiVersion": "eventing.knative.dev/v1beta1",
             "kind": "Broker",
-            "name": "exampleBroker1",
+            "name": "example-broker1",
             "namespace": "josh"
           }
         },
         "subscriber": {
-          "uri": "http://broker-filter.knative-eventing.svc.cluster.local/triggers/josh/exampleTrigger4/99eb7f81-9f17-4131-a8eb-2f0991a72b08"
+          "uri": "http://broker-filter.knative-eventing.svc.cluster.local/triggers/josh/example-trigger4/99eb7f81-9f17-4131-a8eb-2f0991a72b08"
         }
       },
       "status": {
         "observedGeneration": 1,
         "physicalSubscription": {
-          "replyUri": "http://broker-ingress.knative-eventing.svc.cluster.local/josh/exampleBroker1",
-          "subscriberUri": "http://broker-filter.knative-eventing.svc.cluster.local/triggers/josh/exampleTrigger4/99eb7f81-9f17-4131-a8eb-2f0991a72b08"
+          "replyUri": "http://broker-ingress.knative-eventing.svc.cluster.local/josh/example-broker1",
+          "subscriberUri": "http://broker-filter.knative-eventing.svc.cluster.local/triggers/josh/example-trigger4/99eb7f81-9f17-4131-a8eb-2f0991a72b08"
         }
       }
     },

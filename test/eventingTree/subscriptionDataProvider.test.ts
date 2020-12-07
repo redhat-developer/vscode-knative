@@ -24,7 +24,7 @@ suite('SubscriptionDataProvider', () => {
   const eventingFolderNodes: EventingTreeItem[] = eventingDataProvider.getEventingFolders();
 
   const testSubscription0: Subscription = new Subscription(
-    'exampleSubscription0',
+    'example-subscription0',
     'Subscriptions',
     null,
     null,
@@ -35,14 +35,14 @@ suite('SubscriptionDataProvider', () => {
   const testSubscription0TreeItem: EventingTreeItem = new EventingTreeItem(
     eventingFolderNodes[3],
     testSubscription0,
-    'exampleSubscription0',
+    'example-subscription0',
     EventingContextType.SUBSCRIPTION,
     vscode.TreeItemCollapsibleState.None,
     null,
     null,
   );
   const testSubscription1: Subscription = new Subscription(
-    'exampleSubscription1',
+    'example-subscription1',
     'Subscriptions',
     null,
     null,
@@ -53,7 +53,7 @@ suite('SubscriptionDataProvider', () => {
   const testSubscription1TreeItem: EventingTreeItem = new EventingTreeItem(
     eventingFolderNodes[3],
     testSubscription1,
-    'exampleSubscription1',
+    'example-subscription1',
     EventingContextType.SUBSCRIPTION,
     vscode.TreeItemCollapsibleState.None,
     null,
@@ -92,7 +92,7 @@ suite('SubscriptionDataProvider', () => {
       // The list of results gets sorted and the one we want is not at index 4
       assert.equals(result[4], testSubscriptionTreeItems[0]);
       expect(result).to.have.lengthOf(9);
-      expect(result[4].label).equals('exampleSubscription0');
+      expect(result[4].label).equals('example-subscription0');
     });
     test('should refetch subscription info when it is incomplete, then return subscription nodes', async () => {
       sandbox.restore();
@@ -104,7 +104,7 @@ suite('SubscriptionDataProvider', () => {
       // The list of results gets sorted and the one we want is not at index 4
       assert.equals(result[4], testSubscriptionTreeItems[0]);
       expect(result).to.have.lengthOf(9);
-      expect(result[4].label).equals('exampleSubscription0');
+      expect(result[4].label).equals('example-subscription0');
     });
   });
 });

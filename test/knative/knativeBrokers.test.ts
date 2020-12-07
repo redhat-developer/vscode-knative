@@ -15,8 +15,8 @@ chai.use(sinonChai);
 suite('Knative Brokers', () => {
   const sandbox = sinon.createSandbox();
   const knativeBrokers: KnativeBrokers = KnativeBrokers.Instance;
-  const testBroker0: Broker = new Broker('exampleBroker0', 'Brokers', JSON.parse(JSON.stringify(brokerData.items[0])));
-  const testBroker1: Broker = new Broker('exampleBroker1', 'Brokers', JSON.parse(JSON.stringify(brokerData.items[1])));
+  const testBroker0: Broker = new Broker('example-broker0', 'Brokers', JSON.parse(JSON.stringify(brokerData.items[0])));
+  const testBroker1: Broker = new Broker('example-broker1', 'Brokers', JSON.parse(JSON.stringify(brokerData.items[1])));
   let testBrokers: Broker[];
 
   beforeEach(() => {
@@ -43,13 +43,13 @@ suite('Knative Brokers', () => {
   });
   suite('Finding a Broker', () => {
     test('should return a broker using the broker name', () => {
-      const returnedBroker: Broker = knativeBrokers.findBroker('exampleBroker0');
+      const returnedBroker: Broker = knativeBrokers.findBroker('example-broker0');
       assert.equals(testBroker0, returnedBroker);
     });
   });
   suite('Adding a Broker', () => {
     test('should add a broker and return the broker added', () => {
-      const remainingBrokers: Broker[] = knativeBrokers.removeBroker('exampleBroker1');
+      const remainingBrokers: Broker[] = knativeBrokers.removeBroker('example-broker1');
       expect(remainingBrokers).to.have.lengthOf(1);
       const returnedBroker: Broker = knativeBrokers.addBroker(testBroker1);
       assert.equals(testBroker1, returnedBroker);
@@ -57,7 +57,7 @@ suite('Knative Brokers', () => {
   });
   suite('Adding multiple Brokers', () => {
     test('should add a list of brokers return a list of brokers added', () => {
-      const remainingBrokers: Broker[] = knativeBrokers.removeBroker('exampleBroker1');
+      const remainingBrokers: Broker[] = knativeBrokers.removeBroker('example-broker1');
       expect(remainingBrokers).to.have.lengthOf(1);
       const returnedBrokers: Broker[] = knativeBrokers.addBrokers(testBrokers);
       assert.equals(testBrokers, returnedBrokers);

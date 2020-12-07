@@ -53,10 +53,10 @@
             "time": "2020-11-16T19:54:48Z"
           }
         ],
-        "name": "exampleSource0",
+        "name": "example-source0",
         "namespace": "josh",
         "resourceVersion": "48052",
-        "selfLink": "/apis/sources.knative.dev/v1alpha1/namespaces/josh/apiserversources/exampleSource0",
+        "selfLink": "/apis/sources.knative.dev/v1alpha1/namespaces/josh/apiserversources/example-source0",
         "uid": "9a25159c-7698-4a0e-be0b-9b2b1565d1a6"
       },
       "spec": {
@@ -182,10 +182,10 @@
             "time": "2020-11-16T19:54:56Z"
           }
         ],
-        "name": "exampleSource1",
+        "name": "example-source1",
         "namespace": "josh",
         "resourceVersion": "48468",
-        "selfLink": "/apis/sources.knative.dev/v1alpha2/namespaces/josh/pingsources/exampleSource1",
+        "selfLink": "/apis/sources.knative.dev/v1alpha2/namespaces/josh/pingsources/example-source1",
         "uid": "a58b073e-580f-444e-8a2c-c30e450976b3"
       },
       "spec": {
@@ -203,7 +203,7 @@
       "status": {
         "ceAttributes": [
           {
-            "source": "/apis/v1/namespaces/josh/pingsources/exampleSource1",
+            "source": "/apis/v1/namespaces/josh/pingsources/example-source1",
             "type": "dev.knative.sources.ping"
           }
         ],
@@ -301,10 +301,10 @@
             "time": "2020-11-16T19:54:56Z"
           }
         ],
-        "name": "exampleSource2",
+        "name": "example-source2",
         "namespace": "josh",
         "resourceVersion": "48470",
-        "selfLink": "/apis/sources.knative.dev/v1alpha2/namespaces/josh/pingsources/exampleSource2",
+        "selfLink": "/apis/sources.knative.dev/v1alpha2/namespaces/josh/pingsources/example-source2",
         "uid": "2a5454bb-e9a7-48d5-a8c7-9308d947de6f"
       },
       "spec": {
@@ -322,7 +322,7 @@
       "status": {
         "ceAttributes": [
           {
-            "source": "/apis/v1/namespaces/josh/pingsources/exampleSource2",
+            "source": "/apis/v1/namespaces/josh/pingsources/example-source2",
             "type": "dev.knative.sources.ping"
           }
         ],
@@ -415,10 +415,10 @@
             "time": "2020-11-16T19:54:51Z"
           }
         ],
-        "name": "exampleSource3",
+        "name": "example-source3",
         "namespace": "josh",
         "resourceVersion": "48173",
-        "selfLink": "/apis/sources.knative.dev/v1alpha1/namespaces/josh/sinkbindings/exampleSource3",
+        "selfLink": "/apis/sources.knative.dev/v1alpha1/namespaces/josh/sinkbindings/example-source3",
         "uid": "0aed5684-4a99-435c-9ca3-11256dc936fc"
       },
       "spec": {

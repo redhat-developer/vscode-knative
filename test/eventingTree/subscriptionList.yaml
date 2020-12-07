@@ -751,16 +751,16 @@ items:
           manager: controller
           operation: Update
           time: '2020-11-17T15:32:50Z'
-      name: exampleTrigger0
+      name: example-trigger0
       namespace: josh
       resourceVersion: '60309'
-      selfLink: /apis/messaging.knative.dev/v1beta1/namespaces/josh/subscriptions/exampleTrigger0
+      selfLink: /apis/messaging.knative.dev/v1beta1/namespaces/josh/subscriptions/example-trigger0
       uid: 6e7daf15-4863-46a8-a085-d219a464aaf4
     spec:
       channel:
         apiVersion: messaging.knative.dev/v1beta1
         kind: Channel
-        name: exampleChannel0
+        name: example-channel0
       subscriber:
         ref:
           apiVersion: serving.knative.dev/v1
@@ -862,7 +862,7 @@ items:
       channel:
         apiVersion: messaging.knative.dev/v1beta1
         kind: Channel
-        name: exampleChannel1
+        name: example-channel1
       delivery:
         deadLetterSink:
           ref:

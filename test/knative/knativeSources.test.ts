@@ -19,14 +19,14 @@ suite('Knative Sources', () => {
   const sandbox = sinon.createSandbox();
   const knativeSources: KnativeSources = KnativeSources.Instance;
   const testSource0: APIServerSource = new APIServerSource(
-    'exampleSource0',
+    'example-source0',
     'Sources',
     '',
     'aaa',
     JSON.parse(JSON.stringify(sourceData.items[0])),
   );
   const testSource1: PingSource = new PingSource(
-    'exampleSource1',
+    'example-source1',
     'Sources',
     '*/2 * * * *',
     '{ value: "hello" }',
@@ -34,14 +34,14 @@ suite('Knative Sources', () => {
     JSON.parse(JSON.stringify(sourceData.items[1])),
   );
   const testSource2: GenericSource = new GenericSource(
-    'exampleSource2',
+    'example-source2',
     'Sources',
     'UnknownSource',
     null,
     JSON.parse(JSON.stringify(sourceData.items[2])),
   );
   const testSource3: BindingSource = new BindingSource(
-    'exampleSource3',
+    'example-source3',
     'Sources',
     'knative-tut',
     'aaa',
@@ -73,13 +73,13 @@ suite('Knative Sources', () => {
   });
   suite('Finding a Source', () => {
     test('should return a source using the source name', () => {
-      const returnedSource: SourceTypes = knativeSources.findSource('exampleSource0');
+      const returnedSource: SourceTypes = knativeSources.findSource('example-source0');
       assert.equals(testSource0, returnedSource);
     });
   });
   suite('Adding a Source', () => {
     test('should add a source and return the source added', () => {
-      const remainingSources: SourceTypes[] = knativeSources.removeSource('exampleSource1');
+      const remainingSources: SourceTypes[] = knativeSources.removeSource('example-source1');
       expect(remainingSources).to.have.lengthOf(3);
       const returnedSource: SourceTypes = knativeSources.addSource(testSource1);
       assert.equals(testSource1, returnedSource);
@@ -87,7 +87,7 @@ suite('Knative Sources', () => {
   });
   suite('Adding multiple Sources', () => {
     test('should add a list of sources return a list of sources added', () => {
-      const remainingSources: SourceTypes[] = knativeSources.removeSource('exampleSource1');
+      const remainingSources: SourceTypes[] = knativeSources.removeSource('example-source1');
       expect(remainingSources).to.have.lengthOf(3);
       const returnedSources: SourceTypes[] = knativeSources.addSources(testSources);
       assert.equals(testSources, returnedSources);

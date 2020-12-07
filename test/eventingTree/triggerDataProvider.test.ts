@@ -23,21 +23,21 @@ suite('TriggerDataProvider', () => {
 
   const eventingFolderNodes: EventingTreeItem[] = eventingDataProvider.getEventingFolders();
 
-  const testTrigger0: Trigger = new Trigger('exampleTrigger0', 'Triggers', JSON.parse(JSON.stringify(triggerData.items[0])));
+  const testTrigger0: Trigger = new Trigger('example-trigger0', 'Triggers', JSON.parse(JSON.stringify(triggerData.items[0])));
   const testTrigger0TreeItem: EventingTreeItem = new EventingTreeItem(
     eventingFolderNodes[4],
     testTrigger0,
-    'exampleTrigger0',
+    'example-trigger0',
     EventingContextType.TRIGGER,
     vscode.TreeItemCollapsibleState.None,
     null,
     null,
   );
-  const testTrigger1: Trigger = new Trigger('exampleTrigger1', 'Triggers', JSON.parse(JSON.stringify(triggerData.items[1])));
+  const testTrigger1: Trigger = new Trigger('example-trigger1', 'Triggers', JSON.parse(JSON.stringify(triggerData.items[1])));
   const testTrigger1TreeItem: EventingTreeItem = new EventingTreeItem(
     eventingFolderNodes[4],
     testTrigger1,
-    'exampleTrigger1',
+    'example-trigger1',
     EventingContextType.TRIGGER,
     vscode.TreeItemCollapsibleState.None,
     null,
@@ -71,7 +71,7 @@ suite('TriggerDataProvider', () => {
       const result = await triggerDataProvider.getTriggers(eventingFolderNodes[4]);
       assert.equals(result[0], testTriggerTreeItems[0]);
       expect(result).to.have.lengthOf(4);
-      expect(result[0].label).equals('exampleTrigger0');
+      expect(result[0].label).equals('example-trigger0');
     });
     test('should refetch trigger info when it is incomplete, then return trigger nodes', async () => {
       sandbox.restore();
@@ -82,7 +82,7 @@ suite('TriggerDataProvider', () => {
       const result = await triggerDataProvider.getTriggers(eventingFolderNodes[4]);
       assert.equals(result[0], testTriggerTreeItems[0]);
       expect(result).to.have.lengthOf(4);
-      expect(result[0].label).equals('exampleTrigger0');
+      expect(result[0].label).equals('example-trigger0');
     });
   });
 });

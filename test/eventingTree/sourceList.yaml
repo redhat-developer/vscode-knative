@@ -39,10 +39,10 @@ items:
           manager: kn
           operation: Update
           time: '2020-11-17T15:32:43Z'
-      name: exampleSource0
+      name: example-source0
       namespace: josh
       resourceVersion: '60005'
-      selfLink: /apis/sources.knative.dev/v1alpha1/namespaces/josh/apiserversources/exampleSource0
+      selfLink: /apis/sources.knative.dev/v1alpha1/namespaces/josh/apiserversources/example-source0
       uid: 358332f3-4488-4cda-840a-4184ae8d9326
     spec:
       mode: Ref
@@ -132,10 +132,10 @@ items:
           manager: mtping
           operation: Update
           time: '2020-11-17T15:32:51Z'
-      name: exampleSource1
+      name: example-source1
       namespace: josh
       resourceVersion: '60411'
-      selfLink: /apis/sources.knative.dev/v1alpha2/namespaces/josh/pingsources/exampleSource1
+      selfLink: /apis/sources.knative.dev/v1alpha2/namespaces/josh/pingsources/example-source1
       uid: 49c32a59-814c-4bb0-bc7f-1f0f88595b21
     spec:
       jsonData: '{ value: "hello" }'
@@ -148,7 +148,7 @@ items:
           namespace: josh
     status:
       ceAttributes:
-        - source: /apis/v1/namespaces/josh/pingsources/exampleSource1
+        - source: /apis/v1/namespaces/josh/pingsources/example-source1
           type: dev.knative.sources.ping
       conditions:
         - lastTransitionTime: '2020-11-17T15:32:51Z'
@@ -216,10 +216,10 @@ items:
           manager: mtping
           operation: Update
           time: '2020-11-17T15:32:51Z'
-      name: exampleSource2
+      name: example-source2
       namespace: josh
       resourceVersion: '60414'
-      selfLink: /apis/sources.knative.dev/v1alpha2/namespaces/josh/pingsources/exampleSource2
+      selfLink: /apis/sources.knative.dev/v1alpha2/namespaces/josh/pingsources/example-source2
       uid: b8c3f43d-be83-486e-9ceb-53690fd83d1c
     spec:
       jsonData: '{ value: "hola" }'
@@ -232,7 +232,7 @@ items:
           namespace: josh
     status:
       ceAttributes:
-        - source: /apis/v1/namespaces/josh/pingsources/exampleSource2
+        - source: /apis/v1/namespaces/josh/pingsources/example-source2
           type: dev.knative.sources.ping
       conditions:
         - lastTransitionTime: '2020-11-17T15:32:51Z'
@@ -297,10 +297,10 @@ items:
           manager: webhook
           operation: Update
           time: '2020-11-17T15:32:48Z'
-      name: exampleSource3
+      name: example-source3
       namespace: josh
       resourceVersion: '60225'
-      selfLink: /apis/sources.knative.dev/v1alpha1/namespaces/josh/sinkbindings/exampleSource3
+      selfLink: /apis/sources.knative.dev/v1alpha1/namespaces/josh/sinkbindings/example-source3
       uid: 1a3b4ecb-3915-49e3-815d-fc0b16c21db8
     spec:
       sink:

@@ -16,7 +16,7 @@ suite('Knative Subscriptions', () => {
   const sandbox = sinon.createSandbox();
   const knativeSubscriptions: KnativeSubscriptions = KnativeSubscriptions.Instance;
   const testSubscription0: Subscription = new Subscription(
-    'exampleSubscription0',
+    'example-subscription0',
     'Subscriptions',
     null,
     null,
@@ -25,7 +25,7 @@ suite('Knative Subscriptions', () => {
     JSON.parse(JSON.stringify(subscriptionData.items[0])),
   );
   const testSubscription1: Subscription = new Subscription(
-    'exampleSubscription1',
+    'example-subscription1',
     'Subscriptions',
     null,
     null,
@@ -59,13 +59,13 @@ suite('Knative Subscriptions', () => {
   });
   suite('Finding a Subscription', () => {
     test('should return a subscription using the subscription name', () => {
-      const returnedSubscription: Subscription = knativeSubscriptions.findSubscription('exampleSubscription0');
+      const returnedSubscription: Subscription = knativeSubscriptions.findSubscription('example-subscription0');
       assert.equals(testSubscription0, returnedSubscription);
     });
   });
   suite('Adding a Subscription', () => {
     test('should add a subscription and return the subscription added', () => {
-      const remainingSubscriptions: Subscription[] = knativeSubscriptions.removeSubscription('exampleSubscription1');
+      const remainingSubscriptions: Subscription[] = knativeSubscriptions.removeSubscription('example-subscription1');
       expect(remainingSubscriptions).to.have.lengthOf(1);
       const returnedSubscription: Subscription = knativeSubscriptions.addSubscription(testSubscription1);
       assert.equals(testSubscription1, returnedSubscription);
@@ -73,7 +73,7 @@ suite('Knative Subscriptions', () => {
   });
   suite('Adding multiple Subscriptions', () => {
     test('should add a list of subscriptions return a list of subscriptions added', () => {
-      const remainingSubscriptions: Subscription[] = knativeSubscriptions.removeSubscription('exampleSubscription1');
+      const remainingSubscriptions: Subscription[] = knativeSubscriptions.removeSubscription('example-subscription1');
       expect(remainingSubscriptions).to.have.lengthOf(1);
       const returnedSubscriptions: Subscription[] = knativeSubscriptions.addSubscriptions(testSubscriptions);
       assert.equals(testSubscriptions, returnedSubscriptions);

@@ -44,10 +44,10 @@
             "time": "2020-11-16T19:54:52Z"
           }
         ],
-        "name": "exampleChannel0",
+        "name": "example-channel0",
         "namespace": "josh",
         "resourceVersion": "48328",
-        "selfLink": "/apis/messaging.knative.dev/v1beta1/namespaces/josh/channels/exampleChannel0",
+        "selfLink": "/apis/messaging.knative.dev/v1beta1/namespaces/josh/channels/example-channel0",
         "uid": "51800e5d-5e0a-41b5-a3ef-0cf5f60c491b"
       },
       "spec": {
@@ -58,12 +58,12 @@
       },
       "status": {
         "address": {
-          "url": "http://exampleChannel0-kn-channel.josh.svc.cluster.local"
+          "url": "http://example-channel0-kn-channel.josh.svc.cluster.local"
         },
         "channel": {
           "apiVersion": "messaging.knative.dev/v1beta1",
           "kind": "InMemoryChannel",
-          "name": "exampleChannel0",
+          "name": "example-channel0",
           "namespace": "josh"
         },
         "conditions": [
@@ -136,10 +136,10 @@
             "time": "2020-11-16T20:09:40Z"
           }
         ],
-        "name": "exampleChannel1",
+        "name": "example-channel1",
         "namespace": "josh",
         "resourceVersion": "57792",
-        "selfLink": "/apis/messaging.knative.dev/v1beta1/namespaces/josh/channels/exampleChannel1",
+        "selfLink": "/apis/messaging.knative.dev/v1beta1/namespaces/josh/channels/example-channel1",
         "uid": "52d3fe8d-9c64-4171-b02a-d068e3607b03"
       },
       "spec": {
@@ -150,12 +150,12 @@
       },
       "status": {
         "address": {
-          "url": "http://exampleChannel1-kn-channel.josh.svc.cluster.local"
+          "url": "http://example-channel1-kn-channel.josh.svc.cluster.local"
         },
         "channel": {
           "apiVersion": "messaging.knative.dev/v1beta1",
           "kind": "InMemoryChannel",
-          "name": "exampleChannel1",
+          "name": "example-channel1",
           "namespace": "josh"
         },
         "conditions": [

@@ -60,11 +60,11 @@ suite('ServingTreeItem', () => {
     ),
   ];
 
-  const testBroker0: Broker = new Broker('exampleBroker0', 'Brokers', JSON.parse(JSON.stringify(brokerData.items[0])));
+  const testBroker0: Broker = new Broker('example-broker0', 'Brokers', JSON.parse(JSON.stringify(brokerData.items[0])));
   const testBroker0TreeItem: EventingTreeItem = new EventingTreeItem(
     eventingFolderNodes[0],
     testBroker0,
-    'exampleBroker0',
+    'example-broker0',
     EventingContextType.BROKER,
     vscode.TreeItemCollapsibleState.None,
     null,
@@ -73,7 +73,7 @@ suite('ServingTreeItem', () => {
 
   // API Server Source
   const testSource0: APIServerSource = new APIServerSource(
-    'exampleSource0',
+    'example-source0',
     'Sources',
     '',
     'aaa',
@@ -82,7 +82,7 @@ suite('ServingTreeItem', () => {
   const testSource0TreeItem: EventingTreeItem = new EventingTreeItem(
     eventingFolderNodes[2],
     testSource0,
-    'exampleSource0',
+    'example-source0',
     EventingContextType.SOURCE_APISERVER,
     vscode.TreeItemCollapsibleState.None,
     null,
@@ -90,7 +90,7 @@ suite('ServingTreeItem', () => {
   );
   // Ping Source
   const testSource1: PingSource = new PingSource(
-    'exampleSource1',
+    'example-source1',
     'Sources',
     '*/2 * * * *',
     '{ value: "hello" }',
@@ -100,7 +100,7 @@ suite('ServingTreeItem', () => {
   const testSource1TreeItem: EventingTreeItem = new EventingTreeItem(
     eventingFolderNodes[2],
     testSource1,
-    'exampleSource1',
+    'example-source1',
     EventingContextType.SOURCE_PING,
     vscode.TreeItemCollapsibleState.None,
     null,
@@ -108,7 +108,7 @@ suite('ServingTreeItem', () => {
   );
   // ping source as Generic source
   const testSource2: GenericSource = new GenericSource(
-    'exampleSource2',
+    'example-source2',
     'Sources',
     'UnknownSource',
     null,
@@ -117,7 +117,7 @@ suite('ServingTreeItem', () => {
   const testSource2TreeItem: EventingTreeItem = new EventingTreeItem(
     eventingFolderNodes[2],
     testSource2,
-    'exampleSource2',
+    'example-source2',
     EventingContextType.SOURCE,
     vscode.TreeItemCollapsibleState.None,
     null,
@@ -125,7 +125,7 @@ suite('ServingTreeItem', () => {
   );
   // Sink Binding Source
   const testSource3: BindingSource = new BindingSource(
-    'exampleSource3',
+    'example-source3',
     'Sources',
     'knative-tut',
     'aaa',
@@ -134,7 +134,7 @@ suite('ServingTreeItem', () => {
   const testSource3TreeItem: EventingTreeItem = new EventingTreeItem(
     eventingFolderNodes[2],
     testSource3,
-    'exampleSource3',
+    'example-source3',
     EventingContextType.SOURCE_BINDING,
     vscode.TreeItemCollapsibleState.None,
     null,

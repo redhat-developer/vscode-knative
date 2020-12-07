@@ -23,10 +23,10 @@ suite('Knative Events', () => {
 
   const knativeEvents: KnativeEvents = KnativeEvents.Instance;
 
-  const testBroker0: Broker = new Broker('exampleBroker0', 'Brokers', JSON.parse(JSON.stringify(brokerData.items[0])));
-  const testBroker1: Broker = new Broker('exampleBroker1', 'Brokers', JSON.parse(JSON.stringify(brokerData.items[1])));
-  const testTrigger0: Trigger = new Trigger('exampleTrigger0', 'Triggers', JSON.parse(JSON.stringify(triggerData.items[0])));
-  const testTrigger1: Trigger = new Trigger('exampleTrigger1', 'Triggers', JSON.parse(JSON.stringify(triggerData.items[1])));
+  const testBroker0: Broker = new Broker('example-broker0', 'Brokers', JSON.parse(JSON.stringify(brokerData.items[0])));
+  const testBroker1: Broker = new Broker('example-broker1', 'Brokers', JSON.parse(JSON.stringify(brokerData.items[1])));
+  const testTrigger0: Trigger = new Trigger('example-trigger0', 'Triggers', JSON.parse(JSON.stringify(triggerData.items[0])));
+  const testTrigger1: Trigger = new Trigger('example-trigger1', 'Triggers', JSON.parse(JSON.stringify(triggerData.items[1])));
 
   let eventingTreeItems: EventingTreeItem[];
   let brokerEventFolder: KEvent;
@@ -65,19 +65,19 @@ suite('Knative Events', () => {
   });
   suite('Finding a Child', () => {
     test('should return a child using the child name', () => {
-      const returnedEvent = knativeEvents.findChild('exampleTrigger1');
+      const returnedEvent = knativeEvents.findChild('example-trigger1');
       assert.equals(testTrigger1, returnedEvent);
     });
   });
   suite('Finding an Event and Child', () => {
     test('should return an object with both event and child using the child name', () => {
-      const returnedEvent = knativeEvents.findChildAndEvent('exampleTrigger1');
+      const returnedEvent = knativeEvents.findChildAndEvent('example-trigger1');
       assert.equals({ child: testTrigger1, event: triggerEventFolder }, returnedEvent);
     });
   });
   suite('Finding Event and Child indexes', () => {
     test('should return an object with both event and child using the child name', () => {
-      const returnedEvent = knativeEvents.findChildAndEventIndex('exampleTrigger1');
+      const returnedEvent = knativeEvents.findChildAndEventIndex('example-trigger1');
       const childIndex = 1;
       const eventIndex = 4;
       assert.equals({ childIndex, eventIndex }, returnedEvent);
@@ -108,7 +108,7 @@ suite('Knative Events', () => {
   suite('Removing an Event child', () => {
     test('should remove a child from an event', () => {
       expect(knativeEvents.getEvents()[0].children).to.have.lengthOf(2);
-      knativeEvents.removeChild('exampleBroker1');
+      knativeEvents.removeChild('example-broker1');
       expect(knativeEvents.getEvents()[0].children).to.have.lengthOf(1);
     });
   });

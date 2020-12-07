@@ -24,7 +24,7 @@ suite('ChannelDataProvider', () => {
   const eventingFolderNodes: EventingTreeItem[] = eventingDataProvider.getEventingFolders();
 
   const testChannel0: Channel = new Channel(
-    'exampleChannel0',
+    'example-channel0',
     'Channels',
     'InMemoryChannel',
     JSON.parse(JSON.stringify(channelData.items[0])),
@@ -33,14 +33,14 @@ suite('ChannelDataProvider', () => {
   const testChannel0TreeItem: EventingTreeItem = new EventingTreeItem(
     eventingFolderNodes[1],
     testChannel0,
-    'exampleChannel0',
+    'example-channel0',
     EventingContextType.CHANNEL,
     vscode.TreeItemCollapsibleState.None,
     null,
     null,
   );
   const testChannel1: Channel = new Channel(
-    'exampleChannel1',
+    'example-channel1',
     'Channels',
     'InMemoryChannel',
     JSON.parse(JSON.stringify(channelData.items[1])),
@@ -49,7 +49,7 @@ suite('ChannelDataProvider', () => {
   const testChannel1TreeItem: EventingTreeItem = new EventingTreeItem(
     eventingFolderNodes[1],
     testChannel1,
-    'exampleChannel1',
+    'example-channel1',
     EventingContextType.CHANNEL,
     vscode.TreeItemCollapsibleState.None,
     null,
@@ -83,7 +83,7 @@ suite('ChannelDataProvider', () => {
       const result = await channelDataProvider.getChannels(eventingFolderNodes[1]);
       assert.equals(result[0], testChannelTreeItems[0]);
       expect(result).to.have.lengthOf(4);
-      expect(result[0].label).equals('exampleChannel0');
+      expect(result[0].label).equals('example-channel0');
     });
     test('should refetch channel info when it is incomplete, then return channel nodes', async () => {
       sandbox.restore();
@@ -94,7 +94,7 @@ suite('ChannelDataProvider', () => {
       const result = await channelDataProvider.getChannels(eventingFolderNodes[1]);
       assert.equals(result[0], testChannelTreeItems[0]);
       expect(result).to.have.lengthOf(4);
-      expect(result[0].label).equals('exampleChannel0');
+      expect(result[0].label).equals('example-channel0');
     });
   });
 });

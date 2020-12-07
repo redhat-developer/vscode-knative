@@ -32,10 +32,10 @@ items:
           manager: controller
           operation: Update
           time: '2020-11-17T15:32:49Z'
-      name: exampleChannel0
+      name: example-channel0
       namespace: josh
       resourceVersion: '60273'
-      selfLink: /apis/messaging.knative.dev/v1beta1/namespaces/josh/channels/exampleChannel0
+      selfLink: /apis/messaging.knative.dev/v1beta1/namespaces/josh/channels/example-channel0
       uid: 318433b2-cd12-4deb-8353-cdde1549f88f
     spec:
       channelTemplate:
@@ -43,11 +43,11 @@ items:
         kind: InMemoryChannel
     status:
       address:
-        url: http://exampleChannel0-kn-channel.josh.svc.cluster.local
+        url: http://example-channel0-kn-channel.josh.svc.cluster.local
       channel:
         apiVersion: messaging.knative.dev/v1beta1
         kind: InMemoryChannel
-        name: exampleChannel0
+        name: example-channel0
         namespace: josh
       conditions:
         - lastTransitionTime: '2020-11-17T15:32:46Z'
@@ -96,10 +96,10 @@ items:
           manager: controller
           operation: Update
           time: '2020-11-17T15:32:50Z'
-      name: exampleChannel1
+      name: example-channel1
       namespace: josh
       resourceVersion: '60310'
-      selfLink: /apis/messaging.knative.dev/v1beta1/namespaces/josh/channels/exampleChannel1
+      selfLink: /apis/messaging.knative.dev/v1beta1/namespaces/josh/channels/example-channel1
       uid: 0b2f7df2-6f65-42de-a8e6-73d13dd2b37d
     spec:
       channelTemplate:
@@ -107,11 +107,11 @@ items:
         kind: InMemoryChannel
     status:
       address:
-        url: http://exampleChannel1-kn-channel.josh.svc.cluster.local
+        url: http://example-channel1-kn-channel.josh.svc.cluster.local
       channel:
         apiVersion: messaging.knative.dev/v1beta1
         kind: InMemoryChannel
-        name: exampleChannel1
+        name: example-channel1
         namespace: josh
       conditions:
         - lastTransitionTime: '2020-11-17T15:32:46Z'
