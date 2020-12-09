@@ -20,52 +20,87 @@ const CONTEXT_DATA = {
     getChildren: (): undefined[] => [],
   },
   broker: {
-    icon: 'EVT.svg',
+    icon: 'broker2.svg',
+    tooltip: '',
+    description: '',
+    getChildren: (): undefined[] => [],
+  },
+  // eslint-disable-next-line @typescript-eslint/camelcase
+  broker_folder: {
+    icon: 'folder-opened.svg',
     tooltip: '',
     description: '',
     getChildren: (): undefined[] => [],
   },
   channel: {
-    icon: 'EVT.svg',
+    icon: 'channel2.svg',
     tooltip: '',
     description: '',
     getChildren: (): undefined[] => [],
   },
-  source: {
-    icon: 'EVT.svg',
+  // eslint-disable-next-line @typescript-eslint/camelcase
+  channel_folder: {
+    icon: 'folder-opened.svg',
     tooltip: '',
     description: '',
     getChildren: (): undefined[] => [],
   },
   // eslint-disable-next-line @typescript-eslint/camelcase
   source_apiserver: {
-    icon: 'EVT.svg',
+    icon: 'source-generic.svg',
     tooltip: '',
     description: '',
     getChildren: (): undefined[] => [],
   },
   // eslint-disable-next-line @typescript-eslint/camelcase
   source_binding: {
-    icon: 'EVT.svg',
+    icon: 'source-generic.svg',
+    tooltip: '',
+    description: '',
+    getChildren: (): undefined[] => [],
+  },
+  // eslint-disable-next-line @typescript-eslint/camelcase
+  source_folder: {
+    icon: 'folder-opened.svg',
+    tooltip: '',
+    description: '',
+    getChildren: (): undefined[] => [],
+  },
+  source: {
+    icon: 'source-generic.svg',
     tooltip: '',
     description: '',
     getChildren: (): undefined[] => [],
   },
   // eslint-disable-next-line @typescript-eslint/camelcase
   source_ping: {
-    icon: 'EVT.svg',
+    icon: 'source-generic.svg',
     tooltip: '',
     description: '',
     getChildren: (): undefined[] => [],
   },
   subscription: {
-    icon: 'EVT.svg',
+    icon: 'subscription.svg',
+    tooltip: '',
+    description: '',
+    getChildren: (): undefined[] => [],
+  },
+  // eslint-disable-next-line @typescript-eslint/camelcase
+  subscription_folder: {
+    icon: 'folder-opened.svg',
     tooltip: '',
     description: '',
     getChildren: (): undefined[] => [],
   },
   trigger: {
-    icon: 'EVT.svg',
+    icon: 'trigger2.svg',
+    tooltip: '',
+    description: '',
+    getChildren: (): undefined[] => [],
+  },
+  // eslint-disable-next-line @typescript-eslint/camelcase
+  trigger_folder: {
+    icon: 'folder-opened.svg',
     tooltip: '',
     description: '',
     getChildren: (): undefined[] => [],

@@ -127,19 +127,19 @@ export class EventingDataProvider implements TreeDataProvider<EventingTreeItem> 
   public async getEventingInstances(parentEventFolder: EventingTreeItem): Promise<EventingTreeItem[]> {
     let children: Promise<EventingTreeItem[]>;
     try {
-      if (parentEventFolder.contextValue === EventingContextType.BROKER) {
+      if (parentEventFolder.contextValue === EventingContextType.BROKER_FOLDER) {
         children = this.brokerDataProvider.getBrokers(parentEventFolder);
       }
-      if (parentEventFolder.contextValue === EventingContextType.CHANNEL) {
+      if (parentEventFolder.contextValue === EventingContextType.CHANNEL_FOLDER) {
         children = this.channelDataProvider.getChannels(parentEventFolder);
       }
-      if (parentEventFolder.contextValue === EventingContextType.SOURCE) {
+      if (parentEventFolder.contextValue === EventingContextType.SOURCE_FOLDER) {
         children = this.sourceDataProvider.getSources(parentEventFolder);
       }
-      if (parentEventFolder.contextValue === EventingContextType.SUBSCRIPTION) {
+      if (parentEventFolder.contextValue === EventingContextType.SUBSCRIPTION_FOLDER) {
         children = this.subscriptionDataProvider.getSubscriptions(parentEventFolder);
       }
-      if (parentEventFolder.contextValue === EventingContextType.TRIGGER) {
+      if (parentEventFolder.contextValue === EventingContextType.TRIGGER_FOLDER) {
         children = this.triggerDataProvider.getTriggers(parentEventFolder);
       }
     } catch (err) {
@@ -170,7 +170,7 @@ export class EventingDataProvider implements TreeDataProvider<EventingTreeItem> 
         null,
         events[0],
         eventingConcepts[0],
-        EventingContextType.BROKER,
+        EventingContextType.BROKER_FOLDER,
         TreeItemCollapsibleState.Expanded,
         null,
         null,
@@ -179,7 +179,7 @@ export class EventingDataProvider implements TreeDataProvider<EventingTreeItem> 
         null,
         events[1],
         eventingConcepts[1],
-        EventingContextType.CHANNEL,
+        EventingContextType.CHANNEL_FOLDER,
         TreeItemCollapsibleState.Expanded,
         null,
         null,
@@ -188,7 +188,7 @@ export class EventingDataProvider implements TreeDataProvider<EventingTreeItem> 
         null,
         events[2],
         eventingConcepts[2],
-        EventingContextType.SOURCE,
+        EventingContextType.SOURCE_FOLDER,
         TreeItemCollapsibleState.Expanded,
         null,
         null,
@@ -197,7 +197,7 @@ export class EventingDataProvider implements TreeDataProvider<EventingTreeItem> 
         null,
         events[3],
         eventingConcepts[3],
-        EventingContextType.SUBSCRIPTION,
+        EventingContextType.SUBSCRIPTION_FOLDER,
         TreeItemCollapsibleState.Expanded,
         null,
         null,
@@ -206,7 +206,7 @@ export class EventingDataProvider implements TreeDataProvider<EventingTreeItem> 
         null,
         events[4],
         eventingConcepts[4],
-        EventingContextType.TRIGGER,
+        EventingContextType.TRIGGER_FOLDER,
         TreeItemCollapsibleState.Expanded,
         null,
         null,

@@ -18,7 +18,7 @@ import { BindingSource } from '../../src/knative/bindingSource';
 const { assert } = referee;
 chai.use(sinonChai);
 
-suite('ServingTreeItem', () => {
+suite('EventingTreeItem', () => {
   const sandbox = sinon.createSandbox();
   beforeEach(() => {
     sandbox.stub(vscode.window, 'showErrorMessage').resolves();
@@ -29,22 +29,38 @@ suite('ServingTreeItem', () => {
   });
 
   const eventingFolderNodes = [
-    new EventingTreeItem(null, null, 'Brokers', EventingContextType.BROKER, vscode.TreeItemCollapsibleState.Expanded, null, null),
     new EventingTreeItem(
       null,
       null,
-      'Channels',
-      EventingContextType.CHANNEL,
+      'Brokers',
+      EventingContextType.BROKER_FOLDER,
       vscode.TreeItemCollapsibleState.Expanded,
       null,
       null,
     ),
-    new EventingTreeItem(null, null, 'Sources', EventingContextType.SOURCE, vscode.TreeItemCollapsibleState.Expanded, null, null),
+    new EventingTreeItem(
+      null,
+      null,
+      'Channels',
+      EventingContextType.CHANNEL_FOLDER,
+      vscode.TreeItemCollapsibleState.Expanded,
+      null,
+      null,
+    ),
+    new EventingTreeItem(
+      null,
+      null,
+      'Sources',
+      EventingContextType.SOURCE_FOLDER,
+      vscode.TreeItemCollapsibleState.Expanded,
+      null,
+      null,
+    ),
     new EventingTreeItem(
       null,
       null,
       'Subscriptions',
-      EventingContextType.SUBSCRIPTION,
+      EventingContextType.SUBSCRIPTION_FOLDER,
       vscode.TreeItemCollapsibleState.Expanded,
       null,
       null,
@@ -53,7 +69,7 @@ suite('ServingTreeItem', () => {
       null,
       null,
       'Triggers',
-      EventingContextType.TRIGGER,
+      EventingContextType.TRIGGER_FOLDER,
       vscode.TreeItemCollapsibleState.Expanded,
       null,
       null,
@@ -146,7 +162,7 @@ suite('ServingTreeItem', () => {
     const localDir = __dirname;
     // use regex for search since the backslash for windows needs to be escaped in a regex string
     const expected = vscode.Uri.file(
-      `${localDir.substring(0, localDir.search(/out.test/))}images${path.sep}context${path.sep}EVT.svg`,
+      `${localDir.substring(0, localDir.search(/out.test/))}images${path.sep}context${path.sep}broker2.svg`,
     );
     assert.equals(revPath, expected);
   });

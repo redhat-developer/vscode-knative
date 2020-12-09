@@ -23,13 +23,18 @@ export enum ServingContextType {
 export enum EventingContextType {
   NONE = 'none',
   BROKER = 'broker',
+  BROKER_FOLDER = 'broker_folder',
   CHANNEL = 'channel',
+  CHANNEL_FOLDER = 'channel_folder',
   SOURCE = 'source',
+  SOURCE_FOLDER = 'source_folder',
   SOURCE_APISERVER = 'source_apiserver',
   SOURCE_BINDING = 'source_binding',
   SOURCE_PING = 'source_ping',
   SUBSCRIPTION = 'subscription',
+  SUBSCRIPTION_FOLDER = 'subscription_folder',
   TRIGGER = 'trigger',
+  TRIGGER_FOLDER = 'trigger_folder',
 }
 
 export enum ComponentType {

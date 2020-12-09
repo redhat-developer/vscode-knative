@@ -21,43 +21,31 @@ const CONTEXT_DATA = {
     getChildren: (): undefined[] => [],
   },
   revision: {
-    icon: 'REV.svg',
+    icon: 'revision-teal.svg',
     tooltip: 'Revision: {name}',
     description: '',
     getChildren: (): undefined[] => [],
   },
   // eslint-disable-next-line @typescript-eslint/camelcase
   revision_tagged: {
-    icon: 'REV.svg',
+    icon: 'revision-teal.svg',
     tooltip: 'Revision: {name}',
     description: '',
     getChildren: (): undefined[] => [],
   },
   service: {
-    icon: 'SVC.svg',
+    icon: 'service-gear-teal.svg',
     tooltip: 'Service: {name}',
     description: '',
     getChildren: (): undefined[] => [],
   },
   // eslint-disable-next-line @typescript-eslint/camelcase
   service_modified: {
-    icon: 'SVC.svg',
+    icon: 'service-gear-orange.svg',
     tooltip: 'Service: {name} modified',
     description: 'modified',
     getChildren: (): undefined[] => [],
   },
-  // route: {
-  //   icon: 'RTE.svg',
-  //   tooltip: 'Route: {name}',
-  //   description: '',
-  //   getChildren: (): undefined[] => [],
-  // },
-  // event: {
-  //   icon: 'EVT.svg',
-  //   tooltip: 'Event: {name}',
-  //   description: '',
-  //   getChildren: (): undefined[] => [],
-  // },
 };
 
 export class ServingTreeItem extends TreeItem {

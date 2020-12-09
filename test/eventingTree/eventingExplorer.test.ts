@@ -14,19 +14,51 @@ chai.use(sinonChai);
 let eventingExplorer: EventingExplorer;
 
 const eventingFolderNodes = [
-  new EventingTreeItem(null, null, 'Brokers', EventingContextType.BROKER, vscode.TreeItemCollapsibleState.Expanded, null, null),
-  new EventingTreeItem(null, null, 'Channels', EventingContextType.CHANNEL, vscode.TreeItemCollapsibleState.Expanded, null, null),
-  new EventingTreeItem(null, null, 'Sources', EventingContextType.SOURCE, vscode.TreeItemCollapsibleState.Expanded, null, null),
   new EventingTreeItem(
     null,
     null,
-    'Subscriptions',
-    EventingContextType.SUBSCRIPTION,
+    'Brokers',
+    EventingContextType.BROKER_FOLDER,
     vscode.TreeItemCollapsibleState.Expanded,
     null,
     null,
   ),
-  new EventingTreeItem(null, null, 'Triggers', EventingContextType.TRIGGER, vscode.TreeItemCollapsibleState.Expanded, null, null),
+  new EventingTreeItem(
+    null,
+    null,
+    'Channels',
+    EventingContextType.CHANNEL_FOLDER,
+    vscode.TreeItemCollapsibleState.Expanded,
+    null,
+    null,
+  ),
+  new EventingTreeItem(
+    null,
+    null,
+    'Sources',
+    EventingContextType.SOURCE_FOLDER,
+    vscode.TreeItemCollapsibleState.Expanded,
+    null,
+    null,
+  ),
+  new EventingTreeItem(
+    null,
+    null,
+    'Subscriptions',
+    EventingContextType.SUBSCRIPTION_FOLDER,
+    vscode.TreeItemCollapsibleState.Expanded,
+    null,
+    null,
+  ),
+  new EventingTreeItem(
+    null,
+    null,
+    'Triggers',
+    EventingContextType.TRIGGER_FOLDER,
+    vscode.TreeItemCollapsibleState.Expanded,
+    null,
+    null,
+  ),
 ];
 
 suite('EventingExplorer', () => {
