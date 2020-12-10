@@ -21,20 +21,23 @@ const CONTEXT_DATA = {
     getChildren: (): undefined[] => [],
   },
   revision: {
-    icon: 'revision-teal.svg',
+    icon: 'revision-teal-r.svg',
+    // icon: 'REV.svg',
     tooltip: 'Revision: {name}',
     description: '',
     getChildren: (): undefined[] => [],
   },
   // eslint-disable-next-line @typescript-eslint/camelcase
   revision_tagged: {
-    icon: 'revision-teal.svg',
+    icon: 'revision-teal-r.svg',
+    // icon: 'REV.svg',
     tooltip: 'Revision: {name}',
     description: '',
     getChildren: (): undefined[] => [],
   },
   service: {
     icon: 'service-gear-teal.svg',
+    // icon: 'SVC.svg',
     tooltip: 'Service: {name}',
     description: '',
     getChildren: (): undefined[] => [],
@@ -42,6 +45,7 @@ const CONTEXT_DATA = {
   // eslint-disable-next-line @typescript-eslint/camelcase
   service_modified: {
     icon: 'service-gear-orange.svg',
+    // icon: 'SVC.svg',
     tooltip: 'Service: {name} modified',
     description: 'modified',
     getChildren: (): undefined[] => [],
