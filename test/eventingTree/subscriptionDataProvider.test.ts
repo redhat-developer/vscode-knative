@@ -26,11 +26,11 @@ suite('SubscriptionDataProvider', () => {
   const testSubscription0: Subscription = new Subscription(
     'example-subscription0',
     'Subscriptions',
-    null,
-    null,
-    null,
-    null,
-    JSON.parse(JSON.stringify(subscriptionData.items[0])),
+    'example-channel0',
+    'aaa',
+    undefined,
+    undefined,
+    JSON.parse(JSON.stringify(subscriptionData.items[4])),
   );
   const testSubscription0TreeItem: EventingTreeItem = new EventingTreeItem(
     eventingFolderNodes[3],
@@ -44,11 +44,11 @@ suite('SubscriptionDataProvider', () => {
   const testSubscription1: Subscription = new Subscription(
     'example-subscription1',
     'Subscriptions',
-    null,
-    null,
-    null,
-    null,
-    JSON.parse(JSON.stringify(subscriptionData.items[1])),
+    'example-channel1',
+    'aaa',
+    'example-broker1',
+    'example-broker0',
+    JSON.parse(JSON.stringify(subscriptionData.items[5])),
   );
   const testSubscription1TreeItem: EventingTreeItem = new EventingTreeItem(
     eventingFolderNodes[3],
@@ -59,7 +59,25 @@ suite('SubscriptionDataProvider', () => {
     null,
     null,
   );
-  const testSubscriptionTreeItems = [testSubscription0TreeItem, testSubscription1TreeItem];
+  const testSubscription2: Subscription = new Subscription(
+    'example-subscription2',
+    'Subscriptions',
+    undefined,
+    undefined,
+    undefined,
+    undefined,
+    JSON.parse(JSON.stringify(subscriptionData.items[6])),
+  );
+  const testSubscription2TreeItem: EventingTreeItem = new EventingTreeItem(
+    eventingFolderNodes[3],
+    testSubscription2,
+    'example-subscription2',
+    EventingContextType.SUBSCRIPTION,
+    vscode.TreeItemCollapsibleState.None,
+    null,
+    null,
+  );
+  const testSubscriptionTreeItems = [testSubscription0TreeItem, testSubscription1TreeItem, testSubscription2TreeItem];
 
   beforeEach(() => {
     sandbox.stub(vscode.window, 'showErrorMessage').resolves();
@@ -89,7 +107,7 @@ suite('SubscriptionDataProvider', () => {
         .stub(subscriptionDataProvider.knExecutor, 'execute')
         .resolves({ error: undefined, stdout: JSON.stringify(subscriptionData) });
       const result = await subscriptionDataProvider.getSubscriptions(eventingFolderNodes[3]);
-      // The list of results gets sorted and the one we want is not at index 4
+      // The list of results gets sorted and the one we want is now at index 4
       assert.equals(result[4], testSubscriptionTreeItems[0]);
       expect(result).to.have.lengthOf(9);
       expect(result[4].label).equals('example-subscription0');
@@ -101,10 +119,22 @@ suite('SubscriptionDataProvider', () => {
       exeStub.onFirstCall().resolves({ error: undefined, stdout: JSON.stringify(subscriptionIncompleteData) });
       exeStub.onSecondCall().resolves({ error: undefined, stdout: JSON.stringify(subscriptionData) });
       const result = await subscriptionDataProvider.getSubscriptions(eventingFolderNodes[3]);
-      // The list of results gets sorted and the one we want is not at index 4
+      // The list of results gets sorted and the one we want is now at index 4
       assert.equals(result[4], testSubscriptionTreeItems[0]);
       expect(result).to.have.lengthOf(9);
       expect(result[4].label).equals('example-subscription0');
+    });
+    test('should return subscription nodes when it has no references in the spec', async () => {
+      sandbox.restore();
+      sandbox.stub(vscode.window, 'showErrorMessage').resolves();
+      sandbox
+        .stub(subscriptionDataProvider.knExecutor, 'execute')
+        .resolves({ error: undefined, stdout: JSON.stringify(subscriptionData) });
+      const result = await subscriptionDataProvider.getSubscriptions(eventingFolderNodes[3]);
+      // The list of results gets sorted and the one we want is now at index 4
+      assert.equals(result[6], testSubscriptionTreeItems[2]);
+      expect(result).to.have.lengthOf(9);
+      expect(result[6].label).equals('example-subscription2');
     });
   });
 });

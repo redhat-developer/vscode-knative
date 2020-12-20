@@ -11,14 +11,22 @@ export class Subscription extends KnativeItem {
   constructor(
     public name: string,
     public parent: string,
-    public channel: Channel,
-    public sink: Sink,
-    public sinkDeadLetter?: Sink,
-    public sinkReply?: Sink,
+    public channel: string,
+    public sink: string,
+    public sinkDeadLetter?: string,
+    public sinkReply?: string,
     public details?: Items,
   ) {
     super();
   }
+
+  childChannel: Channel;
+
+  childSink: Sink;
+
+  childSinkDeadLetter?: Sink;
+
+  childSinkReply?: Sink;
 
   annotation?: Map<string, boolean>;
 
@@ -29,7 +37,15 @@ export class Subscription extends KnativeItem {
   modified?: boolean;
 
   static JSONToSubscription(value: Items): Subscription {
-    const subscription = new Subscription(value.metadata.name, 'Subscriptions', null, null, null, null, value);
+    const subscription = new Subscription(
+      value.metadata.name,
+      'Subscriptions',
+      value.spec.channel?.name,
+      value.spec.subscriber?.ref?.name,
+      value.spec.delivery?.deadLetterSink?.ref?.name,
+      value.spec.reply?.ref?.name,
+      value,
+    );
     return subscription;
   }
 }
@@ -46,18 +62,24 @@ export interface Metadata {
   creationTimestamp: string;
   finalizers?: string[] | null;
   generation: number;
-  managedFields?: ManagedFields[] | null;
+  managedFields?: ManagedFieldsEntity[] | null;
   name: string;
   namespace: string;
   resourceVersion: string;
   selfLink: string;
   uid: string;
+  labels?: Labels | null;
+  ownerReferences?: OwnerReferencesEntity[] | null;
 }
 export interface Annotations {
   'messaging.knative.dev/creator': string;
   'messaging.knative.dev/lastModifier': string;
 }
-export interface ManagedFields {
+export interface Labels {
+  'eventing.knative.dev/broker': string;
+  'eventing.knative.dev/trigger': string;
+}
+export interface ManagedFieldsEntity {
   apiVersion: string;
   fieldsType: string;
   fieldsV1: FieldsV1;
@@ -70,12 +92,13 @@ export interface FieldsV1 {
   'f:spec'?: {} | null;
   'f:status'?: {} | null;
 }
-export interface Spec {
-  channel: Channel;
-  subscriber: Subscriber;
-}
-export interface Subscriber {
-  ref: Ref;
+export interface OwnerReferencesEntity {
+  apiVersion: string;
+  blockOwnerDeletion: boolean;
+  controller: boolean;
+  kind: string;
+  name: string;
+  uid: string;
 }
 export interface Ref {
   apiVersion: string;
@@ -83,18 +106,31 @@ export interface Ref {
   name: string;
   namespace: string;
 }
+export interface SinkRef {
+  ref?: Ref | null;
+  uri?: string | null;
+}
+export interface Spec {
+  channel: Ref;
+  subscriber: SinkRef;
+  delivery?: Delivery | null;
+  reply?: SinkRef | null;
+}
+export interface Delivery {
+  deadLetterSink: SinkRef;
+}
 export interface Status {
-  conditions?: Conditions[] | null;
+  conditions?: ConditionsEntity[] | null;
   observedGeneration: number;
   physicalSubscription: PhysicalSubscription;
 }
-export interface Conditions {
+export interface ConditionsEntity {
   lastTransitionTime: string;
   status: string;
   type: string;
-  message?: string | null;
-  reason?: string | null;
 }
 export interface PhysicalSubscription {
-  subscriberUri?: string | null;
+  subscriberUri: string;
+  deadLetterSinkUri?: string | null;
+  replyUri?: string | null;
 }

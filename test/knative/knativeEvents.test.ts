@@ -25,8 +25,25 @@ suite('Knative Events', () => {
 
   const testBroker0: Broker = new Broker('example-broker0', 'Brokers', JSON.parse(JSON.stringify(brokerData.items[0])));
   const testBroker1: Broker = new Broker('example-broker1', 'Brokers', JSON.parse(JSON.stringify(brokerData.items[1])));
-  const testTrigger0: Trigger = new Trigger('example-trigger0', 'Triggers', JSON.parse(JSON.stringify(triggerData.items[0])));
-  const testTrigger1: Trigger = new Trigger('example-trigger1', 'Triggers', JSON.parse(JSON.stringify(triggerData.items[1])));
+  const filters = new Map();
+  filters.set('name', 'dev.knative.bar');
+  filters.set('type', 'dev.knative.foo');
+  const testTrigger0: Trigger = new Trigger(
+    'example-trigger0',
+    'Triggers',
+    'example-broker0',
+    filters,
+    'aaa',
+    JSON.parse(JSON.stringify(triggerData.items[0])),
+  );
+  const testTrigger1: Trigger = new Trigger(
+    'example-trigger1',
+    'Triggers',
+    'example-broker0',
+    filters,
+    'example-broker1',
+    JSON.parse(JSON.stringify(triggerData.items[1])),
+  );
 
   let eventingTreeItems: EventingTreeItem[];
   let brokerEventFolder: KEvent;

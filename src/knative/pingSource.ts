@@ -4,6 +4,7 @@
  *-----------------------------------------------------------------------------------------------*/
 
 import { BaseSource, Metadata } from './baseSource';
+import { Sink as sinkType } from './sink';
 
 export type sourceOptions = Array<Array<string>>;
 
@@ -19,13 +20,15 @@ export class PingSource extends BaseSource {
     super(name, parent, details);
   }
 
+  childSink: sinkType;
+
   static JSONToSource(value: Items): PingSource {
     const source = new PingSource(
       value.metadata.name,
       'Sources',
       value.spec.schedule,
       value.spec.jsonData,
-      value.spec.sink.ref.name,
+      value.spec.sink?.ref?.name,
       value,
     );
     return source;

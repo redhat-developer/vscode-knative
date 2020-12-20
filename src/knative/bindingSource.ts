@@ -4,6 +4,7 @@
  *-----------------------------------------------------------------------------------------------*/
 
 import { BaseSource, Metadata } from './baseSource';
+import { Sink as sinkType } from './sink';
 
 export type sourceOptions = Array<Array<string>>;
 
@@ -12,8 +13,10 @@ export class BindingSource extends BaseSource {
     super(name, parent, details);
   }
 
+  childSink: sinkType;
+
   static JSONToSource(value: Items): BindingSource {
-    const source = new BindingSource(value.metadata.name, 'Sources', value.spec.subject.name, value.spec.sink.ref.name, value);
+    const source = new BindingSource(value.metadata.name, 'Sources', value.spec.subject?.name, value.spec.sink?.ref?.name, value);
     return source;
   }
 }

@@ -15,8 +15,25 @@ chai.use(sinonChai);
 suite('Knative Triggers', () => {
   const sandbox = sinon.createSandbox();
   const knativeTriggers: KnativeTriggers = KnativeTriggers.Instance;
-  const testTrigger0: Trigger = new Trigger('example-trigger0', 'Triggers', JSON.parse(JSON.stringify(triggerData.items[0])));
-  const testTrigger1: Trigger = new Trigger('example-trigger1', 'Triggers', JSON.parse(JSON.stringify(triggerData.items[1])));
+  const filters = new Map();
+  filters.set('name', 'dev.knative.bar');
+  filters.set('type', 'dev.knative.foo');
+  const testTrigger0: Trigger = new Trigger(
+    'example-trigger0',
+    'Triggers',
+    'example-broker0',
+    filters,
+    'aaa',
+    JSON.parse(JSON.stringify(triggerData.items[0])),
+  );
+  const testTrigger1: Trigger = new Trigger(
+    'example-trigger1',
+    'Triggers',
+    'example-broker0',
+    filters,
+    'example-broker1',
+    JSON.parse(JSON.stringify(triggerData.items[1])),
+  );
   let testTriggers: Trigger[];
 
   beforeEach(() => {

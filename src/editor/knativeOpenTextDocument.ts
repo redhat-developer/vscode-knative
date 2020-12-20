@@ -30,7 +30,8 @@ export async function openTreeItemInEditor(
       ? treeItem.contextValue.substr(0, treeItem.contextValue.indexOf('_'))
       : treeItem.contextValue;
   }
-  const name: string = treeItem.getName();
+  const foundName: string = treeItem.getName();
+  const name: string = foundName.includes(' - ') ? foundName.slice(foundName.lastIndexOf(' - ') + 3) : foundName;
   const uri = vfsUri(schema, contextValue, name, outputFormat);
 
   await vscode.workspace.openTextDocument(uri).then(

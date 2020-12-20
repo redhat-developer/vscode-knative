@@ -8,11 +8,16 @@ import { EventingTreeItem } from './eventingTreeItem';
 import { Execute, loadItems } from '../cli/execute';
 import { CliExitData } from '../cli/cmdCli';
 import { KnAPI } from '../cli/kn-api';
-import { EventingContextType } from '../cli/config';
+import { EventingContextType, ServingContextType } from '../cli/config';
 import { compareNodes } from '../knative/knativeItem';
 import { Subscription } from '../knative/subscription';
 import { KnativeSubscriptions } from '../knative/knativeSubscriptions';
 import { KnativeEvents } from '../knative/knativeEvents';
+import { Channel } from '../knative/channel';
+import { Sink } from '../knative/sink';
+import { Broker } from '../knative/broker';
+import { Service } from '../knative/service';
+import { ServingTreeItem } from '../servingTree/servingTreeItem';
 
 export class SubscriptionDataProvider {
   public knExecutor = new Execute();
@@ -90,7 +95,7 @@ export class SubscriptionDataProvider {
           value,
           value.name,
           EventingContextType.SUBSCRIPTION,
-          TreeItemCollapsibleState.None,
+          TreeItemCollapsibleState.Expanded,
           null,
           null,
         );
@@ -99,5 +104,68 @@ export class SubscriptionDataProvider {
       .sort(compareNodes);
 
     return children;
+  }
+
+  /**
+   * A Subscription should have at least 2 children and up to 4. This will build a list of those children.
+   */
+  // eslint-disable-next-line class-methods-use-this
+  public getSubscriptionChildren(parent: EventingTreeItem): Array<EventingTreeItem | ServingTreeItem> {
+    const sub: Subscription = parent.getKnativeItem() as Subscription;
+
+    const children: Sink[] = [sub.childChannel, sub.childSink, sub.childSinkDeadLetter, sub.childSinkReply];
+    const childrenLabel = ['Channel', 'Sink', 'DeadLetterSink', 'Reply'];
+    const treeItems: Array<EventingTreeItem | ServingTreeItem> = [];
+    // Create an empty state message when there are no Children.
+    children.forEach((child, index) => {
+      if (index === 0 && (child === null || child === undefined)) {
+        return [
+          new EventingTreeItem(
+            parent,
+            null,
+            'No Channel Found',
+            EventingContextType.NONE,
+            TreeItemCollapsibleState.None,
+            null,
+            null,
+          ),
+        ];
+      }
+      if (child instanceof Broker) {
+        treeItems.push(
+          new EventingTreeItem(
+            parent,
+            child,
+            `${childrenLabel[index]} - ${child.name}`,
+            EventingContextType.BROKER,
+            TreeItemCollapsibleState.None,
+          ),
+        );
+      }
+      if (child instanceof Channel) {
+        treeItems.push(
+          new EventingTreeItem(
+            parent,
+            child,
+            `${childrenLabel[index]} - ${child.name}`,
+            EventingContextType.CHANNEL,
+            TreeItemCollapsibleState.None,
+          ),
+        );
+      }
+      if (child instanceof Service) {
+        treeItems.push(
+          new ServingTreeItem(
+            parent,
+            child,
+            `${childrenLabel[index]} - ${child.name}`,
+            ServingContextType.SERVICE,
+            TreeItemCollapsibleState.None,
+          ),
+        );
+      }
+    });
+
+    return treeItems;
   }
 }

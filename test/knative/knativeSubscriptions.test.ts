@@ -79,6 +79,14 @@ suite('Knative Subscriptions', () => {
       assert.equals(testSubscriptions, returnedSubscriptions);
     });
   });
+  suite('Adding a Channel', () => {
+    test('should add a Channel to the parent subscription and return the Channel added', () => {
+      const remainingSubscriptions: Subscription[] = knativeSubscriptions.removeSubscription('example-subscription1');
+      expect(remainingSubscriptions).to.have.lengthOf(1);
+      const returnedSubscription: Subscription = knativeSubscriptions.addSubscription(testSubscription1);
+      assert.equals(testSubscription1, returnedSubscription);
+    });
+  });
   suite('Updating a Subscription', () => {
     test('should return a list of subscriptions, including the updated one', () => {
       const returnedSubscriptions: Subscription[] = knativeSubscriptions.updateSubscription(testSubscription1);

@@ -19,7 +19,7 @@ export class Channel extends KnativeItem {
   modified?: boolean;
 
   static JSONToChannel(value: Items): Channel {
-    const channel = new Channel(value.metadata.name, 'Channels', value.spec.channelTemplate.kind, value);
+    const channel = new Channel(value.metadata.name, 'Channels', value.spec.channelTemplate?.kind, value);
     return channel;
   }
 }

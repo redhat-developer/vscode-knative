@@ -18,6 +18,7 @@ import { Channel } from '../../src/knative/channel';
 import { GenericSource } from '../../src/knative/genericSource';
 import { Subscription } from '../../src/knative/subscription';
 import { Trigger } from '../../src/knative/trigger';
+import { ServingTreeItem } from '../../src/servingTree/servingTreeItem';
 
 import rewire = require('rewire');
 const rewiredEventingDataProvider = rewire('../../src/eventingTree/eventingDataProvider');
@@ -183,8 +184,8 @@ suite('EventingDataProvider', () => {
   const testSubscription0: Subscription = new Subscription(
     'example-subscription0',
     'Subscriptions',
-    testChannel0,
-    null,
+    'example-channel0',
+    'aaa',
     null,
     null,
     JSON.parse(JSON.stringify(subscriptionData.items[0])),
@@ -202,10 +203,10 @@ suite('EventingDataProvider', () => {
   const testSubscription1: Subscription = new Subscription(
     'example-subscription1',
     'Subscriptions',
-    testChannel1,
-    null,
-    null,
-    null,
+    'example-channel1',
+    'aaa',
+    'example-broker1',
+    'example-broker0',
     JSON.parse(JSON.stringify(subscriptionData.items[1])),
   );
   testSubscription1.modified = false;
@@ -220,7 +221,25 @@ suite('EventingDataProvider', () => {
   );
   const testSubscriptionTreeItems = [testSubscription0TreeItem, testSubscription1TreeItem];
 
-  const testTrigger0: Trigger = new Trigger('example-trigger0', 'Triggers', JSON.parse(JSON.stringify(triggerData.items[0])));
+  const filters = new Map();
+  filters.set('name', 'dev.knative.bar');
+  filters.set('type', 'dev.knative.foo');
+  const testTrigger0: Trigger = new Trigger(
+    'example-trigger0',
+    'Triggers',
+    'example-broker0',
+    filters,
+    'aaa',
+    JSON.parse(JSON.stringify(triggerData.items[0])),
+  );
+  const testTrigger1: Trigger = new Trigger(
+    'example-trigger1',
+    'Triggers',
+    'example-broker0',
+    filters,
+    'example-broker1',
+    JSON.parse(JSON.stringify(triggerData.items[1])),
+  );
   testTrigger0.modified = false;
   const testTrigger0TreeItem: EventingTreeItem = new EventingTreeItem(
     eventingFolderNodes[4],
@@ -231,7 +250,6 @@ suite('EventingDataProvider', () => {
     null,
     null,
   );
-  const testTrigger1: Trigger = new Trigger('example-trigger1', 'Triggers', JSON.parse(JSON.stringify(triggerData.items[1])));
   testTrigger1.modified = false;
   const testTrigger1TreeItem: EventingTreeItem = new EventingTreeItem(
     eventingFolderNodes[4],
@@ -389,7 +407,7 @@ suite('EventingDataProvider', () => {
 
   suite('Getting a Parent Item', () => {
     test('should return null for a top level folder', () => {
-      const item: EventingTreeItem = eventingDataProvider.getParent(eventingFolderNodes[0]);
+      const item: EventingTreeItem | ServingTreeItem = eventingDataProvider.getParent(eventingFolderNodes[0]);
       assert.equals(item, null);
     });
     test('should return the Broker folder for a Broker instance', async () => {
@@ -397,7 +415,7 @@ suite('EventingDataProvider', () => {
       // set children
       sandbox.stub(eventingDataProvider.brokerDataProvider, `getBrokers`).resolves(testBrokerTreeItems);
       const result = await eventingDataProvider.getChildren(eventingTreeItems[0]);
-      const item: EventingTreeItem = eventingDataProvider.getParent(result[0]);
+      const item: EventingTreeItem | ServingTreeItem = eventingDataProvider.getParent(result[0]);
       assert.equals(item.getName(), 'Brokers');
     });
   });

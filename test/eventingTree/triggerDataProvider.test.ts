@@ -23,7 +23,25 @@ suite('TriggerDataProvider', () => {
 
   const eventingFolderNodes: EventingTreeItem[] = eventingDataProvider.getEventingFolders();
 
-  const testTrigger0: Trigger = new Trigger('example-trigger0', 'Triggers', JSON.parse(JSON.stringify(triggerData.items[0])));
+  const filters = new Map();
+  filters.set('name', 'dev.knative.bar');
+  filters.set('type', 'dev.knative.foo');
+  const testTrigger0: Trigger = new Trigger(
+    'example-trigger0',
+    'Triggers',
+    'example-broker0',
+    filters,
+    'aaa',
+    JSON.parse(JSON.stringify(triggerData.items[0])),
+  );
+  const testTrigger1: Trigger = new Trigger(
+    'example-trigger1',
+    'Triggers',
+    'example-broker0',
+    filters,
+    'example-broker1',
+    JSON.parse(JSON.stringify(triggerData.items[1])),
+  );
   const testTrigger0TreeItem: EventingTreeItem = new EventingTreeItem(
     eventingFolderNodes[4],
     testTrigger0,
@@ -33,7 +51,6 @@ suite('TriggerDataProvider', () => {
     null,
     null,
   );
-  const testTrigger1: Trigger = new Trigger('example-trigger1', 'Triggers', JSON.parse(JSON.stringify(triggerData.items[1])));
   const testTrigger1TreeItem: EventingTreeItem = new EventingTreeItem(
     eventingFolderNodes[4],
     testTrigger1,

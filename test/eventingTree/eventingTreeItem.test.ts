@@ -162,7 +162,7 @@ suite('EventingTreeItem', () => {
     const localDir = __dirname;
     // use regex for search since the backslash for windows needs to be escaped in a regex string
     const expected = vscode.Uri.file(
-      `${localDir.substring(0, localDir.search(/out.test/))}images${path.sep}context${path.sep}broker2.svg`,
+      `${localDir.substring(0, localDir.search(/out.test/))}images${path.sep}context${path.sep}EVT.svg`,
     );
     assert.equals(revPath, expected);
   });

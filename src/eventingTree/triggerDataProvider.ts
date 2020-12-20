@@ -8,11 +8,16 @@ import { EventingTreeItem } from './eventingTreeItem';
 import { Execute, loadItems } from '../cli/execute';
 import { CliExitData } from '../cli/cmdCli';
 import { KnAPI } from '../cli/kn-api';
-import { EventingContextType } from '../cli/config';
+import { EventingContextType, ServingContextType } from '../cli/config';
 import { compareNodes } from '../knative/knativeItem';
 import { Trigger } from '../knative/trigger';
 import { KnativeTriggers } from '../knative/knativeTriggers';
 import { KnativeEvents } from '../knative/knativeEvents';
+import { ServingTreeItem } from '../servingTree/servingTreeItem';
+import { Sink } from '../knative/sink';
+import { Service } from '../knative/service';
+import { Channel } from '../knative/channel';
+import { Broker } from '../knative/broker';
 
 export class TriggerDataProvider {
   public knExecutor = new Execute();
@@ -86,7 +91,7 @@ export class TriggerDataProvider {
           value,
           value.name,
           EventingContextType.TRIGGER,
-          TreeItemCollapsibleState.None,
+          TreeItemCollapsibleState.Expanded,
           null,
           null,
         );
@@ -95,5 +100,68 @@ export class TriggerDataProvider {
       .sort(compareNodes);
 
     return children;
+  }
+
+  /**
+   * A Trigger should have 2 children, a Broker and a Sink. This will build a list of those children.
+   */
+  // eslint-disable-next-line class-methods-use-this
+  public getTriggerChildren(parent: EventingTreeItem): Array<EventingTreeItem | ServingTreeItem> {
+    const trigger: Trigger = parent.getKnativeItem() as Trigger;
+
+    const children: Sink[] = [trigger.childBroker, trigger.childSink];
+    const childrenLabel = ['Broker', 'Sink'];
+    const treeItems: Array<EventingTreeItem | ServingTreeItem> = [];
+    // Create an empty state message when there are no Children.
+    children.forEach((child, index) => {
+      if (index === 0 && (child === null || child === undefined)) {
+        return [
+          new EventingTreeItem(
+            parent,
+            null,
+            'No Channel Found',
+            EventingContextType.NONE,
+            TreeItemCollapsibleState.None,
+            null,
+            null,
+          ),
+        ];
+      }
+      if (child instanceof Broker) {
+        treeItems.push(
+          new EventingTreeItem(
+            parent,
+            child,
+            `${childrenLabel[index]} - ${child.name}`,
+            EventingContextType.BROKER,
+            TreeItemCollapsibleState.None,
+          ),
+        );
+      }
+      if (child instanceof Channel) {
+        treeItems.push(
+          new EventingTreeItem(
+            parent,
+            child,
+            `${childrenLabel[index]} - ${child.name}`,
+            EventingContextType.CHANNEL,
+            TreeItemCollapsibleState.None,
+          ),
+        );
+      }
+      if (child instanceof Service) {
+        treeItems.push(
+          new ServingTreeItem(
+            parent,
+            child,
+            `${childrenLabel[index]} - ${child.name}`,
+            ServingContextType.SERVICE,
+            TreeItemCollapsibleState.None,
+          ),
+        );
+      }
+    });
+
+    return treeItems;
   }
 }

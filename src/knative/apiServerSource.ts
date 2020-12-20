@@ -4,6 +4,7 @@
  *-----------------------------------------------------------------------------------------------*/
 
 import { BaseSource, Metadata } from './baseSource';
+import { Sink as sinkType } from './sink';
 
 export type sourceOptions = Array<Array<string>>;
 
@@ -12,14 +13,16 @@ export class APIServerSource extends BaseSource {
     super(name, parent, details);
   }
 
+  childSink: sinkType;
+
   static JSONToSource(value: Items): APIServerSource {
-    const source = new APIServerSource(
-      value.metadata.name,
-      'Sources',
-      value.spec.resources[0].controllerSelector.name,
-      value.spec.sink.ref.name,
-      value,
-    );
+    // eslint-disable-next-line no-console
+    console.log(`sourceDataProvider  api source value.metadata.name ${value.metadata.name}`);
+    let controller: string;
+    if (value.spec.resources) {
+      controller = value.spec.resources[0].controllerSelector?.name;
+    }
+    const source = new APIServerSource(value.metadata.name, 'Sources', controller, value.spec.sink?.ref?.name, value);
     return source;
   }
 }

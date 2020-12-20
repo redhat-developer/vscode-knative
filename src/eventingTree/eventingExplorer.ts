@@ -10,6 +10,7 @@ import { Platform } from '../util/platform';
 import { EventingTreeItem } from './eventingTreeItem';
 import { EventingDataProvider } from './eventingDataProvider';
 import { WatchUtil, FileContentChangeNotifier } from '../util/watch';
+import { ServingTreeItem } from '../servingTree/servingTreeItem';
 
 const kubeConfigFolder: string = path.join(Platform.getUserHomePath(), '.kube');
 const kubeconfigParam: string[][] = [[kubeConfigFolder, 'config']];
@@ -27,7 +28,7 @@ kubeconfigList.forEach((value): void => {
 });
 
 export class EventingExplorer implements Disposable {
-  public treeView: TreeView<EventingTreeItem>;
+  public treeView: TreeView<EventingTreeItem | ServingTreeItem>;
 
   public fsw: FileContentChangeNotifier[] = [];
 
@@ -66,7 +67,7 @@ export class EventingExplorer implements Disposable {
     this.treeView.dispose();
   }
 
-  public async reveal(item: EventingTreeItem): Promise<void> {
+  public async reveal(item: EventingTreeItem | ServingTreeItem): Promise<void> {
     await this.treeView.reveal(item);
   }
 }

@@ -4,11 +4,24 @@
  *-----------------------------------------------------------------------------------------------*/
 
 import { KnativeItem } from './knativeItem';
+import { Broker } from './broker';
+import { Sink } from './sink';
 
 export class Trigger extends KnativeItem {
-  constructor(public name: string, public parent: string, public details?: Items) {
+  constructor(
+    public name: string,
+    public parent: string,
+    public broker: string,
+    public filter: Map<string, string>,
+    public sink: string,
+    public details?: Items,
+  ) {
     super();
   }
+
+  childBroker: Broker;
+
+  childSink: Sink;
 
   annotation?: Map<string, boolean>;
 
@@ -19,7 +32,22 @@ export class Trigger extends KnativeItem {
   modified?: boolean;
 
   static JSONToTrigger(value: Items): Trigger {
-    const trigger = new Trigger(value.metadata.name, 'Triggers', value);
+    // create a map of the filter key/value pairs
+    const filters = new Map();
+    if (value.spec.filter.attributes) {
+      // eslint-disable-next-line no-restricted-syntax, guard-for-in
+      for (const f in value.spec.filter.attributes) {
+        filters.set(f, value.spec.filter.attributes[f]);
+      }
+    }
+    const trigger = new Trigger(
+      value.metadata.name,
+      'Triggers',
+      value.spec.broker,
+      filters,
+      value.spec.subscriber?.ref?.name,
+      value,
+    );
     return trigger;
   }
 }
@@ -65,8 +93,15 @@ export interface FieldsV1 {
 }
 export interface Spec {
   broker: string;
-  filter: {};
+  filter: Filter;
   subscriber: Subscriber;
+}
+export interface Filter {
+  attributes: Attributes;
+}
+export interface Attributes {
+  name: string;
+  type: string;
 }
 export interface Subscriber {
   ref: Ref;

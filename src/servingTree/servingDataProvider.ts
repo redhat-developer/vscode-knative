@@ -31,8 +31,9 @@ import { KnativeServices } from '../knative/knativeServices';
 import { KnativeResourceVirtualFileSystemProvider, KN_RESOURCE_SCHEME } from '../cli/virtualfs';
 import * as vfs from '../cli/virtualfs';
 import { KnOutputChannel, OutputChannel } from '../output/knOutputChannel';
+import { EventingTreeItem } from '../eventingTree/eventingTreeItem';
 
-export class ServingDataProvider implements TreeDataProvider<ServingTreeItem> {
+export class ServingDataProvider implements TreeDataProvider<ServingTreeItem | EventingTreeItem> {
   public knExecutor = new Execute();
 
   public knvfs = new KnativeResourceVirtualFileSystemProvider();
@@ -121,7 +122,7 @@ export class ServingDataProvider implements TreeDataProvider<ServingTreeItem> {
   }
 
   // eslint-disable-next-line class-methods-use-this
-  getParent?(element: ServingTreeItem): ServingTreeItem {
+  getParent?(element: ServingTreeItem | EventingTreeItem): ServingTreeItem | EventingTreeItem {
     return element.getParent();
   }
 

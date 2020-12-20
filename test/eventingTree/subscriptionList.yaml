@@ -505,10 +505,10 @@ items:
           manager: controller
           operation: Update
           time: '2020-11-17T15:32:49Z'
-      name: sub0
+      name: example-subscription1
       namespace: josh
       resourceVersion: '60286'
-      selfLink: /apis/messaging.knative.dev/v1beta1/namespaces/josh/subscriptions/sub0
+      selfLink: /apis/messaging.knative.dev/v1beta1/namespaces/josh/subscriptions/example-subscription1
       uid: 0cacb926-8c73-40b2-b56e-67d4adfcfede
     spec:
       channel:

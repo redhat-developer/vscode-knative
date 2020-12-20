@@ -8,6 +8,7 @@ import * as path from 'path';
 import { ServingContextType } from '../cli/config';
 import { KnativeItem } from '../knative/knativeItem';
 import { Revision, Traffic } from '../knative/revision';
+import { EventingTreeItem } from '../eventingTree/eventingTreeItem';
 
 import format = require('string-format');
 
@@ -21,31 +22,31 @@ const CONTEXT_DATA = {
     getChildren: (): undefined[] => [],
   },
   revision: {
-    icon: 'revision-teal-r.svg',
-    // icon: 'REV.svg',
+    // icon: 'revision-teal-r.svg',
+    icon: 'REV.svg',
     tooltip: 'Revision: {name}',
     description: '',
     getChildren: (): undefined[] => [],
   },
   // eslint-disable-next-line @typescript-eslint/camelcase
   revision_tagged: {
-    icon: 'revision-teal-r.svg',
-    // icon: 'REV.svg',
+    // icon: 'revision-teal-r.svg',
+    icon: 'REV.svg',
     tooltip: 'Revision: {name}',
     description: '',
     getChildren: (): undefined[] => [],
   },
   service: {
-    icon: 'service-gear-teal.svg',
-    // icon: 'SVC.svg',
+    // icon: 'service-gear-teal.svg',
+    icon: 'SVC.svg',
     tooltip: 'Service: {name}',
     description: '',
     getChildren: (): undefined[] => [],
   },
   // eslint-disable-next-line @typescript-eslint/camelcase
   service_modified: {
-    icon: 'service-gear-orange.svg',
-    // icon: 'SVC.svg',
+    // icon: 'service-gear-orange.svg',
+    icon: 'SVC.svg',
     tooltip: 'Service: {name} modified',
     description: 'modified',
     getChildren: (): undefined[] => [],
@@ -58,7 +59,7 @@ export class ServingTreeItem extends TreeItem {
   private desc: string;
 
   constructor(
-    private parent: ServingTreeItem,
+    private parent: ServingTreeItem | EventingTreeItem,
     public readonly item: KnativeItem,
     public readonly label: string,
     public readonly contextValue: ServingContextType,
@@ -153,7 +154,7 @@ export class ServingTreeItem extends TreeItem {
     return CONTEXT_DATA[this.contextValue].getChildren();
   }
 
-  getParent(): ServingTreeItem {
+  getParent(): ServingTreeItem | EventingTreeItem {
     return this.parent;
   }
 

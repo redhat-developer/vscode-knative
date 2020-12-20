@@ -23,8 +23,9 @@ import { EventingContextType } from '../cli/config';
 import { KnativeResourceVirtualFileSystemProvider } from '../cli/virtualfs';
 import { KnativeEvents } from '../knative/knativeEvents';
 import { KEvent } from '../knative/kEvent';
+import { ServingTreeItem } from '../servingTree/servingTreeItem';
 
-export class EventingDataProvider implements TreeDataProvider<EventingTreeItem> {
+export class EventingDataProvider implements TreeDataProvider<EventingTreeItem | ServingTreeItem> {
   private events: KnativeEvents = KnativeEvents.Instance;
 
   public brokerDataProvider = new BrokerDataProvider();
@@ -39,13 +40,14 @@ export class EventingDataProvider implements TreeDataProvider<EventingTreeItem> 
 
   public knvfs = new KnativeResourceVirtualFileSystemProvider();
 
-  private onDidChangeTreeDataEmitter: EventEmitter<EventingTreeItem | undefined | null> = new EventEmitter<
-    EventingTreeItem | undefined | null
+  private onDidChangeTreeDataEmitter: EventEmitter<EventingTreeItem | ServingTreeItem | undefined | null> = new EventEmitter<
+    EventingTreeItem | ServingTreeItem | undefined | null
   >();
 
-  readonly onDidChangeTreeData: Event<EventingTreeItem | undefined | null> = this.onDidChangeTreeDataEmitter.event;
+  readonly onDidChangeTreeData: Event<EventingTreeItem | ServingTreeItem | undefined | null> = this.onDidChangeTreeDataEmitter
+    .event;
 
-  refresh(target?: EventingTreeItem): void {
+  refresh(target?: EventingTreeItem | ServingTreeItem): void {
     this.onDidChangeTreeDataEmitter.fire(target);
   }
 
@@ -87,7 +89,7 @@ export class EventingDataProvider implements TreeDataProvider<EventingTreeItem> 
    * @param element TreeObject
    */
   // eslint-disable-next-line class-methods-use-this
-  getTreeItem(element: EventingTreeItem): TreeItem | Thenable<TreeItem> {
+  getTreeItem(element: EventingTreeItem | ServingTreeItem): TreeItem | Thenable<TreeItem> {
     return element;
   }
 
@@ -103,8 +105,8 @@ export class EventingDataProvider implements TreeDataProvider<EventingTreeItem> 
    *
    * @param element TreeObject
    */
-  getChildren(element?: EventingTreeItem): ProviderResult<EventingTreeItem[]> {
-    let children: ProviderResult<EventingTreeItem[]>;
+  getChildren(element?: EventingTreeItem | ServingTreeItem): ProviderResult<Array<EventingTreeItem | ServingTreeItem>> {
+    let children: ProviderResult<Array<EventingTreeItem | ServingTreeItem>>;
     if (element) {
       children = this.getEventingInstances(element);
     } else {
@@ -114,7 +116,7 @@ export class EventingDataProvider implements TreeDataProvider<EventingTreeItem> 
   }
 
   // eslint-disable-next-line class-methods-use-this
-  getParent?(element: EventingTreeItem): EventingTreeItem {
+  getParent?(element: EventingTreeItem | ServingTreeItem): EventingTreeItem | ServingTreeItem {
     return element.getParent();
   }
 
@@ -124,23 +126,31 @@ export class EventingDataProvider implements TreeDataProvider<EventingTreeItem> 
    *
    * @param parentService
    */
-  public async getEventingInstances(parentEventFolder: EventingTreeItem): Promise<EventingTreeItem[]> {
-    let children: Promise<EventingTreeItem[]>;
+  public async getEventingInstances(
+    parentTreeItem: EventingTreeItem | ServingTreeItem,
+  ): Promise<Array<EventingTreeItem | ServingTreeItem>> {
+    let children: Promise<Array<EventingTreeItem | ServingTreeItem>> | Array<EventingTreeItem | ServingTreeItem>;
     try {
-      if (parentEventFolder.contextValue === EventingContextType.BROKER_FOLDER) {
-        children = this.brokerDataProvider.getBrokers(parentEventFolder);
+      if (parentTreeItem.contextValue === EventingContextType.BROKER_FOLDER) {
+        children = this.brokerDataProvider.getBrokers(parentTreeItem);
       }
-      if (parentEventFolder.contextValue === EventingContextType.CHANNEL_FOLDER) {
-        children = this.channelDataProvider.getChannels(parentEventFolder);
+      if (parentTreeItem.contextValue === EventingContextType.CHANNEL_FOLDER) {
+        children = this.channelDataProvider.getChannels(parentTreeItem);
       }
-      if (parentEventFolder.contextValue === EventingContextType.SOURCE_FOLDER) {
-        children = this.sourceDataProvider.getSources(parentEventFolder);
+      if (parentTreeItem.contextValue === EventingContextType.SOURCE_FOLDER) {
+        children = this.sourceDataProvider.getSources(parentTreeItem);
       }
-      if (parentEventFolder.contextValue === EventingContextType.SUBSCRIPTION_FOLDER) {
-        children = this.subscriptionDataProvider.getSubscriptions(parentEventFolder);
+      if (parentTreeItem.contextValue === EventingContextType.SUBSCRIPTION_FOLDER) {
+        children = this.subscriptionDataProvider.getSubscriptions(parentTreeItem);
       }
-      if (parentEventFolder.contextValue === EventingContextType.TRIGGER_FOLDER) {
-        children = this.triggerDataProvider.getTriggers(parentEventFolder);
+      if (parentTreeItem.contextValue === EventingContextType.SUBSCRIPTION) {
+        children = this.subscriptionDataProvider.getSubscriptionChildren(parentTreeItem);
+      }
+      if (parentTreeItem.contextValue === EventingContextType.TRIGGER_FOLDER) {
+        children = this.triggerDataProvider.getTriggers(parentTreeItem);
+      }
+      if (parentTreeItem.contextValue === EventingContextType.TRIGGER) {
+        children = this.triggerDataProvider.getTriggerChildren(parentTreeItem);
       }
     } catch (err) {
       // Catch the Rejected Promise of the Execute to list Eventing data.

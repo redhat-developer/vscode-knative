@@ -4,6 +4,13 @@
  *-----------------------------------------------------------------------------------------------*/
 
 import { Trigger } from './trigger';
+import { KnativeChannels } from './knativeChannels';
+import { KnativeServices } from './knativeServices';
+import { KnativeBrokers } from './knativeBrokers';
+import { Broker } from './broker';
+import { Channel } from './channel';
+import { Service } from './service';
+import { Sink } from './sink';
 
 /**
  * A singleton to hold the Triggers.
@@ -24,6 +31,12 @@ export class KnativeTriggers {
     return KnativeTriggers.instance;
   }
 
+  private knChannel = KnativeChannels.Instance;
+
+  private knService = KnativeServices.Instance;
+
+  private knBroker = KnativeBrokers.Instance;
+
   private triggers: Trigger[];
 
   // eslint-disable-next-line class-methods-use-this
@@ -43,6 +56,8 @@ export class KnativeTriggers {
 
   public addTrigger(trigger: Trigger): Trigger {
     this.triggers.push(trigger);
+    this.addBroker(trigger);
+    this.addSink(trigger);
     // this.triggers.sort(compareNodes);
     this.updateTree();
     return trigger;
@@ -50,9 +65,63 @@ export class KnativeTriggers {
 
   public addTriggers(triggers: Trigger[]): Trigger[] {
     this.triggers = triggers;
+    // Add the children objects to the Trigger
+    triggers.forEach((trigger) => {
+      this.addBroker(trigger);
+      this.addSink(trigger);
+    });
     // this.triggers.sort(compareNodes);
     this.updateTree();
     return this.triggers;
+  }
+
+  /**
+   * Find a Channel from the static list of Channels that matches the name
+   *  in the Subscription channel field.
+   *
+   * Then add that found Channel to the childChannel in the sub sent in.
+   * @param subscription
+   * @returns channel for the subscription
+   */
+  public addBroker(trigger: Trigger): Broker {
+    const brokerName = trigger.broker;
+    // if no channel was set on the subscription then don't try to add it.
+    if (!brokerName) {
+      return null;
+    }
+
+    const broker: Broker = this.knBroker.getBrokers().find((child): boolean => child.name === brokerName);
+    if (broker) {
+      this.findTrigger(trigger.name).childBroker = broker;
+      this.updateTree();
+    }
+    return broker;
+  }
+
+  /**
+   * Find a Channel from the static list of Channels that matches the name
+   *  in the Subscription channel field.
+   *
+   * Then add that found Channel to the childChannel in the sub sent in.
+   * @param subscription
+   * @returns channel for the subscription
+   */
+  public addSink(trigger: Trigger): Sink {
+    const sinkName = trigger.sink;
+    // if no channel was set on the subscription then don't try to add it.
+    if (!sinkName) {
+      return null;
+    }
+
+    const broker: Broker = this.knBroker.getBrokers().find((child): boolean => child.name === sinkName);
+    const channel: Channel = this.knChannel.getChannels().find((child): boolean => child.name === sinkName);
+    const service: Service = this.knService.getServices().find((child): boolean => child.name === sinkName);
+    const sink: Sink = broker || channel || service;
+    if (sink) {
+      this.findTrigger(trigger.name).childSink = sink;
+      this.updateTree();
+    }
+    return sink;
   }
 
   public updateTrigger(trigger: Trigger): Trigger[] {

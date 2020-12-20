@@ -16,6 +16,7 @@ import { Revision } from '../../src/knative/revision';
 import { Service, CreateService } from '../../src/knative/service';
 import { ServingTreeItem } from '../../src/servingTree/servingTreeItem';
 import { ServingDataProvider } from '../../src/servingTree/servingDataProvider';
+import { EventingTreeItem } from '../../src/eventingTree/eventingTreeItem';
 
 import rewire = require('rewire');
 
@@ -729,12 +730,12 @@ status:
         null,
         null,
       );
-      const item: ServingTreeItem = servingDataProvider.getParent(parent);
+      const item: ServingTreeItem | EventingTreeItem = servingDataProvider.getParent(parent);
       assert.equals(item, null);
     });
     test('should return the Service of the Revision', async () => {
       const result = await servingDataProvider.getRevisions(serviceTreeItems[0]);
-      const item: ServingTreeItem = servingDataProvider.getParent(result[0]);
+      const item: ServingTreeItem | EventingTreeItem = servingDataProvider.getParent(result[0]);
       assert.equals(item, serviceTreeItems[0]);
     });
   });

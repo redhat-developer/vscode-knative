@@ -10,6 +10,7 @@ import { Platform } from '../util/platform';
 import { ServingTreeItem } from './servingTreeItem';
 import { ServingDataProvider } from './servingDataProvider';
 import { WatchUtil, FileContentChangeNotifier } from '../util/watch';
+import { EventingTreeItem } from '../eventingTree/eventingTreeItem';
 
 const kubeConfigFolder: string = path.join(Platform.getUserHomePath(), '.kube');
 const kubeconfigParam: string[][] = [[kubeConfigFolder, 'config']];
@@ -27,7 +28,7 @@ kubeconfigList.forEach((value): void => {
 });
 
 export class ServingExplorer implements Disposable {
-  public treeView: TreeView<ServingTreeItem>;
+  public treeView: TreeView<ServingTreeItem | EventingTreeItem>;
 
   // eslint-disable-next-line class-methods-use-this
   public issueUrl(): string {
