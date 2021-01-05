@@ -179,7 +179,7 @@ export class EventingDataProvider implements TreeDataProvider<EventingTreeItem |
       new EventingTreeItem(
         null,
         events[0],
-        eventingConcepts[0],
+        { label: eventingConcepts[0] },
         EventingContextType.BROKER_FOLDER,
         TreeItemCollapsibleState.Expanded,
         null,
@@ -188,7 +188,7 @@ export class EventingDataProvider implements TreeDataProvider<EventingTreeItem |
       new EventingTreeItem(
         null,
         events[1],
-        eventingConcepts[1],
+        { label: eventingConcepts[1] },
         EventingContextType.CHANNEL_FOLDER,
         TreeItemCollapsibleState.Expanded,
         null,
@@ -197,7 +197,7 @@ export class EventingDataProvider implements TreeDataProvider<EventingTreeItem |
       new EventingTreeItem(
         null,
         events[2],
-        eventingConcepts[2],
+        { label: eventingConcepts[2] },
         EventingContextType.SOURCE_FOLDER,
         TreeItemCollapsibleState.Expanded,
         null,
@@ -206,7 +206,7 @@ export class EventingDataProvider implements TreeDataProvider<EventingTreeItem |
       new EventingTreeItem(
         null,
         events[3],
-        eventingConcepts[3],
+        { label: eventingConcepts[3] },
         EventingContextType.SUBSCRIPTION_FOLDER,
         TreeItemCollapsibleState.Expanded,
         null,
@@ -215,7 +215,7 @@ export class EventingDataProvider implements TreeDataProvider<EventingTreeItem |
       new EventingTreeItem(
         null,
         events[4],
-        eventingConcepts[4],
+        { label: eventingConcepts[4] },
         EventingContextType.TRIGGER_FOLDER,
         TreeItemCollapsibleState.Expanded,
         null,

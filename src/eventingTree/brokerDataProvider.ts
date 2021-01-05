@@ -66,7 +66,7 @@ export class BrokerDataProvider {
         new EventingTreeItem(
           parent,
           null,
-          'No Broker Found',
+          { label: 'No Broker Found' },
           EventingContextType.NONE,
           TreeItemCollapsibleState.None,
           null,
@@ -84,7 +84,7 @@ export class BrokerDataProvider {
         const obj: EventingTreeItem = new EventingTreeItem(
           parent,
           value,
-          value.name,
+          { label: value.name },
           EventingContextType.BROKER,
           TreeItemCollapsibleState.None,
           null,

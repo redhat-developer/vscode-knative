@@ -33,7 +33,7 @@ suite('ChannelDataProvider', () => {
   const testChannel0TreeItem: EventingTreeItem = new EventingTreeItem(
     eventingFolderNodes[1],
     testChannel0,
-    'example-channel0',
+    { label: 'example-channel0' },
     EventingContextType.CHANNEL,
     vscode.TreeItemCollapsibleState.None,
     null,
@@ -49,7 +49,7 @@ suite('ChannelDataProvider', () => {
   const testChannel1TreeItem: EventingTreeItem = new EventingTreeItem(
     eventingFolderNodes[1],
     testChannel1,
-    'example-channel1',
+    { label: 'example-channel1' },
     EventingContextType.CHANNEL,
     vscode.TreeItemCollapsibleState.None,
     null,
@@ -73,7 +73,7 @@ suite('ChannelDataProvider', () => {
       expect(result).to.have.lengthOf(1);
       expect(result[0].description).equals('');
       expect(result[0].description).equals('');
-      expect(result[0].label).equals('No Channel Found');
+      expect(result[0].label.label).equals('No Channel Found');
       expect(result[0].getName()).equals('No Channel Found');
     });
     test('should return channel nodes', async () => {
@@ -83,7 +83,7 @@ suite('ChannelDataProvider', () => {
       const result = await channelDataProvider.getChannels(eventingFolderNodes[1]);
       assert.equals(result[0], testChannelTreeItems[0]);
       expect(result).to.have.lengthOf(4);
-      expect(result[0].label).equals('example-channel0');
+      expect(result[0].label.label).equals('example-channel0');
     });
     test('should refetch channel info when it is incomplete, then return channel nodes', async () => {
       sandbox.restore();
@@ -94,7 +94,7 @@ suite('ChannelDataProvider', () => {
       const result = await channelDataProvider.getChannels(eventingFolderNodes[1]);
       assert.equals(result[0], testChannelTreeItems[0]);
       expect(result).to.have.lengthOf(4);
-      expect(result[0].label).equals('example-channel0');
+      expect(result[0].label.label).equals('example-channel0');
     });
   });
 });

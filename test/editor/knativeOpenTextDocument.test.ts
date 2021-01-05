@@ -144,7 +144,7 @@ status:
   const testServiceTreeItem: ServingTreeItem = new ServingTreeItem(
     null,
     testService,
-    'example',
+    { label: 'example' },
     ServingContextType.SERVICE,
     vscode.TreeItemCollapsibleState.Expanded,
     null,
@@ -154,7 +154,7 @@ status:
   const testServiceTreeItemModified: ServingTreeItem = new ServingTreeItem(
     null,
     testService,
-    'example',
+    { label: 'example' },
     ServingContextType.SERVICE_MODIFIED,
     vscode.TreeItemCollapsibleState.Expanded,
     null,

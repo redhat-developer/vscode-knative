@@ -210,7 +210,7 @@ status:
   const testServiceTreeItem: ServingTreeItem = new ServingTreeItem(
     null,
     testService,
-    'example',
+    { label: 'example' },
     ServingContextType.SERVICE,
     vscode.TreeItemCollapsibleState.Expanded,
     null,
@@ -225,7 +225,7 @@ status:
   const testServiceTreeItemModified: ServingTreeItem = new ServingTreeItem(
     null,
     testServiceModified,
-    'example',
+    { label: 'example' },
     ServingContextType.SERVICE_MODIFIED,
     vscode.TreeItemCollapsibleState.Expanded,
     null,
@@ -354,7 +354,7 @@ status:
   const example75w7vTreeItem: ServingTreeItem = new ServingTreeItem(
     testServiceTreeItem,
     example75w7vRevision,
-    'example-75w7v',
+    { label: 'example-75w7v' },
     ServingContextType.REVISION_TAGGED,
     vscode.TreeItemCollapsibleState.None,
     null,
@@ -464,7 +464,7 @@ status:
   const exampleG4hm8TreeItem: ServingTreeItem = new ServingTreeItem(
     testServiceTreeItem,
     exampleG4hm8Revision,
-    'example-g4hm8',
+    { label: 'example-g4hm8' },
     ServingContextType.REVISION,
     vscode.TreeItemCollapsibleState.None,
     null,
@@ -585,7 +585,7 @@ status:
   const example2fvz4TreeItem: ServingTreeItem = new ServingTreeItem(
     testServiceTreeItem,
     example2fvz4Revision,
-    'example-2fvz4',
+    { label: 'example-2fvz4' },
     ServingContextType.REVISION_TAGGED,
     vscode.TreeItemCollapsibleState.None,
     null,
@@ -659,7 +659,7 @@ status:
       const treeItem: ServingTreeItem = new ServingTreeItem(
         null,
         knativeItem,
-        'example',
+        { label: 'example' },
         ServingContextType.SERVICE,
         vscode.TreeItemCollapsibleState.None,
         null,
@@ -678,7 +678,7 @@ status:
       const result = await servingDataProvider.getChildren();
       expect(result).to.have.lengthOf(1);
       expect(result[0].description).equals('');
-      expect(result[0].label).equals('No Service Found');
+      expect(result[0].label.label).equals('No Service Found');
       expect(result[0].getName()).equals('No Service Found');
     });
     test('should return a single Service tree node when called from root with one Service', async () => {
@@ -690,7 +690,7 @@ status:
       const result = await servingDataProvider.getChildren();
       expect(result).to.have.lengthOf(1);
       expect(result[0].description).equals('');
-      expect(result[0].label).equals('example');
+      expect(result[0].label.label).equals('example');
       expect(result[0].getName()).equals('example');
       expect(result[0].tooltip).equals('Service: example');
     });
@@ -701,7 +701,7 @@ status:
       const result = await servingDataProvider.getChildren(testServiceTreeItem);
       expect(result).to.have.lengthOf(3);
       expect(result[0].description).equals('latest current ');
-      expect(result[0].label).equals('example-75w7v (100%)');
+      expect(result[0].label.label).equals('example-75w7v (100%)');
       expect(result[0].getName()).equals('example-75w7v');
       expect(result[0].tooltip).equals('Revision: example-75w7v');
     });
@@ -712,7 +712,7 @@ status:
       const result = await servingDataProvider.getChildren(testServiceTreeItemModified);
       expect(result).to.have.lengthOf(3);
       expect(result[0].description).equals('latest current ');
-      expect(result[0].label).equals('example-75w7v (100%)');
+      expect(result[0].label.label).equals('example-75w7v (100%)');
       expect(result[0].getName()).equals('example-75w7v');
       expect(result[0].tooltip).equals('Revision: example-75w7v');
     });
@@ -724,7 +724,7 @@ status:
       const parent: ServingTreeItem = new ServingTreeItem(
         null,
         parentKnativeItem,
-        'example',
+        { label: 'example' },
         ServingContextType.SERVICE,
         vscode.TreeItemCollapsibleState.None,
         null,

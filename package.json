@@ -23,7 +23,7 @@
   ],
   "icon": "images/knative-logo.png",
   "engines": {
-    "vscode": "^1.43.0"
+    "vscode": "^1.52.0"
   },
   "categories": [
     "Other"
@@ -92,7 +92,7 @@
     "@types/string-format": "^2.0.0",
     "@types/tmp": "0.1.0",
     "@types/validator": "^12.0.1",
-    "@types/vscode": "^1.43.0",
+    "@types/vscode": "^1.52.0",
     "@typescript-eslint/eslint-plugin": "^2.23.0",
     "@typescript-eslint/parser": "^2.23.0",
     "chai": "^4.2.0",

@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See LICENSE file in the project root for license information.
  *-----------------------------------------------------------------------------------------------*/
 
-import { ProviderResult, TreeItemCollapsibleState, Uri, TreeItem, Command } from 'vscode';
+import { ProviderResult, TreeItemCollapsibleState, Uri, TreeItem, Command, TreeItemLabel } from 'vscode';
 import * as path from 'path';
 import { ServingContextType } from '../cli/config';
 import { KnativeItem } from '../knative/knativeItem';
@@ -61,7 +61,7 @@ export class ServingTreeItem extends TreeItem {
   constructor(
     private parent: ServingTreeItem | EventingTreeItem,
     public readonly item: KnativeItem,
-    public readonly label: string,
+    public readonly label: TreeItemLabel,
     public readonly contextValue: ServingContextType,
     public readonly collapsibleState: TreeItemCollapsibleState = Collapsed,
     public contextPath?: Uri,
@@ -69,7 +69,7 @@ export class ServingTreeItem extends TreeItem {
   ) {
     super(label, collapsibleState);
     // Set the name since the label can have the traffic and we need the actual name for the yaml
-    this.name = label;
+    this.name = label.label;
     // Check the type since only a Revision can have traffic.
     if (parent && (parent.contextValue === 'service' || parent.contextValue === 'service_modified')) {
       // Ensure we only update revisions with traffic, leaving the others alone.
@@ -80,7 +80,7 @@ export class ServingTreeItem extends TreeItem {
         // Look through the traffic list for revisions.
         // When you find one that matches the revision of this Item, pull it out to update the label.
         rev.traffic.forEach((val: Traffic) => {
-          if (val.revisionName === this.label) {
+          if (val.revisionName === this.label.label) {
             // Traffic percent can be assigned to latest and a tag. It needs to be totalled.
             percentTraffic += val.percent ? val.percent : 0;
             // There can be more than one tag, so collect all of them. Then add it to the Description.
@@ -91,7 +91,7 @@ export class ServingTreeItem extends TreeItem {
         this.desc = tagComposite;
         // Revisions with tags are traffic with 0% until the traffic is set. Only show the percentage when traffic is set.
         if (percentTraffic > 0) {
-          this.label = `${this.label} (${percentTraffic}%)`;
+          this.label.label = `${this.label.label} (${percentTraffic}%)`;
         }
       }
     }

@@ -104,7 +104,7 @@ export class SourceDataProvider {
         new EventingTreeItem(
           parent,
           null,
-          'No Source Found',
+          { label: 'No Source Found' },
           EventingContextType.NONE,
           TreeItemCollapsibleState.None,
           null,
@@ -122,7 +122,7 @@ export class SourceDataProvider {
         const obj: EventingTreeItem = new EventingTreeItem(
           parent,
           value,
-          value.name,
+          { label: value.name },
           this.getSourceType(value.details.kind),
           TreeItemCollapsibleState.None,
           null,

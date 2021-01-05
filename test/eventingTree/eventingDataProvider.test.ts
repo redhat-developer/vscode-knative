@@ -43,7 +43,7 @@ suite('EventingDataProvider', () => {
     new EventingTreeItem(
       null,
       null,
-      'Brokers',
+      { label: 'Brokers' },
       EventingContextType.BROKER_FOLDER,
       vscode.TreeItemCollapsibleState.Expanded,
       null,
@@ -52,7 +52,7 @@ suite('EventingDataProvider', () => {
     new EventingTreeItem(
       null,
       null,
-      'Channels',
+      { label: 'Channels' },
       EventingContextType.CHANNEL_FOLDER,
       vscode.TreeItemCollapsibleState.Expanded,
       null,
@@ -61,7 +61,7 @@ suite('EventingDataProvider', () => {
     new EventingTreeItem(
       null,
       null,
-      'Sources',
+      { label: 'Sources' },
       EventingContextType.SOURCE_FOLDER,
       vscode.TreeItemCollapsibleState.Expanded,
       null,
@@ -70,7 +70,7 @@ suite('EventingDataProvider', () => {
     new EventingTreeItem(
       null,
       null,
-      'Subscriptions',
+      { label: 'Subscriptions' },
       EventingContextType.SUBSCRIPTION_FOLDER,
       vscode.TreeItemCollapsibleState.Expanded,
       null,
@@ -79,7 +79,7 @@ suite('EventingDataProvider', () => {
     new EventingTreeItem(
       null,
       null,
-      'Triggers',
+      { label: 'Triggers' },
       EventingContextType.TRIGGER_FOLDER,
       vscode.TreeItemCollapsibleState.Expanded,
       null,
@@ -92,7 +92,7 @@ suite('EventingDataProvider', () => {
   const testBroker0TreeItem: EventingTreeItem = new EventingTreeItem(
     eventingFolderNodes[0],
     testBroker0,
-    'example-broker0',
+    { label: 'example-broker0' },
     EventingContextType.BROKER,
     vscode.TreeItemCollapsibleState.Expanded,
     null,
@@ -103,7 +103,7 @@ suite('EventingDataProvider', () => {
   const testBroker1TreeItem: EventingTreeItem = new EventingTreeItem(
     eventingFolderNodes[0],
     testBroker1,
-    'example-broker1',
+    { label: 'example-broker1' },
     EventingContextType.BROKER,
     vscode.TreeItemCollapsibleState.Expanded,
     null,
@@ -121,7 +121,7 @@ suite('EventingDataProvider', () => {
   const testChannel0TreeItem: EventingTreeItem = new EventingTreeItem(
     eventingFolderNodes[1],
     testChannel0,
-    'example-channel0',
+    { label: 'example-channel0' },
     EventingContextType.CHANNEL,
     vscode.TreeItemCollapsibleState.Expanded,
     null,
@@ -137,7 +137,7 @@ suite('EventingDataProvider', () => {
   const testChannel1TreeItem: EventingTreeItem = new EventingTreeItem(
     eventingFolderNodes[1],
     testChannel1,
-    'example-channel1',
+    { label: 'example-channel1' },
     EventingContextType.CHANNEL,
     vscode.TreeItemCollapsibleState.Expanded,
     null,
@@ -156,7 +156,7 @@ suite('EventingDataProvider', () => {
   const testSource0TreeItem: EventingTreeItem = new EventingTreeItem(
     eventingFolderNodes[2],
     testSource0,
-    'example-source0',
+    { label: 'example-source0' },
     EventingContextType.SOURCE,
     vscode.TreeItemCollapsibleState.Expanded,
     null,
@@ -173,7 +173,7 @@ suite('EventingDataProvider', () => {
   const testSource1TreeItem: EventingTreeItem = new EventingTreeItem(
     eventingFolderNodes[2],
     testSource1,
-    'example-source1',
+    { label: 'example-source1' },
     EventingContextType.SOURCE,
     vscode.TreeItemCollapsibleState.Expanded,
     null,
@@ -194,7 +194,7 @@ suite('EventingDataProvider', () => {
   const testSubscription0TreeItem: EventingTreeItem = new EventingTreeItem(
     eventingFolderNodes[3],
     testSubscription0,
-    'example-subscription0',
+    { label: 'example-subscription0' },
     EventingContextType.SUBSCRIPTION,
     vscode.TreeItemCollapsibleState.Expanded,
     null,
@@ -213,7 +213,7 @@ suite('EventingDataProvider', () => {
   const testSubscription1TreeItem: EventingTreeItem = new EventingTreeItem(
     eventingFolderNodes[3],
     testSubscription1,
-    'example-subscription1',
+    { label: 'example-subscription1' },
     EventingContextType.SUBSCRIPTION,
     vscode.TreeItemCollapsibleState.Expanded,
     null,
@@ -244,7 +244,7 @@ suite('EventingDataProvider', () => {
   const testTrigger0TreeItem: EventingTreeItem = new EventingTreeItem(
     eventingFolderNodes[4],
     testTrigger0,
-    'example-trigger0',
+    { label: 'example-trigger0' },
     EventingContextType.TRIGGER,
     vscode.TreeItemCollapsibleState.Expanded,
     null,
@@ -254,7 +254,7 @@ suite('EventingDataProvider', () => {
   const testTrigger1TreeItem: EventingTreeItem = new EventingTreeItem(
     eventingFolderNodes[4],
     testTrigger1,
-    'example-trigger1',
+    { label: 'example-trigger1' },
     EventingContextType.TRIGGER,
     vscode.TreeItemCollapsibleState.Expanded,
     null,
@@ -314,7 +314,7 @@ suite('EventingDataProvider', () => {
       const treeItem: EventingTreeItem = new EventingTreeItem(
         null,
         knativeItem,
-        'example',
+        { label: 'example' },
         EventingContextType.BROKER,
         vscode.TreeItemCollapsibleState.None,
         null,
@@ -332,7 +332,7 @@ suite('EventingDataProvider', () => {
       const result = await eventingDataProvider.getChildren();
       expect(result).to.have.lengthOf(5);
       expect(result[0].description).equals('');
-      expect(result[0].label).equals('Brokers');
+      expect(result[0].label.label).equals('Brokers');
       expect(result[0].getName()).equals('Brokers');
       expect(result[0].tooltip).equals('');
     });
@@ -345,7 +345,7 @@ suite('EventingDataProvider', () => {
       expect(result).to.have.lengthOf(1);
       expect(result[0].description).equals('');
       expect(result[0].description).equals('');
-      expect(result[0].label).equals('No Broker Found');
+      expect(result[0].label.label).equals('No Broker Found');
       expect(result[0].getName()).equals('No Broker Found');
     });
     test('should return multiple Broker tree nodes', async () => {
@@ -355,7 +355,7 @@ suite('EventingDataProvider', () => {
       const result = await eventingDataProvider.getChildren(eventingFolderNodes[0]);
       expect(result).to.have.lengthOf(2);
       expect(result[0].description).equals('');
-      expect(result[0].label).equals('example-broker0');
+      expect(result[0].label.label).equals('example-broker0');
       expect(result[0].getName()).equals('example-broker0');
       expect(result[0].tooltip).equals('');
     });
@@ -366,7 +366,7 @@ suite('EventingDataProvider', () => {
       const result = await eventingDataProvider.getChildren(eventingFolderNodes[1]);
       expect(result).to.have.lengthOf(2);
       expect(result[0].description).equals('');
-      expect(result[0].label).equals('example-channel0');
+      expect(result[0].label.label).equals('example-channel0');
       expect(result[0].getName()).equals('example-channel0');
       expect(result[0].tooltip).equals('');
     });
@@ -377,7 +377,7 @@ suite('EventingDataProvider', () => {
       const result = await eventingDataProvider.getChildren(eventingFolderNodes[2]);
       expect(result).to.have.lengthOf(2);
       expect(result[0].description).equals('');
-      expect(result[0].label).equals('example-source0');
+      expect(result[0].label.label).equals('example-source0');
       expect(result[0].getName()).equals('example-source0');
       expect(result[0].tooltip).equals('');
     });
@@ -388,7 +388,7 @@ suite('EventingDataProvider', () => {
       const result = await eventingDataProvider.getChildren(eventingFolderNodes[3]);
       expect(result).to.have.lengthOf(2);
       expect(result[0].description).equals('');
-      expect(result[0].label).equals('example-subscription0');
+      expect(result[0].label.label).equals('example-subscription0');
       expect(result[0].getName()).equals('example-subscription0');
       expect(result[0].tooltip).equals('');
     });
@@ -399,7 +399,7 @@ suite('EventingDataProvider', () => {
       const result = await eventingDataProvider.getChildren(eventingFolderNodes[4]);
       expect(result).to.have.lengthOf(2);
       expect(result[0].description).equals('');
-      expect(result[0].label).equals('example-trigger0');
+      expect(result[0].label.label).equals('example-trigger0');
       expect(result[0].getName()).equals('example-trigger0');
       expect(result[0].tooltip).equals('');
     });

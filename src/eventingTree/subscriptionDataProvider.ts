@@ -75,7 +75,7 @@ export class SubscriptionDataProvider {
         new EventingTreeItem(
           parent,
           null,
-          'No Subscription Found',
+          { label: 'No Subscription Found' },
           EventingContextType.NONE,
           TreeItemCollapsibleState.None,
           null,
@@ -93,7 +93,7 @@ export class SubscriptionDataProvider {
         const obj: EventingTreeItem = new EventingTreeItem(
           parent,
           value,
-          value.name,
+          { label: value.name },
           EventingContextType.SUBSCRIPTION,
           TreeItemCollapsibleState.Expanded,
           null,
@@ -123,7 +123,7 @@ export class SubscriptionDataProvider {
           new EventingTreeItem(
             parent,
             null,
-            'No Channel Found',
+            { label: 'No Channel Found' },
             EventingContextType.NONE,
             TreeItemCollapsibleState.None,
             null,
@@ -136,7 +136,7 @@ export class SubscriptionDataProvider {
           new EventingTreeItem(
             parent,
             child,
-            `${childrenLabel[index]} - ${child.name}`,
+            { label: `${childrenLabel[index]} - ${child.name}` },
             EventingContextType.BROKER,
             TreeItemCollapsibleState.None,
           ),
@@ -147,7 +147,7 @@ export class SubscriptionDataProvider {
           new EventingTreeItem(
             parent,
             child,
-            `${childrenLabel[index]} - ${child.name}`,
+            { label: `${childrenLabel[index]} - ${child.name}` },
             EventingContextType.CHANNEL,
             TreeItemCollapsibleState.None,
           ),
@@ -158,7 +158,7 @@ export class SubscriptionDataProvider {
           new ServingTreeItem(
             parent,
             child,
-            `${childrenLabel[index]} - ${child.name}`,
+            { label: `${childrenLabel[index]} - ${child.name}` },
             ServingContextType.SERVICE,
             TreeItemCollapsibleState.None,
           ),

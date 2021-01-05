@@ -66,7 +66,7 @@ export class ChannelDataProvider {
         new EventingTreeItem(
           parent,
           null,
-          'No Channel Found',
+          { label: 'No Channel Found' },
           EventingContextType.NONE,
           TreeItemCollapsibleState.None,
           null,
@@ -84,7 +84,7 @@ export class ChannelDataProvider {
         const obj: EventingTreeItem = new EventingTreeItem(
           parent,
           value,
-          value.name,
+          { label: value.name },
           EventingContextType.CHANNEL,
           TreeItemCollapsibleState.None,
           null,

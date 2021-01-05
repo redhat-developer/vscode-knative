@@ -152,7 +152,7 @@ status:
   const testServiceATreeItem: ServingTreeItem = new ServingTreeItem(
     null,
     testServiceA,
-    'exampleA',
+    { label: 'exampleA' },
     ServingContextType.SERVICE,
     vscode.TreeItemCollapsibleState.Expanded,
     null,
@@ -167,7 +167,7 @@ status:
   const testServiceATreeItemModified: ServingTreeItem = new ServingTreeItem(
     null,
     testServiceAModified,
-    'exampleA',
+    { label: 'exampleA' },
     ServingContextType.SERVICE_MODIFIED,
     vscode.TreeItemCollapsibleState.Expanded,
     null,
@@ -304,7 +304,7 @@ status:
   const exampleA75w7vTreeItemModified: ServingTreeItem = new ServingTreeItem(
     testServiceATreeItemModified,
     exampleA75w7vRevision,
-    'exampleA-75w7v',
+    { label: 'exampleA-75w7v' },
     ServingContextType.REVISION_TAGGED,
     vscode.TreeItemCollapsibleState.None,
     null,
@@ -416,7 +416,7 @@ status:
   const exampleA2fvz4TreeItemNoTraffic: ServingTreeItem = new ServingTreeItem(
     testServiceATreeItem,
     exampleA2fvz4Revision,
-    'exampleA-2fvz4',
+    { label: 'exampleA-2fvz4' },
     ServingContextType.REVISION,
     vscode.TreeItemCollapsibleState.None,
     null,
@@ -550,7 +550,7 @@ status:
   const testServiceBTreeItem: ServingTreeItem = new ServingTreeItem(
     null,
     testServiceB,
-    'exampleB',
+    { label: 'exampleB' },
     ServingContextType.SERVICE,
     vscode.TreeItemCollapsibleState.Expanded,
     null,
@@ -565,7 +565,7 @@ status:
   const testServiceBTreeItemModified: ServingTreeItem = new ServingTreeItem(
     null,
     testServiceBModified,
-    'exampleB',
+    { label: 'exampleB' },
     ServingContextType.SERVICE_MODIFIED,
     vscode.TreeItemCollapsibleState.Expanded,
     null,
@@ -694,7 +694,7 @@ status:
   const exampleB75w7vTreeItem: ServingTreeItem = new ServingTreeItem(
     testServiceBTreeItem,
     exampleB75w7vRevision,
-    'exampleB-75w7v',
+    { label: 'exampleB-75w7v' },
     ServingContextType.REVISION_TAGGED,
     vscode.TreeItemCollapsibleState.None,
     null,
@@ -725,7 +725,7 @@ status:
     const NoServiceContextTreeItem: ServingTreeItem = new ServingTreeItem(
       null,
       testServiceB,
-      'exampleB',
+      { label: 'exampleB' },
       null,
       vscode.TreeItemCollapsibleState.Expanded,
       null,
@@ -740,7 +740,7 @@ status:
     const NoServiceContextTreeItem: ServingTreeItem = new ServingTreeItem(
       null,
       testServiceB,
-      'exampleB',
+      { label: 'exampleB' },
       null,
       vscode.TreeItemCollapsibleState.Expanded,
       null,
@@ -752,7 +752,7 @@ status:
   });
 
   test('should create a tree item and set the traffic labels correctly', () => {
-    const revLabel = exampleA75w7vTreeItemModified.label;
+    const revLabel = exampleA75w7vTreeItemModified.label.label;
     assert.equals(revLabel, `exampleA-75w7v (100%)`);
   });
 
@@ -790,7 +790,7 @@ status:
     const noServiceFoundTreeItem = new ServingTreeItem(
       null,
       null,
-      'No Service Found',
+      { label: 'No Service Found' },
       ServingContextType.NONE,
       vscode.TreeItemCollapsibleState.None,
       null,
@@ -814,7 +814,7 @@ status:
     const noServiceFoundTreeItem = new ServingTreeItem(
       null,
       null,
-      'No Service Found',
+      { label: 'No Service Found' },
       ServingContextType.NONE,
       vscode.TreeItemCollapsibleState.None,
       null,

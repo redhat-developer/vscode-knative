@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See LICENSE file in the project root for license information.
  *-----------------------------------------------------------------------------------------------*/
 
-import { ProviderResult, TreeItemCollapsibleState, Uri, TreeItem, Command } from 'vscode';
+import { ProviderResult, TreeItemCollapsibleState, Uri, TreeItem, Command, TreeItemLabel } from 'vscode';
 import * as path from 'path';
 import { EventingContextType } from '../cli/config';
 import { KnativeItem } from '../knative/knativeItem';
@@ -123,15 +123,14 @@ export class EventingTreeItem extends TreeItem {
   constructor(
     private parent: EventingTreeItem | null,
     public readonly item: KnativeItem,
-    public readonly label: string,
+    public readonly label: TreeItemLabel,
     public readonly contextValue: EventingContextType,
     public readonly collapsibleState: TreeItemCollapsibleState = Collapsed,
     public contextPath?: Uri,
     public readonly compType?: string,
   ) {
     super(label, collapsibleState);
-    // Set the name since the label can have the traffic and we need the actual name for the yaml
-    this.name = label;
+    this.name = label.label;
   }
 
   get iconPath(): Uri {
