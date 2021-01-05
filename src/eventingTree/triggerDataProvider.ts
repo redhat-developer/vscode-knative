@@ -71,7 +71,7 @@ export class TriggerDataProvider {
         new EventingTreeItem(
           parent,
           null,
-          'No Trigger Found',
+          { label: 'No Trigger Found' },
           EventingContextType.NONE,
           TreeItemCollapsibleState.None,
           null,
@@ -89,7 +89,7 @@ export class TriggerDataProvider {
         const obj: EventingTreeItem = new EventingTreeItem(
           parent,
           value,
-          value.name,
+          { label: value.name },
           EventingContextType.TRIGGER,
           TreeItemCollapsibleState.Expanded,
           null,
@@ -119,7 +119,7 @@ export class TriggerDataProvider {
           new EventingTreeItem(
             parent,
             null,
-            'No Channel Found',
+            { label: 'No Channel Found' },
             EventingContextType.NONE,
             TreeItemCollapsibleState.None,
             null,
@@ -132,7 +132,7 @@ export class TriggerDataProvider {
           new EventingTreeItem(
             parent,
             child,
-            `${childrenLabel[index]} - ${child.name}`,
+            { label: `${childrenLabel[index]} - ${child.name}` },
             EventingContextType.BROKER,
             TreeItemCollapsibleState.None,
           ),
@@ -143,7 +143,7 @@ export class TriggerDataProvider {
           new EventingTreeItem(
             parent,
             child,
-            `${childrenLabel[index]} - ${child.name}`,
+            { label: `${childrenLabel[index]} - ${child.name}` },
             EventingContextType.CHANNEL,
             TreeItemCollapsibleState.None,
           ),
@@ -154,7 +154,7 @@ export class TriggerDataProvider {
           new ServingTreeItem(
             parent,
             child,
-            `${childrenLabel[index]} - ${child.name}`,
+            { label: `${childrenLabel[index]} - ${child.name}` },
             ServingContextType.SERVICE,
             TreeItemCollapsibleState.None,
           ),

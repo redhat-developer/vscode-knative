@@ -45,7 +45,7 @@ suite('TriggerDataProvider', () => {
   const testTrigger0TreeItem: EventingTreeItem = new EventingTreeItem(
     eventingFolderNodes[4],
     testTrigger0,
-    'example-trigger0',
+    { label: 'example-trigger0' },
     EventingContextType.TRIGGER,
     vscode.TreeItemCollapsibleState.None,
     null,
@@ -54,7 +54,7 @@ suite('TriggerDataProvider', () => {
   const testTrigger1TreeItem: EventingTreeItem = new EventingTreeItem(
     eventingFolderNodes[4],
     testTrigger1,
-    'example-trigger1',
+    { label: 'example-trigger1' },
     EventingContextType.TRIGGER,
     vscode.TreeItemCollapsibleState.None,
     null,
@@ -78,7 +78,7 @@ suite('TriggerDataProvider', () => {
       expect(result).to.have.lengthOf(1);
       expect(result[0].description).equals('');
       expect(result[0].description).equals('');
-      expect(result[0].label).equals('No Trigger Found');
+      expect(result[0].label.label).equals('No Trigger Found');
       expect(result[0].getName()).equals('No Trigger Found');
     });
     test('should return trigger nodes', async () => {
@@ -88,7 +88,7 @@ suite('TriggerDataProvider', () => {
       const result = await triggerDataProvider.getTriggers(eventingFolderNodes[4]);
       assert.equals(result[0], testTriggerTreeItems[0]);
       expect(result).to.have.lengthOf(4);
-      expect(result[0].label).equals('example-trigger0');
+      expect(result[0].label.label).equals('example-trigger0');
     });
     test('should refetch trigger info when it is incomplete, then return trigger nodes', async () => {
       sandbox.restore();
@@ -99,7 +99,7 @@ suite('TriggerDataProvider', () => {
       const result = await triggerDataProvider.getTriggers(eventingFolderNodes[4]);
       assert.equals(result[0], testTriggerTreeItems[0]);
       expect(result).to.have.lengthOf(4);
-      expect(result[0].label).equals('example-trigger0');
+      expect(result[0].label.label).equals('example-trigger0');
     });
   });
 });

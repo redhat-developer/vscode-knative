@@ -27,7 +27,7 @@ suite('BrokerDataProvider', () => {
   const testBroker0TreeItem: EventingTreeItem = new EventingTreeItem(
     eventingFolderNodes[0],
     testBroker0,
-    'example-broker0',
+    { label: 'example-broker0' },
     EventingContextType.BROKER,
     vscode.TreeItemCollapsibleState.None,
     null,
@@ -37,7 +37,7 @@ suite('BrokerDataProvider', () => {
   const testBroker1TreeItem: EventingTreeItem = new EventingTreeItem(
     eventingFolderNodes[0],
     testBroker1,
-    'example-broker1',
+    { label: 'example-broker1' },
     EventingContextType.BROKER,
     vscode.TreeItemCollapsibleState.None,
     null,
@@ -61,7 +61,7 @@ suite('BrokerDataProvider', () => {
       expect(result).to.have.lengthOf(1);
       expect(result[0].description).equals('');
       expect(result[0].description).equals('');
-      expect(result[0].label).equals('No Broker Found');
+      expect(result[0].label.label).equals('No Broker Found');
       expect(result[0].getName()).equals('No Broker Found');
     });
     test('should return broker nodes', async () => {
@@ -71,7 +71,7 @@ suite('BrokerDataProvider', () => {
       const result = await brokerDataProvider.getBrokers(eventingFolderNodes[0]);
       assert.equals(result[0], testBrokerTreeItems[0]);
       expect(result).to.have.lengthOf(2);
-      expect(result[0].label).equals('example-broker0');
+      expect(result[0].label.label).equals('example-broker0');
     });
     test('should refetch broker info when it is incomplete, then return broker nodes', async () => {
       sandbox.restore();
@@ -82,7 +82,7 @@ suite('BrokerDataProvider', () => {
       const result = await brokerDataProvider.getBrokers(eventingFolderNodes[0]);
       assert.equals(result[0], testBrokerTreeItems[0]);
       expect(result).to.have.lengthOf(2);
-      expect(result[0].label).equals('example-broker0');
+      expect(result[0].label.label).equals('example-broker0');
     });
   });
 });

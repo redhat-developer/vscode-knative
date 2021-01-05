@@ -17,7 +17,7 @@ const eventingFolderNodes = [
   new EventingTreeItem(
     null,
     null,
-    'Brokers',
+    { label: 'Brokers' },
     EventingContextType.BROKER_FOLDER,
     vscode.TreeItemCollapsibleState.Expanded,
     null,
@@ -26,7 +26,7 @@ const eventingFolderNodes = [
   new EventingTreeItem(
     null,
     null,
-    'Channels',
+    { label: 'Channels' },
     EventingContextType.CHANNEL_FOLDER,
     vscode.TreeItemCollapsibleState.Expanded,
     null,
@@ -35,7 +35,7 @@ const eventingFolderNodes = [
   new EventingTreeItem(
     null,
     null,
-    'Sources',
+    { label: 'Sources' },
     EventingContextType.SOURCE_FOLDER,
     vscode.TreeItemCollapsibleState.Expanded,
     null,
@@ -44,7 +44,7 @@ const eventingFolderNodes = [
   new EventingTreeItem(
     null,
     null,
-    'Subscriptions',
+    { label: 'Subscriptions' },
     EventingContextType.SUBSCRIPTION_FOLDER,
     vscode.TreeItemCollapsibleState.Expanded,
     null,
@@ -53,7 +53,7 @@ const eventingFolderNodes = [
   new EventingTreeItem(
     null,
     null,
-    'Triggers',
+    { label: 'Triggers' },
     EventingContextType.TRIGGER_FOLDER,
     vscode.TreeItemCollapsibleState.Expanded,
     null,

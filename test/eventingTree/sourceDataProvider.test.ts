@@ -38,7 +38,7 @@ suite('SourceDataProvider', () => {
   const testSource0TreeItem: EventingTreeItem = new EventingTreeItem(
     eventingFolderNodes[2],
     testSource0,
-    'example-source0',
+    { label: 'example-source0' },
     EventingContextType.SOURCE_APISERVER,
     vscode.TreeItemCollapsibleState.None,
     null,
@@ -56,7 +56,7 @@ suite('SourceDataProvider', () => {
   const testSource1TreeItem: EventingTreeItem = new EventingTreeItem(
     eventingFolderNodes[2],
     testSource1,
-    'example-source1',
+    { label: 'example-source1' },
     EventingContextType.SOURCE_PING,
     vscode.TreeItemCollapsibleState.None,
     null,
@@ -73,7 +73,7 @@ suite('SourceDataProvider', () => {
   const testSource2TreeItem: EventingTreeItem = new EventingTreeItem(
     eventingFolderNodes[2],
     testSource2,
-    'example-source2',
+    { label: 'example-source2' },
     EventingContextType.SOURCE,
     vscode.TreeItemCollapsibleState.None,
     null,
@@ -90,7 +90,7 @@ suite('SourceDataProvider', () => {
   const testSource3TreeItem: EventingTreeItem = new EventingTreeItem(
     eventingFolderNodes[2],
     testSource3,
-    'example-source3',
+    { label: 'example-source3' },
     EventingContextType.SOURCE_BINDING,
     vscode.TreeItemCollapsibleState.None,
     null,
@@ -109,7 +109,7 @@ suite('SourceDataProvider', () => {
   const testSource0TreeItemEmptySpec: EventingTreeItem = new EventingTreeItem(
     eventingFolderNodes[2],
     testSource0EmptySpec,
-    'example-source0-emptySpec',
+    { label: 'example-source0-emptySpec' },
     EventingContextType.SOURCE_APISERVER,
     vscode.TreeItemCollapsibleState.None,
     null,
@@ -127,7 +127,7 @@ suite('SourceDataProvider', () => {
   const testSource1TreeItemEmptySpec: EventingTreeItem = new EventingTreeItem(
     eventingFolderNodes[2],
     testSource1EmptySpec,
-    'example-source1-emptySpec',
+    { label: 'example-source1-emptySpec' },
     EventingContextType.SOURCE_PING,
     vscode.TreeItemCollapsibleState.None,
     null,
@@ -144,7 +144,7 @@ suite('SourceDataProvider', () => {
   const testSource2TreeItemEmptySpec: EventingTreeItem = new EventingTreeItem(
     eventingFolderNodes[2],
     testSource2EmptySpec,
-    'example-source2-emptySpec',
+    { label: 'example-source2-emptySpec' },
     EventingContextType.SOURCE,
     vscode.TreeItemCollapsibleState.None,
     null,
@@ -161,7 +161,7 @@ suite('SourceDataProvider', () => {
   const testSource3TreeItemEmptySpec: EventingTreeItem = new EventingTreeItem(
     eventingFolderNodes[2],
     testSource3EmptySpec,
-    'example-source3-emptySpec',
+    { label: 'example-source3-emptySpec' },
     EventingContextType.SOURCE_BINDING,
     vscode.TreeItemCollapsibleState.None,
     null,
@@ -194,7 +194,7 @@ suite('SourceDataProvider', () => {
       expect(result).to.have.lengthOf(1);
       expect(result[0].description).equals('');
       expect(result[0].description).equals('');
-      expect(result[0].label).equals('No Source Found');
+      expect(result[0].label.label).equals('No Source Found');
       expect(result[0].getName()).equals('No Source Found');
     });
     test('should refetch source info when it is incomplete, then return source nodes', async () => {
@@ -206,7 +206,7 @@ suite('SourceDataProvider', () => {
       const result = await sourceDataProvider.getSources(eventingFolderNodes[2]);
       assert.equals(result[0], testSourceTreeItems[0]);
       expect(result).to.have.lengthOf(4);
-      expect(result[0].label).equals('example-source0');
+      expect(result[0].label.label).equals('example-source0');
     });
     test('should return API source nodes', async () => {
       sandbox.restore();
@@ -215,7 +215,7 @@ suite('SourceDataProvider', () => {
       const result = await sourceDataProvider.getSources(eventingFolderNodes[2]);
       assert.equals(result[0], testSourceTreeItems[0]);
       expect(result).to.have.lengthOf(4);
-      expect(result[0].label).equals('example-source0');
+      expect(result[0].label.label).equals('example-source0');
     });
     test('should return Ping source nodes', async () => {
       sandbox.restore();
@@ -224,7 +224,7 @@ suite('SourceDataProvider', () => {
       const result = await sourceDataProvider.getSources(eventingFolderNodes[2]);
       assert.equals(result[1], testSourceTreeItems[1]);
       expect(result).to.have.lengthOf(4);
-      expect(result[1].label).equals('example-source1');
+      expect(result[1].label.label).equals('example-source1');
     });
     test('should return Generic source nodes', async () => {
       sandbox.restore();
@@ -233,7 +233,7 @@ suite('SourceDataProvider', () => {
       const result = await sourceDataProvider.getSources(eventingFolderNodes[2]);
       assert.equals(result[2], testSourceTreeItems[2]);
       expect(result).to.have.lengthOf(4);
-      expect(result[2].label).equals('example-source2');
+      expect(result[2].label.label).equals('example-source2');
     });
     test('should return Sink Binding source nodes', async () => {
       sandbox.restore();
@@ -242,7 +242,7 @@ suite('SourceDataProvider', () => {
       const result = await sourceDataProvider.getSources(eventingFolderNodes[2]);
       assert.equals(result[3], testSourceTreeItems[3]);
       expect(result).to.have.lengthOf(4);
-      expect(result[3].label).equals('example-source3');
+      expect(result[3].label.label).equals('example-source3');
     });
 
     // Test when the spec is empty
@@ -257,7 +257,7 @@ suite('SourceDataProvider', () => {
       console.log(`sourceDataProvider test api source empty spec result ${result.length}`);
       assert.equals(result[0], testSourceTreeItems[4]);
       expect(result).to.have.lengthOf(4);
-      expect(result[0].label).equals('example-source0-emptySpec');
+      expect(result[0].label.label).equals('example-source0-emptySpec');
     });
     test('should return Ping source nodes when the spec is empty', async () => {
       sandbox.restore();
@@ -268,7 +268,7 @@ suite('SourceDataProvider', () => {
       const result = await sourceDataProvider.getSources(eventingFolderNodes[2]);
       assert.equals(result[1], testSourceTreeItems[5]);
       expect(result).to.have.lengthOf(4);
-      expect(result[1].label).equals('example-source1-emptySpec');
+      expect(result[1].label.label).equals('example-source1-emptySpec');
     });
     test('should return Generic source nodes when the spec is empty', async () => {
       sandbox.restore();
@@ -279,7 +279,7 @@ suite('SourceDataProvider', () => {
       const result = await sourceDataProvider.getSources(eventingFolderNodes[2]);
       assert.equals(result[2], testSourceTreeItems[6]);
       expect(result).to.have.lengthOf(4);
-      expect(result[2].label).equals('example-source2-emptySpec');
+      expect(result[2].label.label).equals('example-source2-emptySpec');
     });
     test('should return Sink Binding source nodes when the spec is empty', async () => {
       sandbox.restore();
@@ -290,7 +290,7 @@ suite('SourceDataProvider', () => {
       const result = await sourceDataProvider.getSources(eventingFolderNodes[2]);
       assert.equals(result[3], testSourceTreeItems[7]);
       expect(result).to.have.lengthOf(4);
-      expect(result[3].label).equals('example-source3-emptySpec');
+      expect(result[3].label.label).equals('example-source3-emptySpec');
     });
   });
 });

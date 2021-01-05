@@ -32,7 +32,7 @@ suite('EventingTreeItem', () => {
     new EventingTreeItem(
       null,
       null,
-      'Brokers',
+      { label: 'Brokers' },
       EventingContextType.BROKER_FOLDER,
       vscode.TreeItemCollapsibleState.Expanded,
       null,
@@ -41,7 +41,7 @@ suite('EventingTreeItem', () => {
     new EventingTreeItem(
       null,
       null,
-      'Channels',
+      { label: 'Channels' },
       EventingContextType.CHANNEL_FOLDER,
       vscode.TreeItemCollapsibleState.Expanded,
       null,
@@ -50,7 +50,7 @@ suite('EventingTreeItem', () => {
     new EventingTreeItem(
       null,
       null,
-      'Sources',
+      { label: 'Sources' },
       EventingContextType.SOURCE_FOLDER,
       vscode.TreeItemCollapsibleState.Expanded,
       null,
@@ -59,7 +59,7 @@ suite('EventingTreeItem', () => {
     new EventingTreeItem(
       null,
       null,
-      'Subscriptions',
+      { label: 'Subscriptions' },
       EventingContextType.SUBSCRIPTION_FOLDER,
       vscode.TreeItemCollapsibleState.Expanded,
       null,
@@ -68,7 +68,7 @@ suite('EventingTreeItem', () => {
     new EventingTreeItem(
       null,
       null,
-      'Triggers',
+      { label: 'Triggers' },
       EventingContextType.TRIGGER_FOLDER,
       vscode.TreeItemCollapsibleState.Expanded,
       null,
@@ -80,7 +80,7 @@ suite('EventingTreeItem', () => {
   const testBroker0TreeItem: EventingTreeItem = new EventingTreeItem(
     eventingFolderNodes[0],
     testBroker0,
-    'example-broker0',
+    { label: 'example-broker0' },
     EventingContextType.BROKER,
     vscode.TreeItemCollapsibleState.None,
     null,
@@ -98,7 +98,7 @@ suite('EventingTreeItem', () => {
   const testSource0TreeItem: EventingTreeItem = new EventingTreeItem(
     eventingFolderNodes[2],
     testSource0,
-    'example-source0',
+    { label: 'example-source0' },
     EventingContextType.SOURCE_APISERVER,
     vscode.TreeItemCollapsibleState.None,
     null,
@@ -116,7 +116,7 @@ suite('EventingTreeItem', () => {
   const testSource1TreeItem: EventingTreeItem = new EventingTreeItem(
     eventingFolderNodes[2],
     testSource1,
-    'example-source1',
+    { label: 'example-source1' },
     EventingContextType.SOURCE_PING,
     vscode.TreeItemCollapsibleState.None,
     null,
@@ -133,7 +133,7 @@ suite('EventingTreeItem', () => {
   const testSource2TreeItem: EventingTreeItem = new EventingTreeItem(
     eventingFolderNodes[2],
     testSource2,
-    'example-source2',
+    { label: 'example-source2' },
     EventingContextType.SOURCE,
     vscode.TreeItemCollapsibleState.None,
     null,
@@ -150,7 +150,7 @@ suite('EventingTreeItem', () => {
   const testSource3TreeItem: EventingTreeItem = new EventingTreeItem(
     eventingFolderNodes[2],
     testSource3,
-    'example-source3',
+    { label: 'example-source3' },
     EventingContextType.SOURCE_BINDING,
     vscode.TreeItemCollapsibleState.None,
     null,
@@ -181,7 +181,7 @@ suite('EventingTreeItem', () => {
     const noBrokerFoundTreeItem: EventingTreeItem = new EventingTreeItem(
       eventingFolderNodes[0],
       null,
-      'No Broker Found',
+      { label: 'No Broker Found' },
       EventingContextType.NONE,
       vscode.TreeItemCollapsibleState.None,
       null,
@@ -200,7 +200,7 @@ suite('EventingTreeItem', () => {
     const noBrokerFoundTreeItem: EventingTreeItem = new EventingTreeItem(
       eventingFolderNodes[0],
       null,
-      'No Broker Found',
+      { label: 'No Broker Found' },
       EventingContextType.NONE,
       vscode.TreeItemCollapsibleState.None,
       null,

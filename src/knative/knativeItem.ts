@@ -31,5 +31,7 @@ export function compareNodes(a: TreeItem, b: TreeItem): number {
   const aContext = a.contextValue.includes('_') ? a.contextValue.substr(0, a.contextValue.indexOf('_')) : a.contextValue;
   const bContext = b.contextValue.includes('_') ? b.contextValue.substr(0, b.contextValue.indexOf('_')) : b.contextValue;
   const t = aContext.localeCompare(bContext);
-  return t || a.label.localeCompare(b.label);
+  const labelA = typeof a.label === 'string' ? a.label : a.label.label;
+  const labelB = typeof b.label === 'string' ? b.label : b.label.label;
+  return t || labelA.localeCompare(labelB);
 }

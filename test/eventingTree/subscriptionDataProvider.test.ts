@@ -35,7 +35,7 @@ suite('SubscriptionDataProvider', () => {
   const testSubscription0TreeItem: EventingTreeItem = new EventingTreeItem(
     eventingFolderNodes[3],
     testSubscription0,
-    'example-subscription0',
+    { label: 'example-subscription0' },
     EventingContextType.SUBSCRIPTION,
     vscode.TreeItemCollapsibleState.None,
     null,
@@ -53,7 +53,7 @@ suite('SubscriptionDataProvider', () => {
   const testSubscription1TreeItem: EventingTreeItem = new EventingTreeItem(
     eventingFolderNodes[3],
     testSubscription1,
-    'example-subscription1',
+    { label: 'example-subscription1' },
     EventingContextType.SUBSCRIPTION,
     vscode.TreeItemCollapsibleState.None,
     null,
@@ -71,7 +71,7 @@ suite('SubscriptionDataProvider', () => {
   const testSubscription2TreeItem: EventingTreeItem = new EventingTreeItem(
     eventingFolderNodes[3],
     testSubscription2,
-    'example-subscription2',
+    { label: 'example-subscription2' },
     EventingContextType.SUBSCRIPTION,
     vscode.TreeItemCollapsibleState.None,
     null,
@@ -97,7 +97,7 @@ suite('SubscriptionDataProvider', () => {
       expect(result).to.have.lengthOf(1);
       expect(result[0].description).equals('');
       expect(result[0].description).equals('');
-      expect(result[0].label).equals('No Subscription Found');
+      expect(result[0].label.label).equals('No Subscription Found');
       expect(result[0].getName()).equals('No Subscription Found');
     });
     test('should return subscription nodes', async () => {
@@ -110,7 +110,7 @@ suite('SubscriptionDataProvider', () => {
       // The list of results gets sorted and the one we want is now at index 4
       assert.equals(result[4], testSubscriptionTreeItems[0]);
       expect(result).to.have.lengthOf(9);
-      expect(result[4].label).equals('example-subscription0');
+      expect(result[4].label.label).equals('example-subscription0');
     });
     test('should refetch subscription info when it is incomplete, then return subscription nodes', async () => {
       sandbox.restore();
@@ -122,7 +122,7 @@ suite('SubscriptionDataProvider', () => {
       // The list of results gets sorted and the one we want is now at index 4
       assert.equals(result[4], testSubscriptionTreeItems[0]);
       expect(result).to.have.lengthOf(9);
-      expect(result[4].label).equals('example-subscription0');
+      expect(result[4].label.label).equals('example-subscription0');
     });
     test('should return subscription nodes when it has no references in the spec', async () => {
       sandbox.restore();
@@ -134,7 +134,7 @@ suite('SubscriptionDataProvider', () => {
       // The list of results gets sorted and the one we want is now at index 4
       assert.equals(result[6], testSubscriptionTreeItems[2]);
       expect(result).to.have.lengthOf(9);
-      expect(result[6].label).equals('example-subscription2');
+      expect(result[6].label.label).equals('example-subscription2');
     });
   });
 });

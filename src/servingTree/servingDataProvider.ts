@@ -210,7 +210,7 @@ export class ServingDataProvider implements TreeDataProvider<ServingTreeItem | E
       const obj: ServingTreeItem = new ServingTreeItem(
         parentService,
         value,
-        value.name,
+        { label: value.name },
         context,
         TreeItemCollapsibleState.None,
         null,
@@ -269,7 +269,15 @@ export class ServingDataProvider implements TreeDataProvider<ServingTreeItem | E
     // Create an empty state message when there is no Service.
     if (services.length === 0) {
       return [
-        new ServingTreeItem(null, null, 'No Service Found', ServingContextType.NONE, TreeItemCollapsibleState.None, null, null),
+        new ServingTreeItem(
+          null,
+          null,
+          { label: 'No Service Found' },
+          ServingContextType.NONE,
+          TreeItemCollapsibleState.None,
+          null,
+          null,
+        ),
       ];
     }
     const iterator = services.values();
@@ -285,7 +293,7 @@ export class ServingDataProvider implements TreeDataProvider<ServingTreeItem | E
         const obj: ServingTreeItem = new ServingTreeItem(
           null,
           value,
-          value.name,
+          { label: value.name },
           value.modified ? ServingContextType.SERVICE_MODIFIED : ServingContextType.SERVICE,
           TreeItemCollapsibleState.Expanded,
           null,

@@ -153,7 +153,7 @@ status:
   const testServiceTreeItem: ServingTreeItem = new ServingTreeItem(
     null,
     testService,
-    'example',
+    { label: 'example' },
     ServingContextType.SERVICE,
     vscode.TreeItemCollapsibleState.Expanded,
     null,
@@ -163,7 +163,7 @@ status:
   const testServiceTreeItemModified: ServingTreeItem = new ServingTreeItem(
     null,
     testService,
-    'example',
+    { label: 'example' },
     ServingContextType.SERVICE_MODIFIED,
     vscode.TreeItemCollapsibleState.Expanded,
     null,
@@ -291,7 +291,7 @@ status:
   const example75w7vTreeItem: ServingTreeItem = new ServingTreeItem(
     testServiceTreeItem,
     example75w7vRevision,
-    'example-75w7v',
+    { label: 'example-75w7v' },
     ServingContextType.REVISION_TAGGED,
     vscode.TreeItemCollapsibleState.None,
     null,
@@ -401,7 +401,7 @@ status:
   const exampleG4hm8TreeItem: ServingTreeItem = new ServingTreeItem(
     testServiceTreeItem,
     exampleG4hm8Revision,
-    'example-g4hm8',
+    { label: 'example-g4hm8' },
     ServingContextType.REVISION,
     vscode.TreeItemCollapsibleState.None,
     null,
@@ -522,7 +522,7 @@ status:
   const example2fvz4TreeItem: ServingTreeItem = new ServingTreeItem(
     testServiceTreeItem,
     example2fvz4Revision,
-    'example-2fvz4',
+    { label: 'example-2fvz4' },
     ServingContextType.REVISION_TAGGED,
     vscode.TreeItemCollapsibleState.None,
     null,
