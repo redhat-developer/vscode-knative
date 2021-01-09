@@ -23,14 +23,16 @@ export class PingSource extends BaseSource {
   childSink: sinkType;
 
   static JSONToSource(value: Items): PingSource {
-    const source = new PingSource(
-      value.metadata.name,
-      'Sources',
-      value.spec.schedule,
-      value.spec.jsonData,
-      value.spec.sink?.ref?.name,
-      value,
-    );
+    let sinkNameOrUri: string;
+    if (value.spec.sink) {
+      if (value.spec.sink.ref) {
+        sinkNameOrUri = value.spec.sink.ref.name;
+      }
+      if (value.spec.sink.uri) {
+        sinkNameOrUri = value.spec.sink.uri;
+      }
+    }
+    const source = new PingSource(value.metadata.name, 'Sources', value.spec.schedule, value.spec.jsonData, sinkNameOrUri, value);
     return source;
   }
 }
@@ -65,7 +67,8 @@ export interface ControllerSelector {
   uid: string;
 }
 export interface Sink {
-  ref: RefOrSubject;
+  ref?: RefOrSubject | null;
+  uri?: string | null;
 }
 export interface RefOrSubject {
   apiVersion: string;

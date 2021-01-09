@@ -140,6 +140,15 @@ export class EventingDataProvider implements TreeDataProvider<EventingTreeItem |
       if (parentTreeItem.contextValue === EventingContextType.SOURCE_FOLDER) {
         children = this.sourceDataProvider.getSources(parentTreeItem);
       }
+      if (parentTreeItem.contextValue === EventingContextType.SOURCE_APISERVER) {
+        children = this.sourceDataProvider.getSourceChildren(parentTreeItem);
+      }
+      if (parentTreeItem.contextValue === EventingContextType.SOURCE_BINDING) {
+        children = this.sourceDataProvider.getSourceChildren(parentTreeItem);
+      }
+      if (parentTreeItem.contextValue === EventingContextType.SOURCE_PING) {
+        children = this.sourceDataProvider.getSourceChildren(parentTreeItem);
+      }
       if (parentTreeItem.contextValue === EventingContextType.SUBSCRIPTION_FOLDER) {
         children = this.subscriptionDataProvider.getSubscriptions(parentTreeItem);
       }
