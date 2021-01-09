@@ -38,7 +38,11 @@ export class KnativeBrokers {
   }
 
   public findBroker(brokerName: string): Broker {
-    return this.brokers[this.brokers.findIndex((s) => s.name === brokerName)];
+    try {
+      return this.brokers[this.brokers.findIndex((s) => s.name === brokerName)];
+    } catch (err) {
+      return undefined;
+    }
   }
 
   public addBroker(broker: Broker): Broker {

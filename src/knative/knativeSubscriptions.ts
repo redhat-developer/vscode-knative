@@ -53,7 +53,11 @@ export class KnativeSubscriptions {
   }
 
   public findSubscription(subscriptionName: string): Subscription {
-    return this.subscriptions[this.subscriptions.findIndex((s) => s.name === subscriptionName)];
+    try {
+      return this.subscriptions[this.subscriptions.findIndex((s) => s.name === subscriptionName)];
+    } catch (err) {
+      return undefined;
+    }
   }
 
   public addSubscription(subscription: Subscription): Subscription {
@@ -97,7 +101,7 @@ export class KnativeSubscriptions {
       return null;
     }
 
-    const channel: Channel = this.knChannel.getChannels().find((child): boolean => child.name === channelName);
+    const channel: Channel = this.knChannel.findChannel(channelName);
     if (channel) {
       this.findSubscription(subscription.name).childChannel = channel;
       this.updateTree();
