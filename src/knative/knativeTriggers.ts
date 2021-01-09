@@ -53,7 +53,11 @@ export class KnativeTriggers {
   }
 
   public findTrigger(triggerName: string): Trigger {
-    return this.triggers[this.triggers.findIndex((s) => s.name === triggerName)];
+    try {
+      return this.triggers[this.triggers.findIndex((s) => s.name === triggerName)];
+    } catch (err) {
+      return undefined;
+    }
   }
 
   public addTrigger(trigger: Trigger): Trigger {

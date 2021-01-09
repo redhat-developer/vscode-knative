@@ -46,7 +46,11 @@ export class KnativeEvents {
   }
 
   public findEvent(eventName: string): KEvent {
-    return this.events[this.events.findIndex((s) => s.name === eventName)];
+    try {
+      return this.events[this.events.findIndex((s) => s.name === eventName)];
+    } catch (err) {
+      return undefined;
+    }
   }
 
   public findChild(childName: string): EventTypes {

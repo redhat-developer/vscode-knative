@@ -42,7 +42,11 @@ export class KnativeServices {
   }
 
   public findService(serviceName: string): Service {
-    return this.services[this.services.findIndex((s) => s.name === serviceName)];
+    try {
+      return this.services[this.services.findIndex((s) => s.name === serviceName)];
+    } catch (err) {
+      return undefined;
+    }
   }
 
   public findRevision(revisionName: string): Revision {

@@ -38,7 +38,11 @@ export class KnativeChannels {
   }
 
   public findChannel(channelName: string): Channel {
-    return this.channels[this.channels.findIndex((s) => s.name === channelName)];
+    try {
+      return this.channels[this.channels.findIndex((s) => s.name === channelName)];
+    } catch (err) {
+      return undefined;
+    }
   }
 
   public addChannel(channel: Channel): Channel {
