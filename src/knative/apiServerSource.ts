@@ -16,13 +16,20 @@ export class APIServerSource extends BaseSource {
   childSink: sinkType;
 
   static JSONToSource(value: Items): APIServerSource {
-    // eslint-disable-next-line no-console
-    console.log(`sourceDataProvider  api source value.metadata.name ${value.metadata.name}`);
     let controller: string;
     if (value.spec.resources) {
       controller = value.spec.resources[0].controllerSelector?.name;
     }
-    const source = new APIServerSource(value.metadata.name, 'Sources', controller, value.spec.sink?.ref?.name, value);
+    let sinkNameOrUri: string;
+    if (value.spec.sink) {
+      if (value.spec.sink.ref) {
+        sinkNameOrUri = value.spec.sink.ref.name;
+      }
+      if (value.spec.sink.uri) {
+        sinkNameOrUri = value.spec.sink.uri;
+      }
+    }
+    const source = new APIServerSource(value.metadata.name, 'Sources', controller, sinkNameOrUri, value);
     return source;
   }
 }
@@ -57,7 +64,8 @@ export interface ControllerSelector {
   uid: string;
 }
 export interface Sink {
-  ref: RefOrSubject;
+  ref?: RefOrSubject | null;
+  uri?: string | null;
 }
 export interface RefOrSubject {
   apiVersion: string;

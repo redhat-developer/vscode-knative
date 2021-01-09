@@ -3,20 +3,25 @@
  *  Licensed under the MIT License. See LICENSE file in the project root for license information.
  *-----------------------------------------------------------------------------------------------*/
 
-import { TreeItemCollapsibleState } from 'vscode';
+import { TreeItemCollapsibleState, Uri } from 'vscode';
 import { EventingTreeItem } from './eventingTreeItem';
 import { Execute, loadItems } from '../cli/execute';
 import { CliExitData } from '../cli/cmdCli';
 import { KnAPI } from '../cli/kn-api';
-import { EventingContextType } from '../cli/config';
+import { EventingContextType, ServingContextType } from '../cli/config';
 import { compareNodes } from '../knative/knativeItem';
 import { GenericSource } from '../knative/genericSource';
 import { APIServerSource } from '../knative/apiServerSource';
 import { KnativeSources, SourceTypes } from '../knative/knativeSources';
 import { KnativeEvents } from '../knative/knativeEvents';
-import { Items } from '../knative/baseSource';
+import { Items, BaseSource } from '../knative/baseSource';
 import { BindingSource } from '../knative/bindingSource';
 import { PingSource } from '../knative/pingSource';
+import { ServingTreeItem } from '../servingTree/servingTreeItem';
+import { Sink } from '../knative/sink';
+import { Broker } from '../knative/broker';
+import { Channel } from '../knative/channel';
+import { Service } from '../knative/service';
 
 export class SourceDataProvider {
   public knExecutor = new Execute();
@@ -124,7 +129,7 @@ export class SourceDataProvider {
           value,
           { label: value.name },
           this.getSourceType(value.details.kind),
-          TreeItemCollapsibleState.None,
+          TreeItemCollapsibleState.Expanded,
           null,
           null,
         );
@@ -133,5 +138,77 @@ export class SourceDataProvider {
       .sort(compareNodes);
 
     return children;
+  }
+
+  /**
+   * A Trigger should have 2 children, a Broker and a Sink. This will build a list of those children.
+   */
+  // eslint-disable-next-line class-methods-use-this
+  public getSourceChildren(parent: EventingTreeItem): Array<EventingTreeItem | ServingTreeItem> {
+    const source: BaseSource = parent.getKnativeItem() as BaseSource;
+
+    const children: Sink[] = [source.childSink];
+    const childrenLabel = ['Sink'];
+    const treeItems: Array<EventingTreeItem | ServingTreeItem> = [];
+    // Create an empty state message when there are no Children.
+    children.forEach((child, index) => {
+      if (child === null || child === undefined) {
+        treeItems.push(
+          new EventingTreeItem(
+            parent,
+            null,
+            { label: `${childrenLabel[index]} Not Found` },
+            EventingContextType.NONE,
+            TreeItemCollapsibleState.None,
+          ),
+        );
+      }
+      if (child instanceof Broker) {
+        treeItems.push(
+          new EventingTreeItem(
+            parent,
+            child,
+            { label: `${childrenLabel[index]} - ${child.name}` },
+            EventingContextType.BROKER,
+            TreeItemCollapsibleState.None,
+          ),
+        );
+      }
+      if (child instanceof Channel) {
+        treeItems.push(
+          new EventingTreeItem(
+            parent,
+            child,
+            { label: `${childrenLabel[index]} - ${child.name}` },
+            EventingContextType.CHANNEL,
+            TreeItemCollapsibleState.None,
+          ),
+        );
+      }
+      if (child instanceof Service) {
+        treeItems.push(
+          new ServingTreeItem(
+            parent,
+            child,
+            { label: `${childrenLabel[index]} - ${child.name}` },
+            ServingContextType.SERVICE,
+            TreeItemCollapsibleState.None,
+          ),
+        );
+      }
+      if (child instanceof Uri) {
+        treeItems.push(
+          new EventingTreeItem(
+            parent,
+            null,
+            { label: `${childrenLabel[index]} - ${child.toString()}` },
+            EventingContextType.URI,
+            TreeItemCollapsibleState.None,
+          ),
+        );
+      }
+    });
+
+    return treeItems;
   }
 }

@@ -5,6 +5,7 @@
 
 // import { Sink } from './event';
 import { KnativeItem } from './knativeItem';
+import { Sink as sinkType } from './sink';
 
 export type sourceOptions = Array<Array<string>>;
 
@@ -12,6 +13,8 @@ export class BaseSource extends KnativeItem {
   constructor(public name: string, public parent: string, public details?: Items) {
     super();
   }
+
+  childSink: sinkType;
 
   annotation?: Map<string, boolean>;
 
@@ -81,7 +84,8 @@ export interface ControllerSelector {
   uid: string;
 }
 export interface Sink {
-  ref: RefOrSubject;
+  ref?: RefOrSubject | null;
+  uri?: string | null;
 }
 export interface RefOrSubject {
   apiVersion: string;
