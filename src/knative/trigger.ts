@@ -40,14 +40,16 @@ export class Trigger extends KnativeItem {
         filters.set(f, value.spec.filter.attributes[f]);
       }
     }
-    const trigger = new Trigger(
-      value.metadata.name,
-      'Triggers',
-      value.spec.broker,
-      filters,
-      value.spec.subscriber?.ref?.name,
-      value,
-    );
+    let sub: string;
+    if (value.spec.subscriber) {
+      if (value.spec.subscriber.ref) {
+        sub = value.spec.subscriber.ref.name;
+      }
+      if (value.spec.subscriber.uri) {
+        sub = value.spec.subscriber.uri;
+      }
+    }
+    const trigger = new Trigger(value.metadata.name, 'Triggers', value.spec.broker, filters, sub, value);
     return trigger;
   }
 }
@@ -104,7 +106,8 @@ export interface Attributes {
   type: string;
 }
 export interface Subscriber {
-  ref: Ref;
+  ref?: Ref | null;
+  uri?: string | null;
 }
 export interface Ref {
   apiVersion: string;

@@ -35,6 +35,7 @@ export enum EventingContextType {
   SUBSCRIPTION_FOLDER = 'subscription_folder',
   TRIGGER = 'trigger',
   TRIGGER_FOLDER = 'trigger_folder',
+  URI = 'uri',
 }
 
 export enum ComponentType {

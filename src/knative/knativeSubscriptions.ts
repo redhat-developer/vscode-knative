@@ -3,6 +3,7 @@
  *  Licensed under the MIT License. See LICENSE file in the project root for license information.
  *-----------------------------------------------------------------------------------------------*/
 
+import { Uri } from 'vscode';
 import { Subscription } from './subscription';
 import { Channel } from './channel';
 import { KnativeChannels } from './knativeChannels';
@@ -11,6 +12,7 @@ import { KnativeServices } from './knativeServices';
 import { KnativeBrokers } from './knativeBrokers';
 import { Broker } from './broker';
 import { Service } from './service';
+import { convertStringToURI } from '../util/parse';
 
 /**
  * A singleton to hold the Subscriptions.
@@ -118,10 +120,11 @@ export class KnativeSubscriptions {
       return null;
     }
 
-    const broker: Broker = this.knBroker.getBrokers().find((child): boolean => child.name === sinkName);
-    const channel: Channel = this.knChannel.getChannels().find((child): boolean => child.name === sinkName);
-    const service: Service = this.knService.getServices().find((child): boolean => child.name === sinkName);
-    const sink: Sink = broker || channel || service;
+    const broker: Broker = this.knBroker.findBroker(sinkName);
+    const channel: Channel = this.knChannel.findChannel(sinkName);
+    const service: Service = this.knService.findService(sinkName);
+    const uri: Uri = sinkName ? convertStringToURI(sinkName) : undefined;
+    const sink: Sink = broker || channel || service || uri;
     if (sink) {
       this.findSubscription(subscription.name).childSink = sink;
       this.updateTree();
@@ -144,10 +147,11 @@ export class KnativeSubscriptions {
       return null;
     }
 
-    const broker: Broker = this.knBroker.getBrokers().find((child): boolean => child.name === sinkName);
-    const channel: Channel = this.knChannel.getChannels().find((child): boolean => child.name === sinkName);
-    const service: Service = this.knService.getServices().find((child): boolean => child.name === sinkName);
-    const sink: Sink = broker || channel || service;
+    const broker: Broker = this.knBroker.findBroker(sinkName);
+    const channel: Channel = this.knChannel.findChannel(sinkName);
+    const service: Service = this.knService.findService(sinkName);
+    const uri: Uri = sinkName ? convertStringToURI(sinkName) : undefined;
+    const sink: Sink = broker || channel || service || uri;
     if (sink) {
       this.findSubscription(subscription.name).childSinkDeadLetter = sink;
       this.updateTree();
@@ -170,10 +174,11 @@ export class KnativeSubscriptions {
       return null;
     }
 
-    const broker: Broker = this.knBroker.getBrokers().find((child): boolean => child.name === sinkName);
-    const channel: Channel = this.knChannel.getChannels().find((child): boolean => child.name === sinkName);
-    const service: Service = this.knService.getServices().find((child): boolean => child.name === sinkName);
-    const sink: Sink = broker || channel || service;
+    const broker: Broker = this.knBroker.findBroker(sinkName);
+    const channel: Channel = this.knChannel.findChannel(sinkName);
+    const service: Service = this.knService.findService(sinkName);
+    const uri: Uri = sinkName ? convertStringToURI(sinkName) : undefined;
+    const sink: Sink = broker || channel || service || uri;
     if (sink) {
       this.findSubscription(subscription.name).childSinkReply = sink;
       this.updateTree();
