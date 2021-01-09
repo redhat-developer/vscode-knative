@@ -3,6 +3,7 @@
  *  Licensed under the MIT License. See LICENSE file in the project root for license information.
  *-----------------------------------------------------------------------------------------------*/
 
+import { Uri } from 'vscode';
 import { readFile } from 'fs';
 
 /**
@@ -25,4 +26,17 @@ export function loadJSON<T>(filePath: string): Promise<T> {
       }
     });
   });
+}
+
+/**
+ * Take a potential URI string, check if it starts with `http://` or `https://` and create URI for it.
+ * @param uriString
+ * @returns vscode.Uri
+ */
+export function convertStringToURI(uriString: string): Uri {
+  let uri: Uri;
+  if (uriString.startsWith('http://') || uriString.startsWith('https://')) {
+    uri = Uri.parse(uriString);
+  }
+  return uri;
 }

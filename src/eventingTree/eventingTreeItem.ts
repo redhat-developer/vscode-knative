@@ -113,6 +113,12 @@ const CONTEXT_DATA = {
     description: '',
     getChildren: (): undefined[] => [],
   },
+  uri: {
+    icon: '',
+    tooltip: '',
+    description: '',
+    getChildren: (): undefined[] => [],
+  },
 };
 
 export class EventingTreeItem extends TreeItem {

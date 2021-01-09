@@ -37,15 +37,34 @@ export class Subscription extends KnativeItem {
   modified?: boolean;
 
   static JSONToSubscription(value: Items): Subscription {
-    const subscription = new Subscription(
-      value.metadata.name,
-      'Subscriptions',
-      value.spec.channel?.name,
-      value.spec.subscriber?.ref?.name,
-      value.spec.delivery?.deadLetterSink?.ref?.name,
-      value.spec.reply?.ref?.name,
-      value,
-    );
+    let sub: string;
+    if (value.spec.subscriber) {
+      if (value.spec.subscriber.ref) {
+        sub = value.spec.subscriber.ref.name;
+      }
+      if (value.spec.subscriber.uri) {
+        sub = value.spec.subscriber.uri;
+      }
+    }
+    let rep: string;
+    if (value.spec.reply) {
+      if (value.spec.reply.ref) {
+        rep = value.spec.reply.ref.name;
+      }
+      if (value.spec.reply.uri) {
+        rep = value.spec.reply.uri;
+      }
+    }
+    let dls: string;
+    if (value.spec.delivery?.deadLetterSink) {
+      if (value.spec.delivery.deadLetterSink.ref) {
+        dls = value.spec.delivery.deadLetterSink.ref.name;
+      }
+      if (value.spec.delivery.deadLetterSink.uri) {
+        dls = value.spec.delivery.deadLetterSink.uri;
+      }
+    }
+    const subscription = new Subscription(value.metadata.name, 'Subscriptions', value.spec.channel?.name, sub, dls, rep, value);
     return subscription;
   }
 }

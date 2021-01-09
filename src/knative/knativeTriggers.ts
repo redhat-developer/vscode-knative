@@ -3,6 +3,7 @@
  *  Licensed under the MIT License. See LICENSE file in the project root for license information.
  *-----------------------------------------------------------------------------------------------*/
 
+import { Uri } from 'vscode';
 import { Trigger } from './trigger';
 import { KnativeChannels } from './knativeChannels';
 import { KnativeServices } from './knativeServices';
@@ -11,6 +12,7 @@ import { Broker } from './broker';
 import { Channel } from './channel';
 import { Service } from './service';
 import { Sink } from './sink';
+import { convertStringToURI } from '../util/parse';
 
 /**
  * A singleton to hold the Triggers.
@@ -90,8 +92,9 @@ export class KnativeTriggers {
       return null;
     }
 
-    const broker: Broker = this.knBroker.getBrokers().find((child): boolean => child.name === brokerName);
+    const broker: Broker = this.knBroker.findBroker(brokerName);
     if (broker) {
+      // find this trigger in the master list of triggers and add the broker to it
       this.findTrigger(trigger.name).childBroker = broker;
       this.updateTree();
     }
@@ -113,11 +116,13 @@ export class KnativeTriggers {
       return null;
     }
 
-    const broker: Broker = this.knBroker.getBrokers().find((child): boolean => child.name === sinkName);
-    const channel: Channel = this.knChannel.getChannels().find((child): boolean => child.name === sinkName);
-    const service: Service = this.knService.getServices().find((child): boolean => child.name === sinkName);
-    const sink: Sink = broker || channel || service;
+    const broker: Broker = this.knBroker.findBroker(sinkName);
+    const channel: Channel = this.knChannel.findChannel(sinkName);
+    const service: Service = this.knService.findService(sinkName);
+    const uri: Uri = sinkName ? convertStringToURI(sinkName) : undefined;
+    const sink: Sink = broker || channel || service || uri;
     if (sink) {
+      // find this trigger in the master list of triggers and add the sink to it
       this.findTrigger(trigger.name).childSink = sink;
       this.updateTree();
     }

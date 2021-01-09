@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See LICENSE file in the project root for license information.
  *-----------------------------------------------------------------------------------------------*/
 
-import { TreeItemCollapsibleState } from 'vscode';
+import { TreeItemCollapsibleState, Uri } from 'vscode';
 import { EventingTreeItem } from './eventingTreeItem';
 import { Execute, loadItems } from '../cli/execute';
 import { CliExitData } from '../cli/cmdCli';
@@ -74,8 +74,6 @@ export class TriggerDataProvider {
           { label: 'No Trigger Found' },
           EventingContextType.NONE,
           TreeItemCollapsibleState.None,
-          null,
-          null,
         ),
       ];
     }
@@ -92,8 +90,6 @@ export class TriggerDataProvider {
           { label: value.name },
           EventingContextType.TRIGGER,
           TreeItemCollapsibleState.Expanded,
-          null,
-          null,
         );
         return obj;
       })
@@ -114,18 +110,16 @@ export class TriggerDataProvider {
     const treeItems: Array<EventingTreeItem | ServingTreeItem> = [];
     // Create an empty state message when there are no Children.
     children.forEach((child, index) => {
-      if (index === 0 && (child === null || child === undefined)) {
-        return [
+      if (child === null || child === undefined) {
+        treeItems.push(
           new EventingTreeItem(
             parent,
             null,
-            { label: 'No Channel Found' },
+            { label: `${childrenLabel[index]} Not Found` },
             EventingContextType.NONE,
             TreeItemCollapsibleState.None,
-            null,
-            null,
           ),
-        ];
+        );
       }
       if (child instanceof Broker) {
         treeItems.push(
@@ -156,6 +150,17 @@ export class TriggerDataProvider {
             child,
             { label: `${childrenLabel[index]} - ${child.name}` },
             ServingContextType.SERVICE,
+            TreeItemCollapsibleState.None,
+          ),
+        );
+      }
+      if (child instanceof Uri) {
+        treeItems.push(
+          new EventingTreeItem(
+            parent,
+            null,
+            { label: `${childrenLabel[index]} - ${child.toString()}` },
+            EventingContextType.URI,
             TreeItemCollapsibleState.None,
           ),
         );
