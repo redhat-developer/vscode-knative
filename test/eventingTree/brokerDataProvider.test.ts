@@ -18,10 +18,9 @@ chai.use(sinonChai);
 
 suite('BrokerDataProvider', () => {
   const sandbox = sinon.createSandbox();
-  const brokerDataProvider: BrokerDataProvider = new BrokerDataProvider();
   const eventingDataProvider: EventingDataProvider = new EventingDataProvider();
-
   const eventingFolderNodes: EventingTreeItem[] = eventingDataProvider.getEventingFolders();
+  const brokerDataProvider: BrokerDataProvider = new BrokerDataProvider();
 
   const testBroker0: Broker = new Broker('example-broker0', 'Brokers', JSON.parse(JSON.stringify(brokerData.items[0])));
   const testBroker0TreeItem: EventingTreeItem = new EventingTreeItem(

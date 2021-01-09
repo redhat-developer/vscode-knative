@@ -5,12 +5,21 @@ import * as sinon from 'sinon';
 import * as sinonChai from 'sinon-chai';
 import * as referee from '@sinonjs/referee';
 import * as subscriptionIncompleteData from './subscriptionIncomplete.json';
+import * as brokerData from './broker.json';
+import * as channelData from './channel.json';
+import * as multipleServiceData from '../servingTree/multipleServiceServicesList.json';
 import * as subscriptionData from './subscription.json';
 import { EventingContextType } from '../../src/cli/config';
 import { EventingDataProvider } from '../../src/eventingTree/eventingDataProvider';
 import { EventingTreeItem } from '../../src/eventingTree/eventingTreeItem';
 import { SubscriptionDataProvider } from '../../src/eventingTree/subscriptionDataProvider';
 import { Subscription } from '../../src/knative/subscription';
+import { BrokerDataProvider } from '../../src/eventingTree/brokerDataProvider';
+import { ChannelDataProvider } from '../../src/eventingTree/channelDataProvider';
+import { ServingDataProvider } from '../../src/servingTree/servingDataProvider';
+import { KnativeSubscriptions } from '../../src/knative/knativeSubscriptions';
+import { Service } from '../../src/knative/service';
+import { KnativeServices } from '../../src/knative/knativeServices';
 
 const { assert } = referee;
 const { expect } = chai;
@@ -18,10 +27,14 @@ chai.use(sinonChai);
 
 suite('SubscriptionDataProvider', () => {
   const sandbox = sinon.createSandbox();
-  const subscriptionDataProvider: SubscriptionDataProvider = new SubscriptionDataProvider();
   const eventingDataProvider: EventingDataProvider = new EventingDataProvider();
-
   const eventingFolderNodes: EventingTreeItem[] = eventingDataProvider.getEventingFolders();
+  const brokerDataProvider: BrokerDataProvider = new BrokerDataProvider();
+  const channelDataProvider: ChannelDataProvider = new ChannelDataProvider();
+  const servingDataProvider: ServingDataProvider = new ServingDataProvider();
+  const ksvc: KnativeServices = KnativeServices.Instance;
+  const knativeSubscriptions: KnativeSubscriptions = KnativeSubscriptions.Instance;
+  const subscriptionDataProvider: SubscriptionDataProvider = new SubscriptionDataProvider();
 
   const testSubscription0: Subscription = new Subscription(
     'example-subscription0',
@@ -37,9 +50,7 @@ suite('SubscriptionDataProvider', () => {
     testSubscription0,
     { label: 'example-subscription0' },
     EventingContextType.SUBSCRIPTION,
-    vscode.TreeItemCollapsibleState.None,
-    null,
-    null,
+    vscode.TreeItemCollapsibleState.Expanded,
   );
   const testSubscription1: Subscription = new Subscription(
     'example-subscription1',
@@ -55,9 +66,7 @@ suite('SubscriptionDataProvider', () => {
     testSubscription1,
     { label: 'example-subscription1' },
     EventingContextType.SUBSCRIPTION,
-    vscode.TreeItemCollapsibleState.None,
-    null,
-    null,
+    vscode.TreeItemCollapsibleState.Expanded,
   );
   const testSubscription2: Subscription = new Subscription(
     'example-subscription2',
@@ -73,14 +82,26 @@ suite('SubscriptionDataProvider', () => {
     testSubscription2,
     { label: 'example-subscription2' },
     EventingContextType.SUBSCRIPTION,
-    vscode.TreeItemCollapsibleState.None,
-    null,
-    null,
+    vscode.TreeItemCollapsibleState.Expanded,
   );
+
+  const testSubscriptions = [testSubscription0, testSubscription1, testSubscription2];
   const testSubscriptionTreeItems = [testSubscription0TreeItem, testSubscription1TreeItem, testSubscription2TreeItem];
 
-  beforeEach(() => {
+  beforeEach(async () => {
     sandbox.stub(vscode.window, 'showErrorMessage').resolves();
+    sandbox.stub(brokerDataProvider.knExecutor, 'execute').resolves({ error: undefined, stdout: JSON.stringify(brokerData) });
+    await brokerDataProvider.getBrokers(eventingFolderNodes[0]);
+    sandbox.stub(channelDataProvider.knExecutor, 'execute').resolves({ error: undefined, stdout: JSON.stringify(channelData) });
+    await channelDataProvider.getChannels(eventingFolderNodes[1]);
+    sandbox
+      .stub(servingDataProvider.knExecutor, 'execute')
+      .resolves({ error: undefined, stdout: JSON.stringify(multipleServiceData) });
+    const servingTreeItems = await servingDataProvider.getServices();
+    const service: Service = servingTreeItems[0].getKnativeItem() as Service;
+    service.modified = false;
+    ksvc.updateService(service);
+    knativeSubscriptions.addSubscriptions(testSubscriptions);
   });
   teardown(() => {
     sandbox.restore();

@@ -464,6 +464,122 @@
         "observedGeneration": 1,
         "subscriberUri": "http://broker-ingress.knative-eventing.svc.cluster.local/josh/example-broker1"
       }
+    },
+    {
+      "apiVersion": "eventing.knative.dev/v1beta1",
+      "kind": "Trigger",
+      "metadata": {
+        "annotations": {
+          "eventing.knative.dev/creator": "system:admin",
+          "eventing.knative.dev/lastModifier": "system:admin"
+        },
+        "creationTimestamp": "2020-12-11T04:57:58Z",
+        "generation": 1,
+        "labels": {
+          "eventing.knative.dev/broker": "example-broker4-missing"
+        },
+        "managedFields": [
+          {
+            "apiVersion": "eventing.knative.dev/v1beta1",
+            "fieldsType": "FieldsV1",
+            "fieldsV1": {
+              "f:spec": {
+                ".": {},
+                "f:broker": {},
+                "f:filter": {
+                  ".": {},
+                  "f:attributes": {
+                    ".": {},
+                    "f:name": {},
+                    "f:type": {}
+                  }
+                },
+                "f:subscriber": {
+                  ".": {},
+                  "f:ref": {
+                    ".": {},
+                    "f:apiVersion": {},
+                    "f:kind": {},
+                    "f:name": {},
+                    "f:namespace": {}
+                  }
+                }
+              },
+              "f:status": {}
+            },
+            "manager": "kn",
+            "operation": "Update",
+            "time": "2020-12-11T04:57:58Z"
+          },
+          {
+            "apiVersion": "eventing.knative.dev/v1",
+            "fieldsType": "FieldsV1",
+            "fieldsV1": {
+              "f:status": {
+                "f:conditions": {},
+                "f:observedGeneration": {},
+                "f:subscriberUri": {}
+              }
+            },
+            "manager": "mtchannel-broker",
+            "operation": "Update",
+            "time": "2020-12-11T04:57:59Z"
+          }
+        ],
+        "name": "example-trigger4-missing",
+        "namespace": "josh",
+        "resourceVersion": "961195",
+        "selfLink": "/apis/eventing.knative.dev/v1beta1/namespaces/josh/triggers/example-trigger4-missing",
+        "uid": "dc0ecf4d-668e-425b-9f5d-0158868a998a"
+      },
+      "spec": {
+        "broker": "example-broker4-missing",
+        "filter": {
+          "attributes": {
+            "name": "dev.knative.bar",
+            "type": "dev.knative.foo"
+          }
+        },
+        "subscriber": {
+          "ref": {
+            "apiVersion": "eventing.knative.dev/v1beta1",
+            "kind": "Broker",
+            "name": "example-broker4-missing",
+            "namespace": "josh"
+          }
+        }
+      },
+      "status": {
+        "conditions": [
+          {
+            "lastTransitionTime": "2020-12-11T04:57:58Z",
+            "status": "True",
+            "type": "BrokerReady"
+          },
+          {
+            "lastTransitionTime": "2020-12-11T04:57:58Z",
+            "status": "True",
+            "type": "DependencyReady"
+          },
+          {
+            "lastTransitionTime": "2020-12-11T04:57:59Z",
+            "status": "True",
+            "type": "Ready"
+          },
+          {
+            "lastTransitionTime": "2020-12-11T04:57:58Z",
+            "status": "True",
+            "type": "SubscriberResolved"
+          },
+          {
+            "lastTransitionTime": "2020-12-11T04:57:59Z",
+            "status": "True",
+            "type": "SubscriptionReady"
+          }
+        ],
+        "observedGeneration": 1,
+        "subscriberUri": "http://broker-ingress.knative-eventing.svc.cluster.local/josh/example-broker1"
+      }
     }
   ],
   "kind": "TriggerList"
