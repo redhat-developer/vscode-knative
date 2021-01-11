@@ -40,7 +40,7 @@ suite('SourceDataProvider', () => {
     testSource0,
     { label: 'example-source0' },
     EventingContextType.SOURCE_APISERVER,
-    vscode.TreeItemCollapsibleState.None,
+    vscode.TreeItemCollapsibleState.Expanded,
     null,
     null,
   );
@@ -58,7 +58,7 @@ suite('SourceDataProvider', () => {
     testSource1,
     { label: 'example-source1' },
     EventingContextType.SOURCE_PING,
-    vscode.TreeItemCollapsibleState.None,
+    vscode.TreeItemCollapsibleState.Expanded,
     null,
     null,
   );
@@ -75,7 +75,7 @@ suite('SourceDataProvider', () => {
     testSource2,
     { label: 'example-source2' },
     EventingContextType.SOURCE,
-    vscode.TreeItemCollapsibleState.None,
+    vscode.TreeItemCollapsibleState.Expanded,
     null,
     null,
   );
@@ -92,7 +92,7 @@ suite('SourceDataProvider', () => {
     testSource3,
     { label: 'example-source3' },
     EventingContextType.SOURCE_BINDING,
-    vscode.TreeItemCollapsibleState.None,
+    vscode.TreeItemCollapsibleState.Expanded,
     null,
     null,
   );
@@ -111,7 +111,7 @@ suite('SourceDataProvider', () => {
     testSource0EmptySpec,
     { label: 'example-source0-emptySpec' },
     EventingContextType.SOURCE_APISERVER,
-    vscode.TreeItemCollapsibleState.None,
+    vscode.TreeItemCollapsibleState.Expanded,
     null,
     null,
   );
@@ -129,7 +129,7 @@ suite('SourceDataProvider', () => {
     testSource1EmptySpec,
     { label: 'example-source1-emptySpec' },
     EventingContextType.SOURCE_PING,
-    vscode.TreeItemCollapsibleState.None,
+    vscode.TreeItemCollapsibleState.Expanded,
     null,
     null,
   );
@@ -146,7 +146,7 @@ suite('SourceDataProvider', () => {
     testSource2EmptySpec,
     { label: 'example-source2-emptySpec' },
     EventingContextType.SOURCE,
-    vscode.TreeItemCollapsibleState.None,
+    vscode.TreeItemCollapsibleState.Expanded,
     null,
     null,
   );
@@ -163,7 +163,7 @@ suite('SourceDataProvider', () => {
     testSource3EmptySpec,
     { label: 'example-source3-emptySpec' },
     EventingContextType.SOURCE_BINDING,
-    vscode.TreeItemCollapsibleState.None,
+    vscode.TreeItemCollapsibleState.Expanded,
     null,
     null,
   );
