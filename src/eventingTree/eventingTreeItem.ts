@@ -57,7 +57,7 @@ const CONTEXT_DATA = {
   },
   // eslint-disable-next-line @typescript-eslint/camelcase
   source_binding: {
-    // icon: 'source-generic-cloud.svg',
+    // icon: 'source-generic.svg',
     icon: 'EVT.svg',
     tooltip: '',
     description: '',
@@ -79,7 +79,7 @@ const CONTEXT_DATA = {
   },
   // eslint-disable-next-line @typescript-eslint/camelcase
   source_ping: {
-    // icon: 'source-generic-cloud-rain.svg',
+    // icon: 'source-generic.svg',
     icon: 'EVT.svg',
     tooltip: '',
     description: '',
@@ -114,7 +114,7 @@ const CONTEXT_DATA = {
     getChildren: (): undefined[] => [],
   },
   uri: {
-    icon: '',
+    icon: 'EVT.svg',
     tooltip: '',
     description: '',
     getChildren: (): undefined[] => [],
