@@ -123,7 +123,7 @@ export class KnativeTriggers {
     const broker: Broker = this.knBroker.findBroker(sinkName);
     const channel: Channel = this.knChannel.findChannel(sinkName);
     const service: Service = this.knService.findService(sinkName);
-    const uri: Uri = sinkName ? convertStringToURI(sinkName) : undefined;
+    const uri: Uri = typeof sinkName === 'string' ? convertStringToURI(sinkName) : undefined;
     const sink: Sink = broker || channel || service || uri;
     if (sink) {
       // find this trigger in the master list of triggers and add the sink to it

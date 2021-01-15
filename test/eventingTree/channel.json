@@ -10,7 +10,7 @@
           "messaging.knative.dev/lastModifier": "system:admin",
           "messaging.knative.dev/subscribable": "v1beta1"
         },
-        "creationTimestamp": "2020-11-16T19:54:50Z",
+        "creationTimestamp": "2021-01-14T14:19:57Z",
         "generation": 1,
         "managedFields": [
           {
@@ -20,18 +20,22 @@
               "f:spec": {
                 ".": {},
                 "f:channelTemplate": {}
+              },
+              "f:status": {
+                ".": {},
+                "f:channel": {},
+                "f:observedGeneration": {}
               }
             },
             "manager": "kn",
             "operation": "Update",
-            "time": "2020-11-16T19:54:50Z"
+            "time": "2021-01-14T14:19:57Z"
           },
           {
-            "apiVersion": "messaging.knative.dev/v1beta1",
+            "apiVersion": "messaging.knative.dev/v1",
             "fieldsType": "FieldsV1",
             "fieldsV1": {
               "f:status": {
-                ".": {},
                 "f:address": {},
                 "f:channel": {},
                 "f:conditions": {},
@@ -41,14 +45,14 @@
             },
             "manager": "controller",
             "operation": "Update",
-            "time": "2020-11-16T19:54:52Z"
+            "time": "2021-01-14T14:20:02Z"
           }
         ],
         "name": "example-channel0",
         "namespace": "josh",
-        "resourceVersion": "48328",
+        "resourceVersion": "228227",
         "selfLink": "/apis/messaging.knative.dev/v1beta1/namespaces/josh/channels/example-channel0",
-        "uid": "51800e5d-5e0a-41b5-a3ef-0cf5f60c491b"
+        "uid": "0ec2ac91-f0b1-40b0-b3bb-ba7bdb31e5ca"
       },
       "spec": {
         "channelTemplate": {
@@ -68,17 +72,17 @@
         },
         "conditions": [
           {
-            "lastTransitionTime": "2020-11-16T19:54:51Z",
+            "lastTransitionTime": "2021-01-14T14:19:57Z",
             "status": "True",
             "type": "Addressable"
           },
           {
-            "lastTransitionTime": "2020-11-16T19:54:52Z",
+            "lastTransitionTime": "2021-01-14T14:19:57Z",
             "status": "True",
             "type": "BackingChannelReady"
           },
           {
-            "lastTransitionTime": "2020-11-16T19:54:52Z",
+            "lastTransitionTime": "2021-01-14T14:19:57Z",
             "status": "True",
             "type": "Ready"
           }
@@ -88,7 +92,12 @@
           {
             "observedGeneration": 1,
             "ready": "True",
-            "uid": "7a351d67-06ce-4f63-9885-601ceb0257aa"
+            "uid": "df593bf6-3f41-428e-81bd-f1a6407d458a"
+          },
+          {
+            "observedGeneration": 1,
+            "ready": "True",
+            "uid": "23548d63-0552-4470-a4db-a83ccdcee21b"
           }
         ]
       }
@@ -102,7 +111,7 @@
           "messaging.knative.dev/lastModifier": "system:admin",
           "messaging.knative.dev/subscribable": "v1beta1"
         },
-        "creationTimestamp": "2020-11-16T19:54:50Z",
+        "creationTimestamp": "2021-01-14T14:19:58Z",
         "generation": 1,
         "managedFields": [
           {
@@ -112,18 +121,22 @@
               "f:spec": {
                 ".": {},
                 "f:channelTemplate": {}
+              },
+              "f:status": {
+                ".": {},
+                "f:channel": {},
+                "f:observedGeneration": {}
               }
             },
             "manager": "kn",
             "operation": "Update",
-            "time": "2020-11-16T19:54:50Z"
+            "time": "2021-01-14T14:19:58Z"
           },
           {
-            "apiVersion": "messaging.knative.dev/v1beta1",
+            "apiVersion": "messaging.knative.dev/v1",
             "fieldsType": "FieldsV1",
             "fieldsV1": {
               "f:status": {
-                ".": {},
                 "f:address": {},
                 "f:channel": {},
                 "f:conditions": {},
@@ -133,14 +146,14 @@
             },
             "manager": "controller",
             "operation": "Update",
-            "time": "2020-11-16T20:09:40Z"
+            "time": "2021-01-14T14:20:03Z"
           }
         ],
         "name": "example-channel1",
         "namespace": "josh",
-        "resourceVersion": "57792",
+        "resourceVersion": "228354",
         "selfLink": "/apis/messaging.knative.dev/v1beta1/namespaces/josh/channels/example-channel1",
-        "uid": "52d3fe8d-9c64-4171-b02a-d068e3607b03"
+        "uid": "c2a184f8-c12c-4233-bb3d-959f2280bf03"
       },
       "spec": {
         "channelTemplate": {
@@ -160,17 +173,17 @@
         },
         "conditions": [
           {
-            "lastTransitionTime": "2020-11-16T19:54:51Z",
+            "lastTransitionTime": "2021-01-14T14:19:58Z",
             "status": "True",
             "type": "Addressable"
           },
           {
-            "lastTransitionTime": "2020-11-16T20:09:40Z",
+            "lastTransitionTime": "2021-01-14T14:19:58Z",
             "status": "True",
             "type": "BackingChannelReady"
           },
           {
-            "lastTransitionTime": "2020-11-16T20:09:40Z",
+            "lastTransitionTime": "2021-01-14T14:19:58Z",
             "status": "True",
             "type": "Ready"
           }
@@ -180,7 +193,7 @@
           {
             "observedGeneration": 1,
             "ready": "True",
-            "uid": "1fb5d5c0-713a-401b-86e3-7a76f9ed8e6c"
+            "uid": "8a61efe3-fd7c-4806-b406-3eab3279d12c"
           }
         ]
       }
@@ -194,7 +207,7 @@
           "messaging.knative.dev/lastModifier": "system:admin",
           "messaging.knative.dev/subscribable": "v1beta1"
         },
-        "creationTimestamp": "2020-11-16T19:54:49Z",
+        "creationTimestamp": "2021-01-14T14:19:58Z",
         "generation": 1,
         "managedFields": [
           {
@@ -204,18 +217,22 @@
               "f:spec": {
                 ".": {},
                 "f:channelTemplate": {}
+              },
+              "f:status": {
+                ".": {},
+                "f:channel": {},
+                "f:observedGeneration": {}
               }
             },
             "manager": "kn",
             "operation": "Update",
-            "time": "2020-11-16T19:54:49Z"
+            "time": "2021-01-14T14:19:58Z"
           },
           {
-            "apiVersion": "messaging.knative.dev/v1beta1",
+            "apiVersion": "messaging.knative.dev/v1",
             "fieldsType": "FieldsV1",
             "fieldsV1": {
               "f:status": {
-                ".": {},
                 "f:address": {},
                 "f:channel": {},
                 "f:conditions": {},
@@ -225,14 +242,14 @@
             },
             "manager": "controller",
             "operation": "Update",
-            "time": "2020-11-16T19:54:52Z"
+            "time": "2021-01-14T14:20:04Z"
           }
         ],
-        "name": "pipe",
+        "name": "example-channel2",
         "namespace": "josh",
-        "resourceVersion": "48279",
-        "selfLink": "/apis/messaging.knative.dev/v1beta1/namespaces/josh/channels/pipe",
-        "uid": "9c83eef4-e6f1-4760-a18f-fdcbf18fc72d"
+        "resourceVersion": "228431",
+        "selfLink": "/apis/messaging.knative.dev/v1beta1/namespaces/josh/channels/example-channel2",
+        "uid": "f1d31db7-c112-4b1a-9071-f462951a2282"
       },
       "spec": {
         "channelTemplate": {
@@ -242,27 +259,27 @@
       },
       "status": {
         "address": {
-          "url": "http://pipe-kn-channel.josh.svc.cluster.local"
+          "url": "http://example-channel2-kn-channel.josh.svc.cluster.local"
         },
         "channel": {
           "apiVersion": "messaging.knative.dev/v1beta1",
           "kind": "InMemoryChannel",
-          "name": "pipe",
+          "name": "example-channel2",
           "namespace": "josh"
         },
         "conditions": [
           {
-            "lastTransitionTime": "2020-11-16T19:54:50Z",
+            "lastTransitionTime": "2021-01-14T14:19:58Z",
             "status": "True",
             "type": "Addressable"
           },
           {
-            "lastTransitionTime": "2020-11-16T19:54:52Z",
+            "lastTransitionTime": "2021-01-14T14:19:58Z",
             "status": "True",
             "type": "BackingChannelReady"
           },
           {
-            "lastTransitionTime": "2020-11-16T19:54:52Z",
+            "lastTransitionTime": "2021-01-14T14:19:58Z",
             "status": "True",
             "type": "Ready"
           }
@@ -272,12 +289,7 @@
           {
             "observedGeneration": 1,
             "ready": "True",
-            "uid": "0f4b5f5c-c672-4461-ae39-65ba2603f158"
-          },
-          {
-            "observedGeneration": 1,
-            "ready": "True",
-            "uid": "c676e078-6e27-4a36-9aff-89317f1b6c47"
+            "uid": "11cc0f0c-8e1b-4cfa-bb40-9cacc121802d"
           }
         ]
       }
@@ -291,7 +303,7 @@
           "messaging.knative.dev/lastModifier": "system:admin",
           "messaging.knative.dev/subscribable": "v1beta1"
         },
-        "creationTimestamp": "2020-11-16T19:54:49Z",
+        "creationTimestamp": "2021-01-14T14:19:58Z",
         "generation": 1,
         "managedFields": [
           {
@@ -301,18 +313,22 @@
               "f:spec": {
                 ".": {},
                 "f:channelTemplate": {}
+              },
+              "f:status": {
+                ".": {},
+                "f:channel": {},
+                "f:observedGeneration": {}
               }
             },
             "manager": "kn",
             "operation": "Update",
-            "time": "2020-11-16T19:54:49Z"
+            "time": "2021-01-14T14:19:58Z"
           },
           {
-            "apiVersion": "messaging.knative.dev/v1beta1",
+            "apiVersion": "messaging.knative.dev/v1",
             "fieldsType": "FieldsV1",
             "fieldsV1": {
               "f:status": {
-                ".": {},
                 "f:address": {},
                 "f:channel": {},
                 "f:conditions": {},
@@ -322,14 +338,14 @@
             },
             "manager": "controller",
             "operation": "Update",
-            "time": "2020-11-16T19:54:53Z"
+            "time": "2021-01-14T14:20:05Z"
           }
         ],
-        "name": "pipe1",
+        "name": "example-channel3",
         "namespace": "josh",
-        "resourceVersion": "48345",
-        "selfLink": "/apis/messaging.knative.dev/v1beta1/namespaces/josh/channels/pipe1",
-        "uid": "c761e777-e7a8-41bb-87c7-d409a7e46d9b"
+        "resourceVersion": "228735",
+        "selfLink": "/apis/messaging.knative.dev/v1beta1/namespaces/josh/channels/example-channel3",
+        "uid": "9cd59660-6311-4667-b808-5675b9014664"
       },
       "spec": {
         "channelTemplate": {
@@ -339,27 +355,27 @@
       },
       "status": {
         "address": {
-          "url": "http://pipe1-kn-channel.josh.svc.cluster.local"
+          "url": "http://example-channel3-kn-channel.josh.svc.cluster.local"
         },
         "channel": {
           "apiVersion": "messaging.knative.dev/v1beta1",
           "kind": "InMemoryChannel",
-          "name": "pipe1",
+          "name": "example-channel3",
           "namespace": "josh"
         },
         "conditions": [
           {
-            "lastTransitionTime": "2020-11-16T19:54:52Z",
+            "lastTransitionTime": "2021-01-14T14:19:58Z",
             "status": "True",
             "type": "Addressable"
           },
           {
-            "lastTransitionTime": "2020-11-16T19:54:53Z",
+            "lastTransitionTime": "2021-01-14T14:19:58Z",
             "status": "True",
             "type": "BackingChannelReady"
           },
           {
-            "lastTransitionTime": "2020-11-16T19:54:53Z",
+            "lastTransitionTime": "2021-01-14T14:19:58Z",
             "status": "True",
             "type": "Ready"
           }
@@ -369,7 +385,7 @@
           {
             "observedGeneration": 1,
             "ready": "True",
-            "uid": "b06b54c5-953d-4a31-b93b-f2a6fbd0321d"
+            "uid": "a8bf6e9b-d88b-4b4d-8eff-1ce70d5abf97"
           }
         ]
       }
