@@ -121,7 +121,7 @@ export class SourceDataProvider {
     // Add the list of children to the parent for reference
     this.events.addChildren(sources);
 
-    // Convert the fetch Sources into TreeItems
+    // Convert the fetched Sources into TreeItems
     const children = sources
       .map<EventingTreeItem>((value) => {
         const obj: EventingTreeItem = new EventingTreeItem(
