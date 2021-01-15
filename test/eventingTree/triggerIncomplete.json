@@ -9,7 +9,7 @@
           "eventing.knative.dev/creator": "system:admin",
           "eventing.knative.dev/lastModifier": "system:admin"
         },
-        "creationTimestamp": "2020-11-16T19:54:51Z",
+        "creationTimestamp": "2021-01-14T00:26:38Z",
         "generation": 1,
         "labels": {
           "eventing.knative.dev/broker": "example-broker0"
@@ -22,7 +22,14 @@
               "f:spec": {
                 ".": {},
                 "f:broker": {},
-                "f:filter": {},
+                "f:filter": {
+                  ".": {},
+                  "f:attributes": {
+                    ".": {},
+                    "f:name": {},
+                    "f:type": {}
+                  }
+                },
                 "f:subscriber": {
                   ".": {},
                   "f:ref": {
@@ -33,18 +40,22 @@
                     "f:namespace": {}
                   }
                 }
+              },
+              "f:status": {
+                ".": {},
+                "f:observedGeneration": {},
+                "f:subscriberUri": {}
               }
             },
             "manager": "kn",
             "operation": "Update",
-            "time": "2020-11-16T19:54:51Z"
+            "time": "2021-01-14T00:26:38Z"
           },
           {
-            "apiVersion": "eventing.knative.dev/v1beta1",
+            "apiVersion": "eventing.knative.dev/v1",
             "fieldsType": "FieldsV1",
             "fieldsV1": {
               "f:status": {
-                ".": {},
                 "f:conditions": {},
                 "f:observedGeneration": {},
                 "f:subscriberUri": {}
@@ -52,18 +63,23 @@
             },
             "manager": "mtchannel-broker",
             "operation": "Update",
-            "time": "2020-11-16T19:54:53Z"
+            "time": "2021-01-14T00:26:39Z"
           }
         ],
         "name": "example-trigger0",
         "namespace": "josh",
-        "resourceVersion": "48379",
+        "resourceVersion": "323435",
         "selfLink": "/apis/eventing.knative.dev/v1beta1/namespaces/josh/triggers/example-trigger0",
-        "uid": "38d940a2-39f3-4988-9c61-8f4866acece1"
+        "uid": "e979993b-e4b2-4637-815a-064a4f789bb0"
       },
       "spec": {
         "broker": "example-broker0",
-        "filter": {},
+        "filter": {
+          "attributes": {
+            "name": "dev.knative.bar",
+            "type": "dev.knative.foo0"
+          }
+        },
         "subscriber": {
           "ref": {
             "apiVersion": "serving.knative.dev/v1",
@@ -86,7 +102,7 @@
           "eventing.knative.dev/creator": "system:admin",
           "eventing.knative.dev/lastModifier": "system:admin"
         },
-        "creationTimestamp": "2020-11-16T19:54:51Z",
+        "creationTimestamp": "2021-01-14T00:26:39Z",
         "generation": 1,
         "labels": {
           "eventing.knative.dev/broker": "example-broker0"
@@ -99,7 +115,14 @@
               "f:spec": {
                 ".": {},
                 "f:broker": {},
-                "f:filter": {},
+                "f:filter": {
+                  ".": {},
+                  "f:attributes": {
+                    ".": {},
+                    "f:name": {},
+                    "f:type": {}
+                  }
+                },
                 "f:subscriber": {
                   ".": {},
                   "f:ref": {
@@ -110,18 +133,22 @@
                     "f:namespace": {}
                   }
                 }
+              },
+              "f:status": {
+                ".": {},
+                "f:observedGeneration": {},
+                "f:subscriberUri": {}
               }
             },
             "manager": "kn",
             "operation": "Update",
-            "time": "2020-11-16T19:54:51Z"
+            "time": "2021-01-14T00:26:38Z"
           },
           {
-            "apiVersion": "eventing.knative.dev/v1beta1",
+            "apiVersion": "eventing.knative.dev/v1",
             "fieldsType": "FieldsV1",
             "fieldsV1": {
               "f:status": {
-                ".": {},
                 "f:conditions": {},
                 "f:observedGeneration": {},
                 "f:subscriberUri": {}
@@ -129,30 +156,35 @@
             },
             "manager": "mtchannel-broker",
             "operation": "Update",
-            "time": "2020-11-16T19:54:53Z"
+            "time": "2021-01-14T00:26:39Z"
           }
         ],
         "name": "example-trigger1",
         "namespace": "josh",
-        "resourceVersion": "48381",
+        "resourceVersion": "323407",
         "selfLink": "/apis/eventing.knative.dev/v1beta1/namespaces/josh/triggers/example-trigger1",
-        "uid": "8cde4473-e3e9-492d-b2de-693889bbdf6c"
+        "uid": "cdf2ac22-83ef-456a-b37e-f779cc67e9eb"
       },
       "spec": {
         "broker": "example-broker0",
-        "filter": {},
+        "filter": {
+          "attributes": {
+            "name": "dev.knative.bar",
+            "type": "dev.knative.foo1"
+          }
+        },
         "subscriber": {
           "ref": {
-            "apiVersion": "serving.knative.dev/v1",
-            "kind": "Service",
-            "name": "aaa",
+            "apiVersion": "eventing.knative.dev/v1beta1",
+            "kind": "Broker",
+            "name": "example-broker1",
             "namespace": "josh"
           }
         }
       },
       "status": {
         "observedGeneration": 1,
-        "subscriberUri": "http://aaa.josh.svc.cluster.local"
+        "subscriberUri": "http://broker-ingress.knative-eventing.svc.cluster.local/josh/example-broker1"
       }
     },
     {
@@ -163,7 +195,7 @@
           "eventing.knative.dev/creator": "system:admin",
           "eventing.knative.dev/lastModifier": "system:admin"
         },
-        "creationTimestamp": "2020-11-16T19:54:52Z",
+        "creationTimestamp": "2021-01-14T00:26:39Z",
         "generation": 1,
         "labels": {
           "eventing.knative.dev/broker": "example-broker1"
@@ -176,7 +208,14 @@
               "f:spec": {
                 ".": {},
                 "f:broker": {},
-                "f:filter": {},
+                "f:filter": {
+                  ".": {},
+                  "f:attributes": {
+                    ".": {},
+                    "f:name": {},
+                    "f:type": {}
+                  }
+                },
                 "f:subscriber": {
                   ".": {},
                   "f:ref": {
@@ -187,18 +226,22 @@
                     "f:namespace": {}
                   }
                 }
+              },
+              "f:status": {
+                ".": {},
+                "f:observedGeneration": {},
+                "f:subscriberUri": {}
               }
             },
             "manager": "kn",
             "operation": "Update",
-            "time": "2020-11-16T19:54:52Z"
+            "time": "2021-01-14T00:26:39Z"
           },
           {
-            "apiVersion": "eventing.knative.dev/v1beta1",
+            "apiVersion": "eventing.knative.dev/v1",
             "fieldsType": "FieldsV1",
             "fieldsV1": {
               "f:status": {
-                ".": {},
                 "f:conditions": {},
                 "f:observedGeneration": {},
                 "f:subscriberUri": {}
@@ -206,30 +249,35 @@
             },
             "manager": "mtchannel-broker",
             "operation": "Update",
-            "time": "2020-11-16T19:54:54Z"
+            "time": "2021-01-14T00:26:40Z"
           }
         ],
         "name": "example-trigger2",
         "namespace": "josh",
-        "resourceVersion": "48410",
+        "resourceVersion": "323501",
         "selfLink": "/apis/eventing.knative.dev/v1beta1/namespaces/josh/triggers/example-trigger2",
-        "uid": "09126c0a-153a-4797-a637-8d4183682975"
+        "uid": "a2059acf-ebb5-4100-a3fe-0a70208360c9"
       },
       "spec": {
         "broker": "example-broker1",
-        "filter": {},
+        "filter": {
+          "attributes": {
+            "name": "dev.knative.bar",
+            "type": "dev.knative.foo2"
+          }
+        },
         "subscriber": {
           "ref": {
-            "apiVersion": "serving.knative.dev/v1",
-            "kind": "Service",
-            "name": "aaa",
+            "apiVersion": "messaging.knative.dev/v1beta1",
+            "kind": "Channel",
+            "name": "example-channel0",
             "namespace": "josh"
           }
         }
       },
       "status": {
         "observedGeneration": 1,
-        "subscriberUri": "http://aaa.josh.svc.cluster.local"
+        "subscriberUri": "http://example-channel0-kn-channel.josh.svc.cluster.local"
       }
     },
     {
@@ -240,7 +288,7 @@
           "eventing.knative.dev/creator": "system:admin",
           "eventing.knative.dev/lastModifier": "system:admin"
         },
-        "creationTimestamp": "2020-11-16T19:54:52Z",
+        "creationTimestamp": "2021-01-14T00:26:39Z",
         "generation": 1,
         "labels": {
           "eventing.knative.dev/broker": "example-broker1"
@@ -253,7 +301,14 @@
               "f:spec": {
                 ".": {},
                 "f:broker": {},
-                "f:filter": {},
+                "f:filter": {
+                  ".": {},
+                  "f:attributes": {
+                    ".": {},
+                    "f:name": {},
+                    "f:type": {}
+                  }
+                },
                 "f:subscriber": {
                   ".": {},
                   "f:ref": {
@@ -264,18 +319,22 @@
                     "f:namespace": {}
                   }
                 }
+              },
+              "f:status": {
+                ".": {},
+                "f:observedGeneration": {},
+                "f:subscriberUri": {}
               }
             },
             "manager": "kn",
             "operation": "Update",
-            "time": "2020-11-16T19:54:52Z"
+            "time": "2021-01-14T00:26:39Z"
           },
           {
-            "apiVersion": "eventing.knative.dev/v1beta1",
+            "apiVersion": "eventing.knative.dev/v1",
             "fieldsType": "FieldsV1",
             "fieldsV1": {
               "f:status": {
-                ".": {},
                 "f:conditions": {},
                 "f:observedGeneration": {},
                 "f:subscriberUri": {}
@@ -283,30 +342,117 @@
             },
             "manager": "mtchannel-broker",
             "operation": "Update",
-            "time": "2020-11-16T19:54:54Z"
+            "time": "2021-01-14T00:26:40Z"
           }
         ],
         "name": "example-trigger3",
         "namespace": "josh",
-        "resourceVersion": "48411",
+        "resourceVersion": "323589",
         "selfLink": "/apis/eventing.knative.dev/v1beta1/namespaces/josh/triggers/example-trigger3",
-        "uid": "99eb7f81-9f17-4131-a8eb-2f0991a72b08"
+        "uid": "1646e2a0-e747-4915-9dd8-c477e62c9713"
       },
       "spec": {
         "broker": "example-broker1",
-        "filter": {},
+        "filter": {
+          "attributes": {
+            "name": "dev.knative.bar",
+            "type": "dev.knative.foo3"
+          }
+        },
         "subscriber": {
           "ref": {
-            "apiVersion": "serving.knative.dev/v1",
-            "kind": "Service",
-            "name": "aaa",
+            "apiVersion": "eventing.knative.dev/v1beta1",
+            "kind": "Broker",
+            "name": "example-broker1",
             "namespace": "josh"
           }
         }
       },
       "status": {
         "observedGeneration": 1,
-        "subscriberUri": "http://aaa.josh.svc.cluster.local"
+        "subscriberUri": "http://broker-ingress.knative-eventing.svc.cluster.local/josh/example-broker1"
+      }
+    },
+    {
+      "apiVersion": "eventing.knative.dev/v1beta1",
+      "kind": "Trigger",
+      "metadata": {
+        "annotations": {
+          "eventing.knative.dev/creator": "system:admin",
+          "eventing.knative.dev/lastModifier": "system:admin"
+        },
+        "creationTimestamp": "2021-01-14T00:26:39Z",
+        "generation": 1,
+        "labels": {
+          "eventing.knative.dev/broker": "example-broker1"
+        },
+        "managedFields": [
+          {
+            "apiVersion": "eventing.knative.dev/v1beta1",
+            "fieldsType": "FieldsV1",
+            "fieldsV1": {
+              "f:spec": {
+                ".": {},
+                "f:broker": {},
+                "f:filter": {
+                  ".": {},
+                  "f:attributes": {
+                    ".": {},
+                    "f:name": {},
+                    "f:type": {}
+                  }
+                },
+                "f:subscriber": {
+                  ".": {},
+                  "f:uri": {}
+                }
+              },
+              "f:status": {
+                ".": {},
+                "f:observedGeneration": {},
+                "f:subscriberUri": {}
+              }
+            },
+            "manager": "kn",
+            "operation": "Update",
+            "time": "2021-01-14T00:26:39Z"
+          },
+          {
+            "apiVersion": "eventing.knative.dev/v1",
+            "fieldsType": "FieldsV1",
+            "fieldsV1": {
+              "f:status": {
+                "f:conditions": {},
+                "f:observedGeneration": {},
+                "f:subscriberUri": {}
+              }
+            },
+            "manager": "mtchannel-broker",
+            "operation": "Update",
+            "time": "2021-01-14T00:26:40Z"
+          }
+        ],
+        "name": "example-trigger4",
+        "namespace": "josh",
+        "resourceVersion": "323537",
+        "selfLink": "/apis/eventing.knative.dev/v1beta1/namespaces/josh/triggers/example-trigger4",
+        "uid": "ef259d5a-c913-4c83-a07e-5da15e87ac49"
+      },
+      "spec": {
+        "broker": "example-broker1",
+        "filter": {
+          "attributes": {
+            "name": "dev.knative.bar",
+            "type": "dev.knative.foo3"
+          }
+        },
+        "subscriber": {
+          "uri": "https://event.receiver.uri"
+        }
+      },
+      "status": {
+        "observedGeneration": 1,
+        "subscriberUri": "https://event.receiver.uri"
       }
     }
   ],

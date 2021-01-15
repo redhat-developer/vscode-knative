@@ -6,15 +6,15 @@ items:
       annotations:
         messaging.knative.dev/creator: system:serviceaccount:knative-eventing:eventing-controller
         messaging.knative.dev/lastModifier: system:serviceaccount:knative-eventing:eventing-controller
-      creationTimestamp: '2020-11-17T15:32:48Z'
+      creationTimestamp: '2021-01-14T00:26:39Z'
       finalizers:
         - subscriptions.messaging.knative.dev
       generation: 1
       labels:
-        eventing.knative.dev/broker: mybroker
-        eventing.knative.dev/trigger: mytrigger
+        eventing.knative.dev/broker: example-broker0
+        eventing.knative.dev/trigger: example-trigger1
       managedFields:
-        - apiVersion: messaging.knative.dev/v1beta1
+        - apiVersion: messaging.knative.dev/v1
           fieldsType: FieldsV1
           fieldsV1:
             f:metadata:
@@ -24,7 +24,7 @@ items:
                 f:eventing.knative.dev/trigger: {}
               f:ownerReferences:
                 .: {}
-                k:{"uid":"46e4553f-3263-4194-9a5a-d4b3f8608073"}:
+                k:{"uid":"cdf2ac22-83ef-456a-b37e-f779cc67e9eb"}:
                   .: {}
                   f:apiVersion: {}
                   f:blockOwnerDeletion: {}
@@ -50,10 +50,16 @@ items:
               f:subscriber:
                 .: {}
                 f:uri: {}
+            f:status:
+              .: {}
+              f:physicalSubscription:
+                .: {}
+                f:replyUri: {}
+                f:subscriberUri: {}
           manager: mtchannel-broker
           operation: Update
-          time: '2020-11-17T15:32:48Z'
-        - apiVersion: messaging.knative.dev/v1beta1
+          time: '2021-01-14T00:26:39Z'
+        - apiVersion: messaging.knative.dev/v1
           fieldsType: FieldsV1
           fieldsV1:
             f:metadata:
@@ -61,74 +67,72 @@ items:
                 .: {}
                 v:"subscriptions.messaging.knative.dev": {}
             f:status:
-              .: {}
               f:conditions: {}
               f:observedGeneration: {}
               f:physicalSubscription:
-                .: {}
                 f:replyUri: {}
                 f:subscriberUri: {}
           manager: controller
           operation: Update
-          time: '2020-11-17T15:32:50Z'
-      name: mybroker-mytrigger-46e4553f-3263-4194-9a5a-d4b3f8608073
+          time: '2021-01-14T00:26:41Z'
+      name: example-broker0-example-trigger73695afbba0520ad778fd264afea2e74
       namespace: josh
       ownerReferences:
-        - apiVersion: eventing.knative.dev/v1beta1
+        - apiVersion: eventing.knative.dev/v1
           blockOwnerDeletion: true
           controller: true
           kind: Trigger
-          name: mytrigger
-          uid: 46e4553f-3263-4194-9a5a-d4b3f8608073
-      resourceVersion: '60354'
-      selfLink: /apis/messaging.knative.dev/v1beta1/namespaces/josh/subscriptions/mybroker-mytrigger-46e4553f-3263-4194-9a5a-d4b3f8608073
-      uid: 45bd6091-36a3-49f4-a201-9298ca6d282d
+          name: example-trigger1
+          uid: cdf2ac22-83ef-456a-b37e-f779cc67e9eb
+      resourceVersion: '323370'
+      selfLink: /apis/messaging.knative.dev/v1beta1/namespaces/josh/subscriptions/example-broker0-example-trigger73695afbba0520ad778fd264afea2e74
+      uid: fd7e80ea-3f28-47d7-8562-87dfac64b230
     spec:
       channel:
         apiVersion: messaging.knative.dev/v1beta1
         kind: InMemoryChannel
-        name: mybroker-kne-trigger
+        name: example-broker0-kne-trigger
       reply:
         ref:
-          apiVersion: eventing.knative.dev/v1beta1
+          apiVersion: eventing.knative.dev/v1
           kind: Broker
-          name: mybroker
+          name: example-broker0
           namespace: josh
       subscriber:
-        uri: http://broker-filter.knative-eventing.svc.cluster.local/triggers/josh/mytrigger/46e4553f-3263-4194-9a5a-d4b3f8608073
+        uri: http://broker-filter.knative-eventing.svc.cluster.local/triggers/josh/example-trigger1/cdf2ac22-83ef-456a-b37e-f779cc67e9eb
     status:
       conditions:
-        - lastTransitionTime: '2020-11-17T15:32:49Z'
+        - lastTransitionTime: '2021-01-14T00:26:41Z'
           status: 'True'
           type: AddedToChannel
-        - lastTransitionTime: '2020-11-17T15:32:50Z'
+        - lastTransitionTime: '2021-01-14T00:26:43Z'
           status: 'True'
           type: ChannelReady
-        - lastTransitionTime: '2020-11-17T15:32:50Z'
+        - lastTransitionTime: '2021-01-14T00:26:43Z'
           status: 'True'
           type: Ready
-        - lastTransitionTime: '2020-11-17T15:32:49Z'
+        - lastTransitionTime: '2021-01-14T00:26:41Z'
           status: 'True'
           type: ReferencesResolved
       observedGeneration: 1
       physicalSubscription:
-        replyUri: http://broker-ingress.knative-eventing.svc.cluster.local/josh/mybroker
-        subscriberUri: http://broker-filter.knative-eventing.svc.cluster.local/triggers/josh/mytrigger/46e4553f-3263-4194-9a5a-d4b3f8608073
+        replyUri: http://broker-ingress.knative-eventing.svc.cluster.local/josh/example-broker0
+        subscriberUri: http://broker-filter.knative-eventing.svc.cluster.local/triggers/josh/example-trigger1/cdf2ac22-83ef-456a-b37e-f779cc67e9eb
   - apiVersion: messaging.knative.dev/v1beta1
     kind: Subscription
     metadata:
       annotations:
         messaging.knative.dev/creator: system:serviceaccount:knative-eventing:eventing-controller
         messaging.knative.dev/lastModifier: system:serviceaccount:knative-eventing:eventing-controller
-      creationTimestamp: '2020-11-17T15:32:49Z'
+      creationTimestamp: '2021-01-14T00:26:39Z'
       finalizers:
         - subscriptions.messaging.knative.dev
       generation: 1
       labels:
-        eventing.knative.dev/broker: mybroker
-        eventing.knative.dev/trigger: mytrigger2
+        eventing.knative.dev/broker: example-broker0
+        eventing.knative.dev/trigger: example-trigger0
       managedFields:
-        - apiVersion: messaging.knative.dev/v1beta1
+        - apiVersion: messaging.knative.dev/v1
           fieldsType: FieldsV1
           fieldsV1:
             f:metadata:
@@ -138,7 +142,7 @@ items:
                 f:eventing.knative.dev/trigger: {}
               f:ownerReferences:
                 .: {}
-                k:{"uid":"36687771-d0dc-468d-b404-3a39f5194408"}:
+                k:{"uid":"e979993b-e4b2-4637-815a-064a4f789bb0"}:
                   .: {}
                   f:apiVersion: {}
                   f:blockOwnerDeletion: {}
@@ -164,10 +168,16 @@ items:
               f:subscriber:
                 .: {}
                 f:uri: {}
+            f:status:
+              .: {}
+              f:physicalSubscription:
+                .: {}
+                f:replyUri: {}
+                f:subscriberUri: {}
           manager: mtchannel-broker
           operation: Update
-          time: '2020-11-17T15:32:48Z'
-        - apiVersion: messaging.knative.dev/v1beta1
+          time: '2021-01-14T00:26:39Z'
+        - apiVersion: messaging.knative.dev/v1
           fieldsType: FieldsV1
           fieldsV1:
             f:metadata:
@@ -175,74 +185,72 @@ items:
                 .: {}
                 v:"subscriptions.messaging.knative.dev": {}
             f:status:
-              .: {}
               f:conditions: {}
               f:observedGeneration: {}
               f:physicalSubscription:
-                .: {}
                 f:replyUri: {}
                 f:subscriberUri: {}
           manager: controller
           operation: Update
-          time: '2020-11-17T15:32:50Z'
-      name: mybroker-mytrigger2-36687771-d0dc-468d-b404-3a39f5194408
+          time: '2021-01-14T00:26:41Z'
+      name: example-broker0-example-triggercdb7b6a1e581af671f2750e8d736f509
       namespace: josh
       ownerReferences:
-        - apiVersion: eventing.knative.dev/v1beta1
+        - apiVersion: eventing.knative.dev/v1
           blockOwnerDeletion: true
           controller: true
           kind: Trigger
-          name: mytrigger2
-          uid: 36687771-d0dc-468d-b404-3a39f5194408
-      resourceVersion: '60352'
-      selfLink: /apis/messaging.knative.dev/v1beta1/namespaces/josh/subscriptions/mybroker-mytrigger2-36687771-d0dc-468d-b404-3a39f5194408
-      uid: 7e80e81c-d83b-4587-ab34-0dd808510495
+          name: example-trigger0
+          uid: e979993b-e4b2-4637-815a-064a4f789bb0
+      resourceVersion: '323384'
+      selfLink: /apis/messaging.knative.dev/v1beta1/namespaces/josh/subscriptions/example-broker0-example-triggercdb7b6a1e581af671f2750e8d736f509
+      uid: 3e0c30ba-a965-4cab-8df7-62a47e31cff0
     spec:
       channel:
         apiVersion: messaging.knative.dev/v1beta1
         kind: InMemoryChannel
-        name: mybroker-kne-trigger
+        name: example-broker0-kne-trigger
       reply:
         ref:
-          apiVersion: eventing.knative.dev/v1beta1
+          apiVersion: eventing.knative.dev/v1
           kind: Broker
-          name: mybroker
+          name: example-broker0
           namespace: josh
       subscriber:
-        uri: http://broker-filter.knative-eventing.svc.cluster.local/triggers/josh/mytrigger2/36687771-d0dc-468d-b404-3a39f5194408
+        uri: http://broker-filter.knative-eventing.svc.cluster.local/triggers/josh/example-trigger0/e979993b-e4b2-4637-815a-064a4f789bb0
     status:
       conditions:
-        - lastTransitionTime: '2020-11-17T15:32:49Z'
+        - lastTransitionTime: '2021-01-14T00:26:41Z'
           status: 'True'
           type: AddedToChannel
-        - lastTransitionTime: '2020-11-17T15:32:50Z'
+        - lastTransitionTime: '2021-01-14T00:26:43Z'
           status: 'True'
           type: ChannelReady
-        - lastTransitionTime: '2020-11-17T15:32:50Z'
+        - lastTransitionTime: '2021-01-14T00:26:43Z'
           status: 'True'
           type: Ready
-        - lastTransitionTime: '2020-11-17T15:32:49Z'
+        - lastTransitionTime: '2021-01-14T00:26:41Z'
           status: 'True'
           type: ReferencesResolved
       observedGeneration: 1
       physicalSubscription:
-        replyUri: http://broker-ingress.knative-eventing.svc.cluster.local/josh/mybroker
-        subscriberUri: http://broker-filter.knative-eventing.svc.cluster.local/triggers/josh/mytrigger2/36687771-d0dc-468d-b404-3a39f5194408
+        replyUri: http://broker-ingress.knative-eventing.svc.cluster.local/josh/example-broker0
+        subscriberUri: http://broker-filter.knative-eventing.svc.cluster.local/triggers/josh/example-trigger0/e979993b-e4b2-4637-815a-064a4f789bb0
   - apiVersion: messaging.knative.dev/v1beta1
     kind: Subscription
     metadata:
       annotations:
         messaging.knative.dev/creator: system:serviceaccount:knative-eventing:eventing-controller
         messaging.knative.dev/lastModifier: system:serviceaccount:knative-eventing:eventing-controller
-      creationTimestamp: '2020-11-17T15:32:49Z'
+      creationTimestamp: '2021-01-14T00:26:40Z'
       finalizers:
         - subscriptions.messaging.knative.dev
       generation: 1
       labels:
-        eventing.knative.dev/broker: mybroker1
-        eventing.knative.dev/trigger: mytrigger3
+        eventing.knative.dev/broker: example-broker1
+        eventing.knative.dev/trigger: example-trigger3
       managedFields:
-        - apiVersion: messaging.knative.dev/v1beta1
+        - apiVersion: messaging.knative.dev/v1
           fieldsType: FieldsV1
           fieldsV1:
             f:metadata:
@@ -252,7 +260,7 @@ items:
                 f:eventing.knative.dev/trigger: {}
               f:ownerReferences:
                 .: {}
-                k:{"uid":"722712aa-c9f4-4276-822e-63441e743246"}:
+                k:{"uid":"1646e2a0-e747-4915-9dd8-c477e62c9713"}:
                   .: {}
                   f:apiVersion: {}
                   f:blockOwnerDeletion: {}
@@ -278,10 +286,16 @@ items:
               f:subscriber:
                 .: {}
                 f:uri: {}
+            f:status:
+              .: {}
+              f:physicalSubscription:
+                .: {}
+                f:replyUri: {}
+                f:subscriberUri: {}
           manager: mtchannel-broker
           operation: Update
-          time: '2020-11-17T15:32:49Z'
-        - apiVersion: messaging.knative.dev/v1beta1
+          time: '2021-01-14T00:26:40Z'
+        - apiVersion: messaging.knative.dev/v1
           fieldsType: FieldsV1
           fieldsV1:
             f:metadata:
@@ -289,74 +303,72 @@ items:
                 .: {}
                 v:"subscriptions.messaging.knative.dev": {}
             f:status:
-              .: {}
               f:conditions: {}
               f:observedGeneration: {}
               f:physicalSubscription:
-                .: {}
                 f:replyUri: {}
                 f:subscriberUri: {}
           manager: controller
           operation: Update
-          time: '2020-11-17T15:32:51Z'
-      name: mybroker1-mytrigger3-722712aa-c9f4-4276-822e-63441e743246
+          time: '2021-01-14T00:26:42Z'
+      name: example-broker1-example-trigger03c4f99e0eb638e4dff7066476d1dbf7
       namespace: josh
       ownerReferences:
-        - apiVersion: eventing.knative.dev/v1beta1
+        - apiVersion: eventing.knative.dev/v1
           blockOwnerDeletion: true
           controller: true
           kind: Trigger
-          name: mytrigger3
-          uid: 722712aa-c9f4-4276-822e-63441e743246
-      resourceVersion: '60369'
-      selfLink: /apis/messaging.knative.dev/v1beta1/namespaces/josh/subscriptions/mybroker1-mytrigger3-722712aa-c9f4-4276-822e-63441e743246
-      uid: 16e8b20c-6758-4983-8a46-4cc83d2b799e
+          name: example-trigger3
+          uid: 1646e2a0-e747-4915-9dd8-c477e62c9713
+      resourceVersion: '323568'
+      selfLink: /apis/messaging.knative.dev/v1beta1/namespaces/josh/subscriptions/example-broker1-example-trigger03c4f99e0eb638e4dff7066476d1dbf7
+      uid: 0c64dde1-0d50-406e-8d7d-d38b159672c6
     spec:
       channel:
         apiVersion: messaging.knative.dev/v1beta1
         kind: InMemoryChannel
-        name: mybroker1-kne-trigger
+        name: example-broker1-kne-trigger
       reply:
         ref:
-          apiVersion: eventing.knative.dev/v1beta1
+          apiVersion: eventing.knative.dev/v1
           kind: Broker
-          name: mybroker1
+          name: example-broker1
           namespace: josh
       subscriber:
-        uri: http://broker-filter.knative-eventing.svc.cluster.local/triggers/josh/mytrigger3/722712aa-c9f4-4276-822e-63441e743246
+        uri: http://broker-filter.knative-eventing.svc.cluster.local/triggers/josh/example-trigger3/1646e2a0-e747-4915-9dd8-c477e62c9713
     status:
       conditions:
-        - lastTransitionTime: '2020-11-17T15:32:49Z'
+        - lastTransitionTime: '2021-01-14T00:26:42Z'
           status: 'True'
           type: AddedToChannel
-        - lastTransitionTime: '2020-11-17T15:32:51Z'
+        - lastTransitionTime: '2021-01-14T00:26:44Z'
           status: 'True'
           type: ChannelReady
-        - lastTransitionTime: '2020-11-17T15:32:51Z'
+        - lastTransitionTime: '2021-01-14T00:26:44Z'
           status: 'True'
           type: Ready
-        - lastTransitionTime: '2020-11-17T15:32:49Z'
+        - lastTransitionTime: '2021-01-14T00:26:42Z'
           status: 'True'
           type: ReferencesResolved
       observedGeneration: 1
       physicalSubscription:
-        replyUri: http://broker-ingress.knative-eventing.svc.cluster.local/josh/mybroker1
-        subscriberUri: http://broker-filter.knative-eventing.svc.cluster.local/triggers/josh/mytrigger3/722712aa-c9f4-4276-822e-63441e743246
+        replyUri: http://broker-ingress.knative-eventing.svc.cluster.local/josh/example-broker1
+        subscriberUri: http://broker-filter.knative-eventing.svc.cluster.local/triggers/josh/example-trigger3/1646e2a0-e747-4915-9dd8-c477e62c9713
   - apiVersion: messaging.knative.dev/v1beta1
     kind: Subscription
     metadata:
       annotations:
         messaging.knative.dev/creator: system:serviceaccount:knative-eventing:eventing-controller
         messaging.knative.dev/lastModifier: system:serviceaccount:knative-eventing:eventing-controller
-      creationTimestamp: '2020-11-17T15:32:49Z'
+      creationTimestamp: '2021-01-14T00:26:40Z'
       finalizers:
         - subscriptions.messaging.knative.dev
       generation: 1
       labels:
-        eventing.knative.dev/broker: mybroker1
-        eventing.knative.dev/trigger: mytrigger4
+        eventing.knative.dev/broker: example-broker1
+        eventing.knative.dev/trigger: example-trigger4
       managedFields:
-        - apiVersion: messaging.knative.dev/v1beta1
+        - apiVersion: messaging.knative.dev/v1
           fieldsType: FieldsV1
           fieldsV1:
             f:metadata:
@@ -366,7 +378,7 @@ items:
                 f:eventing.knative.dev/trigger: {}
               f:ownerReferences:
                 .: {}
-                k:{"uid":"d6490975-3443-4646-b8b6-fd31ae0cbed6"}:
+                k:{"uid":"ef259d5a-c913-4c83-a07e-5da15e87ac49"}:
                   .: {}
                   f:apiVersion: {}
                   f:blockOwnerDeletion: {}
@@ -392,84 +404,106 @@ items:
               f:subscriber:
                 .: {}
                 f:uri: {}
-          manager: mtchannel-broker
-          operation: Update
-          time: '2020-11-17T15:32:49Z'
-        - apiVersion: messaging.knative.dev/v1beta1
-          fieldsType: FieldsV1
-          fieldsV1:
-            f:metadata:
-              f:finalizers:
-                .: {}
-                v:"subscriptions.messaging.knative.dev": {}
             f:status:
               .: {}
-              f:conditions: {}
-              f:observedGeneration: {}
               f:physicalSubscription:
                 .: {}
                 f:replyUri: {}
                 f:subscriberUri: {}
+          manager: mtchannel-broker
+          operation: Update
+          time: '2021-01-14T00:26:40Z'
+        - apiVersion: messaging.knative.dev/v1
+          fieldsType: FieldsV1
+          fieldsV1:
+            f:metadata:
+              f:finalizers:
+                .: {}
+                v:"subscriptions.messaging.knative.dev": {}
+            f:status:
+              f:conditions: {}
+              f:observedGeneration: {}
+              f:physicalSubscription:
+                f:replyUri: {}
+                f:subscriberUri: {}
           manager: controller
           operation: Update
-          time: '2020-11-17T15:32:51Z'
-      name: mybroker1-mytrigger4-d6490975-3443-4646-b8b6-fd31ae0cbed6
+          time: '2021-01-14T00:26:43Z'
+      name: example-broker1-example-trigger562d0c35289db3e51f5a07464d1cad28
       namespace: josh
       ownerReferences:
-        - apiVersion: eventing.knative.dev/v1beta1
+        - apiVersion: eventing.knative.dev/v1
           blockOwnerDeletion: true
           controller: true
           kind: Trigger
-          name: mytrigger4
-          uid: d6490975-3443-4646-b8b6-fd31ae0cbed6
-      resourceVersion: '60368'
-      selfLink: /apis/messaging.knative.dev/v1beta1/namespaces/josh/subscriptions/mybroker1-mytrigger4-d6490975-3443-4646-b8b6-fd31ae0cbed6
-      uid: 6fddc0b2-585d-4c01-b2a9-5fad4725f007
+          name: example-trigger4
+          uid: ef259d5a-c913-4c83-a07e-5da15e87ac49
+      resourceVersion: '323458'
+      selfLink: /apis/messaging.knative.dev/v1beta1/namespaces/josh/subscriptions/example-broker1-example-trigger562d0c35289db3e51f5a07464d1cad28
+      uid: 549bbbb7-535d-42ae-bf13-7d088dfb99c1
     spec:
       channel:
         apiVersion: messaging.knative.dev/v1beta1
         kind: InMemoryChannel
-        name: mybroker1-kne-trigger
+        name: example-broker1-kne-trigger
       reply:
         ref:
-          apiVersion: eventing.knative.dev/v1beta1
+          apiVersion: eventing.knative.dev/v1
           kind: Broker
-          name: mybroker1
+          name: example-broker1
           namespace: josh
       subscriber:
-        uri: http://broker-filter.knative-eventing.svc.cluster.local/triggers/josh/mytrigger4/d6490975-3443-4646-b8b6-fd31ae0cbed6
+        uri: http://broker-filter.knative-eventing.svc.cluster.local/triggers/josh/example-trigger4/ef259d5a-c913-4c83-a07e-5da15e87ac49
     status:
       conditions:
-        - lastTransitionTime: '2020-11-17T15:32:50Z'
+        - lastTransitionTime: '2021-01-14T00:26:42Z'
           status: 'True'
           type: AddedToChannel
-        - lastTransitionTime: '2020-11-17T15:32:51Z'
+        - lastTransitionTime: '2021-01-14T00:26:43Z'
           status: 'True'
           type: ChannelReady
-        - lastTransitionTime: '2020-11-17T15:32:51Z'
+        - lastTransitionTime: '2021-01-14T00:26:43Z'
           status: 'True'
           type: Ready
-        - lastTransitionTime: '2020-11-17T15:32:50Z'
+        - lastTransitionTime: '2021-01-14T00:26:42Z'
           status: 'True'
           type: ReferencesResolved
       observedGeneration: 1
       physicalSubscription:
-        replyUri: http://broker-ingress.knative-eventing.svc.cluster.local/josh/mybroker1
-        subscriberUri: http://broker-filter.knative-eventing.svc.cluster.local/triggers/josh/mytrigger4/d6490975-3443-4646-b8b6-fd31ae0cbed6
+        replyUri: http://broker-ingress.knative-eventing.svc.cluster.local/josh/example-broker1
+        subscriberUri: http://broker-filter.knative-eventing.svc.cluster.local/triggers/josh/example-trigger4/ef259d5a-c913-4c83-a07e-5da15e87ac49
   - apiVersion: messaging.knative.dev/v1beta1
     kind: Subscription
     metadata:
       annotations:
-        messaging.knative.dev/creator: system:admin
-        messaging.knative.dev/lastModifier: system:admin
-      creationTimestamp: '2020-11-17T15:32:46Z'
+        messaging.knative.dev/creator: system:serviceaccount:knative-eventing:eventing-controller
+        messaging.knative.dev/lastModifier: system:serviceaccount:knative-eventing:eventing-controller
+      creationTimestamp: '2021-01-14T00:26:40Z'
       finalizers:
         - subscriptions.messaging.knative.dev
       generation: 1
+      labels:
+        eventing.knative.dev/broker: example-broker1
+        eventing.knative.dev/trigger: example-trigger2
       managedFields:
-        - apiVersion: messaging.knative.dev/v1beta1
+        - apiVersion: messaging.knative.dev/v1
           fieldsType: FieldsV1
           fieldsV1:
+            f:metadata:
+              f:labels:
+                .: {}
+                f:eventing.knative.dev/broker: {}
+                f:eventing.knative.dev/trigger: {}
+              f:ownerReferences:
+                .: {}
+                k:{"uid":"a2059acf-ebb5-4100-a3fe-0a70208360c9"}:
+                  .: {}
+                  f:apiVersion: {}
+                  f:blockOwnerDeletion: {}
+                  f:controller: {}
+                  f:kind: {}
+                  f:name: {}
+                  f:uid: {}
             f:spec:
               .: {}
               f:channel:
@@ -477,7 +511,7 @@ items:
                 f:apiVersion: {}
                 f:kind: {}
                 f:name: {}
-              f:subscriber:
+              f:reply:
                 .: {}
                 f:ref:
                   .: {}
@@ -485,10 +519,19 @@ items:
                   f:kind: {}
                   f:name: {}
                   f:namespace: {}
-          manager: kn
+              f:subscriber:
+                .: {}
+                f:uri: {}
+            f:status:
+              .: {}
+              f:physicalSubscription:
+                .: {}
+                f:replyUri: {}
+                f:subscriberUri: {}
+          manager: mtchannel-broker
           operation: Update
-          time: '2020-11-17T15:32:46Z'
-        - apiVersion: messaging.knative.dev/v1beta1
+          time: '2021-01-14T00:26:39Z'
+        - apiVersion: messaging.knative.dev/v1
           fieldsType: FieldsV1
           fieldsV1:
             f:metadata:
@@ -496,55 +539,64 @@ items:
                 .: {}
                 v:"subscriptions.messaging.knative.dev": {}
             f:status:
-              .: {}
               f:conditions: {}
               f:observedGeneration: {}
               f:physicalSubscription:
-                .: {}
+                f:replyUri: {}
                 f:subscriberUri: {}
           manager: controller
           operation: Update
-          time: '2020-11-17T15:32:49Z'
-      name: example-subscription1
+          time: '2021-01-14T00:26:42Z'
+      name: example-broker1-example-triggercef691ccfcce132ed56cd3896f2c93ad
       namespace: josh
-      resourceVersion: '60286'
-      selfLink: /apis/messaging.knative.dev/v1beta1/namespaces/josh/subscriptions/example-subscription1
-      uid: 0cacb926-8c73-40b2-b56e-67d4adfcfede
+      ownerReferences:
+        - apiVersion: eventing.knative.dev/v1
+          blockOwnerDeletion: true
+          controller: true
+          kind: Trigger
+          name: example-trigger2
+          uid: a2059acf-ebb5-4100-a3fe-0a70208360c9
+      resourceVersion: '323400'
+      selfLink: /apis/messaging.knative.dev/v1beta1/namespaces/josh/subscriptions/example-broker1-example-triggercef691ccfcce132ed56cd3896f2c93ad
+      uid: 87ff8920-619c-44e4-bb74-07c00a9c8032
     spec:
       channel:
         apiVersion: messaging.knative.dev/v1beta1
-        kind: Channel
-        name: pipe
-      subscriber:
+        kind: InMemoryChannel
+        name: example-broker1-kne-trigger
+      reply:
         ref:
-          apiVersion: serving.knative.dev/v1
-          kind: Service
-          name: aaa
+          apiVersion: eventing.knative.dev/v1
+          kind: Broker
+          name: example-broker1
           namespace: josh
+      subscriber:
+        uri: http://broker-filter.knative-eventing.svc.cluster.local/triggers/josh/example-trigger2/a2059acf-ebb5-4100-a3fe-0a70208360c9
     status:
       conditions:
-        - lastTransitionTime: '2020-11-17T15:32:47Z'
+        - lastTransitionTime: '2021-01-14T00:26:42Z'
           status: 'True'
           type: AddedToChannel
-        - lastTransitionTime: '2020-11-17T15:32:49Z'
+        - lastTransitionTime: '2021-01-14T00:26:43Z'
           status: 'True'
           type: ChannelReady
-        - lastTransitionTime: '2020-11-17T15:32:49Z'
+        - lastTransitionTime: '2021-01-14T00:26:43Z'
           status: 'True'
           type: Ready
-        - lastTransitionTime: '2020-11-17T15:32:47Z'
+        - lastTransitionTime: '2021-01-14T00:26:42Z'
           status: 'True'
           type: ReferencesResolved
       observedGeneration: 1
       physicalSubscription:
-        subscriberUri: http://aaa.josh.svc.cluster.local
+        replyUri: http://broker-ingress.knative-eventing.svc.cluster.local/josh/example-broker1
+        subscriberUri: http://broker-filter.knative-eventing.svc.cluster.local/triggers/josh/example-trigger2/a2059acf-ebb5-4100-a3fe-0a70208360c9
   - apiVersion: messaging.knative.dev/v1beta1
     kind: Subscription
     metadata:
       annotations:
         messaging.knative.dev/creator: system:admin
         messaging.knative.dev/lastModifier: system:admin
-      creationTimestamp: '2020-11-17T15:32:47Z'
+      creationTimestamp: '2021-01-14T00:26:37Z'
       finalizers:
         - subscriptions.messaging.knative.dev
       generation: 1
@@ -567,10 +619,15 @@ items:
                   f:kind: {}
                   f:name: {}
                   f:namespace: {}
+            f:status:
+              .: {}
+              f:physicalSubscription:
+                .: {}
+                f:subscriberUri: {}
           manager: kn
           operation: Update
-          time: '2020-11-17T15:32:46Z'
-        - apiVersion: messaging.knative.dev/v1beta1
+          time: '2021-01-14T00:26:37Z'
+        - apiVersion: messaging.knative.dev/v1
           fieldsType: FieldsV1
           fieldsV1:
             f:metadata:
@@ -578,184 +635,18 @@ items:
                 .: {}
                 v:"subscriptions.messaging.knative.dev": {}
             f:status:
-              .: {}
               f:conditions: {}
               f:observedGeneration: {}
               f:physicalSubscription:
-                .: {}
                 f:subscriberUri: {}
           manager: controller
           operation: Update
-          time: '2020-11-17T15:32:50Z'
-      name: sub1
+          time: '2021-01-14T00:26:38Z'
+      name: example-subscription0
       namespace: josh
-      resourceVersion: '60311'
-      selfLink: /apis/messaging.knative.dev/v1beta1/namespaces/josh/subscriptions/sub1
-      uid: 53f1fa7f-1d1d-41b2-aecf-809b403c137a
-    spec:
-      channel:
-        apiVersion: messaging.knative.dev/v1beta1
-        kind: Channel
-        name: pipe
-      subscriber:
-        ref:
-          apiVersion: serving.knative.dev/v1
-          kind: Service
-          name: aaa
-          namespace: josh
-    status:
-      conditions:
-        - lastTransitionTime: '2020-11-17T15:32:47Z'
-          status: 'True'
-          type: AddedToChannel
-        - lastTransitionTime: '2020-11-17T15:32:50Z'
-          status: 'True'
-          type: ChannelReady
-        - lastTransitionTime: '2020-11-17T15:32:50Z'
-          status: 'True'
-          type: Ready
-        - lastTransitionTime: '2020-11-17T15:32:50Z'
-          status: 'True'
-          type: ReferencesResolved
-      observedGeneration: 1
-      physicalSubscription:
-        subscriberUri: http://aaa.josh.svc.cluster.local
-  - apiVersion: messaging.knative.dev/v1beta1
-    kind: Subscription
-    metadata:
-      annotations:
-        messaging.knative.dev/creator: system:admin
-        messaging.knative.dev/lastModifier: system:admin
-      creationTimestamp: '2020-11-17T15:32:47Z'
-      finalizers:
-        - subscriptions.messaging.knative.dev
-      generation: 1
-      managedFields:
-        - apiVersion: messaging.knative.dev/v1beta1
-          fieldsType: FieldsV1
-          fieldsV1:
-            f:spec:
-              .: {}
-              f:channel:
-                .: {}
-                f:apiVersion: {}
-                f:kind: {}
-                f:name: {}
-              f:subscriber:
-                .: {}
-                f:ref:
-                  .: {}
-                  f:apiVersion: {}
-                  f:kind: {}
-                  f:name: {}
-                  f:namespace: {}
-          manager: kn
-          operation: Update
-          time: '2020-11-17T15:32:47Z'
-        - apiVersion: messaging.knative.dev/v1beta1
-          fieldsType: FieldsV1
-          fieldsV1:
-            f:metadata:
-              f:finalizers:
-                .: {}
-                v:"subscriptions.messaging.knative.dev": {}
-            f:status:
-              .: {}
-              f:conditions: {}
-              f:observedGeneration: {}
-              f:physicalSubscription:
-                .: {}
-                f:subscriberUri: {}
-          manager: controller
-          operation: Update
-          time: '2020-11-17T15:32:49Z'
-      name: sub2
-      namespace: josh
-      resourceVersion: '60293'
-      selfLink: /apis/messaging.knative.dev/v1beta1/namespaces/josh/subscriptions/sub2
-      uid: b2fa8c10-3141-4902-8443-ab150f384b2c
-    spec:
-      channel:
-        apiVersion: messaging.knative.dev/v1beta1
-        kind: Channel
-        name: pipe1
-      subscriber:
-        ref:
-          apiVersion: serving.knative.dev/v1
-          kind: Service
-          name: aaa
-          namespace: josh
-    status:
-      conditions:
-        - lastTransitionTime: '2020-11-17T15:32:48Z'
-          status: 'True'
-          type: AddedToChannel
-        - lastTransitionTime: '2020-11-17T15:32:49Z'
-          status: 'True'
-          type: ChannelReady
-        - lastTransitionTime: '2020-11-17T15:32:49Z'
-          status: 'True'
-          type: Ready
-        - lastTransitionTime: '2020-11-17T15:32:49Z'
-          status: 'True'
-          type: ReferencesResolved
-      observedGeneration: 1
-      physicalSubscription:
-        subscriberUri: http://aaa.josh.svc.cluster.local
-  - apiVersion: messaging.knative.dev/v1beta1
-    kind: Subscription
-    metadata:
-      annotations:
-        messaging.knative.dev/creator: system:admin
-        messaging.knative.dev/lastModifier: system:admin
-      creationTimestamp: '2020-11-17T15:32:47Z'
-      finalizers:
-        - subscriptions.messaging.knative.dev
-      generation: 1
-      managedFields:
-        - apiVersion: messaging.knative.dev/v1beta1
-          fieldsType: FieldsV1
-          fieldsV1:
-            f:spec:
-              .: {}
-              f:channel:
-                .: {}
-                f:apiVersion: {}
-                f:kind: {}
-                f:name: {}
-              f:subscriber:
-                .: {}
-                f:ref:
-                  .: {}
-                  f:apiVersion: {}
-                  f:kind: {}
-                  f:name: {}
-                  f:namespace: {}
-          manager: kn
-          operation: Update
-          time: '2020-11-17T15:32:47Z'
-        - apiVersion: messaging.knative.dev/v1beta1
-          fieldsType: FieldsV1
-          fieldsV1:
-            f:metadata:
-              f:finalizers:
-                .: {}
-                v:"subscriptions.messaging.knative.dev": {}
-            f:status:
-              .: {}
-              f:conditions: {}
-              f:observedGeneration: {}
-              f:physicalSubscription:
-                .: {}
-                f:subscriberUri: {}
-          manager: controller
-          operation: Update
-          time: '2020-11-17T15:32:50Z'
-      name: example-trigger0
-      namespace: josh
-      resourceVersion: '60309'
-      selfLink: /apis/messaging.knative.dev/v1beta1/namespaces/josh/subscriptions/example-trigger0
-      uid: 6e7daf15-4863-46a8-a085-d219a464aaf4
+      resourceVersion: '322642'
+      selfLink: /apis/messaging.knative.dev/v1beta1/namespaces/josh/subscriptions/example-subscription0
+      uid: db93b867-33fb-40d9-9053-071106efd9ff
     spec:
       channel:
         apiVersion: messaging.knative.dev/v1beta1
@@ -769,16 +660,16 @@ items:
           namespace: josh
     status:
       conditions:
-        - lastTransitionTime: '2020-11-17T15:32:48Z'
+        - lastTransitionTime: '2021-01-14T00:26:37Z'
           status: 'True'
           type: AddedToChannel
-        - lastTransitionTime: '2020-11-17T15:32:50Z'
+        - lastTransitionTime: '2021-01-14T00:26:40Z'
           status: 'True'
           type: ChannelReady
-        - lastTransitionTime: '2020-11-17T15:32:50Z'
+        - lastTransitionTime: '2021-01-14T00:26:40Z'
           status: 'True'
           type: Ready
-        - lastTransitionTime: '2020-11-17T15:32:50Z'
+        - lastTransitionTime: '2021-01-14T00:26:37Z'
           status: 'True'
           type: ReferencesResolved
       observedGeneration: 1
@@ -790,7 +681,252 @@ items:
       annotations:
         messaging.knative.dev/creator: system:admin
         messaging.knative.dev/lastModifier: system:admin
-      creationTimestamp: '2020-11-17T15:32:48Z'
+      creationTimestamp: '2021-01-14T00:26:37Z'
+      finalizers:
+        - subscriptions.messaging.knative.dev
+      generation: 1
+      managedFields:
+        - apiVersion: messaging.knative.dev/v1beta1
+          fieldsType: FieldsV1
+          fieldsV1:
+            f:spec:
+              .: {}
+              f:channel:
+                .: {}
+                f:apiVersion: {}
+                f:kind: {}
+                f:name: {}
+              f:subscriber:
+                .: {}
+                f:ref:
+                  .: {}
+                  f:apiVersion: {}
+                  f:kind: {}
+                  f:name: {}
+                  f:namespace: {}
+            f:status:
+              .: {}
+              f:physicalSubscription:
+                .: {}
+                f:subscriberUri: {}
+          manager: kn
+          operation: Update
+          time: '2021-01-14T00:26:37Z'
+        - apiVersion: messaging.knative.dev/v1
+          fieldsType: FieldsV1
+          fieldsV1:
+            f:metadata:
+              f:finalizers:
+                .: {}
+                v:"subscriptions.messaging.knative.dev": {}
+            f:status:
+              f:conditions: {}
+              f:observedGeneration: {}
+              f:physicalSubscription:
+                f:subscriberUri: {}
+          manager: controller
+          operation: Update
+          time: '2021-01-14T00:26:38Z'
+      name: example-subscription1
+      namespace: josh
+      resourceVersion: '322683'
+      selfLink: /apis/messaging.knative.dev/v1beta1/namespaces/josh/subscriptions/example-subscription1
+      uid: fcdae977-3609-4791-a55d-52ff1efc2990
+    spec:
+      channel:
+        apiVersion: messaging.knative.dev/v1beta1
+        kind: Channel
+        name: example-channel0
+      subscriber:
+        ref:
+          apiVersion: eventing.knative.dev/v1beta1
+          kind: Broker
+          name: example-broker0
+          namespace: josh
+    status:
+      conditions:
+        - lastTransitionTime: '2021-01-14T00:26:38Z'
+          status: 'True'
+          type: AddedToChannel
+        - lastTransitionTime: '2021-01-14T00:26:40Z'
+          status: 'True'
+          type: ChannelReady
+        - lastTransitionTime: '2021-01-14T00:26:40Z'
+          status: 'True'
+          type: Ready
+        - lastTransitionTime: '2021-01-14T00:26:38Z'
+          status: 'True'
+          type: ReferencesResolved
+      observedGeneration: 1
+      physicalSubscription:
+        subscriberUri: http://broker-ingress.knative-eventing.svc.cluster.local/josh/example-broker0
+  - apiVersion: messaging.knative.dev/v1beta1
+    kind: Subscription
+    metadata:
+      annotations:
+        messaging.knative.dev/creator: system:admin
+        messaging.knative.dev/lastModifier: system:admin
+      creationTimestamp: '2021-01-14T00:26:37Z'
+      finalizers:
+        - subscriptions.messaging.knative.dev
+      generation: 1
+      managedFields:
+        - apiVersion: messaging.knative.dev/v1beta1
+          fieldsType: FieldsV1
+          fieldsV1:
+            f:spec:
+              .: {}
+              f:channel:
+                .: {}
+                f:apiVersion: {}
+                f:kind: {}
+                f:name: {}
+              f:subscriber:
+                .: {}
+                f:ref:
+                  .: {}
+                  f:apiVersion: {}
+                  f:kind: {}
+                  f:name: {}
+                  f:namespace: {}
+            f:status:
+              .: {}
+              f:physicalSubscription:
+                .: {}
+                f:subscriberUri: {}
+          manager: kn
+          operation: Update
+          time: '2021-01-14T00:26:37Z'
+        - apiVersion: messaging.knative.dev/v1
+          fieldsType: FieldsV1
+          fieldsV1:
+            f:metadata:
+              f:finalizers:
+                .: {}
+                v:"subscriptions.messaging.knative.dev": {}
+            f:status:
+              f:conditions: {}
+              f:observedGeneration: {}
+              f:physicalSubscription:
+                f:subscriberUri: {}
+          manager: controller
+          operation: Update
+          time: '2021-01-14T00:26:39Z'
+      name: example-subscription2
+      namespace: josh
+      resourceVersion: '322982'
+      selfLink: /apis/messaging.knative.dev/v1beta1/namespaces/josh/subscriptions/example-subscription2
+      uid: f7848d5e-5dda-4a78-a3a6-a98f4870b391
+    spec:
+      channel:
+        apiVersion: messaging.knative.dev/v1beta1
+        kind: Channel
+        name: example-channel1
+      subscriber:
+        ref:
+          apiVersion: messaging.knative.dev/v1beta1
+          kind: Channel
+          name: example-channel0
+          namespace: josh
+    status:
+      conditions:
+        - lastTransitionTime: '2021-01-14T00:26:38Z'
+          status: 'True'
+          type: AddedToChannel
+        - lastTransitionTime: '2021-01-14T00:26:41Z'
+          status: 'True'
+          type: ChannelReady
+        - lastTransitionTime: '2021-01-14T00:26:41Z'
+          status: 'True'
+          type: Ready
+        - lastTransitionTime: '2021-01-14T00:26:38Z'
+          status: 'True'
+          type: ReferencesResolved
+      observedGeneration: 1
+      physicalSubscription:
+        subscriberUri: http://example-channel0-kn-channel.josh.svc.cluster.local
+  - apiVersion: messaging.knative.dev/v1beta1
+    kind: Subscription
+    metadata:
+      annotations:
+        messaging.knative.dev/creator: system:admin
+        messaging.knative.dev/lastModifier: system:admin
+      creationTimestamp: '2021-01-14T00:26:38Z'
+      finalizers:
+        - subscriptions.messaging.knative.dev
+      generation: 1
+      managedFields:
+        - apiVersion: messaging.knative.dev/v1beta1
+          fieldsType: FieldsV1
+          fieldsV1:
+            f:spec:
+              .: {}
+              f:channel:
+                .: {}
+                f:apiVersion: {}
+                f:kind: {}
+                f:name: {}
+              f:subscriber:
+                .: {}
+                f:uri: {}
+            f:status:
+              .: {}
+              f:physicalSubscription: {}
+          manager: kn
+          operation: Update
+          time: '2021-01-14T00:26:38Z'
+        - apiVersion: messaging.knative.dev/v1
+          fieldsType: FieldsV1
+          fieldsV1:
+            f:metadata:
+              f:finalizers:
+                .: {}
+                v:"subscriptions.messaging.knative.dev": {}
+            f:status:
+              f:conditions: {}
+              f:observedGeneration: {}
+          manager: controller
+          operation: Update
+          time: '2021-01-14T00:26:40Z'
+      name: example-subscription3
+      namespace: josh
+      resourceVersion: '322621'
+      selfLink: /apis/messaging.knative.dev/v1beta1/namespaces/josh/subscriptions/example-subscription3
+      uid: 27c71469-e038-4c34-ada2-35b15ed9f586
+    spec:
+      channel:
+        apiVersion: messaging.knative.dev/v1beta1
+        kind: Channel
+        name: example-channel2
+      subscriber:
+        uri: https://event.receiver.uri
+    status:
+      conditions:
+        - lastTransitionTime: '2021-01-14T00:26:39Z'
+          status: Unknown
+          type: AddedToChannel
+        - lastTransitionTime: '2021-01-14T00:26:39Z'
+          status: Unknown
+          type: ChannelReady
+        - lastTransitionTime: '2021-01-14T00:26:39Z'
+          message: 'Failed to get Spec.Channel or backing channel: channels.messaging.knative.dev "example-channel2" not found'
+          reason: ChannelReferenceFailed
+          status: Unknown
+          type: Ready
+        - lastTransitionTime: '2021-01-14T00:26:39Z'
+          message: 'Failed to get Spec.Channel or backing channel: channels.messaging.knative.dev "example-channel2" not found'
+          reason: ChannelReferenceFailed
+          status: Unknown
+          type: ReferencesResolved
+      observedGeneration: 1
+      physicalSubscription: {}
+  - apiVersion: messaging.knative.dev/v1beta1
+    kind: Subscription
+    metadata:
+      annotations:
+        messaging.knative.dev/creator: system:admin
+        messaging.knative.dev/lastModifier: system:admin
+      creationTimestamp: '2021-01-14T00:26:38Z'
       finalizers:
         - subscriptions.messaging.knative.dev
       generation: 1
@@ -831,10 +967,17 @@ items:
                   f:kind: {}
                   f:name: {}
                   f:namespace: {}
+            f:status:
+              .: {}
+              f:physicalSubscription:
+                .: {}
+                f:deadLetterSinkUri: {}
+                f:replyUri: {}
+                f:subscriberUri: {}
           manager: kn
           operation: Update
-          time: '2020-11-17T15:32:47Z'
-        - apiVersion: messaging.knative.dev/v1beta1
+          time: '2021-01-14T00:26:38Z'
+        - apiVersion: messaging.knative.dev/v1
           fieldsType: FieldsV1
           fieldsV1:
             f:metadata:
@@ -842,39 +985,37 @@ items:
                 .: {}
                 v:"subscriptions.messaging.knative.dev": {}
             f:status:
-              .: {}
               f:conditions: {}
               f:observedGeneration: {}
               f:physicalSubscription:
-                .: {}
                 f:deadLetterSinkUri: {}
                 f:replyUri: {}
                 f:subscriberUri: {}
           manager: controller
           operation: Update
-          time: '2020-11-17T15:32:50Z'
-      name: sub4
+          time: '2021-01-14T00:26:41Z'
+      name: example-subscription4
       namespace: josh
-      resourceVersion: '60344'
-      selfLink: /apis/messaging.knative.dev/v1beta1/namespaces/josh/subscriptions/sub4
-      uid: 0158cf75-69ce-4e20-9d98-55999022af3f
+      resourceVersion: '323295'
+      selfLink: /apis/messaging.knative.dev/v1beta1/namespaces/josh/subscriptions/example-subscription4
+      uid: dcd2080d-f6a6-4e31-b6de-b4c9bd2807c1
     spec:
       channel:
         apiVersion: messaging.knative.dev/v1beta1
         kind: Channel
-        name: example-channel1
+        name: example-channel3
       delivery:
         deadLetterSink:
           ref:
             apiVersion: eventing.knative.dev/v1beta1
             kind: Broker
-            name: mybroker1
+            name: example-broker1
             namespace: josh
       reply:
         ref:
           apiVersion: eventing.knative.dev/v1beta1
           kind: Broker
-          name: mybroker
+          name: example-broker0
           namespace: josh
       subscriber:
         ref:
@@ -884,21 +1025,21 @@ items:
           namespace: josh
     status:
       conditions:
-        - lastTransitionTime: '2020-11-17T15:32:49Z'
+        - lastTransitionTime: '2021-01-14T00:26:40Z'
           status: 'True'
           type: AddedToChannel
-        - lastTransitionTime: '2020-11-17T15:32:50Z'
+        - lastTransitionTime: '2021-01-14T00:26:42Z'
           status: 'True'
           type: ChannelReady
-        - lastTransitionTime: '2020-11-17T15:32:50Z'
+        - lastTransitionTime: '2021-01-14T00:26:42Z'
           status: 'True'
           type: Ready
-        - lastTransitionTime: '2020-11-17T15:32:50Z'
+        - lastTransitionTime: '2021-01-14T00:26:40Z'
           status: 'True'
           type: ReferencesResolved
       observedGeneration: 1
       physicalSubscription:
-        deadLetterSinkUri: http://broker-ingress.knative-eventing.svc.cluster.local/josh/mybroker1
-        replyUri: http://broker-ingress.knative-eventing.svc.cluster.local/josh/mybroker
+        deadLetterSinkUri: http://broker-ingress.knative-eventing.svc.cluster.local/josh/example-broker1
+        replyUri: http://broker-ingress.knative-eventing.svc.cluster.local/josh/example-broker0
         subscriberUri: http://aaa.josh.svc.cluster.local
 kind: SubscriptionList

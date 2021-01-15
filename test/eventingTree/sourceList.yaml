@@ -6,10 +6,10 @@ items:
       annotations:
         sources.knative.dev/creator: system:admin
         sources.knative.dev/lastModifier: system:admin
-      creationTimestamp: '2020-11-17T15:32:43Z'
+      creationTimestamp: '2021-01-14T00:26:33Z'
       generation: 1
       managedFields:
-        - apiVersion: sources.knative.dev/v1alpha2
+        - apiVersion: sources.knative.dev/v1beta1
           fieldsType: FieldsV1
           fieldsV1:
             f:status:
@@ -18,7 +18,7 @@ items:
               f:sinkUri: {}
           manager: controller
           operation: Update
-          time: '2020-11-17T15:32:43Z'
+          time: '2021-01-14T00:26:33Z'
         - apiVersion: sources.knative.dev/v1alpha2
           fieldsType: FieldsV1
           fieldsV1:
@@ -35,15 +35,19 @@ items:
                   f:kind: {}
                   f:name: {}
                   f:namespace: {}
-            f:status: {}
+            f:status:
+              .: {}
+              f:conditions: {}
+              f:observedGeneration: {}
+              f:sinkUri: {}
           manager: kn
           operation: Update
-          time: '2020-11-17T15:32:43Z'
-      name: example-source0
+          time: '2021-01-14T00:26:33Z'
+      name: example-source-apiserver0
       namespace: josh
-      resourceVersion: '60005'
-      selfLink: /apis/sources.knative.dev/v1alpha1/namespaces/josh/apiserversources/example-source0
-      uid: 358332f3-4488-4cda-840a-4184ae8d9326
+      resourceVersion: '321574'
+      selfLink: /apis/sources.knative.dev/v1alpha1/namespaces/josh/apiserversources/example-source-apiserver0
+      uid: 8439660a-649f-409e-9c98-ee59de1474e8
     spec:
       mode: Ref
       resources:
@@ -65,33 +69,285 @@ items:
           namespace: josh
     status:
       conditions:
-        - lastTransitionTime: '2020-11-17T15:32:43Z'
+        - lastTransitionTime: '2021-01-14T00:26:33Z'
           status: Unknown
           type: Deployed
-        - lastTransitionTime: '2020-11-17T15:32:43Z'
+        - lastTransitionTime: '2021-01-14T00:26:33Z'
           message: User system:serviceaccount:josh:default cannot get, list, watch resource "events" in API group ""
           status: 'False'
           type: Ready
-        - lastTransitionTime: '2020-11-17T15:32:43Z'
+        - lastTransitionTime: '2021-01-14T00:26:33Z'
           status: 'True'
           type: SinkProvided
-        - lastTransitionTime: '2020-11-17T15:32:43Z'
+        - lastTransitionTime: '2021-01-14T00:26:33Z'
           message: User system:serviceaccount:josh:default cannot get, list, watch resource "events" in API group ""
           status: 'False'
           type: SufficientPermissions
       observedGeneration: 1
       sinkUri: http://aaa.josh.svc.cluster.local
+  - apiVersion: sources.knative.dev/v1alpha1
+    kind: ApiServerSource
+    metadata:
+      annotations:
+        sources.knative.dev/creator: system:admin
+        sources.knative.dev/lastModifier: system:admin
+      creationTimestamp: '2021-01-14T00:26:33Z'
+      generation: 1
+      managedFields:
+        - apiVersion: sources.knative.dev/v1alpha2
+          fieldsType: FieldsV1
+          fieldsV1:
+            f:spec:
+              .: {}
+              f:mode: {}
+              f:resources: {}
+              f:serviceAccountName: {}
+              f:sink:
+                .: {}
+                f:ref:
+                  .: {}
+                  f:apiVersion: {}
+                  f:kind: {}
+                  f:name: {}
+                  f:namespace: {}
+            f:status:
+              .: {}
+              f:conditions: {}
+              f:observedGeneration: {}
+              f:sinkUri: {}
+          manager: kn
+          operation: Update
+          time: '2021-01-14T00:26:33Z'
+        - apiVersion: sources.knative.dev/v1beta1
+          fieldsType: FieldsV1
+          fieldsV1:
+            f:status:
+              f:conditions: {}
+              f:observedGeneration: {}
+              f:sinkUri: {}
+          manager: controller
+          operation: Update
+          time: '2021-01-14T00:26:34Z'
+      name: example-source-apiserver1
+      namespace: josh
+      resourceVersion: '321586'
+      selfLink: /apis/sources.knative.dev/v1alpha1/namespaces/josh/apiserversources/example-source-apiserver1
+      uid: c6c2011f-048f-4797-bacc-77ac977bdb62
+    spec:
+      mode: Ref
+      resources:
+        - apiVersion: v1
+          controller: false
+          controllerSelector:
+            apiVersion: ''
+            kind: ''
+            name: ''
+            uid: ''
+          kind: Event
+          labelSelector: {}
+      serviceAccountName: default
+      sink:
+        ref:
+          apiVersion: eventing.knative.dev/v1beta1
+          kind: Broker
+          name: example-broker0
+          namespace: josh
+    status:
+      conditions:
+        - lastTransitionTime: '2021-01-14T00:26:34Z'
+          status: Unknown
+          type: Deployed
+        - lastTransitionTime: '2021-01-14T00:26:34Z'
+          message: User system:serviceaccount:josh:default cannot get, list, watch resource "events" in API group ""
+          status: 'False'
+          type: Ready
+        - lastTransitionTime: '2021-01-14T00:26:34Z'
+          status: 'True'
+          type: SinkProvided
+        - lastTransitionTime: '2021-01-14T00:26:34Z'
+          message: User system:serviceaccount:josh:default cannot get, list, watch resource "events" in API group ""
+          status: 'False'
+          type: SufficientPermissions
+      observedGeneration: 1
+      sinkUri: http://broker-ingress.knative-eventing.svc.cluster.local/josh/example-broker0
+  - apiVersion: sources.knative.dev/v1alpha1
+    kind: ApiServerSource
+    metadata:
+      annotations:
+        sources.knative.dev/creator: system:admin
+        sources.knative.dev/lastModifier: system:admin
+      creationTimestamp: '2021-01-14T00:26:34Z'
+      generation: 1
+      managedFields:
+        - apiVersion: sources.knative.dev/v1beta1
+          fieldsType: FieldsV1
+          fieldsV1:
+            f:status:
+              f:conditions: {}
+              f:observedGeneration: {}
+              f:sinkUri: {}
+          manager: controller
+          operation: Update
+          time: '2021-01-14T00:26:34Z'
+        - apiVersion: sources.knative.dev/v1alpha2
+          fieldsType: FieldsV1
+          fieldsV1:
+            f:spec:
+              .: {}
+              f:mode: {}
+              f:resources: {}
+              f:serviceAccountName: {}
+              f:sink:
+                .: {}
+                f:ref:
+                  .: {}
+                  f:apiVersion: {}
+                  f:kind: {}
+                  f:name: {}
+                  f:namespace: {}
+            f:status:
+              .: {}
+              f:conditions: {}
+              f:observedGeneration: {}
+              f:sinkUri: {}
+          manager: kn
+          operation: Update
+          time: '2021-01-14T00:26:34Z'
+      name: example-source-apiserver2
+      namespace: josh
+      resourceVersion: '321605'
+      selfLink: /apis/sources.knative.dev/v1alpha1/namespaces/josh/apiserversources/example-source-apiserver2
+      uid: d1b82e72-a863-4f7c-9bb9-ff636d2feab6
+    spec:
+      mode: Ref
+      resources:
+        - apiVersion: v1
+          controller: false
+          controllerSelector:
+            apiVersion: ''
+            kind: ''
+            name: ''
+            uid: ''
+          kind: Event
+          labelSelector: {}
+      serviceAccountName: default
+      sink:
+        ref:
+          apiVersion: messaging.knative.dev/v1beta1
+          kind: Channel
+          name: example-channel0
+          namespace: josh
+    status:
+      conditions:
+        - lastTransitionTime: '2021-01-14T00:26:34Z'
+          status: Unknown
+          type: Deployed
+        - lastTransitionTime: '2021-01-14T00:26:34Z'
+          message: User system:serviceaccount:josh:default cannot get, list, watch resource "events" in API group ""
+          status: 'False'
+          type: Ready
+        - lastTransitionTime: '2021-01-14T00:26:34Z'
+          status: 'True'
+          type: SinkProvided
+        - lastTransitionTime: '2021-01-14T00:26:34Z'
+          message: User system:serviceaccount:josh:default cannot get, list, watch resource "events" in API group ""
+          status: 'False'
+          type: SufficientPermissions
+      observedGeneration: 1
+      sinkUri: http://example-channel0-kn-channel.josh.svc.cluster.local
+  - apiVersion: sources.knative.dev/v1alpha1
+    kind: ApiServerSource
+    metadata:
+      annotations:
+        sources.knative.dev/creator: system:admin
+        sources.knative.dev/lastModifier: system:admin
+      creationTimestamp: '2021-01-14T00:26:34Z'
+      generation: 1
+      managedFields:
+        - apiVersion: sources.knative.dev/v1beta1
+          fieldsType: FieldsV1
+          fieldsV1:
+            f:status:
+              f:conditions: {}
+              f:observedGeneration: {}
+              f:sinkUri: {}
+          manager: controller
+          operation: Update
+          time: '2021-01-14T00:26:34Z'
+        - apiVersion: sources.knative.dev/v1alpha2
+          fieldsType: FieldsV1
+          fieldsV1:
+            f:spec:
+              .: {}
+              f:mode: {}
+              f:resources: {}
+              f:serviceAccountName: {}
+              f:sink:
+                .: {}
+                f:uri: {}
+            f:status: {}
+          manager: kn
+          operation: Update
+          time: '2021-01-14T00:26:34Z'
+      name: example-source-apiserver3
+      namespace: josh
+      resourceVersion: '321607'
+      selfLink: /apis/sources.knative.dev/v1alpha1/namespaces/josh/apiserversources/example-source-apiserver3
+      uid: 5463a7fa-8c45-426e-ae74-e66d1c89747c
+    spec:
+      mode: Ref
+      resources:
+        - apiVersion: v1
+          controller: false
+          controllerSelector:
+            apiVersion: ''
+            kind: ''
+            name: ''
+            uid: ''
+          kind: Event
+          labelSelector: {}
+      serviceAccountName: default
+      sink:
+        uri: https://event.receiver.uri
+    status:
+      conditions:
+        - lastTransitionTime: '2021-01-14T00:26:34Z'
+          status: Unknown
+          type: Deployed
+        - lastTransitionTime: '2021-01-14T00:26:34Z'
+          message: User system:serviceaccount:josh:default cannot get, list, watch resource "events" in API group ""
+          status: 'False'
+          type: Ready
+        - lastTransitionTime: '2021-01-14T00:26:34Z'
+          status: 'True'
+          type: SinkProvided
+        - lastTransitionTime: '2021-01-14T00:26:34Z'
+          message: User system:serviceaccount:josh:default cannot get, list, watch resource "events" in API group ""
+          status: 'False'
+          type: SufficientPermissions
+      observedGeneration: 1
+      sinkUri: https://event.receiver.uri
   - apiVersion: sources.knative.dev/v1alpha2
     kind: PingSource
     metadata:
       annotations:
         sources.knative.dev/creator: system:admin
         sources.knative.dev/lastModifier: system:admin
-      creationTimestamp: '2020-11-17T15:32:43Z'
-      finalizers:
-        - pingsources.sources.knative.dev
+      creationTimestamp: '2021-01-14T00:26:36Z'
       generation: 1
       managedFields:
+        - apiVersion: sources.knative.dev/v1alpha2
+          fieldsType: FieldsV1
+          fieldsV1:
+            f:status:
+              .: {}
+              f:ceAttributes: {}
+              f:conditions: {}
+              f:observedGeneration: {}
+              f:sinkUri: {}
+          manager: controller
+          operation: Update
+          time: '2021-01-14T00:26:36Z'
         - apiVersion: sources.knative.dev/v1alpha2
           fieldsType: FieldsV1
           fieldsV1:
@@ -109,34 +365,12 @@ items:
                   f:namespace: {}
           manager: kn
           operation: Update
-          time: '2020-11-17T15:32:43Z'
-        - apiVersion: sources.knative.dev/v1alpha2
-          fieldsType: FieldsV1
-          fieldsV1:
-            f:status:
-              .: {}
-              f:ceAttributes: {}
-              f:conditions: {}
-              f:observedGeneration: {}
-              f:sinkUri: {}
-          manager: controller
-          operation: Update
-          time: '2020-11-17T15:32:51Z'
-        - apiVersion: sources.knative.dev/v1alpha2
-          fieldsType: FieldsV1
-          fieldsV1:
-            f:metadata:
-              f:finalizers:
-                .: {}
-                v:"pingsources.sources.knative.dev": {}
-          manager: mtping
-          operation: Update
-          time: '2020-11-17T15:32:51Z'
-      name: example-source1
+          time: '2021-01-14T00:26:36Z'
+      name: example-source-ping0
       namespace: josh
-      resourceVersion: '60411'
-      selfLink: /apis/sources.knative.dev/v1alpha2/namespaces/josh/pingsources/example-source1
-      uid: 49c32a59-814c-4bb0-bc7f-1f0f88595b21
+      resourceVersion: '321795'
+      selfLink: /apis/sources.knative.dev/v1alpha2/namespaces/josh/pingsources/example-source-ping0
+      uid: 7cbf8634-96ec-4f45-a074-cb80dbd75b97
     spec:
       jsonData: '{ value: "hello" }'
       schedule: '*/2 * * * *'
@@ -148,19 +382,23 @@ items:
           namespace: josh
     status:
       ceAttributes:
-        - source: /apis/v1/namespaces/josh/pingsources/example-source1
+        - source: /apis/v1/namespaces/josh/pingsources/example-source-ping0
           type: dev.knative.sources.ping
       conditions:
-        - lastTransitionTime: '2020-11-17T15:32:51Z'
-          status: 'True'
+        - lastTransitionTime: '2021-01-14T00:26:36Z'
+          message: Deployment does not have minimum availability.
+          reason: MinimumReplicasUnavailable
+          status: 'False'
           type: Deployed
-        - lastTransitionTime: '2020-11-17T15:32:51Z'
-          status: 'True'
+        - lastTransitionTime: '2021-01-14T00:26:36Z'
+          message: Deployment does not have minimum availability.
+          reason: MinimumReplicasUnavailable
+          status: 'False'
           type: Ready
-        - lastTransitionTime: '2020-11-17T15:32:43Z'
+        - lastTransitionTime: '2021-01-14T00:26:36Z'
           status: 'True'
           type: SinkProvided
-        - lastTransitionTime: '2020-11-17T15:32:43Z'
+        - lastTransitionTime: '2021-01-14T00:26:36Z'
           status: 'True'
           type: ValidSchedule
       observedGeneration: 1
@@ -171,11 +409,21 @@ items:
       annotations:
         sources.knative.dev/creator: system:admin
         sources.knative.dev/lastModifier: system:admin
-      creationTimestamp: '2020-11-17T15:32:43Z'
-      finalizers:
-        - pingsources.sources.knative.dev
+      creationTimestamp: '2021-01-14T00:26:36Z'
       generation: 1
       managedFields:
+        - apiVersion: sources.knative.dev/v1alpha2
+          fieldsType: FieldsV1
+          fieldsV1:
+            f:status:
+              .: {}
+              f:ceAttributes: {}
+              f:conditions: {}
+              f:observedGeneration: {}
+              f:sinkUri: {}
+          manager: controller
+          operation: Update
+          time: '2021-01-14T00:26:36Z'
         - apiVersion: sources.knative.dev/v1alpha2
           fieldsType: FieldsV1
           fieldsV1:
@@ -193,7 +441,53 @@ items:
                   f:namespace: {}
           manager: kn
           operation: Update
-          time: '2020-11-17T15:32:43Z'
+          time: '2021-01-14T00:26:36Z'
+      name: example-source-ping1
+      namespace: josh
+      resourceVersion: '321824'
+      selfLink: /apis/sources.knative.dev/v1alpha2/namespaces/josh/pingsources/example-source-ping1
+      uid: 2bf15c41-32ab-4151-b5ad-8236c2000600
+    spec:
+      jsonData: '{ value: "hi service" }'
+      schedule: '*/2 * * * *'
+      sink:
+        ref:
+          apiVersion: serving.knative.dev/v1
+          kind: Service
+          name: aaa
+          namespace: josh
+    status:
+      ceAttributes:
+        - source: /apis/v1/namespaces/josh/pingsources/example-source-ping1
+          type: dev.knative.sources.ping
+      conditions:
+        - lastTransitionTime: '2021-01-14T00:26:36Z'
+          message: Deployment does not have minimum availability.
+          reason: MinimumReplicasUnavailable
+          status: 'False'
+          type: Deployed
+        - lastTransitionTime: '2021-01-14T00:26:36Z'
+          message: Deployment does not have minimum availability.
+          reason: MinimumReplicasUnavailable
+          status: 'False'
+          type: Ready
+        - lastTransitionTime: '2021-01-14T00:26:36Z'
+          status: 'True'
+          type: SinkProvided
+        - lastTransitionTime: '2021-01-14T00:26:36Z'
+          status: 'True'
+          type: ValidSchedule
+      observedGeneration: 1
+      sinkUri: http://aaa.josh.svc.cluster.local
+  - apiVersion: sources.knative.dev/v1alpha2
+    kind: PingSource
+    metadata:
+      annotations:
+        sources.knative.dev/creator: system:admin
+        sources.knative.dev/lastModifier: system:admin
+      creationTimestamp: '2021-01-14T00:26:36Z'
+      generation: 1
+      managedFields:
         - apiVersion: sources.knative.dev/v1alpha2
           fieldsType: FieldsV1
           fieldsV1:
@@ -205,48 +499,278 @@ items:
               f:sinkUri: {}
           manager: controller
           operation: Update
-          time: '2020-11-17T15:32:51Z'
+          time: '2021-01-14T00:26:36Z'
         - apiVersion: sources.knative.dev/v1alpha2
+          fieldsType: FieldsV1
+          fieldsV1:
+            f:spec:
+              .: {}
+              f:jsonData: {}
+              f:schedule: {}
+              f:sink:
+                .: {}
+                f:ref:
+                  .: {}
+                  f:apiVersion: {}
+                  f:kind: {}
+                  f:name: {}
+                  f:namespace: {}
+          manager: kn
+          operation: Update
+          time: '2021-01-14T00:26:36Z'
+      name: example-source-ping2
+      namespace: josh
+      resourceVersion: '321871'
+      selfLink: /apis/sources.knative.dev/v1alpha2/namespaces/josh/pingsources/example-source-ping2
+      uid: a9eefa61-a285-4bea-a3fe-09b6c7abdea0
+    spec:
+      jsonData: '{ value: "hi broker" }'
+      schedule: '*/2 * * * *'
+      sink:
+        ref:
+          apiVersion: eventing.knative.dev/v1beta1
+          kind: Broker
+          name: example-broker0
+          namespace: josh
+    status:
+      ceAttributes:
+        - source: /apis/v1/namespaces/josh/pingsources/example-source-ping2
+          type: dev.knative.sources.ping
+      conditions:
+        - lastTransitionTime: '2021-01-14T00:26:36Z'
+          message: Deployment does not have minimum availability.
+          reason: MinimumReplicasUnavailable
+          status: 'False'
+          type: Deployed
+        - lastTransitionTime: '2021-01-14T00:26:36Z'
+          message: Deployment does not have minimum availability.
+          reason: MinimumReplicasUnavailable
+          status: 'False'
+          type: Ready
+        - lastTransitionTime: '2021-01-14T00:26:36Z'
+          status: 'True'
+          type: SinkProvided
+        - lastTransitionTime: '2021-01-14T00:26:36Z'
+          status: 'True'
+          type: ValidSchedule
+      observedGeneration: 1
+      sinkUri: http://broker-ingress.knative-eventing.svc.cluster.local/josh/example-broker0
+  - apiVersion: sources.knative.dev/v1alpha2
+    kind: PingSource
+    metadata:
+      annotations:
+        sources.knative.dev/creator: system:admin
+        sources.knative.dev/lastModifier: system:admin
+      creationTimestamp: '2021-01-14T00:26:37Z'
+      generation: 1
+      managedFields:
+        - apiVersion: sources.knative.dev/v1alpha2
+          fieldsType: FieldsV1
+          fieldsV1:
+            f:status:
+              .: {}
+              f:ceAttributes: {}
+              f:conditions: {}
+              f:observedGeneration: {}
+              f:sinkUri: {}
+          manager: controller
+          operation: Update
+          time: '2021-01-14T00:26:37Z'
+        - apiVersion: sources.knative.dev/v1alpha2
+          fieldsType: FieldsV1
+          fieldsV1:
+            f:spec:
+              .: {}
+              f:jsonData: {}
+              f:schedule: {}
+              f:sink:
+                .: {}
+                f:ref:
+                  .: {}
+                  f:apiVersion: {}
+                  f:kind: {}
+                  f:name: {}
+                  f:namespace: {}
+          manager: kn
+          operation: Update
+          time: '2021-01-14T00:26:37Z'
+      name: example-source-ping3
+      namespace: josh
+      resourceVersion: '321913'
+      selfLink: /apis/sources.knative.dev/v1alpha2/namespaces/josh/pingsources/example-source-ping3
+      uid: 339b06bf-db77-4485-9c45-6075c53c92c1
+    spec:
+      jsonData: '{ value: "hi channel" }'
+      schedule: '*/2 * * * *'
+      sink:
+        ref:
+          apiVersion: messaging.knative.dev/v1beta1
+          kind: Channel
+          name: example-channel0
+          namespace: josh
+    status:
+      ceAttributes:
+        - source: /apis/v1/namespaces/josh/pingsources/example-source-ping3
+          type: dev.knative.sources.ping
+      conditions:
+        - lastTransitionTime: '2021-01-14T00:26:37Z'
+          message: Deployment does not have minimum availability.
+          reason: MinimumReplicasUnavailable
+          status: 'False'
+          type: Deployed
+        - lastTransitionTime: '2021-01-14T00:26:37Z'
+          message: Deployment does not have minimum availability.
+          reason: MinimumReplicasUnavailable
+          status: 'False'
+          type: Ready
+        - lastTransitionTime: '2021-01-14T00:26:37Z'
+          status: 'True'
+          type: SinkProvided
+        - lastTransitionTime: '2021-01-14T00:26:37Z'
+          status: 'True'
+          type: ValidSchedule
+      observedGeneration: 1
+      sinkUri: http://example-channel0-kn-channel.josh.svc.cluster.local
+  - apiVersion: sources.knative.dev/v1alpha2
+    kind: PingSource
+    metadata:
+      annotations:
+        sources.knative.dev/creator: system:admin
+        sources.knative.dev/lastModifier: system:admin
+      creationTimestamp: '2021-01-14T00:26:37Z'
+      generation: 1
+      managedFields:
+        - apiVersion: sources.knative.dev/v1alpha2
+          fieldsType: FieldsV1
+          fieldsV1:
+            f:status:
+              .: {}
+              f:ceAttributes: {}
+              f:conditions: {}
+              f:observedGeneration: {}
+              f:sinkUri: {}
+          manager: controller
+          operation: Update
+          time: '2021-01-14T00:26:37Z'
+        - apiVersion: sources.knative.dev/v1alpha2
+          fieldsType: FieldsV1
+          fieldsV1:
+            f:spec:
+              .: {}
+              f:jsonData: {}
+              f:schedule: {}
+              f:sink:
+                .: {}
+                f:uri: {}
+          manager: kn
+          operation: Update
+          time: '2021-01-14T00:26:37Z'
+      name: example-source-ping4
+      namespace: josh
+      resourceVersion: '321946'
+      selfLink: /apis/sources.knative.dev/v1alpha2/namespaces/josh/pingsources/example-source-ping4
+      uid: 586d7bed-6b1c-474a-96f7-10b8d8e64103
+    spec:
+      jsonData: '{ value: "hi uri" }'
+      schedule: '*/2 * * * *'
+      sink:
+        uri: https://event.receiver.uri
+    status:
+      ceAttributes:
+        - source: /apis/v1/namespaces/josh/pingsources/example-source-ping4
+          type: dev.knative.sources.ping
+      conditions:
+        - lastTransitionTime: '2021-01-14T00:26:37Z'
+          message: Deployment does not have minimum availability.
+          reason: MinimumReplicasUnavailable
+          status: 'False'
+          type: Deployed
+        - lastTransitionTime: '2021-01-14T00:26:37Z'
+          message: Deployment does not have minimum availability.
+          reason: MinimumReplicasUnavailable
+          status: 'False'
+          type: Ready
+        - lastTransitionTime: '2021-01-14T00:26:37Z'
+          status: 'True'
+          type: SinkProvided
+        - lastTransitionTime: '2021-01-14T00:26:37Z'
+          status: 'True'
+          type: ValidSchedule
+      observedGeneration: 1
+      sinkUri: https://event.receiver.uri
+  - apiVersion: sources.knative.dev/v1alpha1
+    kind: SinkBinding
+    metadata:
+      annotations:
+        sources.knative.dev/creator: system:admin
+        sources.knative.dev/lastModifier: system:admin
+      creationTimestamp: '2021-01-14T00:26:34Z'
+      finalizers:
+        - sinkbindings.sources.knative.dev
+      generation: 1
+      managedFields:
+        - apiVersion: sources.knative.dev/v1alpha2
+          fieldsType: FieldsV1
+          fieldsV1:
+            f:spec:
+              .: {}
+              f:sink:
+                .: {}
+                f:ref:
+                  .: {}
+                  f:apiVersion: {}
+                  f:kind: {}
+                  f:name: {}
+                  f:namespace: {}
+              f:subject:
+                .: {}
+                f:apiVersion: {}
+                f:kind: {}
+                f:name: {}
+                f:namespace: {}
+            f:status:
+              .: {}
+              f:observedGeneration: {}
+              f:sinkUri: {}
+          manager: kn
+          operation: Update
+          time: '2021-01-14T00:26:34Z'
+        - apiVersion: sources.knative.dev/v1beta1
           fieldsType: FieldsV1
           fieldsV1:
             f:metadata:
               f:finalizers:
                 .: {}
-                v:"pingsources.sources.knative.dev": {}
-          manager: mtping
+                v:"sinkbindings.sources.knative.dev": {}
+            f:status:
+              f:conditions: {}
+              f:observedGeneration: {}
+              f:sinkUri: {}
+          manager: webhook
           operation: Update
-          time: '2020-11-17T15:32:51Z'
-      name: example-source2
+          time: '2021-01-14T00:26:35Z'
+      name: example-source-binding0
       namespace: josh
-      resourceVersion: '60414'
-      selfLink: /apis/sources.knative.dev/v1alpha2/namespaces/josh/pingsources/example-source2
-      uid: b8c3f43d-be83-486e-9ceb-53690fd83d1c
+      resourceVersion: '891126'
+      selfLink: /apis/sources.knative.dev/v1alpha1/namespaces/josh/sinkbindings/example-source-binding0
+      uid: de6cdcf6-1e2e-48eb-8a10-ad1d3ec10a38
     spec:
-      jsonData: '{ value: "hola" }'
-      schedule: '*/2 * * * *'
       sink:
         ref:
           apiVersion: serving.knative.dev/v1
           kind: Service
           name: aaa
           namespace: josh
+      subject:
+        apiVersion: apps/v1
+        kind: Deployment
+        name: ddd
+        namespace: josh
     status:
-      ceAttributes:
-        - source: /apis/v1/namespaces/josh/pingsources/example-source2
-          type: dev.knative.sources.ping
       conditions:
-        - lastTransitionTime: '2020-11-17T15:32:51Z'
-          status: 'True'
-          type: Deployed
-        - lastTransitionTime: '2020-11-17T15:32:51Z'
+        - lastTransitionTime: '2021-01-14T01:15:23Z'
           status: 'True'
           type: Ready
-        - lastTransitionTime: '2020-11-17T15:32:43Z'
-          status: 'True'
-          type: SinkProvided
-        - lastTransitionTime: '2020-11-17T15:32:43Z'
-          status: 'True'
-          type: ValidSchedule
       observedGeneration: 1
       sinkUri: http://aaa.josh.svc.cluster.local
   - apiVersion: sources.knative.dev/v1alpha1
@@ -255,7 +779,81 @@ items:
       annotations:
         sources.knative.dev/creator: system:admin
         sources.knative.dev/lastModifier: system:admin
-      creationTimestamp: '2020-11-17T15:32:43Z'
+      creationTimestamp: '2021-01-14T00:26:34Z'
+      finalizers:
+        - sinkbindings.sources.knative.dev
+      generation: 1
+      managedFields:
+        - apiVersion: sources.knative.dev/v1alpha2
+          fieldsType: FieldsV1
+          fieldsV1:
+            f:spec:
+              .: {}
+              f:sink:
+                .: {}
+                f:ref:
+                  .: {}
+                  f:apiVersion: {}
+                  f:kind: {}
+                  f:name: {}
+                  f:namespace: {}
+              f:subject:
+                .: {}
+                f:apiVersion: {}
+                f:kind: {}
+                f:name: {}
+                f:namespace: {}
+            f:status:
+              .: {}
+              f:sinkUri: {}
+          manager: kn
+          operation: Update
+          time: '2021-01-14T00:26:34Z'
+        - apiVersion: sources.knative.dev/v1beta1
+          fieldsType: FieldsV1
+          fieldsV1:
+            f:metadata:
+              f:finalizers:
+                .: {}
+                v:"sinkbindings.sources.knative.dev": {}
+            f:status:
+              f:conditions: {}
+              f:observedGeneration: {}
+              f:sinkUri: {}
+          manager: webhook
+          operation: Update
+          time: '2021-01-14T00:26:36Z'
+      name: example-source-binding1
+      namespace: josh
+      resourceVersion: '321763'
+      selfLink: /apis/sources.knative.dev/v1alpha1/namespaces/josh/sinkbindings/example-source-binding1
+      uid: e906ebd9-912c-4e94-a5b5-bf6bd3abfb8e
+    spec:
+      sink:
+        ref:
+          apiVersion: eventing.knative.dev/v1beta1
+          kind: Broker
+          name: example-broker0
+          namespace: josh
+      subject:
+        apiVersion: apps/v1
+        kind: Deployment
+        name: ddd
+        namespace: josh
+    status:
+      conditions:
+        - lastTransitionTime: '2021-01-14T00:26:36Z'
+          status: 'True'
+          type: Ready
+      observedGeneration: 1
+      sinkUri: http://broker-ingress.knative-eventing.svc.cluster.local/josh/example-broker0
+  - apiVersion: sources.knative.dev/v1alpha1
+    kind: SinkBinding
+    metadata:
+      annotations:
+        sources.knative.dev/creator: system:admin
+        sources.knative.dev/lastModifier: system:admin
+      creationTimestamp: '2021-01-14T00:26:35Z'
       finalizers:
         - sinkbindings.sources.knative.dev
       generation: 1
@@ -282,8 +880,8 @@ items:
             f:status: {}
           manager: kn
           operation: Update
-          time: '2020-11-17T15:32:43Z'
-        - apiVersion: sources.knative.dev/v1alpha1
+          time: '2021-01-14T00:26:35Z'
+        - apiVersion: sources.knative.dev/v1beta1
           fieldsType: FieldsV1
           fieldsV1:
             f:metadata:
@@ -296,29 +894,95 @@ items:
               f:sinkUri: {}
           manager: webhook
           operation: Update
-          time: '2020-11-17T15:32:48Z'
-      name: example-source3
+          time: '2021-01-14T00:26:36Z'
+      name: example-source-binding2
       namespace: josh
-      resourceVersion: '60225'
-      selfLink: /apis/sources.knative.dev/v1alpha1/namespaces/josh/sinkbindings/example-source3
-      uid: 1a3b4ecb-3915-49e3-815d-fc0b16c21db8
+      resourceVersion: '321793'
+      selfLink: /apis/sources.knative.dev/v1alpha1/namespaces/josh/sinkbindings/example-source-binding2
+      uid: fee38c93-be91-4d93-8265-a269e81c328c
     spec:
       sink:
         ref:
-          apiVersion: serving.knative.dev/v1
-          kind: Service
-          name: aaa
+          apiVersion: messaging.knative.dev/v1beta1
+          kind: Channel
+          name: example-channel0
           namespace: josh
       subject:
         apiVersion: apps/v1
         kind: Deployment
-        name: knative-tut
+        name: ddd
         namespace: josh
     status:
       conditions:
-        - lastTransitionTime: '2020-11-17T15:32:48Z'
+        - lastTransitionTime: '2021-01-14T00:26:36Z'
           status: 'True'
           type: Ready
       observedGeneration: 1
-      sinkUri: http://aaa.josh.svc.cluster.local
+      sinkUri: http://example-channel0-kn-channel.josh.svc.cluster.local
+  - apiVersion: sources.knative.dev/v1alpha1
+    kind: SinkBinding
+    metadata:
+      annotations:
+        sources.knative.dev/creator: system:admin
+        sources.knative.dev/lastModifier: system:admin
+      creationTimestamp: '2021-01-14T00:26:35Z'
+      finalizers:
+        - sinkbindings.sources.knative.dev
+      generation: 1
+      managedFields:
+        - apiVersion: sources.knative.dev/v1alpha2
+          fieldsType: FieldsV1
+          fieldsV1:
+            f:spec:
+              .: {}
+              f:sink:
+                .: {}
+                f:uri: {}
+              f:subject:
+                .: {}
+                f:apiVersion: {}
+                f:kind: {}
+                f:name: {}
+                f:namespace: {}
+            f:status:
+              .: {}
+              f:observedGeneration: {}
+              f:sinkUri: {}
+          manager: kn
+          operation: Update
+          time: '2021-01-14T00:26:35Z'
+        - apiVersion: sources.knative.dev/v1beta1
+          fieldsType: FieldsV1
+          fieldsV1:
+            f:metadata:
+              f:finalizers:
+                .: {}
+                v:"sinkbindings.sources.knative.dev": {}
+            f:status:
+              f:conditions: {}
+              f:observedGeneration: {}
+              f:sinkUri: {}
+          manager: webhook
+          operation: Update
+          time: '2021-01-14T00:26:36Z'
+      name: example-source-binding3
+      namespace: josh
+      resourceVersion: '1316498'
+      selfLink: /apis/sources.knative.dev/v1alpha1/namespaces/josh/sinkbindings/example-source-binding3
+      uid: 59c60a79-87df-4c3c-bb57-c4c303e4fb1c
+    spec:
+      sink:
+        uri: https://event.receiver.uri
+      subject:
+        apiVersion: apps/v1
+        kind: Deployment
+        name: ddd
+        namespace: josh
+    status:
+      conditions:
+        - lastTransitionTime: '2021-01-14T01:51:24Z'
+          status: 'True'
+          type: Ready
+      observedGeneration: 1
+      sinkUri: https://event.receiver.uri
 kind: SourceList

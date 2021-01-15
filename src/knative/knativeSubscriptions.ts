@@ -127,7 +127,7 @@ export class KnativeSubscriptions {
     const broker: Broker = this.knBroker.findBroker(sinkName);
     const channel: Channel = this.knChannel.findChannel(sinkName);
     const service: Service = this.knService.findService(sinkName);
-    const uri: Uri = sinkName ? convertStringToURI(sinkName) : undefined;
+    const uri: Uri = typeof sinkName === 'string' ? convertStringToURI(sinkName) : undefined;
     const sink: Sink = broker || channel || service || uri;
     if (sink) {
       this.findSubscription(subscription.name).childSink = sink;
@@ -154,7 +154,7 @@ export class KnativeSubscriptions {
     const broker: Broker = this.knBroker.findBroker(sinkName);
     const channel: Channel = this.knChannel.findChannel(sinkName);
     const service: Service = this.knService.findService(sinkName);
-    const uri: Uri = sinkName ? convertStringToURI(sinkName) : undefined;
+    const uri: Uri = typeof sinkName === 'string' ? convertStringToURI(sinkName) : undefined;
     const sink: Sink = broker || channel || service || uri;
     if (sink) {
       this.findSubscription(subscription.name).childSinkDeadLetter = sink;
@@ -181,7 +181,7 @@ export class KnativeSubscriptions {
     const broker: Broker = this.knBroker.findBroker(sinkName);
     const channel: Channel = this.knChannel.findChannel(sinkName);
     const service: Service = this.knService.findService(sinkName);
-    const uri: Uri = sinkName ? convertStringToURI(sinkName) : undefined;
+    const uri: Uri = typeof sinkName === 'string' ? convertStringToURI(sinkName) : undefined;
     const sink: Sink = broker || channel || service || uri;
     if (sink) {
       this.findSubscription(subscription.name).childSinkReply = sink;

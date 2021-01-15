@@ -9,164 +9,7 @@
           "messaging.knative.dev/creator": "system:serviceaccount:knative-eventing:eventing-controller",
           "messaging.knative.dev/lastModifier": "system:serviceaccount:knative-eventing:eventing-controller"
         },
-        "creationTimestamp": "2020-11-16T19:54:51Z",
-        "finalizers": ["subscriptions.messaging.knative.dev"],
-        "generation": 1,
-        "labels": {
-          "eventing.knative.dev/broker": "example-broker0",
-          "eventing.knative.dev/trigger": "example-trigger0"
-        },
-        "managedFields": [
-          {
-            "apiVersion": "messaging.knative.dev/v1beta1",
-            "fieldsType": "FieldsV1",
-            "fieldsV1": {
-              "f:metadata": {
-                "f:labels": {
-                  ".": {},
-                  "f:eventing.knative.dev/broker": {},
-                  "f:eventing.knative.dev/trigger": {}
-                },
-                "f:ownerReferences": {
-                  ".": {},
-                  "k:{\"uid\":\"38d940a2-39f3-4988-9c61-8f4866acece1\"}": {
-                    ".": {},
-                    "f:apiVersion": {},
-                    "f:blockOwnerDeletion": {},
-                    "f:controller": {},
-                    "f:kind": {},
-                    "f:name": {},
-                    "f:uid": {}
-                  }
-                }
-              },
-              "f:spec": {
-                ".": {},
-                "f:channel": {
-                  ".": {},
-                  "f:apiVersion": {},
-                  "f:kind": {},
-                  "f:name": {}
-                },
-                "f:reply": {
-                  ".": {},
-                  "f:ref": {
-                    ".": {},
-                    "f:apiVersion": {},
-                    "f:kind": {},
-                    "f:name": {},
-                    "f:namespace": {}
-                  }
-                },
-                "f:subscriber": {
-                  ".": {},
-                  "f:uri": {}
-                }
-              }
-            },
-            "manager": "mtchannel-broker",
-            "operation": "Update",
-            "time": "2020-11-16T19:54:51Z"
-          },
-          {
-            "apiVersion": "messaging.knative.dev/v1beta1",
-            "fieldsType": "FieldsV1",
-            "fieldsV1": {
-              "f:metadata": {
-                "f:finalizers": {
-                  ".": {},
-                  "v:\"subscriptions.messaging.knative.dev\"": {}
-                }
-              },
-              "f:status": {
-                ".": {},
-                "f:conditions": {},
-                "f:observedGeneration": {},
-                "f:physicalSubscription": {
-                  ".": {},
-                  "f:replyUri": {},
-                  "f:subscriberUri": {}
-                }
-              }
-            },
-            "manager": "controller",
-            "operation": "Update",
-            "time": "2020-11-16T19:54:53Z"
-          }
-        ],
-        "name": "example-broker0-example-trigger0-38d940a2-39f3-4988-9c61-8f4866acece1",
-        "namespace": "josh",
-        "ownerReferences": [
-          {
-            "apiVersion": "eventing.knative.dev/v1beta1",
-            "blockOwnerDeletion": true,
-            "controller": true,
-            "kind": "Trigger",
-            "name": "example-trigger0",
-            "uid": "38d940a2-39f3-4988-9c61-8f4866acece1"
-          }
-        ],
-        "resourceVersion": "48371",
-        "selfLink": "/apis/messaging.knative.dev/v1beta1/namespaces/josh/subscriptions/example-broker0-example-trigger0-38d940a2-39f3-4988-9c61-8f4866acece1",
-        "uid": "40ed1393-2ada-45d9-8038-ddc929d28f36"
-      },
-      "spec": {
-        "channel": {
-          "apiVersion": "messaging.knative.dev/v1beta1",
-          "kind": "InMemoryChannel",
-          "name": "example-broker0-kne-trigger"
-        },
-        "reply": {
-          "ref": {
-            "apiVersion": "eventing.knative.dev/v1beta1",
-            "kind": "Broker",
-            "name": "example-broker0",
-            "namespace": "josh"
-          }
-        },
-        "subscriber": {
-          "uri": "http://broker-filter.knative-eventing.svc.cluster.local/triggers/josh/example-trigger0/38d940a2-39f3-4988-9c61-8f4866acece1"
-        }
-      },
-      "status": {
-        "conditions": [
-          {
-            "lastTransitionTime": "2020-11-16T19:54:52Z",
-            "status": "True",
-            "type": "AddedToChannel"
-          },
-          {
-            "lastTransitionTime": "2020-11-16T19:54:53Z",
-            "status": "True",
-            "type": "ChannelReady"
-          },
-          {
-            "lastTransitionTime": "2020-11-16T19:54:53Z",
-            "status": "True",
-            "type": "Ready"
-          },
-          {
-            "lastTransitionTime": "2020-11-16T19:54:52Z",
-            "status": "True",
-            "type": "ReferencesResolved"
-          }
-        ],
-        "observedGeneration": 1,
-        "physicalSubscription": {
-          "replyUri": "http://broker-ingress.knative-eventing.svc.cluster.local/josh/example-broker0",
-          "subscriberUri": "http://broker-filter.knative-eventing.svc.cluster.local/triggers/josh/example-trigger0/38d940a2-39f3-4988-9c61-8f4866acece1"
-        }
-      }
-    },
-    {
-      "apiVersion": "messaging.knative.dev/v1beta1",
-      "kind": "Subscription",
-      "metadata": {
-        "annotations": {
-          "messaging.knative.dev/creator": "system:serviceaccount:knative-eventing:eventing-controller",
-          "messaging.knative.dev/lastModifier": "system:serviceaccount:knative-eventing:eventing-controller"
-        },
-        "creationTimestamp": "2020-11-16T19:54:52Z",
+        "creationTimestamp": "2021-01-14T14:20:04Z",
         "finalizers": ["subscriptions.messaging.knative.dev"],
         "generation": 1,
         "labels": {
@@ -175,7 +18,7 @@
         },
         "managedFields": [
           {
-            "apiVersion": "messaging.knative.dev/v1beta1",
+            "apiVersion": "messaging.knative.dev/v1",
             "fieldsType": "FieldsV1",
             "fieldsV1": {
               "f:metadata": {
@@ -186,7 +29,7 @@
                 },
                 "f:ownerReferences": {
                   ".": {},
-                  "k:{\"uid\":\"8cde4473-e3e9-492d-b2de-693889bbdf6c\"}": {
+                  "k:{\"uid\":\"e8765b1c-57ad-492a-b64d-6c4246385cdb\"}": {
                     ".": {},
                     "f:apiVersion": {},
                     "f:blockOwnerDeletion": {},
@@ -219,14 +62,22 @@
                   ".": {},
                   "f:uri": {}
                 }
+              },
+              "f:status": {
+                ".": {},
+                "f:physicalSubscription": {
+                  ".": {},
+                  "f:replyUri": {},
+                  "f:subscriberUri": {}
+                }
               }
             },
             "manager": "mtchannel-broker",
             "operation": "Update",
-            "time": "2020-11-16T19:54:52Z"
+            "time": "2021-01-14T14:20:04Z"
           },
           {
-            "apiVersion": "messaging.knative.dev/v1beta1",
+            "apiVersion": "messaging.knative.dev/v1",
             "fieldsType": "FieldsV1",
             "fieldsV1": {
               "f:metadata": {
@@ -236,11 +87,9 @@
                 }
               },
               "f:status": {
-                ".": {},
                 "f:conditions": {},
                 "f:observedGeneration": {},
                 "f:physicalSubscription": {
-                  ".": {},
                   "f:replyUri": {},
                   "f:subscriberUri": {}
                 }
@@ -248,24 +97,24 @@
             },
             "manager": "controller",
             "operation": "Update",
-            "time": "2020-11-16T19:54:53Z"
+            "time": "2021-01-14T14:20:06Z"
           }
         ],
-        "name": "example-broker0-example-trigger1-8cde4473-e3e9-492d-b2de-693889bbdf6c",
+        "name": "example-broker0-example-trigger18f8f84ecc9aeeddd78d7640489575bf",
         "namespace": "josh",
         "ownerReferences": [
           {
-            "apiVersion": "eventing.knative.dev/v1beta1",
+            "apiVersion": "eventing.knative.dev/v1",
             "blockOwnerDeletion": true,
             "controller": true,
             "kind": "Trigger",
             "name": "example-trigger1",
-            "uid": "8cde4473-e3e9-492d-b2de-693889bbdf6c"
+            "uid": "e8765b1c-57ad-492a-b64d-6c4246385cdb"
           }
         ],
-        "resourceVersion": "48370",
-        "selfLink": "/apis/messaging.knative.dev/v1beta1/namespaces/josh/subscriptions/example-broker0-example-trigger1-8cde4473-e3e9-492d-b2de-693889bbdf6c",
-        "uid": "d695fa7e-2daf-4a53-89d6-8367966e9bc1"
+        "resourceVersion": "229205",
+        "selfLink": "/apis/messaging.knative.dev/v1beta1/namespaces/josh/subscriptions/example-broker0-example-trigger18f8f84ecc9aeeddd78d7640489575bf",
+        "uid": "84614755-bd5f-46f5-bdb6-7d22c5aa4058"
       },
       "spec": {
         "channel": {
@@ -275,35 +124,35 @@
         },
         "reply": {
           "ref": {
-            "apiVersion": "eventing.knative.dev/v1beta1",
+            "apiVersion": "eventing.knative.dev/v1",
             "kind": "Broker",
             "name": "example-broker0",
             "namespace": "josh"
           }
         },
         "subscriber": {
-          "uri": "http://broker-filter.knative-eventing.svc.cluster.local/triggers/josh/example-trigger1/8cde4473-e3e9-492d-b2de-693889bbdf6c"
+          "uri": "http://broker-filter.knative-eventing.svc.cluster.local/triggers/josh/example-trigger1/e8765b1c-57ad-492a-b64d-6c4246385cdb"
         }
       },
       "status": {
         "conditions": [
           {
-            "lastTransitionTime": "2020-11-16T19:54:52Z",
+            "lastTransitionTime": "2021-01-14T14:20:05Z",
             "status": "True",
             "type": "AddedToChannel"
           },
           {
-            "lastTransitionTime": "2020-11-16T19:54:53Z",
+            "lastTransitionTime": "2021-01-14T14:20:07Z",
             "status": "True",
             "type": "ChannelReady"
           },
           {
-            "lastTransitionTime": "2020-11-16T19:54:53Z",
+            "lastTransitionTime": "2021-01-14T14:20:07Z",
             "status": "True",
             "type": "Ready"
           },
           {
-            "lastTransitionTime": "2020-11-16T19:54:52Z",
+            "lastTransitionTime": "2021-01-14T14:20:05Z",
             "status": "True",
             "type": "ReferencesResolved"
           }
@@ -311,7 +160,7 @@
         "observedGeneration": 1,
         "physicalSubscription": {
           "replyUri": "http://broker-ingress.knative-eventing.svc.cluster.local/josh/example-broker0",
-          "subscriberUri": "http://broker-filter.knative-eventing.svc.cluster.local/triggers/josh/example-trigger1/8cde4473-e3e9-492d-b2de-693889bbdf6c"
+          "subscriberUri": "http://broker-filter.knative-eventing.svc.cluster.local/triggers/josh/example-trigger1/e8765b1c-57ad-492a-b64d-6c4246385cdb"
         }
       }
     },
@@ -323,16 +172,16 @@
           "messaging.knative.dev/creator": "system:serviceaccount:knative-eventing:eventing-controller",
           "messaging.knative.dev/lastModifier": "system:serviceaccount:knative-eventing:eventing-controller"
         },
-        "creationTimestamp": "2020-11-16T19:54:52Z",
+        "creationTimestamp": "2021-01-14T14:20:04Z",
         "finalizers": ["subscriptions.messaging.knative.dev"],
         "generation": 1,
         "labels": {
-          "eventing.knative.dev/broker": "example-broker1",
-          "eventing.knative.dev/trigger": "example-trigger3"
+          "eventing.knative.dev/broker": "example-broker0",
+          "eventing.knative.dev/trigger": "example-trigger0"
         },
         "managedFields": [
           {
-            "apiVersion": "messaging.knative.dev/v1beta1",
+            "apiVersion": "messaging.knative.dev/v1",
             "fieldsType": "FieldsV1",
             "fieldsV1": {
               "f:metadata": {
@@ -343,7 +192,7 @@
                 },
                 "f:ownerReferences": {
                   ".": {},
-                  "k:{\"uid\":\"09126c0a-153a-4797-a637-8d4183682975\"}": {
+                  "k:{\"uid\":\"4d47e9c6-4fa1-4773-b8b3-dd8cd9578940\"}": {
                     ".": {},
                     "f:apiVersion": {},
                     "f:blockOwnerDeletion": {},
@@ -376,14 +225,22 @@
                   ".": {},
                   "f:uri": {}
                 }
+              },
+              "f:status": {
+                ".": {},
+                "f:physicalSubscription": {
+                  ".": {},
+                  "f:replyUri": {},
+                  "f:subscriberUri": {}
+                }
               }
             },
             "manager": "mtchannel-broker",
             "operation": "Update",
-            "time": "2020-11-16T19:54:52Z"
+            "time": "2021-01-14T14:20:04Z"
           },
           {
-            "apiVersion": "messaging.knative.dev/v1beta1",
+            "apiVersion": "messaging.knative.dev/v1",
             "fieldsType": "FieldsV1",
             "fieldsV1": {
               "f:metadata": {
@@ -393,11 +250,9 @@
                 }
               },
               "f:status": {
-                ".": {},
                 "f:conditions": {},
                 "f:observedGeneration": {},
                 "f:physicalSubscription": {
-                  ".": {},
                   "f:replyUri": {},
                   "f:subscriberUri": {}
                 }
@@ -405,70 +260,70 @@
             },
             "manager": "controller",
             "operation": "Update",
-            "time": "2020-11-16T19:54:54Z"
+            "time": "2021-01-14T14:20:05Z"
           }
         ],
-        "name": "example-broker1-example-trigger3-09126c0a-153a-4797-a637-8d4183682975",
+        "name": "example-broker0-example-trigger57933d7738bc8bbf15a14f392c0e56aa",
         "namespace": "josh",
         "ownerReferences": [
           {
-            "apiVersion": "eventing.knative.dev/v1beta1",
+            "apiVersion": "eventing.knative.dev/v1",
             "blockOwnerDeletion": true,
             "controller": true,
             "kind": "Trigger",
-            "name": "example-trigger3",
-            "uid": "09126c0a-153a-4797-a637-8d4183682975"
+            "name": "example-trigger0",
+            "uid": "4d47e9c6-4fa1-4773-b8b3-dd8cd9578940"
           }
         ],
-        "resourceVersion": "48386",
-        "selfLink": "/apis/messaging.knative.dev/v1beta1/namespaces/josh/subscriptions/example-broker1-example-trigger3-09126c0a-153a-4797-a637-8d4183682975",
-        "uid": "b2e1e902-0cc4-45ef-9469-2554b9af623b"
+        "resourceVersion": "228805",
+        "selfLink": "/apis/messaging.knative.dev/v1beta1/namespaces/josh/subscriptions/example-broker0-example-trigger57933d7738bc8bbf15a14f392c0e56aa",
+        "uid": "ccefc8db-abca-4085-9537-3e21edb0f9fd"
       },
       "spec": {
         "channel": {
           "apiVersion": "messaging.knative.dev/v1beta1",
           "kind": "InMemoryChannel",
-          "name": "example-broker1-kne-trigger"
+          "name": "example-broker0-kne-trigger"
         },
         "reply": {
           "ref": {
-            "apiVersion": "eventing.knative.dev/v1beta1",
+            "apiVersion": "eventing.knative.dev/v1",
             "kind": "Broker",
-            "name": "example-broker1",
+            "name": "example-broker0",
             "namespace": "josh"
           }
         },
         "subscriber": {
-          "uri": "http://broker-filter.knative-eventing.svc.cluster.local/triggers/josh/example-trigger3/09126c0a-153a-4797-a637-8d4183682975"
+          "uri": "http://broker-filter.knative-eventing.svc.cluster.local/triggers/josh/example-trigger0/4d47e9c6-4fa1-4773-b8b3-dd8cd9578940"
         }
       },
       "status": {
         "conditions": [
           {
-            "lastTransitionTime": "2020-11-16T19:54:52Z",
+            "lastTransitionTime": "2021-01-14T14:20:04Z",
             "status": "True",
             "type": "AddedToChannel"
           },
           {
-            "lastTransitionTime": "2020-11-16T19:54:54Z",
+            "lastTransitionTime": "2021-01-14T14:20:05Z",
             "status": "True",
             "type": "ChannelReady"
           },
           {
-            "lastTransitionTime": "2020-11-16T19:54:54Z",
+            "lastTransitionTime": "2021-01-14T14:20:05Z",
             "status": "True",
             "type": "Ready"
           },
           {
-            "lastTransitionTime": "2020-11-16T19:54:52Z",
+            "lastTransitionTime": "2021-01-14T14:20:04Z",
             "status": "True",
             "type": "ReferencesResolved"
           }
         ],
         "observedGeneration": 1,
         "physicalSubscription": {
-          "replyUri": "http://broker-ingress.knative-eventing.svc.cluster.local/josh/example-broker1",
-          "subscriberUri": "http://broker-filter.knative-eventing.svc.cluster.local/triggers/josh/example-trigger3/09126c0a-153a-4797-a637-8d4183682975"
+          "replyUri": "http://broker-ingress.knative-eventing.svc.cluster.local/josh/example-broker0",
+          "subscriberUri": "http://broker-filter.knative-eventing.svc.cluster.local/triggers/josh/example-trigger0/4d47e9c6-4fa1-4773-b8b3-dd8cd9578940"
         }
       }
     },
@@ -480,7 +335,7 @@
           "messaging.knative.dev/creator": "system:serviceaccount:knative-eventing:eventing-controller",
           "messaging.knative.dev/lastModifier": "system:serviceaccount:knative-eventing:eventing-controller"
         },
-        "creationTimestamp": "2020-11-16T19:54:52Z",
+        "creationTimestamp": "2021-01-14T14:20:05Z",
         "finalizers": ["subscriptions.messaging.knative.dev"],
         "generation": 1,
         "labels": {
@@ -489,7 +344,7 @@
         },
         "managedFields": [
           {
-            "apiVersion": "messaging.knative.dev/v1beta1",
+            "apiVersion": "messaging.knative.dev/v1",
             "fieldsType": "FieldsV1",
             "fieldsV1": {
               "f:metadata": {
@@ -500,7 +355,7 @@
                 },
                 "f:ownerReferences": {
                   ".": {},
-                  "k:{\"uid\":\"99eb7f81-9f17-4131-a8eb-2f0991a72b08\"}": {
+                  "k:{\"uid\":\"bf87b4ce-251a-424d-b674-85bd29c13450\"}": {
                     ".": {},
                     "f:apiVersion": {},
                     "f:blockOwnerDeletion": {},
@@ -533,14 +388,22 @@
                   ".": {},
                   "f:uri": {}
                 }
+              },
+              "f:status": {
+                ".": {},
+                "f:physicalSubscription": {
+                  ".": {},
+                  "f:replyUri": {},
+                  "f:subscriberUri": {}
+                }
               }
             },
             "manager": "mtchannel-broker",
             "operation": "Update",
-            "time": "2020-11-16T19:54:52Z"
+            "time": "2021-01-14T14:20:05Z"
           },
           {
-            "apiVersion": "messaging.knative.dev/v1beta1",
+            "apiVersion": "messaging.knative.dev/v1",
             "fieldsType": "FieldsV1",
             "fieldsV1": {
               "f:metadata": {
@@ -550,11 +413,9 @@
                 }
               },
               "f:status": {
-                ".": {},
                 "f:conditions": {},
                 "f:observedGeneration": {},
                 "f:physicalSubscription": {
-                  ".": {},
                   "f:replyUri": {},
                   "f:subscriberUri": {}
                 }
@@ -562,24 +423,24 @@
             },
             "manager": "controller",
             "operation": "Update",
-            "time": "2020-11-16T19:54:54Z"
+            "time": "2021-01-14T14:20:07Z"
           }
         ],
-        "name": "example-broker1-example-trigger4-99eb7f81-9f17-4131-a8eb-2f0991a72b08",
+        "name": "example-broker1-example-trigger4846a458d0f4c0d29ad7568cf64d27e9",
         "namespace": "josh",
         "ownerReferences": [
           {
-            "apiVersion": "eventing.knative.dev/v1beta1",
+            "apiVersion": "eventing.knative.dev/v1",
             "blockOwnerDeletion": true,
             "controller": true,
             "kind": "Trigger",
             "name": "example-trigger4",
-            "uid": "99eb7f81-9f17-4131-a8eb-2f0991a72b08"
+            "uid": "bf87b4ce-251a-424d-b674-85bd29c13450"
           }
         ],
-        "resourceVersion": "48387",
-        "selfLink": "/apis/messaging.knative.dev/v1beta1/namespaces/josh/subscriptions/example-broker1-example-trigger4-99eb7f81-9f17-4131-a8eb-2f0991a72b08",
-        "uid": "4abdb8e6-05b6-4872-af71-704c2ece17e0"
+        "resourceVersion": "229565",
+        "selfLink": "/apis/messaging.knative.dev/v1beta1/namespaces/josh/subscriptions/example-broker1-example-trigger4846a458d0f4c0d29ad7568cf64d27e9",
+        "uid": "7ab0fb0d-4be2-4d09-bd37-e1efe817984a"
       },
       "spec": {
         "channel": {
@@ -589,35 +450,35 @@
         },
         "reply": {
           "ref": {
-            "apiVersion": "eventing.knative.dev/v1beta1",
+            "apiVersion": "eventing.knative.dev/v1",
             "kind": "Broker",
             "name": "example-broker1",
             "namespace": "josh"
           }
         },
         "subscriber": {
-          "uri": "http://broker-filter.knative-eventing.svc.cluster.local/triggers/josh/example-trigger4/99eb7f81-9f17-4131-a8eb-2f0991a72b08"
+          "uri": "http://broker-filter.knative-eventing.svc.cluster.local/triggers/josh/example-trigger4/bf87b4ce-251a-424d-b674-85bd29c13450"
         }
       },
       "status": {
         "conditions": [
           {
-            "lastTransitionTime": "2020-11-16T19:54:53Z",
+            "lastTransitionTime": "2021-01-14T14:20:07Z",
             "status": "True",
             "type": "AddedToChannel"
           },
           {
-            "lastTransitionTime": "2020-11-16T19:54:54Z",
+            "lastTransitionTime": "2021-01-14T14:20:08Z",
             "status": "True",
             "type": "ChannelReady"
           },
           {
-            "lastTransitionTime": "2020-11-16T19:54:54Z",
+            "lastTransitionTime": "2021-01-14T14:20:08Z",
             "status": "True",
             "type": "Ready"
           },
           {
-            "lastTransitionTime": "2020-11-16T19:54:53Z",
+            "lastTransitionTime": "2021-01-14T14:20:07Z",
             "status": "True",
             "type": "ReferencesResolved"
           }
@@ -625,7 +486,333 @@
         "observedGeneration": 1,
         "physicalSubscription": {
           "replyUri": "http://broker-ingress.knative-eventing.svc.cluster.local/josh/example-broker1",
-          "subscriberUri": "http://broker-filter.knative-eventing.svc.cluster.local/triggers/josh/example-trigger4/99eb7f81-9f17-4131-a8eb-2f0991a72b08"
+          "subscriberUri": "http://broker-filter.knative-eventing.svc.cluster.local/triggers/josh/example-trigger4/bf87b4ce-251a-424d-b674-85bd29c13450"
+        }
+      }
+    },
+    {
+      "apiVersion": "messaging.knative.dev/v1beta1",
+      "kind": "Subscription",
+      "metadata": {
+        "annotations": {
+          "messaging.knative.dev/creator": "system:serviceaccount:knative-eventing:eventing-controller",
+          "messaging.knative.dev/lastModifier": "system:serviceaccount:knative-eventing:eventing-controller"
+        },
+        "creationTimestamp": "2021-01-14T14:20:05Z",
+        "finalizers": ["subscriptions.messaging.knative.dev"],
+        "generation": 1,
+        "labels": {
+          "eventing.knative.dev/broker": "example-broker1",
+          "eventing.knative.dev/trigger": "example-trigger2"
+        },
+        "managedFields": [
+          {
+            "apiVersion": "messaging.knative.dev/v1",
+            "fieldsType": "FieldsV1",
+            "fieldsV1": {
+              "f:metadata": {
+                "f:labels": {
+                  ".": {},
+                  "f:eventing.knative.dev/broker": {},
+                  "f:eventing.knative.dev/trigger": {}
+                },
+                "f:ownerReferences": {
+                  ".": {},
+                  "k:{\"uid\":\"b9e384c1-7e2e-47d1-881c-4d42685915e0\"}": {
+                    ".": {},
+                    "f:apiVersion": {},
+                    "f:blockOwnerDeletion": {},
+                    "f:controller": {},
+                    "f:kind": {},
+                    "f:name": {},
+                    "f:uid": {}
+                  }
+                }
+              },
+              "f:spec": {
+                ".": {},
+                "f:channel": {
+                  ".": {},
+                  "f:apiVersion": {},
+                  "f:kind": {},
+                  "f:name": {}
+                },
+                "f:reply": {
+                  ".": {},
+                  "f:ref": {
+                    ".": {},
+                    "f:apiVersion": {},
+                    "f:kind": {},
+                    "f:name": {},
+                    "f:namespace": {}
+                  }
+                },
+                "f:subscriber": {
+                  ".": {},
+                  "f:uri": {}
+                }
+              },
+              "f:status": {
+                ".": {},
+                "f:physicalSubscription": {
+                  ".": {},
+                  "f:replyUri": {},
+                  "f:subscriberUri": {}
+                }
+              }
+            },
+            "manager": "mtchannel-broker",
+            "operation": "Update",
+            "time": "2021-01-14T14:20:05Z"
+          },
+          {
+            "apiVersion": "messaging.knative.dev/v1",
+            "fieldsType": "FieldsV1",
+            "fieldsV1": {
+              "f:metadata": {
+                "f:finalizers": {
+                  ".": {},
+                  "v:\"subscriptions.messaging.knative.dev\"": {}
+                }
+              },
+              "f:status": {
+                "f:conditions": {},
+                "f:observedGeneration": {},
+                "f:physicalSubscription": {
+                  "f:replyUri": {},
+                  "f:subscriberUri": {}
+                }
+              }
+            },
+            "manager": "controller",
+            "operation": "Update",
+            "time": "2021-01-14T14:20:07Z"
+          }
+        ],
+        "name": "example-broker1-example-triggerb184585a72dd739bb2c781d796ffeadf",
+        "namespace": "josh",
+        "ownerReferences": [
+          {
+            "apiVersion": "eventing.knative.dev/v1",
+            "blockOwnerDeletion": true,
+            "controller": true,
+            "kind": "Trigger",
+            "name": "example-trigger2",
+            "uid": "b9e384c1-7e2e-47d1-881c-4d42685915e0"
+          }
+        ],
+        "resourceVersion": "229567",
+        "selfLink": "/apis/messaging.knative.dev/v1beta1/namespaces/josh/subscriptions/example-broker1-example-triggerb184585a72dd739bb2c781d796ffeadf",
+        "uid": "b655e85c-8ce2-4389-967b-7324f637b117"
+      },
+      "spec": {
+        "channel": {
+          "apiVersion": "messaging.knative.dev/v1beta1",
+          "kind": "InMemoryChannel",
+          "name": "example-broker1-kne-trigger"
+        },
+        "reply": {
+          "ref": {
+            "apiVersion": "eventing.knative.dev/v1",
+            "kind": "Broker",
+            "name": "example-broker1",
+            "namespace": "josh"
+          }
+        },
+        "subscriber": {
+          "uri": "http://broker-filter.knative-eventing.svc.cluster.local/triggers/josh/example-trigger2/b9e384c1-7e2e-47d1-881c-4d42685915e0"
+        }
+      },
+      "status": {
+        "conditions": [
+          {
+            "lastTransitionTime": "2021-01-14T14:20:06Z",
+            "status": "True",
+            "type": "AddedToChannel"
+          },
+          {
+            "lastTransitionTime": "2021-01-14T14:20:08Z",
+            "status": "True",
+            "type": "ChannelReady"
+          },
+          {
+            "lastTransitionTime": "2021-01-14T14:20:08Z",
+            "status": "True",
+            "type": "Ready"
+          },
+          {
+            "lastTransitionTime": "2021-01-14T14:20:06Z",
+            "status": "True",
+            "type": "ReferencesResolved"
+          }
+        ],
+        "observedGeneration": 1,
+        "physicalSubscription": {
+          "replyUri": "http://broker-ingress.knative-eventing.svc.cluster.local/josh/example-broker1",
+          "subscriberUri": "http://broker-filter.knative-eventing.svc.cluster.local/triggers/josh/example-trigger2/b9e384c1-7e2e-47d1-881c-4d42685915e0"
+        }
+      }
+    },
+    {
+      "apiVersion": "messaging.knative.dev/v1beta1",
+      "kind": "Subscription",
+      "metadata": {
+        "annotations": {
+          "messaging.knative.dev/creator": "system:serviceaccount:knative-eventing:eventing-controller",
+          "messaging.knative.dev/lastModifier": "system:serviceaccount:knative-eventing:eventing-controller"
+        },
+        "creationTimestamp": "2021-01-14T14:20:05Z",
+        "finalizers": ["subscriptions.messaging.knative.dev"],
+        "generation": 1,
+        "labels": {
+          "eventing.knative.dev/broker": "example-broker1",
+          "eventing.knative.dev/trigger": "example-trigger3"
+        },
+        "managedFields": [
+          {
+            "apiVersion": "messaging.knative.dev/v1",
+            "fieldsType": "FieldsV1",
+            "fieldsV1": {
+              "f:metadata": {
+                "f:labels": {
+                  ".": {},
+                  "f:eventing.knative.dev/broker": {},
+                  "f:eventing.knative.dev/trigger": {}
+                },
+                "f:ownerReferences": {
+                  ".": {},
+                  "k:{\"uid\":\"540ecadc-2fb6-46e0-ba52-95513b379b46\"}": {
+                    ".": {},
+                    "f:apiVersion": {},
+                    "f:blockOwnerDeletion": {},
+                    "f:controller": {},
+                    "f:kind": {},
+                    "f:name": {},
+                    "f:uid": {}
+                  }
+                }
+              },
+              "f:spec": {
+                ".": {},
+                "f:channel": {
+                  ".": {},
+                  "f:apiVersion": {},
+                  "f:kind": {},
+                  "f:name": {}
+                },
+                "f:reply": {
+                  ".": {},
+                  "f:ref": {
+                    ".": {},
+                    "f:apiVersion": {},
+                    "f:kind": {},
+                    "f:name": {},
+                    "f:namespace": {}
+                  }
+                },
+                "f:subscriber": {
+                  ".": {},
+                  "f:uri": {}
+                }
+              },
+              "f:status": {
+                ".": {},
+                "f:physicalSubscription": {
+                  ".": {},
+                  "f:replyUri": {},
+                  "f:subscriberUri": {}
+                }
+              }
+            },
+            "manager": "mtchannel-broker",
+            "operation": "Update",
+            "time": "2021-01-14T14:20:05Z"
+          },
+          {
+            "apiVersion": "messaging.knative.dev/v1",
+            "fieldsType": "FieldsV1",
+            "fieldsV1": {
+              "f:metadata": {
+                "f:finalizers": {
+                  ".": {},
+                  "v:\"subscriptions.messaging.knative.dev\"": {}
+                }
+              },
+              "f:status": {
+                "f:conditions": {},
+                "f:observedGeneration": {},
+                "f:physicalSubscription": {
+                  "f:replyUri": {},
+                  "f:subscriberUri": {}
+                }
+              }
+            },
+            "manager": "controller",
+            "operation": "Update",
+            "time": "2021-01-14T14:20:06Z"
+          }
+        ],
+        "name": "example-broker1-example-triggerfcdd516b8da66997b1f1c61da6ac824e",
+        "namespace": "josh",
+        "ownerReferences": [
+          {
+            "apiVersion": "eventing.knative.dev/v1",
+            "blockOwnerDeletion": true,
+            "controller": true,
+            "kind": "Trigger",
+            "name": "example-trigger3",
+            "uid": "540ecadc-2fb6-46e0-ba52-95513b379b46"
+          }
+        ],
+        "resourceVersion": "229369",
+        "selfLink": "/apis/messaging.knative.dev/v1beta1/namespaces/josh/subscriptions/example-broker1-example-triggerfcdd516b8da66997b1f1c61da6ac824e",
+        "uid": "a006dd4e-5b82-42eb-b8bc-07aea50b5b88"
+      },
+      "spec": {
+        "channel": {
+          "apiVersion": "messaging.knative.dev/v1beta1",
+          "kind": "InMemoryChannel",
+          "name": "example-broker1-kne-trigger"
+        },
+        "reply": {
+          "ref": {
+            "apiVersion": "eventing.knative.dev/v1",
+            "kind": "Broker",
+            "name": "example-broker1",
+            "namespace": "josh"
+          }
+        },
+        "subscriber": {
+          "uri": "http://broker-filter.knative-eventing.svc.cluster.local/triggers/josh/example-trigger3/540ecadc-2fb6-46e0-ba52-95513b379b46"
+        }
+      },
+      "status": {
+        "conditions": [
+          {
+            "lastTransitionTime": "2021-01-14T14:20:06Z",
+            "status": "True",
+            "type": "AddedToChannel"
+          },
+          {
+            "lastTransitionTime": "2021-01-14T14:20:08Z",
+            "status": "True",
+            "type": "ChannelReady"
+          },
+          {
+            "lastTransitionTime": "2021-01-14T14:20:08Z",
+            "status": "True",
+            "type": "Ready"
+          },
+          {
+            "lastTransitionTime": "2021-01-14T14:20:06Z",
+            "status": "True",
+            "type": "ReferencesResolved"
+          }
+        ],
+        "observedGeneration": 1,
+        "physicalSubscription": {
+          "replyUri": "http://broker-ingress.knative-eventing.svc.cluster.local/josh/example-broker1",
+          "subscriberUri": "http://broker-filter.knative-eventing.svc.cluster.local/triggers/josh/example-trigger3/540ecadc-2fb6-46e0-ba52-95513b379b46"
         }
       }
     },
@@ -637,10 +824,32 @@
           "messaging.knative.dev/creator": "system:admin",
           "messaging.knative.dev/lastModifier": "system:admin"
         },
-        "creationTimestamp": "2020-11-16T11:54:51Z",
+        "creationTimestamp": "2021-01-14T14:20:02Z",
         "finalizers": ["subscriptions.messaging.knative.dev"],
         "generation": 1,
         "managedFields": [
+          {
+            "apiVersion": "messaging.knative.dev/v1",
+            "fieldsType": "FieldsV1",
+            "fieldsV1": {
+              "f:metadata": {
+                "f:finalizers": {
+                  ".": {},
+                  "v:\"subscriptions.messaging.knative.dev\"": {}
+                }
+              },
+              "f:status": {
+                "f:conditions": {},
+                "f:observedGeneration": {},
+                "f:physicalSubscription": {
+                  "f:subscriberUri": {}
+                }
+              }
+            },
+            "manager": "controller",
+            "operation": "Update",
+            "time": "2021-01-14T14:20:02Z"
+          },
           {
             "apiVersion": "messaging.knative.dev/v1beta1",
             "fieldsType": "FieldsV1",
@@ -663,42 +872,25 @@
                     "f:namespace": {}
                   }
                 }
-              }
-            },
-            "manager": "kn",
-            "operation": "Update",
-            "time": "2020-11-16T19:54:51Z"
-          },
-          {
-            "apiVersion": "messaging.knative.dev/v1beta1",
-            "fieldsType": "FieldsV1",
-            "fieldsV1": {
-              "f:metadata": {
-                "f:finalizers": {
-                  ".": {},
-                  "v:\"subscriptions.messaging.knative.dev\"": {}
-                }
               },
               "f:status": {
                 ".": {},
-                "f:conditions": {},
-                "f:observedGeneration": {},
                 "f:physicalSubscription": {
                   ".": {},
                   "f:subscriberUri": {}
                 }
               }
             },
-            "manager": "controller",
+            "manager": "kn",
             "operation": "Update",
-            "time": "2020-11-16T19:54:53Z"
+            "time": "2021-01-14T14:20:02Z"
           }
         ],
         "name": "example-subscription0",
         "namespace": "josh",
-        "resourceVersion": "48342",
-        "selfLink": "/apis/messaging.knative.dev/v1beta1/namespaces/josh/subscriptions/example-trigger0",
-        "uid": "7a351d67-06ce-4f63-9885-601ceb0257aa"
+        "resourceVersion": "228206",
+        "selfLink": "/apis/messaging.knative.dev/v1beta1/namespaces/josh/subscriptions/example-subscription0",
+        "uid": "df593bf6-3f41-428e-81bd-f1a6407d458a"
       },
       "spec": {
         "channel": {
@@ -718,22 +910,22 @@
       "status": {
         "conditions": [
           {
-            "lastTransitionTime": "2020-11-16T19:54:51Z",
+            "lastTransitionTime": "2021-01-14T14:20:02Z",
             "status": "True",
             "type": "AddedToChannel"
           },
           {
-            "lastTransitionTime": "2020-11-16T19:54:53Z",
+            "lastTransitionTime": "2021-01-14T14:20:03Z",
             "status": "True",
             "type": "ChannelReady"
           },
           {
-            "lastTransitionTime": "2020-11-16T19:54:53Z",
+            "lastTransitionTime": "2021-01-14T14:20:03Z",
             "status": "True",
             "type": "Ready"
           },
           {
-            "lastTransitionTime": "2020-11-16T19:54:53Z",
+            "lastTransitionTime": "2021-01-14T14:20:02Z",
             "status": "True",
             "type": "ReferencesResolved"
           }
@@ -752,12 +944,47 @@
           "messaging.knative.dev/creator": "system:admin",
           "messaging.knative.dev/lastModifier": "system:admin"
         },
-        "creationTimestamp": "2020-11-16T12:09:40Z",
+        "creationTimestamp": "2021-01-14T14:20:02Z",
         "finalizers": ["subscriptions.messaging.knative.dev"],
         "generation": 1,
         "managedFields": [
           {
             "apiVersion": "messaging.knative.dev/v1beta1",
+            "fieldsType": "FieldsV1",
+            "fieldsV1": {
+              "f:spec": {
+                ".": {},
+                "f:channel": {
+                  ".": {},
+                  "f:apiVersion": {},
+                  "f:kind": {},
+                  "f:name": {}
+                },
+                "f:subscriber": {
+                  ".": {},
+                  "f:ref": {
+                    ".": {},
+                    "f:apiVersion": {},
+                    "f:kind": {},
+                    "f:name": {},
+                    "f:namespace": {}
+                  }
+                }
+              },
+              "f:status": {
+                ".": {},
+                "f:physicalSubscription": {
+                  ".": {},
+                  "f:subscriberUri": {}
+                }
+              }
+            },
+            "manager": "kn",
+            "operation": "Update",
+            "time": "2021-01-14T14:20:02Z"
+          },
+          {
+            "apiVersion": "messaging.knative.dev/v1",
             "fieldsType": "FieldsV1",
             "fieldsV1": {
               "f:metadata": {
@@ -767,21 +994,309 @@
                 }
               },
               "f:status": {
-                ".": {},
                 "f:conditions": {},
                 "f:observedGeneration": {},
                 "f:physicalSubscription": {
-                  ".": {},
-                  "f:deadLetterSinkUri": {},
-                  "f:replyUri": {},
                   "f:subscriberUri": {}
                 }
               }
             },
             "manager": "controller",
             "operation": "Update",
-            "time": "2020-11-16T20:09:40Z"
+            "time": "2021-01-14T14:20:03Z"
+          }
+        ],
+        "name": "example-subscription1",
+        "namespace": "josh",
+        "resourceVersion": "228253",
+        "selfLink": "/apis/messaging.knative.dev/v1beta1/namespaces/josh/subscriptions/example-subscription1",
+        "uid": "23548d63-0552-4470-a4db-a83ccdcee21b"
+      },
+      "spec": {
+        "channel": {
+          "apiVersion": "messaging.knative.dev/v1beta1",
+          "kind": "Channel",
+          "name": "example-channel0"
+        },
+        "subscriber": {
+          "ref": {
+            "apiVersion": "eventing.knative.dev/v1beta1",
+            "kind": "Broker",
+            "name": "example-broker0",
+            "namespace": "josh"
+          }
+        }
+      },
+      "status": {
+        "conditions": [
+          {
+            "lastTransitionTime": "2021-01-14T14:20:02Z",
+            "status": "True",
+            "type": "AddedToChannel"
           },
+          {
+            "lastTransitionTime": "2021-01-14T14:20:03Z",
+            "status": "True",
+            "type": "ChannelReady"
+          },
+          {
+            "lastTransitionTime": "2021-01-14T14:20:03Z",
+            "status": "True",
+            "type": "Ready"
+          },
+          {
+            "lastTransitionTime": "2021-01-14T14:20:02Z",
+            "status": "True",
+            "type": "ReferencesResolved"
+          }
+        ],
+        "observedGeneration": 1,
+        "physicalSubscription": {
+          "subscriberUri": "http://broker-ingress.knative-eventing.svc.cluster.local/josh/example-broker0"
+        }
+      }
+    },
+    {
+      "apiVersion": "messaging.knative.dev/v1beta1",
+      "kind": "Subscription",
+      "metadata": {
+        "annotations": {
+          "messaging.knative.dev/creator": "system:admin",
+          "messaging.knative.dev/lastModifier": "system:admin"
+        },
+        "creationTimestamp": "2021-01-14T14:20:03Z",
+        "finalizers": ["subscriptions.messaging.knative.dev"],
+        "generation": 1,
+        "managedFields": [
+          {
+            "apiVersion": "messaging.knative.dev/v1",
+            "fieldsType": "FieldsV1",
+            "fieldsV1": {
+              "f:metadata": {
+                "f:finalizers": {
+                  ".": {},
+                  "v:\"subscriptions.messaging.knative.dev\"": {}
+                }
+              },
+              "f:status": {
+                "f:conditions": {},
+                "f:observedGeneration": {},
+                "f:physicalSubscription": {
+                  "f:subscriberUri": {}
+                }
+              }
+            },
+            "manager": "controller",
+            "operation": "Update",
+            "time": "2021-01-14T14:20:03Z"
+          },
+          {
+            "apiVersion": "messaging.knative.dev/v1beta1",
+            "fieldsType": "FieldsV1",
+            "fieldsV1": {
+              "f:spec": {
+                ".": {},
+                "f:channel": {
+                  ".": {},
+                  "f:apiVersion": {},
+                  "f:kind": {},
+                  "f:name": {}
+                },
+                "f:subscriber": {
+                  ".": {},
+                  "f:ref": {
+                    ".": {},
+                    "f:apiVersion": {},
+                    "f:kind": {},
+                    "f:name": {},
+                    "f:namespace": {}
+                  }
+                }
+              },
+              "f:status": {
+                ".": {},
+                "f:physicalSubscription": {
+                  ".": {},
+                  "f:subscriberUri": {}
+                }
+              }
+            },
+            "manager": "kn",
+            "operation": "Update",
+            "time": "2021-01-14T14:20:03Z"
+          }
+        ],
+        "name": "example-subscription2",
+        "namespace": "josh",
+        "resourceVersion": "228452",
+        "selfLink": "/apis/messaging.knative.dev/v1beta1/namespaces/josh/subscriptions/example-subscription2",
+        "uid": "8a61efe3-fd7c-4806-b406-3eab3279d12c"
+      },
+      "spec": {
+        "channel": {
+          "apiVersion": "messaging.knative.dev/v1beta1",
+          "kind": "Channel",
+          "name": "example-channel1"
+        },
+        "subscriber": {
+          "ref": {
+            "apiVersion": "messaging.knative.dev/v1beta1",
+            "kind": "Channel",
+            "name": "example-channel0",
+            "namespace": "josh"
+          }
+        }
+      },
+      "status": {
+        "conditions": [
+          {
+            "lastTransitionTime": "2021-01-14T14:20:03Z",
+            "status": "True",
+            "type": "AddedToChannel"
+          },
+          {
+            "lastTransitionTime": "2021-01-14T14:20:03Z",
+            "status": "True",
+            "type": "ChannelReady"
+          },
+          {
+            "lastTransitionTime": "2021-01-14T14:20:03Z",
+            "status": "True",
+            "type": "Ready"
+          },
+          {
+            "lastTransitionTime": "2021-01-14T14:20:03Z",
+            "status": "True",
+            "type": "ReferencesResolved"
+          }
+        ],
+        "observedGeneration": 1,
+        "physicalSubscription": {
+          "subscriberUri": "http://example-channel0-kn-channel.josh.svc.cluster.local"
+        }
+      }
+    },
+    {
+      "apiVersion": "messaging.knative.dev/v1beta1",
+      "kind": "Subscription",
+      "metadata": {
+        "annotations": {
+          "messaging.knative.dev/creator": "system:admin",
+          "messaging.knative.dev/lastModifier": "system:admin"
+        },
+        "creationTimestamp": "2021-01-14T14:20:03Z",
+        "finalizers": ["subscriptions.messaging.knative.dev"],
+        "generation": 1,
+        "managedFields": [
+          {
+            "apiVersion": "messaging.knative.dev/v1beta1",
+            "fieldsType": "FieldsV1",
+            "fieldsV1": {
+              "f:spec": {
+                ".": {},
+                "f:channel": {
+                  ".": {},
+                  "f:apiVersion": {},
+                  "f:kind": {},
+                  "f:name": {}
+                },
+                "f:subscriber": {
+                  ".": {},
+                  "f:uri": {}
+                }
+              },
+              "f:status": {
+                ".": {},
+                "f:physicalSubscription": {
+                  ".": {},
+                  "f:subscriberUri": {}
+                }
+              }
+            },
+            "manager": "kn",
+            "operation": "Update",
+            "time": "2021-01-14T14:20:03Z"
+          },
+          {
+            "apiVersion": "messaging.knative.dev/v1",
+            "fieldsType": "FieldsV1",
+            "fieldsV1": {
+              "f:metadata": {
+                "f:finalizers": {
+                  ".": {},
+                  "v:\"subscriptions.messaging.knative.dev\"": {}
+                }
+              },
+              "f:status": {
+                "f:conditions": {},
+                "f:observedGeneration": {},
+                "f:physicalSubscription": {
+                  "f:subscriberUri": {}
+                }
+              }
+            },
+            "manager": "controller",
+            "operation": "Update",
+            "time": "2021-01-14T14:20:04Z"
+          }
+        ],
+        "name": "example-subscription3",
+        "namespace": "josh",
+        "resourceVersion": "228761",
+        "selfLink": "/apis/messaging.knative.dev/v1beta1/namespaces/josh/subscriptions/example-subscription3",
+        "uid": "11cc0f0c-8e1b-4cfa-bb40-9cacc121802d"
+      },
+      "spec": {
+        "channel": {
+          "apiVersion": "messaging.knative.dev/v1beta1",
+          "kind": "Channel",
+          "name": "example-channel2"
+        },
+        "subscriber": {
+          "uri": "https://event.receiver.uri"
+        }
+      },
+      "status": {
+        "conditions": [
+          {
+            "lastTransitionTime": "2021-01-14T14:20:03Z",
+            "status": "True",
+            "type": "AddedToChannel"
+          },
+          {
+            "lastTransitionTime": "2021-01-14T14:20:05Z",
+            "status": "True",
+            "type": "ChannelReady"
+          },
+          {
+            "lastTransitionTime": "2021-01-14T14:20:05Z",
+            "status": "True",
+            "type": "Ready"
+          },
+          {
+            "lastTransitionTime": "2021-01-14T14:20:03Z",
+            "status": "True",
+            "type": "ReferencesResolved"
+          }
+        ],
+        "observedGeneration": 1,
+        "physicalSubscription": {
+          "subscriberUri": "https://event.receiver.uri"
+        }
+      }
+    },
+    {
+      "apiVersion": "messaging.knative.dev/v1beta1",
+      "kind": "Subscription",
+      "metadata": {
+        "annotations": {
+          "messaging.knative.dev/creator": "system:admin",
+          "messaging.knative.dev/lastModifier": "system:admin"
+        },
+        "creationTimestamp": "2021-01-14T14:20:03Z",
+        "finalizers": ["subscriptions.messaging.knative.dev"],
+        "generation": 1,
+        "managedFields": [
           {
             "apiVersion": "messaging.knative.dev/v1beta1",
             "fieldsType": "FieldsV1",
@@ -827,24 +1342,57 @@
                     "f:namespace": {}
                   }
                 }
+              },
+              "f:status": {
+                ".": {},
+                "f:physicalSubscription": {
+                  ".": {},
+                  "f:deadLetterSinkUri": {},
+                  "f:replyUri": {},
+                  "f:subscriberUri": {}
+                }
               }
             },
             "manager": "kn",
             "operation": "Update",
-            "time": "2020-11-16T20:09:40Z"
+            "time": "2021-01-14T14:20:03Z"
+          },
+          {
+            "apiVersion": "messaging.knative.dev/v1",
+            "fieldsType": "FieldsV1",
+            "fieldsV1": {
+              "f:metadata": {
+                "f:finalizers": {
+                  ".": {},
+                  "v:\"subscriptions.messaging.knative.dev\"": {}
+                }
+              },
+              "f:status": {
+                "f:conditions": {},
+                "f:observedGeneration": {},
+                "f:physicalSubscription": {
+                  "f:deadLetterSinkUri": {},
+                  "f:replyUri": {},
+                  "f:subscriberUri": {}
+                }
+              }
+            },
+            "manager": "controller",
+            "operation": "Update",
+            "time": "2021-01-14T14:20:05Z"
           }
         ],
-        "name": "example-subscription1",
+        "name": "example-subscription4",
         "namespace": "josh",
-        "resourceVersion": "57802",
-        "selfLink": "/apis/messaging.knative.dev/v1beta1/namespaces/josh/subscriptions/example-subscription1",
-        "uid": "1fb5d5c0-713a-401b-86e3-7a76f9ed8e6c"
+        "resourceVersion": "228922",
+        "selfLink": "/apis/messaging.knative.dev/v1beta1/namespaces/josh/subscriptions/example-subscription4",
+        "uid": "a8bf6e9b-d88b-4b4d-8eff-1ce70d5abf97"
       },
       "spec": {
         "channel": {
           "apiVersion": "messaging.knative.dev/v1beta1",
           "kind": "Channel",
-          "name": "example-channel1"
+          "name": "example-channel3"
         },
         "delivery": {
           "deadLetterSink": {
@@ -876,22 +1424,22 @@
       "status": {
         "conditions": [
           {
-            "lastTransitionTime": "2020-11-16T20:09:40Z",
+            "lastTransitionTime": "2021-01-14T14:20:04Z",
             "status": "True",
             "type": "AddedToChannel"
           },
           {
-            "lastTransitionTime": "2020-11-16T20:09:40Z",
+            "lastTransitionTime": "2021-01-14T14:20:05Z",
             "status": "True",
             "type": "ChannelReady"
           },
           {
-            "lastTransitionTime": "2020-11-16T20:09:40Z",
+            "lastTransitionTime": "2021-01-14T14:20:05Z",
             "status": "True",
             "type": "Ready"
           },
           {
-            "lastTransitionTime": "2020-11-16T20:09:40Z",
+            "lastTransitionTime": "2021-01-14T14:20:04Z",
             "status": "True",
             "type": "ReferencesResolved"
           }
@@ -900,338 +1448,6 @@
         "physicalSubscription": {
           "deadLetterSinkUri": "http://broker-ingress.knative-eventing.svc.cluster.local/josh/example-broker1",
           "replyUri": "http://broker-ingress.knative-eventing.svc.cluster.local/josh/example-broker0",
-          "subscriberUri": "http://aaa.josh.svc.cluster.local"
-        }
-      }
-    },
-    {
-      "apiVersion": "messaging.knative.dev/v1beta1",
-      "kind": "Subscription",
-      "metadata": {
-        "annotations": {
-          "messaging.knative.dev/creator": "system:admin",
-          "messaging.knative.dev/lastModifier": "system:admin"
-        },
-        "creationTimestamp": "2020-11-16T19:54:50Z",
-        "finalizers": ["subscriptions.messaging.knative.dev"],
-        "generation": 1,
-        "managedFields": [
-          {
-            "apiVersion": "messaging.knative.dev/v1beta1",
-            "fieldsType": "FieldsV1",
-            "fieldsV1": {
-              "f:spec": {
-                ".": {},
-                "f:channel": {
-                  ".": {},
-                  "f:apiVersion": {},
-                  "f:kind": {},
-                  "f:name": {}
-                },
-                "f:subscriber": {
-                  ".": {},
-                  "f:ref": {
-                    ".": {},
-                    "f:apiVersion": {},
-                    "f:kind": {},
-                    "f:name": {},
-                    "f:namespace": {}
-                  }
-                }
-              }
-            },
-            "manager": "kn",
-            "operation": "Update",
-            "time": "2020-11-16T19:54:50Z"
-          },
-          {
-            "apiVersion": "messaging.knative.dev/v1beta1",
-            "fieldsType": "FieldsV1",
-            "fieldsV1": {
-              "f:metadata": {
-                "f:finalizers": {
-                  ".": {},
-                  "v:\"subscriptions.messaging.knative.dev\"": {}
-                }
-              },
-              "f:status": {
-                ".": {},
-                "f:conditions": {},
-                "f:observedGeneration": {},
-                "f:physicalSubscription": {
-                  ".": {},
-                  "f:subscriberUri": {}
-                }
-              }
-            },
-            "manager": "controller",
-            "operation": "Update",
-            "time": "2020-11-16T19:54:52Z"
-          }
-        ],
-        "name": "example-subscription2",
-        "namespace": "josh",
-        "resourceVersion": "48293",
-        "selfLink": "/apis/messaging.knative.dev/v1beta1/namespaces/josh/subscriptions/example-subscription2",
-        "uid": "0f4b5f5c-c672-4461-ae39-65ba2603f158"
-      },
-      "spec": {
-      },
-      "status": {
-        "conditions": [
-          {
-            "lastTransitionTime": "2020-11-16T19:54:51Z",
-            "status": "True",
-            "type": "AddedToChannel"
-          },
-          {
-            "lastTransitionTime": "2020-11-16T19:54:52Z",
-            "status": "True",
-            "type": "ChannelReady"
-          },
-          {
-            "lastTransitionTime": "2020-11-16T19:54:52Z",
-            "status": "True",
-            "type": "Ready"
-          },
-          {
-            "lastTransitionTime": "2020-11-16T19:54:52Z",
-            "status": "True",
-            "type": "ReferencesResolved"
-          }
-        ],
-        "observedGeneration": 1,
-        "physicalSubscription": {
-          "subscriberUri": "http://aaa.josh.svc.cluster.local"
-        }
-      }
-    },
-    {
-      "apiVersion": "messaging.knative.dev/v1beta1",
-      "kind": "Subscription",
-      "metadata": {
-        "annotations": {
-          "messaging.knative.dev/creator": "system:admin",
-          "messaging.knative.dev/lastModifier": "system:admin"
-        },
-        "creationTimestamp": "2020-11-16T19:54:50Z",
-        "finalizers": ["subscriptions.messaging.knative.dev"],
-        "generation": 1,
-        "managedFields": [
-          {
-            "apiVersion": "messaging.knative.dev/v1beta1",
-            "fieldsType": "FieldsV1",
-            "fieldsV1": {
-              "f:spec": {
-                ".": {},
-                "f:channel": {
-                  ".": {},
-                  "f:apiVersion": {},
-                  "f:kind": {},
-                  "f:name": {}
-                },
-                "f:subscriber": {
-                  ".": {},
-                  "f:ref": {
-                    ".": {},
-                    "f:apiVersion": {},
-                    "f:kind": {},
-                    "f:name": {},
-                    "f:namespace": {}
-                  }
-                }
-              }
-            },
-            "manager": "kn",
-            "operation": "Update",
-            "time": "2020-11-16T19:54:50Z"
-          },
-          {
-            "apiVersion": "messaging.knative.dev/v1beta1",
-            "fieldsType": "FieldsV1",
-            "fieldsV1": {
-              "f:metadata": {
-                "f:finalizers": {
-                  ".": {},
-                  "v:\"subscriptions.messaging.knative.dev\"": {}
-                }
-              },
-              "f:status": {
-                ".": {},
-                "f:conditions": {},
-                "f:observedGeneration": {},
-                "f:physicalSubscription": {
-                  ".": {},
-                  "f:subscriberUri": {}
-                }
-              }
-            },
-            "manager": "controller",
-            "operation": "Update",
-            "time": "2020-11-16T19:54:52Z"
-          }
-        ],
-        "name": "sub1",
-        "namespace": "josh",
-        "resourceVersion": "48296",
-        "selfLink": "/apis/messaging.knative.dev/v1beta1/namespaces/josh/subscriptions/sub1",
-        "uid": "c676e078-6e27-4a36-9aff-89317f1b6c47"
-      },
-      "spec": {
-        "channel": {
-          "apiVersion": "messaging.knative.dev/v1beta1",
-          "kind": "Channel",
-          "name": "pipe"
-        },
-        "subscriber": {
-          "ref": {
-            "apiVersion": "serving.knative.dev/v1",
-            "kind": "Service",
-            "name": "aaa",
-            "namespace": "josh"
-          }
-        }
-      },
-      "status": {
-        "conditions": [
-          {
-            "lastTransitionTime": "2020-11-16T19:54:51Z",
-            "status": "True",
-            "type": "AddedToChannel"
-          },
-          {
-            "lastTransitionTime": "2020-11-16T19:54:52Z",
-            "status": "True",
-            "type": "ChannelReady"
-          },
-          {
-            "lastTransitionTime": "2020-11-16T19:54:52Z",
-            "status": "True",
-            "type": "Ready"
-          },
-          {
-            "lastTransitionTime": "2020-11-16T19:54:52Z",
-            "status": "True",
-            "type": "ReferencesResolved"
-          }
-        ],
-        "observedGeneration": 1,
-        "physicalSubscription": {
-          "subscriberUri": "http://aaa.josh.svc.cluster.local"
-        }
-      }
-    },
-    {
-      "apiVersion": "messaging.knative.dev/v1beta1",
-      "kind": "Subscription",
-      "metadata": {
-        "annotations": {
-          "messaging.knative.dev/creator": "system:admin",
-          "messaging.knative.dev/lastModifier": "system:admin"
-        },
-        "creationTimestamp": "2020-11-16T19:54:51Z",
-        "finalizers": ["subscriptions.messaging.knative.dev"],
-        "generation": 1,
-        "managedFields": [
-          {
-            "apiVersion": "messaging.knative.dev/v1beta1",
-            "fieldsType": "FieldsV1",
-            "fieldsV1": {
-              "f:spec": {
-                ".": {},
-                "f:channel": {
-                  ".": {},
-                  "f:apiVersion": {},
-                  "f:kind": {},
-                  "f:name": {}
-                },
-                "f:subscriber": {
-                  ".": {},
-                  "f:ref": {
-                    ".": {},
-                    "f:apiVersion": {},
-                    "f:kind": {},
-                    "f:name": {},
-                    "f:namespace": {}
-                  }
-                }
-              }
-            },
-            "manager": "kn",
-            "operation": "Update",
-            "time": "2020-11-16T19:54:51Z"
-          },
-          {
-            "apiVersion": "messaging.knative.dev/v1beta1",
-            "fieldsType": "FieldsV1",
-            "fieldsV1": {
-              "f:metadata": {
-                "f:finalizers": {
-                  ".": {},
-                  "v:\"subscriptions.messaging.knative.dev\"": {}
-                }
-              },
-              "f:status": {
-                ".": {},
-                "f:conditions": {},
-                "f:observedGeneration": {},
-                "f:physicalSubscription": {
-                  ".": {},
-                  "f:subscriberUri": {}
-                }
-              }
-            },
-            "manager": "controller",
-            "operation": "Update",
-            "time": "2020-11-16T19:54:53Z"
-          }
-        ],
-        "name": "sub2",
-        "namespace": "josh",
-        "resourceVersion": "48354",
-        "selfLink": "/apis/messaging.knative.dev/v1beta1/namespaces/josh/subscriptions/sub2",
-        "uid": "b06b54c5-953d-4a31-b93b-f2a6fbd0321d"
-      },
-      "spec": {
-        "channel": {
-          "apiVersion": "messaging.knative.dev/v1beta1",
-          "kind": "Channel",
-          "name": "pipe1"
-        },
-        "subscriber": {
-          "ref": {
-            "apiVersion": "serving.knative.dev/v1",
-            "kind": "Service",
-            "name": "aaa",
-            "namespace": "josh"
-          }
-        }
-      },
-      "status": {
-        "conditions": [
-          {
-            "lastTransitionTime": "2020-11-16T19:54:52Z",
-            "status": "True",
-            "type": "AddedToChannel"
-          },
-          {
-            "lastTransitionTime": "2020-11-16T19:54:53Z",
-            "status": "True",
-            "type": "ChannelReady"
-          },
-          {
-            "lastTransitionTime": "2020-11-16T19:54:53Z",
-            "status": "True",
-            "type": "Ready"
-          },
-          {
-            "lastTransitionTime": "2020-11-16T19:54:53Z",
-            "status": "True",
-            "type": "ReferencesResolved"
-          }
-        ],
-        "observedGeneration": 1,
-        "physicalSubscription": {
           "subscriberUri": "http://aaa.josh.svc.cluster.local"
         }
       }

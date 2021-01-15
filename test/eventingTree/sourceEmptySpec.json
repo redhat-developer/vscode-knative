@@ -9,11 +9,11 @@
           "sources.knative.dev/creator": "system:admin",
           "sources.knative.dev/lastModifier": "system:admin"
         },
-        "creationTimestamp": "2020-11-16T19:54:48Z",
+        "creationTimestamp": "2021-01-14T14:19:59Z",
         "generation": 1,
         "managedFields": [
           {
-            "apiVersion": "sources.knative.dev/v1alpha2",
+            "apiVersion": "sources.knative.dev/v1beta1",
             "fieldsType": "FieldsV1",
             "fieldsV1": {
               "f:status": {
@@ -24,7 +24,101 @@
             },
             "manager": "controller",
             "operation": "Update",
-            "time": "2020-11-16T19:54:48Z"
+            "time": "2021-01-14T14:19:59Z"
+          },
+          {
+            "apiVersion": "sources.knative.dev/v1alpha2",
+            "fieldsType": "FieldsV1",
+            "fieldsV1": {
+              "f:spec": {
+                ".": {},
+                "f:mode": {},
+                "f:resources": {},
+                "f:serviceAccountName": {},
+                "f:sink": {
+                  ".": {},
+                  "f:ref": {
+                    ".": {},
+                    "f:apiVersion": {},
+                    "f:kind": {},
+                    "f:name": {},
+                    "f:namespace": {}
+                  }
+                }
+              },
+              "f:status": {
+                ".": {},
+                "f:conditions": {},
+                "f:observedGeneration": {},
+                "f:sinkUri": {}
+              }
+            },
+            "manager": "kn",
+            "operation": "Update",
+            "time": "2021-01-14T14:19:59Z"
+          }
+        ],
+        "name": "example-source-apiserver0-emptySpec",
+        "namespace": "josh",
+        "resourceVersion": "227537",
+        "selfLink": "/apis/sources.knative.dev/v1alpha1/namespaces/josh/apiserversources/example-source-apiserver0-emptySpec",
+        "uid": "9c90e7c0-25d4-4d07-8422-359c6234b85b"
+      },
+      "spec": {
+      },
+      "status": {
+        "conditions": [
+          {
+            "lastTransitionTime": "2021-01-14T14:19:59Z",
+            "status": "Unknown",
+            "type": "Deployed"
+          },
+          {
+            "lastTransitionTime": "2021-01-14T14:19:59Z",
+            "message": "User system:serviceaccount:josh:default cannot get, list, watch resource \"events\" in API group \"\"",
+            "status": "False",
+            "type": "Ready"
+          },
+          {
+            "lastTransitionTime": "2021-01-14T14:19:59Z",
+            "status": "True",
+            "type": "SinkProvided"
+          },
+          {
+            "lastTransitionTime": "2021-01-14T14:19:59Z",
+            "message": "User system:serviceaccount:josh:default cannot get, list, watch resource \"events\" in API group \"\"",
+            "status": "False",
+            "type": "SufficientPermissions"
+          }
+        ],
+        "observedGeneration": 1,
+        "sinkUri": "http://aaa.josh.svc.cluster.local"
+      }
+    },
+    {
+      "apiVersion": "sources.knative.dev/v1alpha1",
+      "kind": "ApiServerSource",
+      "metadata": {
+        "annotations": {
+          "sources.knative.dev/creator": "system:admin",
+          "sources.knative.dev/lastModifier": "system:admin"
+        },
+        "creationTimestamp": "2021-01-14T14:19:59Z",
+        "generation": 1,
+        "managedFields": [
+          {
+            "apiVersion": "sources.knative.dev/v1beta1",
+            "fieldsType": "FieldsV1",
+            "fieldsV1": {
+              "f:status": {
+                "f:conditions": {},
+                "f:observedGeneration": {},
+                "f:sinkUri": {}
+              }
+            },
+            "manager": "controller",
+            "operation": "Update",
+            "time": "2021-01-14T14:19:59Z"
           },
           {
             "apiVersion": "sources.knative.dev/v1alpha2",
@@ -50,40 +144,310 @@
             },
             "manager": "kn",
             "operation": "Update",
-            "time": "2020-11-16T19:54:48Z"
+            "time": "2021-01-14T14:19:59Z"
           }
         ],
-        "name": "example-source0-emptySpec",
+        "name": "example-source-apiserver1-emptySpec",
         "namespace": "josh",
-        "resourceVersion": "48052",
-        "selfLink": "/apis/sources.knative.dev/v1alpha1/namespaces/josh/apiserversources/example-source0-emptySpec",
-        "uid": "9a25159c-7698-4a0e-be0b-9b2b1565d1a6"
+        "resourceVersion": "227551",
+        "selfLink": "/apis/sources.knative.dev/v1alpha1/namespaces/josh/apiserversources/example-source-apiserver1-emptySpec",
+        "uid": "3833e481-6913-4a9e-af42-2132e5908a82"
       },
       "spec": {
       },
       "status": {
         "conditions": [
           {
-            "lastTransitionTime": "2020-11-16T19:54:48Z",
+            "lastTransitionTime": "2021-01-14T14:19:59Z",
             "status": "Unknown",
             "type": "Deployed"
           },
           {
-            "lastTransitionTime": "2020-11-16T19:54:48Z",
+            "lastTransitionTime": "2021-01-14T14:19:59Z",
             "message": "User system:serviceaccount:josh:default cannot get, list, watch resource \"events\" in API group \"\"",
             "status": "False",
             "type": "Ready"
           },
           {
-            "lastTransitionTime": "2020-11-16T19:54:48Z",
+            "lastTransitionTime": "2021-01-14T14:19:59Z",
             "status": "True",
             "type": "SinkProvided"
           },
           {
-            "lastTransitionTime": "2020-11-16T19:54:48Z",
+            "lastTransitionTime": "2021-01-14T14:19:59Z",
             "message": "User system:serviceaccount:josh:default cannot get, list, watch resource \"events\" in API group \"\"",
             "status": "False",
             "type": "SufficientPermissions"
+          }
+        ],
+        "observedGeneration": 1,
+        "sinkUri": "http://broker-ingress.knative-eventing.svc.cluster.local/josh/example-broker0"
+      }
+    },
+    {
+      "apiVersion": "sources.knative.dev/v1alpha1",
+      "kind": "ApiServerSource",
+      "metadata": {
+        "annotations": {
+          "sources.knative.dev/creator": "system:admin",
+          "sources.knative.dev/lastModifier": "system:admin"
+        },
+        "creationTimestamp": "2021-01-14T14:19:59Z",
+        "generation": 1,
+        "managedFields": [
+          {
+            "apiVersion": "sources.knative.dev/v1beta1",
+            "fieldsType": "FieldsV1",
+            "fieldsV1": {
+              "f:status": {
+                "f:conditions": {},
+                "f:observedGeneration": {},
+                "f:sinkUri": {}
+              }
+            },
+            "manager": "controller",
+            "operation": "Update",
+            "time": "2021-01-14T14:19:59Z"
+          },
+          {
+            "apiVersion": "sources.knative.dev/v1alpha2",
+            "fieldsType": "FieldsV1",
+            "fieldsV1": {
+              "f:spec": {
+                ".": {},
+                "f:mode": {},
+                "f:resources": {},
+                "f:serviceAccountName": {},
+                "f:sink": {
+                  ".": {},
+                  "f:ref": {
+                    ".": {},
+                    "f:apiVersion": {},
+                    "f:kind": {},
+                    "f:name": {},
+                    "f:namespace": {}
+                  }
+                }
+              },
+              "f:status": {
+                ".": {},
+                "f:conditions": {},
+                "f:observedGeneration": {},
+                "f:sinkUri": {}
+              }
+            },
+            "manager": "kn",
+            "operation": "Update",
+            "time": "2021-01-14T14:19:59Z"
+          }
+        ],
+        "name": "example-source-apiserver2-emptySpec",
+        "namespace": "josh",
+        "resourceVersion": "227568",
+        "selfLink": "/apis/sources.knative.dev/v1alpha1/namespaces/josh/apiserversources/example-source-apiserver2-emptySpec",
+        "uid": "03c36588-b26c-47e5-8444-4a4c58fde8b0"
+      },
+      "spec": {
+      },
+      "status": {
+        "conditions": [
+          {
+            "lastTransitionTime": "2021-01-14T14:19:59Z",
+            "status": "Unknown",
+            "type": "Deployed"
+          },
+          {
+            "lastTransitionTime": "2021-01-14T14:19:59Z",
+            "message": "User system:serviceaccount:josh:default cannot get, list, watch resource \"events\" in API group \"\"",
+            "status": "False",
+            "type": "Ready"
+          },
+          {
+            "lastTransitionTime": "2021-01-14T14:19:59Z",
+            "status": "True",
+            "type": "SinkProvided"
+          },
+          {
+            "lastTransitionTime": "2021-01-14T14:19:59Z",
+            "message": "User system:serviceaccount:josh:default cannot get, list, watch resource \"events\" in API group \"\"",
+            "status": "False",
+            "type": "SufficientPermissions"
+          }
+        ],
+        "observedGeneration": 1,
+        "sinkUri": "http://example-channel0-kn-channel.josh.svc.cluster.local"
+      }
+    },
+    {
+      "apiVersion": "sources.knative.dev/v1alpha1",
+      "kind": "ApiServerSource",
+      "metadata": {
+        "annotations": {
+          "sources.knative.dev/creator": "system:admin",
+          "sources.knative.dev/lastModifier": "system:admin"
+        },
+        "creationTimestamp": "2021-01-14T14:19:59Z",
+        "generation": 1,
+        "managedFields": [
+          {
+            "apiVersion": "sources.knative.dev/v1beta1",
+            "fieldsType": "FieldsV1",
+            "fieldsV1": {
+              "f:status": {
+                "f:conditions": {},
+                "f:observedGeneration": {},
+                "f:sinkUri": {}
+              }
+            },
+            "manager": "controller",
+            "operation": "Update",
+            "time": "2021-01-14T14:19:59Z"
+          },
+          {
+            "apiVersion": "sources.knative.dev/v1alpha2",
+            "fieldsType": "FieldsV1",
+            "fieldsV1": {
+              "f:spec": {
+                ".": {},
+                "f:mode": {},
+                "f:resources": {},
+                "f:serviceAccountName": {},
+                "f:sink": {
+                  ".": {},
+                  "f:uri": {}
+                }
+              },
+              "f:status": {}
+            },
+            "manager": "kn",
+            "operation": "Update",
+            "time": "2021-01-14T14:19:59Z"
+          }
+        ],
+        "name": "example-source-apiserver3-emptySpec",
+        "namespace": "josh",
+        "resourceVersion": "227577",
+        "selfLink": "/apis/sources.knative.dev/v1alpha1/namespaces/josh/apiserversources/example-source-apiserver3-emptySpec",
+        "uid": "c24e2968-7326-49bd-b6c9-6e4a62148111"
+      },
+      "spec": {
+      },
+      "status": {
+        "conditions": [
+          {
+            "lastTransitionTime": "2021-01-14T14:19:59Z",
+            "status": "Unknown",
+            "type": "Deployed"
+          },
+          {
+            "lastTransitionTime": "2021-01-14T14:19:59Z",
+            "message": "User system:serviceaccount:josh:default cannot get, list, watch resource \"events\" in API group \"\"",
+            "status": "False",
+            "type": "Ready"
+          },
+          {
+            "lastTransitionTime": "2021-01-14T14:19:59Z",
+            "status": "True",
+            "type": "SinkProvided"
+          },
+          {
+            "lastTransitionTime": "2021-01-14T14:19:59Z",
+            "message": "User system:serviceaccount:josh:default cannot get, list, watch resource \"events\" in API group \"\"",
+            "status": "False",
+            "type": "SufficientPermissions"
+          }
+        ],
+        "observedGeneration": 1,
+        "sinkUri": "https://event.receiver.uri"
+      }
+    },
+    {
+      "apiVersion": "sources.knative.dev/v1alpha2",
+      "kind": "PingSource",
+      "metadata": {
+        "annotations": {
+          "sources.knative.dev/creator": "system:admin",
+          "sources.knative.dev/lastModifier": "system:admin"
+        },
+        "creationTimestamp": "2021-01-14T14:20:01Z",
+        "generation": 1,
+        "managedFields": [
+          {
+            "apiVersion": "sources.knative.dev/v1alpha2",
+            "fieldsType": "FieldsV1",
+            "fieldsV1": {
+              "f:status": {
+                ".": {},
+                "f:ceAttributes": {},
+                "f:conditions": {},
+                "f:observedGeneration": {},
+                "f:sinkUri": {}
+              }
+            },
+            "manager": "controller",
+            "operation": "Update",
+            "time": "2021-01-14T14:20:01Z"
+          },
+          {
+            "apiVersion": "sources.knative.dev/v1alpha2",
+            "fieldsType": "FieldsV1",
+            "fieldsV1": {
+              "f:spec": {
+                ".": {},
+                "f:jsonData": {},
+                "f:schedule": {},
+                "f:sink": {
+                  ".": {},
+                  "f:ref": {
+                    ".": {},
+                    "f:apiVersion": {},
+                    "f:kind": {},
+                    "f:name": {},
+                    "f:namespace": {}
+                  }
+                }
+              }
+            },
+            "manager": "kn",
+            "operation": "Update",
+            "time": "2021-01-14T14:20:01Z"
+          }
+        ],
+        "name": "example-source-ping0-emptySpec",
+        "namespace": "josh",
+        "resourceVersion": "227796",
+        "selfLink": "/apis/sources.knative.dev/v1alpha2/namespaces/josh/pingsources/example-source-ping0-emptySpec",
+        "uid": "47cb995e-a776-4263-86d1-72dff906b1ab"
+      },
+      "spec": {
+      },
+      "status": {
+        "ceAttributes": [
+          {
+            "source": "/apis/v1/namespaces/josh/pingsources/example-source-ping0-emptySpec",
+            "type": "dev.knative.sources.ping"
+          }
+        ],
+        "conditions": [
+          {
+            "lastTransitionTime": "2021-01-14T14:20:01Z",
+            "status": "True",
+            "type": "Deployed"
+          },
+          {
+            "lastTransitionTime": "2021-01-14T14:20:01Z",
+            "status": "True",
+            "type": "Ready"
+          },
+          {
+            "lastTransitionTime": "2021-01-14T14:20:01Z",
+            "status": "True",
+            "type": "SinkProvided"
+          },
+          {
+            "lastTransitionTime": "2021-01-14T14:20:01Z",
+            "status": "True",
+            "type": "ValidSchedule"
           }
         ],
         "observedGeneration": 1,
@@ -98,10 +462,25 @@
           "sources.knative.dev/creator": "system:admin",
           "sources.knative.dev/lastModifier": "system:admin"
         },
-        "creationTimestamp": "2020-11-16T19:54:47Z",
-        "finalizers": ["pingsources.sources.knative.dev"],
+        "creationTimestamp": "2021-01-14T14:20:01Z",
         "generation": 1,
         "managedFields": [
+          {
+            "apiVersion": "sources.knative.dev/v1alpha2",
+            "fieldsType": "FieldsV1",
+            "fieldsV1": {
+              "f:status": {
+                ".": {},
+                "f:ceAttributes": {},
+                "f:conditions": {},
+                "f:observedGeneration": {},
+                "f:sinkUri": {}
+              }
+            },
+            "manager": "controller",
+            "operation": "Update",
+            "time": "2021-01-14T14:20:01Z"
+          },
           {
             "apiVersion": "sources.knative.dev/v1alpha2",
             "fieldsType": "FieldsV1",
@@ -124,73 +503,42 @@
             },
             "manager": "kn",
             "operation": "Update",
-            "time": "2020-11-16T19:54:47Z"
-          },
-          {
-            "apiVersion": "sources.knative.dev/v1alpha2",
-            "fieldsType": "FieldsV1",
-            "fieldsV1": {
-              "f:status": {
-                ".": {},
-                "f:ceAttributes": {},
-                "f:conditions": {},
-                "f:observedGeneration": {},
-                "f:sinkUri": {}
-              }
-            },
-            "manager": "controller",
-            "operation": "Update",
-            "time": "2020-11-16T19:54:56Z"
-          },
-          {
-            "apiVersion": "sources.knative.dev/v1alpha2",
-            "fieldsType": "FieldsV1",
-            "fieldsV1": {
-              "f:metadata": {
-                "f:finalizers": {
-                  ".": {},
-                  "v:\"pingsources.sources.knative.dev\"": {}
-                }
-              }
-            },
-            "manager": "mtping",
-            "operation": "Update",
-            "time": "2020-11-16T19:54:56Z"
+            "time": "2021-01-14T14:20:01Z"
           }
         ],
-        "name": "example-source1-emptySpec",
+        "name": "example-source-ping1-emptySpec",
         "namespace": "josh",
-        "resourceVersion": "48468",
-        "selfLink": "/apis/sources.knative.dev/v1alpha2/namespaces/josh/pingsources/example-source1-emptySpec",
-        "uid": "a58b073e-580f-444e-8a2c-c30e450976b3"
+        "resourceVersion": "227830",
+        "selfLink": "/apis/sources.knative.dev/v1alpha2/namespaces/josh/pingsources/example-source-ping1-emptySpec",
+        "uid": "509e356b-feba-443d-9549-3598f85f723b"
       },
       "spec": {
       },
       "status": {
         "ceAttributes": [
           {
-            "source": "/apis/v1/namespaces/josh/pingsources/example-source1",
+            "source": "/apis/v1/namespaces/josh/pingsources/example-source-ping1-emptySpec",
             "type": "dev.knative.sources.ping"
           }
         ],
         "conditions": [
           {
-            "lastTransitionTime": "2020-11-16T19:54:56Z",
+            "lastTransitionTime": "2021-01-14T14:20:01Z",
             "status": "True",
             "type": "Deployed"
           },
           {
-            "lastTransitionTime": "2020-11-16T19:54:56Z",
+            "lastTransitionTime": "2021-01-14T14:20:01Z",
             "status": "True",
             "type": "Ready"
           },
           {
-            "lastTransitionTime": "2020-11-16T19:54:48Z",
+            "lastTransitionTime": "2021-01-14T14:20:01Z",
             "status": "True",
             "type": "SinkProvided"
           },
           {
-            "lastTransitionTime": "2020-11-16T19:54:48Z",
+            "lastTransitionTime": "2021-01-14T14:20:01Z",
             "status": "True",
             "type": "ValidSchedule"
           }
@@ -201,16 +549,31 @@
     },
     {
       "apiVersion": "sources.knative.dev/v1alpha2",
-      "kind": "UnknownSource",
+      "kind": "PingSource",
       "metadata": {
         "annotations": {
           "sources.knative.dev/creator": "system:admin",
           "sources.knative.dev/lastModifier": "system:admin"
         },
-        "creationTimestamp": "2020-11-16T19:54:48Z",
-        "finalizers": ["pingsources.sources.knative.dev"],
+        "creationTimestamp": "2021-01-14T14:20:01Z",
         "generation": 1,
         "managedFields": [
+          {
+            "apiVersion": "sources.knative.dev/v1alpha2",
+            "fieldsType": "FieldsV1",
+            "fieldsV1": {
+              "f:status": {
+                ".": {},
+                "f:ceAttributes": {},
+                "f:conditions": {},
+                "f:observedGeneration": {},
+                "f:sinkUri": {}
+              }
+            },
+            "manager": "controller",
+            "operation": "Update",
+            "time": "2021-01-14T14:20:01Z"
+          },
           {
             "apiVersion": "sources.knative.dev/v1alpha2",
             "fieldsType": "FieldsV1",
@@ -233,8 +596,61 @@
             },
             "manager": "kn",
             "operation": "Update",
-            "time": "2020-11-16T19:54:48Z"
+            "time": "2021-01-14T14:20:01Z"
+          }
+        ],
+        "name": "example-source-ping2-emptySpec",
+        "namespace": "josh",
+        "resourceVersion": "227880",
+        "selfLink": "/apis/sources.knative.dev/v1alpha2/namespaces/josh/pingsources/example-source-ping2-emptySpec",
+        "uid": "39c4623b-96d1-409a-9041-b168f8599d09"
+      },
+      "spec": {
+      },
+      "status": {
+        "ceAttributes": [
+          {
+            "source": "/apis/v1/namespaces/josh/pingsources/example-source-ping2-emptySpec",
+            "type": "dev.knative.sources.ping"
+          }
+        ],
+        "conditions": [
+          {
+            "lastTransitionTime": "2021-01-14T14:20:01Z",
+            "status": "True",
+            "type": "Deployed"
           },
+          {
+            "lastTransitionTime": "2021-01-14T14:20:01Z",
+            "status": "True",
+            "type": "Ready"
+          },
+          {
+            "lastTransitionTime": "2021-01-14T14:20:01Z",
+            "status": "True",
+            "type": "SinkProvided"
+          },
+          {
+            "lastTransitionTime": "2021-01-14T14:20:01Z",
+            "status": "True",
+            "type": "ValidSchedule"
+          }
+        ],
+        "observedGeneration": 1,
+        "sinkUri": "http://broker-ingress.knative-eventing.svc.cluster.local/josh/example-broker0"
+      }
+    },
+    {
+      "apiVersion": "sources.knative.dev/v1alpha2",
+      "kind": "PingSource",
+      "metadata": {
+        "annotations": {
+          "sources.knative.dev/creator": "system:admin",
+          "sources.knative.dev/lastModifier": "system:admin"
+        },
+        "creationTimestamp": "2021-01-14T14:20:01Z",
+        "generation": 1,
+        "managedFields": [
           {
             "apiVersion": "sources.knative.dev/v1alpha2",
             "fieldsType": "FieldsV1",
@@ -249,63 +665,159 @@
             },
             "manager": "controller",
             "operation": "Update",
-            "time": "2020-11-16T19:54:56Z"
+            "time": "2021-01-14T14:20:01Z"
           },
           {
             "apiVersion": "sources.knative.dev/v1alpha2",
             "fieldsType": "FieldsV1",
             "fieldsV1": {
-              "f:metadata": {
-                "f:finalizers": {
+              "f:spec": {
+                ".": {},
+                "f:jsonData": {},
+                "f:schedule": {},
+                "f:sink": {
                   ".": {},
-                  "v:\"pingsources.sources.knative.dev\"": {}
+                  "f:ref": {
+                    ".": {},
+                    "f:apiVersion": {},
+                    "f:kind": {},
+                    "f:name": {},
+                    "f:namespace": {}
+                  }
                 }
               }
             },
-            "manager": "mtping",
+            "manager": "kn",
             "operation": "Update",
-            "time": "2020-11-16T19:54:56Z"
+            "time": "2021-01-14T14:20:01Z"
           }
         ],
-        "name": "example-source2-emptySpec",
+        "name": "example-source-ping3-emptySpec",
         "namespace": "josh",
-        "resourceVersion": "48470",
-        "selfLink": "/apis/sources.knative.dev/v1alpha2/namespaces/josh/pingsources/example-source2-emptySpec",
-        "uid": "2a5454bb-e9a7-48d5-a8c7-9308d947de6f"
+        "resourceVersion": "227951",
+        "selfLink": "/apis/sources.knative.dev/v1alpha2/namespaces/josh/pingsources/example-source-ping3-emptySpec",
+        "uid": "63294d2a-0e4c-407e-9971-40e4953bbcb8"
       },
       "spec": {
       },
       "status": {
         "ceAttributes": [
           {
-            "source": "/apis/v1/namespaces/josh/pingsources/example-source2",
+            "source": "/apis/v1/namespaces/josh/pingsources/example-source-ping3-emptySpec",
             "type": "dev.knative.sources.ping"
           }
         ],
         "conditions": [
           {
-            "lastTransitionTime": "2020-11-16T19:54:56Z",
+            "lastTransitionTime": "2021-01-14T14:20:01Z",
             "status": "True",
             "type": "Deployed"
           },
           {
-            "lastTransitionTime": "2020-11-16T19:54:56Z",
+            "lastTransitionTime": "2021-01-14T14:20:01Z",
             "status": "True",
             "type": "Ready"
           },
           {
-            "lastTransitionTime": "2020-11-16T19:54:48Z",
+            "lastTransitionTime": "2021-01-14T14:20:01Z",
             "status": "True",
             "type": "SinkProvided"
           },
           {
-            "lastTransitionTime": "2020-11-16T19:54:48Z",
+            "lastTransitionTime": "2021-01-14T14:20:01Z",
             "status": "True",
             "type": "ValidSchedule"
           }
         ],
         "observedGeneration": 1,
-        "sinkUri": "http://aaa.josh.svc.cluster.local"
+        "sinkUri": "http://example-channel0-kn-channel.josh.svc.cluster.local"
+      }
+    },
+    {
+      "apiVersion": "sources.knative.dev/v1alpha2",
+      "kind": "PingSource",
+      "metadata": {
+        "annotations": {
+          "sources.knative.dev/creator": "system:admin",
+          "sources.knative.dev/lastModifier": "system:admin"
+        },
+        "creationTimestamp": "2021-01-14T14:20:02Z",
+        "generation": 1,
+        "managedFields": [
+          {
+            "apiVersion": "sources.knative.dev/v1alpha2",
+            "fieldsType": "FieldsV1",
+            "fieldsV1": {
+              "f:status": {
+                ".": {},
+                "f:ceAttributes": {},
+                "f:conditions": {},
+                "f:observedGeneration": {},
+                "f:sinkUri": {}
+              }
+            },
+            "manager": "controller",
+            "operation": "Update",
+            "time": "2021-01-14T14:20:02Z"
+          },
+          {
+            "apiVersion": "sources.knative.dev/v1alpha2",
+            "fieldsType": "FieldsV1",
+            "fieldsV1": {
+              "f:spec": {
+                ".": {},
+                "f:jsonData": {},
+                "f:schedule": {},
+                "f:sink": {
+                  ".": {},
+                  "f:uri": {}
+                }
+              }
+            },
+            "manager": "kn",
+            "operation": "Update",
+            "time": "2021-01-14T14:20:02Z"
+          }
+        ],
+        "name": "example-source-ping4-emptySpec",
+        "namespace": "josh",
+        "resourceVersion": "227992",
+        "selfLink": "/apis/sources.knative.dev/v1alpha2/namespaces/josh/pingsources/example-source-ping4-emptySpec",
+        "uid": "f3f7b17a-b3b1-4fd0-a94a-6e4ebe8eb9f6"
+      },
+      "spec": {
+      },
+      "status": {
+        "ceAttributes": [
+          {
+            "source": "/apis/v1/namespaces/josh/pingsources/example-source-ping4-emptySpec",
+            "type": "dev.knative.sources.ping"
+          }
+        ],
+        "conditions": [
+          {
+            "lastTransitionTime": "2021-01-14T14:20:02Z",
+            "status": "True",
+            "type": "Deployed"
+          },
+          {
+            "lastTransitionTime": "2021-01-14T14:20:02Z",
+            "status": "True",
+            "type": "Ready"
+          },
+          {
+            "lastTransitionTime": "2021-01-14T14:20:02Z",
+            "status": "True",
+            "type": "SinkProvided"
+          },
+          {
+            "lastTransitionTime": "2021-01-14T14:20:02Z",
+            "status": "True",
+            "type": "ValidSchedule"
+          }
+        ],
+        "observedGeneration": 1,
+        "sinkUri": "https://event.receiver.uri"
       }
     },
     {
@@ -316,7 +828,7 @@
           "sources.knative.dev/creator": "system:admin",
           "sources.knative.dev/lastModifier": "system:admin"
         },
-        "creationTimestamp": "2020-11-16T19:54:48Z",
+        "creationTimestamp": "2021-01-14T14:20:00Z",
         "finalizers": ["sinkbindings.sources.knative.dev"],
         "generation": 1,
         "managedFields": [
@@ -348,10 +860,10 @@
             },
             "manager": "kn",
             "operation": "Update",
-            "time": "2020-11-16T19:54:48Z"
+            "time": "2021-01-14T14:20:00Z"
           },
           {
-            "apiVersion": "sources.knative.dev/v1alpha1",
+            "apiVersion": "sources.knative.dev/v1beta1",
             "fieldsType": "FieldsV1",
             "fieldsV1": {
               "f:metadata": {
@@ -368,27 +880,274 @@
             },
             "manager": "webhook",
             "operation": "Update",
-            "time": "2020-11-16T19:54:51Z"
+            "time": "2021-01-14T14:20:00Z"
           }
         ],
-        "name": "example-source3-emptySpec",
+        "name": "example-source-binding0-emptySpec",
         "namespace": "josh",
-        "resourceVersion": "48173",
-        "selfLink": "/apis/sources.knative.dev/v1alpha1/namespaces/josh/sinkbindings/example-source3-emptySpec",
-        "uid": "0aed5684-4a99-435c-9ca3-11256dc936fc"
+        "resourceVersion": "227595",
+        "selfLink": "/apis/sources.knative.dev/v1alpha1/namespaces/josh/sinkbindings/example-source-binding0-emptySpec",
+        "uid": "41daa84c-b0bb-49d6-ac77-f849d194734f"
       },
       "spec": {
       },
       "status": {
         "conditions": [
           {
-            "lastTransitionTime": "2020-11-16T19:54:50Z",
+            "lastTransitionTime": "2021-01-14T14:20:00Z",
             "status": "True",
             "type": "Ready"
           }
         ],
         "observedGeneration": 1,
         "sinkUri": "http://aaa.josh.svc.cluster.local"
+      }
+    },
+    {
+      "apiVersion": "sources.knative.dev/v1alpha1",
+      "kind": "SinkBinding",
+      "metadata": {
+        "annotations": {
+          "sources.knative.dev/creator": "system:admin",
+          "sources.knative.dev/lastModifier": "system:admin"
+        },
+        "creationTimestamp": "2021-01-14T14:20:00Z",
+        "finalizers": ["sinkbindings.sources.knative.dev"],
+        "generation": 1,
+        "managedFields": [
+          {
+            "apiVersion": "sources.knative.dev/v1alpha2",
+            "fieldsType": "FieldsV1",
+            "fieldsV1": {
+              "f:spec": {
+                ".": {},
+                "f:sink": {
+                  ".": {},
+                  "f:ref": {
+                    ".": {},
+                    "f:apiVersion": {},
+                    "f:kind": {},
+                    "f:name": {},
+                    "f:namespace": {}
+                  }
+                },
+                "f:subject": {
+                  ".": {},
+                  "f:apiVersion": {},
+                  "f:kind": {},
+                  "f:name": {},
+                  "f:namespace": {}
+                }
+              },
+              "f:status": {}
+            },
+            "manager": "kn",
+            "operation": "Update",
+            "time": "2021-01-14T14:20:00Z"
+          },
+          {
+            "apiVersion": "sources.knative.dev/v1beta1",
+            "fieldsType": "FieldsV1",
+            "fieldsV1": {
+              "f:metadata": {
+                "f:finalizers": {
+                  ".": {},
+                  "v:\"sinkbindings.sources.knative.dev\"": {}
+                }
+              },
+              "f:status": {
+                "f:conditions": {},
+                "f:observedGeneration": {},
+                "f:sinkUri": {}
+              }
+            },
+            "manager": "webhook",
+            "operation": "Update",
+            "time": "2021-01-14T14:20:00Z"
+          }
+        ],
+        "name": "example-source-binding1-emptySpec",
+        "namespace": "josh",
+        "resourceVersion": "227616",
+        "selfLink": "/apis/sources.knative.dev/v1alpha1/namespaces/josh/sinkbindings/example-source-binding1-emptySpec",
+        "uid": "7711ba68-6350-4ba7-b53e-4d7df9de4f2d"
+      },
+      "spec": {
+      },
+      "status": {
+        "conditions": [
+          {
+            "lastTransitionTime": "2021-01-14T14:20:00Z",
+            "status": "True",
+            "type": "Ready"
+          }
+        ],
+        "observedGeneration": 1,
+        "sinkUri": "http://broker-ingress.knative-eventing.svc.cluster.local/josh/example-broker0"
+      }
+    },
+    {
+      "apiVersion": "sources.knative.dev/v1alpha1",
+      "kind": "SinkBinding",
+      "metadata": {
+        "annotations": {
+          "sources.knative.dev/creator": "system:admin",
+          "sources.knative.dev/lastModifier": "system:admin"
+        },
+        "creationTimestamp": "2021-01-14T14:20:00Z",
+        "finalizers": ["sinkbindings.sources.knative.dev"],
+        "generation": 1,
+        "managedFields": [
+          {
+            "apiVersion": "sources.knative.dev/v1alpha2",
+            "fieldsType": "FieldsV1",
+            "fieldsV1": {
+              "f:spec": {
+                ".": {},
+                "f:sink": {
+                  ".": {},
+                  "f:ref": {
+                    ".": {},
+                    "f:apiVersion": {},
+                    "f:kind": {},
+                    "f:name": {},
+                    "f:namespace": {}
+                  }
+                },
+                "f:subject": {
+                  ".": {},
+                  "f:apiVersion": {},
+                  "f:kind": {},
+                  "f:name": {},
+                  "f:namespace": {}
+                }
+              },
+              "f:status": {}
+            },
+            "manager": "kn",
+            "operation": "Update",
+            "time": "2021-01-14T14:20:00Z"
+          },
+          {
+            "apiVersion": "sources.knative.dev/v1beta1",
+            "fieldsType": "FieldsV1",
+            "fieldsV1": {
+              "f:metadata": {
+                "f:finalizers": {
+                  ".": {},
+                  "v:\"sinkbindings.sources.knative.dev\"": {}
+                }
+              },
+              "f:status": {
+                "f:conditions": {},
+                "f:observedGeneration": {},
+                "f:sinkUri": {}
+              }
+            },
+            "manager": "webhook",
+            "operation": "Update",
+            "time": "2021-01-14T14:20:00Z"
+          }
+        ],
+        "name": "example-source-binding2-emptySpec",
+        "namespace": "josh",
+        "resourceVersion": "227717",
+        "selfLink": "/apis/sources.knative.dev/v1alpha1/namespaces/josh/sinkbindings/example-source-binding2-emptySpec",
+        "uid": "bad7c8d5-9406-451a-8a00-aa8bab20bf76"
+      },
+      "spec": {
+      },
+      "status": {
+        "conditions": [
+          {
+            "lastTransitionTime": "2021-01-14T14:20:00Z",
+            "status": "True",
+            "type": "Ready"
+          }
+        ],
+        "observedGeneration": 1,
+        "sinkUri": "http://example-channel0-kn-channel.josh.svc.cluster.local"
+      }
+    },
+    {
+      "apiVersion": "sources.knative.dev/v1alpha1",
+      "kind": "SinkBinding",
+      "metadata": {
+        "annotations": {
+          "sources.knative.dev/creator": "system:admin",
+          "sources.knative.dev/lastModifier": "system:admin"
+        },
+        "creationTimestamp": "2021-01-14T14:20:00Z",
+        "finalizers": ["sinkbindings.sources.knative.dev"],
+        "generation": 1,
+        "managedFields": [
+          {
+            "apiVersion": "sources.knative.dev/v1alpha2",
+            "fieldsType": "FieldsV1",
+            "fieldsV1": {
+              "f:spec": {
+                ".": {},
+                "f:sink": {
+                  ".": {},
+                  "f:uri": {}
+                },
+                "f:subject": {
+                  ".": {},
+                  "f:apiVersion": {},
+                  "f:kind": {},
+                  "f:name": {},
+                  "f:namespace": {}
+                }
+              },
+              "f:status": {
+                ".": {},
+                "f:observedGeneration": {},
+                "f:sinkUri": {}
+              }
+            },
+            "manager": "kn",
+            "operation": "Update",
+            "time": "2021-01-14T14:20:00Z"
+          },
+          {
+            "apiVersion": "sources.knative.dev/v1beta1",
+            "fieldsType": "FieldsV1",
+            "fieldsV1": {
+              "f:metadata": {
+                "f:finalizers": {
+                  ".": {},
+                  "v:\"sinkbindings.sources.knative.dev\"": {}
+                }
+              },
+              "f:status": {
+                "f:conditions": {},
+                "f:observedGeneration": {},
+                "f:sinkUri": {}
+              }
+            },
+            "manager": "webhook",
+            "operation": "Update",
+            "time": "2021-01-14T14:20:00Z"
+          }
+        ],
+        "name": "example-source-binding3-emptySpec",
+        "namespace": "josh",
+        "resourceVersion": "431463",
+        "selfLink": "/apis/sources.knative.dev/v1alpha1/namespaces/josh/sinkbindings/example-source-binding3-emptySpec",
+        "uid": "1488d4f3-e4e6-4f92-9e66-9fbe235bc8b8"
+      },
+      "spec": {
+      },
+      "status": {
+        "conditions": [
+          {
+            "lastTransitionTime": "2021-01-14T14:39:39Z",
+            "status": "True",
+            "type": "Ready"
+          }
+        ],
+        "observedGeneration": 1,
+        "sinkUri": "https://event.receiver.uri"
       }
     }
   ],

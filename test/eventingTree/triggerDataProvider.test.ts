@@ -172,10 +172,13 @@ suite('TriggerDataProvider', () => {
 
   beforeEach(async () => {
     sandbox.stub(vscode.window, 'showErrorMessage').resolves();
+    // Get the Brokers
     sandbox.stub(brokerDataProvider.knExecutor, 'execute').resolves({ error: undefined, stdout: JSON.stringify(brokerData) });
     await brokerDataProvider.getBrokers(eventingFolderNodes[0]);
+    // Get the Channels
     sandbox.stub(channelDataProvider.knExecutor, 'execute').resolves({ error: undefined, stdout: JSON.stringify(channelData) });
     await channelDataProvider.getChannels(eventingFolderNodes[1]);
+    // Get the Services
     sandbox
       .stub(servingDataProvider.knExecutor, 'execute')
       .resolves({ error: undefined, stdout: JSON.stringify(multipleServiceData) });
@@ -183,6 +186,7 @@ suite('TriggerDataProvider', () => {
     const service: Service = servingTreeItems[0].getKnativeItem() as Service;
     service.modified = false;
     ksvc.updateService(service);
+    // Add the triggers, that will add the above to the trigger objects
     knativeTriggers.addTriggers(testTriggers);
   });
   teardown(() => {
