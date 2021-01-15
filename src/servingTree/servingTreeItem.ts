@@ -30,7 +30,7 @@ const CONTEXT_DATA = {
   },
   // eslint-disable-next-line @typescript-eslint/camelcase
   revision_tagged: {
-    // icon: 'revision-teal-r.svg',
+    // icon: 'revision-save-gear-outside-outline-blue.svg',
     icon: 'REV.svg',
     tooltip: 'Revision: {name}',
     description: '',
@@ -45,7 +45,7 @@ const CONTEXT_DATA = {
   },
   // eslint-disable-next-line @typescript-eslint/camelcase
   service_modified: {
-    // icon: 'service-gear-orange.svg',
+    // icon: 'service-7gear-2nd-blue2.svg',
     icon: 'SVC.svg',
     tooltip: 'Service: {name} modified',
     description: 'modified',

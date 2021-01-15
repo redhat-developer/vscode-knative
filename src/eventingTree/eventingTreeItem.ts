@@ -20,7 +20,7 @@ const CONTEXT_DATA = {
     getChildren: (): undefined[] => [],
   },
   broker: {
-    // icon: 'broker2.svg',
+    // icon: 'broker-e3.svg',
     icon: 'EVT.svg',
     tooltip: '',
     description: '',
@@ -34,7 +34,7 @@ const CONTEXT_DATA = {
     getChildren: (): undefined[] => [],
   },
   channel: {
-    // icon: 'channel3.svg',
+    // icon: 'channel-e2.svg',
     icon: 'EVT.svg',
     tooltip: '',
     description: '',
@@ -49,7 +49,7 @@ const CONTEXT_DATA = {
   },
   // eslint-disable-next-line @typescript-eslint/camelcase
   source_apiserver: {
-    // icon: 'source-generic.svg',
+    // icon: 'eventing-e-cloud-envelope.svg',
     icon: 'EVT.svg',
     tooltip: '',
     description: '',
@@ -57,7 +57,7 @@ const CONTEXT_DATA = {
   },
   // eslint-disable-next-line @typescript-eslint/camelcase
   source_binding: {
-    // icon: 'source-generic.svg',
+    // icon: 'eventing-e-cloud-envelope.svg',
     icon: 'EVT.svg',
     tooltip: '',
     description: '',
@@ -71,7 +71,7 @@ const CONTEXT_DATA = {
     getChildren: (): undefined[] => [],
   },
   source: {
-    // icon: 'source-generic.svg',
+    // icon: 'eventing-e-cloud-envelope.svg',
     icon: 'EVT.svg',
     tooltip: '',
     description: '',
@@ -79,14 +79,14 @@ const CONTEXT_DATA = {
   },
   // eslint-disable-next-line @typescript-eslint/camelcase
   source_ping: {
-    // icon: 'source-generic.svg',
+    // icon: 'eventing-e-cloud-envelope.svg',
     icon: 'EVT.svg',
     tooltip: '',
     description: '',
     getChildren: (): undefined[] => [],
   },
   subscription: {
-    // icon: 'subscription.svg',
+    // icon: 'subscription-e.svg',
     icon: 'EVT.svg',
     tooltip: '',
     description: '',
@@ -100,7 +100,7 @@ const CONTEXT_DATA = {
     getChildren: (): undefined[] => [],
   },
   trigger: {
-    // icon: 'trigger2.svg',
+    // icon: 'trigger3.svg',
     icon: 'EVT.svg',
     tooltip: '',
     description: '',
