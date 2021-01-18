@@ -42,6 +42,23 @@ suite('TriggerDataProvider', () => {
   const filters = new Map();
   filters.set('name', 'dev.knative.bar');
   filters.set('type', 'dev.knative.foo');
+
+  const testTriggerMissing: Trigger = new Trigger(
+    'example-trigger-missing',
+    'Triggers',
+    'example-broker-missing',
+    filters,
+    'example-broker-missing',
+    JSON.parse(JSON.stringify(triggerData.items[4])),
+  );
+  const testTriggerMissingTreeItem: EventingTreeItem = new EventingTreeItem(
+    eventingFolderNodes[4],
+    testTriggerMissing,
+    { label: 'example-trigger-missing' },
+    EventingContextType.TRIGGER,
+    vscode.TreeItemCollapsibleState.Expanded,
+  );
+
   const testTrigger0: Trigger = new Trigger(
     'example-trigger0',
     'Triggers',
@@ -66,15 +83,23 @@ suite('TriggerDataProvider', () => {
     'example-channel0',
     JSON.parse(JSON.stringify(triggerData.items[2])),
   );
-  const testTriggerMissing: Trigger = new Trigger(
-    'example-trigger-missing',
+  const testTrigger3: Trigger = new Trigger(
+    'example-trigger3',
     'Triggers',
-    'example-broker-missing',
+    'example-broker1',
     filters,
-    'example-broker-missing',
-    JSON.parse(JSON.stringify(triggerData.items[4])),
+    'example-broker1',
+    JSON.parse(JSON.stringify(triggerData.items[2])),
   );
-  const testTriggers = [testTrigger0, testTrigger1, testTrigger2];
+  const testTrigger4: Trigger = new Trigger(
+    'example-trigger4',
+    'Triggers',
+    'example-broker1',
+    filters,
+    'https://event.receiver.uri/',
+    JSON.parse(JSON.stringify(triggerData.items[2])),
+  );
+  const testTriggers = [testTrigger0, testTrigger1, testTrigger2, testTrigger3, testTrigger4];
   const testTrigger0TreeItem: EventingTreeItem = new EventingTreeItem(
     eventingFolderNodes[4],
     testTrigger0,
@@ -96,14 +121,27 @@ suite('TriggerDataProvider', () => {
     EventingContextType.TRIGGER,
     vscode.TreeItemCollapsibleState.Expanded,
   );
-  const testTriggerMissingTreeItem: EventingTreeItem = new EventingTreeItem(
+  const testTrigger3TreeItem: EventingTreeItem = new EventingTreeItem(
     eventingFolderNodes[4],
-    testTriggerMissing,
-    { label: 'example-trigger-missing' },
+    testTrigger3,
+    { label: 'example-trigger3' },
     EventingContextType.TRIGGER,
     vscode.TreeItemCollapsibleState.Expanded,
   );
-  const testTriggerTreeItems = [testTrigger0TreeItem, testTrigger1TreeItem, testTrigger2TreeItem, testTriggerMissingTreeItem];
+  const testTrigger4TreeItem: EventingTreeItem = new EventingTreeItem(
+    eventingFolderNodes[4],
+    testTrigger4,
+    { label: 'example-trigger4' },
+    EventingContextType.TRIGGER,
+    vscode.TreeItemCollapsibleState.Expanded,
+  );
+  const testTriggerTreeItems = [
+    testTrigger0TreeItem,
+    testTrigger1TreeItem,
+    testTrigger2TreeItem,
+    testTrigger3TreeItem,
+    testTrigger4TreeItem,
+  ];
 
   const testService0: Service = new Service(
     'aaa',
@@ -149,11 +187,19 @@ suite('TriggerDataProvider', () => {
     EventingContextType.BROKER,
     vscode.TreeItemCollapsibleState.None,
   );
+  const testBroker1ForTrigger4TreeItem: EventingTreeItem = new EventingTreeItem(
+    testTriggerTreeItems[4],
+    testBroker1,
+    { label: 'Broker - example-broker1' },
+    EventingContextType.BROKER,
+    vscode.TreeItemCollapsibleState.None,
+  );
   const testBrokerTreeItems = [
     testBroker0ForTrigger0TreeItem,
     testBroker0ForTrigger1TreeItem,
     testBroker1ForTrigger2TreeItem,
     testBroker1TreeItem,
+    testBroker1ForTrigger4TreeItem,
   ];
 
   const testChannel0: Channel = new Channel(
@@ -167,6 +213,14 @@ suite('TriggerDataProvider', () => {
     testChannel0,
     { label: 'Sink - example-channel0' },
     EventingContextType.CHANNEL,
+    vscode.TreeItemCollapsibleState.None,
+  );
+
+  const testURITreeItem: EventingTreeItem = new EventingTreeItem(
+    testTriggerTreeItems[4],
+    null,
+    { label: 'Sink - https://event.receiver.uri/' },
+    EventingContextType.URI,
     vscode.TreeItemCollapsibleState.None,
   );
 
@@ -223,7 +277,7 @@ suite('TriggerDataProvider', () => {
     test('should return a node of "No Child Found" when there is no data returned for the Children', async () => {
       sandbox.stub(triggerDataProvider.knExecutor, 'execute').resolves({ error: undefined, stdout: JSON.stringify(triggerData) });
       await triggerDataProvider.getTriggers(eventingFolderNodes[4]);
-      const result = triggerDataProvider.getTriggerChildren(testTriggerTreeItems[3]);
+      const result = triggerDataProvider.getTriggerChildren(testTriggerMissingTreeItem);
       expect(result).to.have.lengthOf(2);
       expect(result[0].description).equals('');
       expect(result[0].label.label).equals('Broker Not Found');
@@ -260,6 +314,16 @@ suite('TriggerDataProvider', () => {
       expect(result).to.have.lengthOf(2);
       expect(result[0].label.label).equals('Broker - example-broker1');
       expect(result[1].label.label).equals('Sink - example-channel0');
+    });
+    test('should return URI child nodes', async () => {
+      sandbox.stub(triggerDataProvider.knExecutor, 'execute').resolves({ error: undefined, stdout: JSON.stringify(triggerData) });
+      await triggerDataProvider.getTriggers(eventingFolderNodes[4]);
+      const result = triggerDataProvider.getTriggerChildren(testTriggerTreeItems[4]);
+      assert.equals(result[0], testBrokerTreeItems[4]);
+      assert.equals(result[1], testURITreeItem);
+      expect(result).to.have.lengthOf(2);
+      expect(result[0].label.label).equals('Broker - example-broker1');
+      expect(result[1].label.label).equals('Sink - https://event.receiver.uri/');
     });
   });
 });
