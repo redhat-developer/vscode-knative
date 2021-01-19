@@ -106,15 +106,7 @@ export class SourceDataProvider {
     // Create an empty state message when there is no Source.
     if (sources.length === 0) {
       return [
-        new EventingTreeItem(
-          parent,
-          null,
-          { label: 'No Source Found' },
-          EventingContextType.NONE,
-          TreeItemCollapsibleState.None,
-          null,
-          null,
-        ),
+        new EventingTreeItem(parent, null, { label: 'No Source Found' }, EventingContextType.NONE, TreeItemCollapsibleState.None),
       ];
     }
 
@@ -130,8 +122,6 @@ export class SourceDataProvider {
           { label: value.name },
           this.getSourceType(value.details.kind),
           TreeItemCollapsibleState.Expanded,
-          null,
-          null,
         );
         return obj;
       })

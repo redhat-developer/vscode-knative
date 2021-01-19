@@ -557,7 +557,7 @@
     },
     {
       "apiVersion": "sources.knative.dev/v1alpha2",
-      "kind": "PingSource",
+      "kind": "Source",
       "metadata": {
         "annotations": {
           "sources.knative.dev/creator": "system:admin",
