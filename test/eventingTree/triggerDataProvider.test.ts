@@ -4,25 +4,25 @@ import { beforeEach } from 'mocha';
 import * as sinon from 'sinon';
 import * as sinonChai from 'sinon-chai';
 import * as referee from '@sinonjs/referee';
-import * as triggerIncompleteData from './triggerIncomplete.json';
 import * as brokerData from './broker.json';
 import * as channelData from './channel.json';
-import * as triggerData from './trigger.json';
 import * as multipleServiceData from '../servingTree/multipleServiceServicesList.json';
+import * as triggerData from './trigger.json';
+import * as triggerIncompleteData from './triggerIncomplete.json';
 import { EventingContextType, ServingContextType } from '../../src/cli/config';
-import { EventingDataProvider } from '../../src/eventingTree/eventingDataProvider';
-import { EventingTreeItem } from '../../src/eventingTree/eventingTreeItem';
-import { TriggerDataProvider } from '../../src/eventingTree/triggerDataProvider';
-import { Trigger } from '../../src/knative/trigger';
-import { KnativeTriggers } from '../../src/knative/knativeTriggers';
 import { BrokerDataProvider } from '../../src/eventingTree/brokerDataProvider';
 import { ChannelDataProvider } from '../../src/eventingTree/channelDataProvider';
-import { ServingDataProvider } from '../../src/servingTree/servingDataProvider';
+import { EventingTreeItem } from '../../src/eventingTree/eventingTreeItem';
+import { EventingDataProvider } from '../../src/eventingTree/eventingDataProvider';
+import { TriggerDataProvider } from '../../src/eventingTree/triggerDataProvider';
 import { Broker } from '../../src/knative/broker';
 import { Channel } from '../../src/knative/channel';
-import { ServingTreeItem } from '../../src/servingTree/servingTreeItem';
-import { Service } from '../../src/knative/service';
 import { KnativeServices } from '../../src/knative/knativeServices';
+import { KnativeTriggers } from '../../src/knative/knativeTriggers';
+import { Service } from '../../src/knative/service';
+import { Trigger } from '../../src/knative/trigger';
+import { ServingDataProvider } from '../../src/servingTree/servingDataProvider';
+import { ServingTreeItem } from '../../src/servingTree/servingTreeItem';
 
 const { assert } = referee;
 const { expect } = chai;
@@ -274,7 +274,7 @@ suite('TriggerDataProvider', () => {
     });
   });
   suite('Get Trigger Children', () => {
-    test('should return a node of "No Child Found" when there is no data returned for the Children', async () => {
+    test('should return a node of "Child Not Found" when there is no data returned for the Children', async () => {
       sandbox.stub(triggerDataProvider.knExecutor, 'execute').resolves({ error: undefined, stdout: JSON.stringify(triggerData) });
       await triggerDataProvider.getTriggers(eventingFolderNodes[4]);
       const result = triggerDataProvider.getTriggerChildren(testTriggerMissingTreeItem);

@@ -4,8 +4,8 @@ import { beforeEach } from 'mocha';
 import * as sinon from 'sinon';
 import * as sinonChai from 'sinon-chai';
 import * as referee from '@sinonjs/referee';
-import * as channelData from './channel.json';
 import * as brokerData from './broker.json';
+import * as channelData from './channel.json';
 import * as multipleServiceData from '../servingTree/multipleServiceServicesList.json';
 import * as subscriptionData from './subscription.json';
 import * as subscriptionIncompleteData from './subscriptionIncomplete.json';
@@ -17,9 +17,9 @@ import { EventingTreeItem } from '../../src/eventingTree/eventingTreeItem';
 import { SubscriptionDataProvider } from '../../src/eventingTree/subscriptionDataProvider';
 import { Broker } from '../../src/knative/broker';
 import { Channel } from '../../src/knative/channel';
-import { Service } from '../../src/knative/service';
 import { KnativeServices } from '../../src/knative/knativeServices';
 import { KnativeSubscriptions } from '../../src/knative/knativeSubscriptions';
+import { Service } from '../../src/knative/service';
 import { Subscription } from '../../src/knative/subscription';
 import { ServingDataProvider } from '../../src/servingTree/servingDataProvider';
 import { ServingTreeItem } from '../../src/servingTree/servingTreeItem';
@@ -288,8 +288,6 @@ suite('SubscriptionDataProvider', () => {
 
   suite('Get Subscriptions', () => {
     test('should return a node of "No Subscription Found" when there is no data returned for Subscriptions', async () => {
-      sandbox.restore();
-      sandbox.stub(vscode.window, 'showErrorMessage').resolves();
       sandbox
         .stub(subscriptionDataProvider.knExecutor, 'execute')
         .resolves({ error: undefined, stdout: `No subscriptions found.` });
@@ -301,8 +299,6 @@ suite('SubscriptionDataProvider', () => {
       expect(result[0].getName()).equals('No Subscription Found');
     });
     test('should return subscription nodes', async () => {
-      sandbox.restore();
-      sandbox.stub(vscode.window, 'showErrorMessage').resolves();
       sandbox
         .stub(subscriptionDataProvider.knExecutor, 'execute')
         .resolves({ error: undefined, stdout: JSON.stringify(subscriptionData) });
@@ -312,8 +308,6 @@ suite('SubscriptionDataProvider', () => {
       expect(result[5].label.label).equals('example-subscription0');
     });
     test('should refetch subscription info when it is incomplete, then return subscription nodes', async () => {
-      sandbox.restore();
-      sandbox.stub(vscode.window, 'showErrorMessage').resolves();
       const exeStub = sandbox.stub(subscriptionDataProvider.knExecutor, 'execute');
       exeStub.onFirstCall().resolves({ error: undefined, stdout: JSON.stringify(subscriptionIncompleteData) });
       exeStub.onSecondCall().resolves({ error: undefined, stdout: JSON.stringify(subscriptionData) });
@@ -324,7 +318,7 @@ suite('SubscriptionDataProvider', () => {
     });
   });
   suite('Get subscription Children', () => {
-    test('should return a node of "No Child Found" when there is no data returned for the Children', async () => {
+    test('should return a node of "Child Not Found" when there is no data returned for the Children', async () => {
       sandbox
         .stub(subscriptionDataProvider.knExecutor, 'execute')
         .resolves({ error: undefined, stdout: JSON.stringify(subscriptionData) });
