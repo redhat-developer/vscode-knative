@@ -5,10 +5,16 @@ All notable changes to the "vscode-knative" extension will be documented in this
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 0.9.2 (2021/01/19)
+
+-  Display Eventing children
+-  Update `kn` cli to 0.20.0
+-  Update minimum required version of VSCode to 1.52.0
+
 ## 0.9.1 (2020/12/07)
 
 -  Fix bugs in eventing
--  Update kn cli from 0.18.1 -> 0.19.1
+-  Update `kn` cli to 0.19.1
 
 ## 0.9.0 (2020/11/18)
 
@@ -18,8 +24,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## 0.8.1 (2020/10/17)
 
--  Update `kn` from 0.14.0 to 0.18.1
--  Update `kubectl` from 1.18.3 to 1.18.8
+-  Update `kn` cli to 0.18.1
+-  Update `kubectl` cli to 1.18.8
 -  Fix bug; Error thrown when modifying a Service for the first time.
 -  Fix bug; Allow deleting of tagged Revisions
 
