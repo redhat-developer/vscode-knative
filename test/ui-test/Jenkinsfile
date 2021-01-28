@@ -165,7 +165,7 @@ treshold=240
 timer=0
 starting_result="CRC is started and ready"
 while [ "\$(crc_started)" != "1" ]; do
-	echo "waiting for \$timer sec..."
+    echo "waiting for \$timer sec..."
     sleep 10
     ((timer=timer+10))
     if [ \$timer -ge \$treshold ]; then
@@ -227,7 +227,7 @@ echo "Serverless Operator is deploying..."
 treshold=240
 timer=0
 while [ "\$(operator_deployed)" != "1" ]; do
-	echo "waiting for \$timer sec..."
+    echo "waiting for \$timer sec..."
     sleep 30
     ((timer=timer+30))
     if [ \$timer -ge \$treshold ]; then
@@ -263,7 +263,7 @@ treshold=300
 timer=0
 deploying_result="KNative Serving is deployed"
 while [ "\$(serving_deployed)" != "1" ]; do
-	echo "waiting for \$timer sec..."
+    echo "waiting for \$timer sec..."
     sleep 30
     ((timer=timer+30))
     if [ \$timer -ge \$treshold ]; then
@@ -301,7 +301,7 @@ treshold=300
 timer=0
 deploying_result="KNative Eventing is deployed"
 while [ "\$(serving_deployed)" != "1" ]; do
-	echo "waiting for \$timer sec..."
+    echo "waiting for \$timer sec..."
     sleep 30
     ((timer=timer+30))
     if [ \$timer -ge \$treshold ]; then
@@ -342,7 +342,12 @@ oc new-project another-serverless-example
     stage('UI Tests') {
       wrap([$class: 'Xvnc']) {
         dir('vscode-knative') {
-          sh "npm run ui-test"
+          try {
+            sh "npm run ui-test"
+          }
+          finally {
+            archive includes:"**/test-resources/*.log,**/test-resources/**/*.png"
+          }
         }
       }
     }
