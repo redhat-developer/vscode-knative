@@ -17,7 +17,7 @@ export function knativeInitializationUITest(): void {
 
   describe('Knative view', () => {
     it('should be ready for usage, requires access to the cluster', async function context() {
-      this.timeout(25000);
+      this.timeout(50000);
       const view = new ActivityBar().getViewControl(KNativeConstants.KNATIVE_EXTENSION_NAME);
       const sideBar = await view.openView();
       // check that no notification error appeared
@@ -36,7 +36,7 @@ export function knativeInitializationUITest(): void {
       }
       console.log(await servingSection.getText());
       console.log(await servingSection.getTitle());
-      await driver.wait(async () => (await servingSection.getVisibleItems()).length > 0, 10000);
+      await driver.wait(async () => (await servingSection.getVisibleItems()).length > 0, 30000);
       console.log(await Promise.all((await servingSection.getVisibleItems()).map((item) => item.getText())));
       const items = await servingSection.getVisibleItems();
       expect(await items[0].getText()).to.equal(KNativeConstants.NO_SERVICE_FOUND);
