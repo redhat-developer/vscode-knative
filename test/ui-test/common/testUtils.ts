@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import { Notification, VSBrowser, NotificationType, Workbench, SideBarView } from 'vscode-extension-tester';
 
 /**
@@ -5,15 +6,16 @@ import { Notification, VSBrowser, NotificationType, Workbench, SideBarView } fro
  */
 export async function getNotifications(...types: NotificationType[]): Promise<Notification[]> {
   const center = await new Workbench().openNotificationsCenter();
-  const notifications: Notification[] = [];
-  types.map(async (type) => {
-    notifications.push(...(await center.getNotifications(type)));
-  });
+  const notifications = [];
+  await Promise.all(
+    types.map(async (type) => {
+      notifications.push(...(await center.getNotifications(type)));
+    }),
+  );
   return notifications;
 }
 
 export async function cleanUpNotifications(): Promise<void> {
-  // clean up notifications
   const nc = await new Workbench().openNotificationsCenter();
   const notifications = await nc.getNotifications(NotificationType.Any);
   if (notifications.length > 0) {
@@ -25,27 +27,29 @@ export async function cleanUpNotifications(): Promise<void> {
 export async function findNotification(text: string): Promise<Notification | undefined> {
   const center = await new Workbench().openNotificationsCenter();
   const notifications = await center.getNotifications(NotificationType.Any);
-  notifications.map(async (notification) => {
-    if (notification) {
-      const message = await notification.getMessage();
-      if (message.includes(text)) {
-        return notification;
-      }
+  // eslint-disable-next-line no-restricted-syntax
+  for (const notification of notifications) {
+    // eslint-disable-next-line no-await-in-loop
+    const message = await notification.getMessage();
+    if (message.includes(text)) {
+      return notification;
     }
-  });
+  }
   return undefined;
 }
 
 export async function notificationExists(text: string): Promise<boolean> {
-  const notifications = await getNotifications();
-  notifications.map(async (notification) => {
+  const notifications = await getNotifications(NotificationType.Any);
+  // eslint-disable-next-line no-restricted-syntax
+  for (const notification of notifications) {
     if (notification) {
+      // eslint-disable-next-line no-await-in-loop
       const message = await notification.getMessage();
       if (message.includes(text)) {
         return true;
       }
     }
-  });
+  }
   return false;
 }
 

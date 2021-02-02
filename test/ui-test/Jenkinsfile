@@ -15,42 +15,51 @@ timeout(time: 90, unit: 'MINUTES') {
     }
     stage ('Set up cluster') {
         if (env.CLUSTER_CHOICE == 'kubeconfig') {
-            stage('Set up KUBECONFIG env. variable poiting to kubeconfig file') {
+            // Uses kubeconfig passed as string parameter,
+            // it is saved as kubeconfig at user's home directory
+            // KUBECONFIG env. variable is set pointing to this file
+            stage('Setting up KUBECONFIG') {
                 writeFile(file: "${env.WORKSPACE}/kubeconfig", text: "${env.KUBECONFIG_CONTENT}", encoding: "UTF-8")
                 env.KUBECONFIG = "${env.WORKSPACE}/kubeconfig"
-                echo "${KUBECONFIG}, ${env.KUBECONFIG}"
-                sh "echo ${env.KUBECONFIG}"
+                sh "echo ${KUBECONFIG}"
             }
         } else if (env.CLUSTER_CHOICE == 'credentials') {
             // Requires CLUSTER_URL, USERNAME and PASSWORD
             // Downloads and extracts OC/OKD
             // login into cluster using given variables
-            stage('online') {
-                echo "we are all right with online"
+            stage('Connecting to the cluster using OKD') {
+                sh """
+                    okd_url="https://mirror.openshift.com/pub/openshift-v4/clients/ocp/latest/openshift-client-linux.tar.gz"
+                    mkdir -p oc_dir
+                    wget \${okd_url} -O oc_dir/oc.tar.gz
+                    cd oc_dir
+                    tar -xvzf oc.tar.gz
+                    ./oc login \${CLUSTER_URL} -u \${CLUSTER_USER} -p \${CLUSTER_PASSWORD} --insecure-skip-tls-verify
+                """
             }
         } else if (env.CLUSTER_CHOICE == 'crc') {
-            stage('crc') {
-                echo "going crc"
+            // Downloads, start and configures local cluster using CRC
+            stage('CRC Cluster preparation') {
+                stage('Setup CRC environment') {
+                    sh '${WORKSPACE}/vscode-knative/test/ui-test/scripts/prepare-env.sh'
+                }
+
+                stage('Download and Setup CRC') {
+                    timeout(time: 15, unit: 'MINUTES') {
+                        withCredentials([string(credentialsId: 'crc-pull-secret', variable: 'PULL_SECRET')]){
+                            writeFile(file: "${env.WORKSPACE}/crc-pull-secret.txt", text: "${env.PULL_SECRET}", encoding: "UTF-8")
+                            env.CRC_PULL_SECRET = "${env.WORKSPACE}/crc-pull-secret.txt"
+                            sh '${WORKSPACE}/vscode-knative/test/ui-test/scripts/setup-crc.sh'
+                        }
+                    }
+                }
+
+                stage('Run CRC and install Serverless operator, setup KNative on the cluster') {
+                    timeout(time: 45, unit: 'MINUTES') {
+                        sh '${WORKSPACE}/vscode-knative/test/ui-test/scripts/run-crc.sh'
+                    }
+                }
             }
-            // stage('Setup CRC environment') {
-            //     sh '${WORKSPACE}/vscode-knative/test/ui-test/scripts/prepare-env.sh'
-            // }
-
-            // stage('Download and Setup CRC') {
-            //     timeout(time: 15, unit: 'MINUTES') {
-            //         withCredentials([string(credentialsId: 'crc-pull-secret', variable: 'PULL_SECRET')]){
-            //             writeFile(file: "${env.WORKSPACE}/crc-pull-secret.txt", text: "${env.PULL_SECRET}", encoding: "UTF-8")
-            //             env.CRC_PULL_SECRET = "${env.WORKSPACE}/crc-pull-secret.txt"
-            //             sh '${WORKSPACE}/vscode-knative/test/ui-test/scripts/setup-crc.sh'
-            //         }
-            //     }
-            // }
-
-            // stage('Run CRC and install Serverless operator, setup KNative on the cluster') {
-            //     timeout(time: 45, unit: 'MINUTES') {
-            //         sh '${WORKSPACE}/vscode-knative/test/ui-test/scripts/run-crc.sh'
-            //     }
-            // }
         }
     }
 
