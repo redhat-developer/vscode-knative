@@ -13,7 +13,7 @@
    version="1.1"
    id="svg8"
    inkscape:version="1.0.1 (3bc2e813f5, 2020-09-07)"
-   sodipodi:docname="kn-source.svg">
+   sodipodi:docname="kn-source-name.svg">
   <defs
      id="defs2" />
   <sodipodi:namedview
@@ -24,8 +24,8 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="45.254834"
-     inkscape:cx="6.03118"
-     inkscape:cy="7.7191767"
+     inkscape:cx="5.7487819"
+     inkscape:cy="7.7436159"
      inkscape:document-units="mm"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -101,5 +101,16 @@
            y="295.97025"
            style="font-style:normal;font-variant:normal;font-weight:600;font-stretch:normal;font-size:1.84071px;font-family:Montserrat;-inkscape-font-specification:'Montserrat, Semi-Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#ffffff;fill-opacity:1;stroke-width:0.0460178">e</tspan></text>
     </g>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:0.348544px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.00871363"
+       x="1.3967736"
+       y="296.67136"
+       id="text17672"><tspan
+         sodipodi:role="line"
+         id="tspan17670"
+         x="1.3967736"
+         y="296.67136"
+         style="fill:#ffffff;fill-opacity:1;stroke-width:0.00871363">SOURCE</tspan></text>
   </g>
 </svg>

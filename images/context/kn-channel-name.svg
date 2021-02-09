@@ -13,7 +13,7 @@
    version="1.1"
    id="svg8"
    inkscape:version="1.0.1 (3bc2e813f5, 2020-09-07)"
-   sodipodi:docname="kn-channel.svg">
+   sodipodi:docname="kn-channel-name.svg">
   <defs
      id="defs2" />
   <sodipodi:namedview
@@ -187,5 +187,16 @@
         </g>
       </g>
     </g>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:0.348544px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.00871363"
+       x="1.2679416"
+       y="296.67007"
+       id="text17672"><tspan
+         sodipodi:role="line"
+         id="tspan17670"
+         x="1.2679416"
+         y="296.67007"
+         style="fill:#ffffff;fill-opacity:1;stroke-width:0.00871363">CHANNEL</tspan></text>
   </g>
 </svg>
