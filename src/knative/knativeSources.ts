@@ -44,7 +44,7 @@ export class KnativeSources {
     return KnativeSources.instance;
   }
 
-  private sources: Array<SourceTypes>;
+  private sources: Array<SourceTypes> = [];
 
   // eslint-disable-next-line class-methods-use-this
   private updateTree(): void {
@@ -58,11 +58,7 @@ export class KnativeSources {
   }
 
   public findSource(sourceName: string): SourceTypes {
-    try {
-      return this.sources[this.sources.findIndex((s) => s.name === sourceName)];
-    } catch (err) {
-      return undefined;
-    }
+    return this.sources[this.sources.findIndex((s) => s.name === sourceName)];
   }
 
   /**

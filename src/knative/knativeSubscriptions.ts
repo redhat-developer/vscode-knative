@@ -39,7 +39,7 @@ export class KnativeSubscriptions {
 
   private knBroker = KnativeBrokers.Instance;
 
-  private subscriptions: Subscription[];
+  private subscriptions: Subscription[] = [];
 
   // eslint-disable-next-line class-methods-use-this
   private updateTree(): void {
@@ -53,11 +53,7 @@ export class KnativeSubscriptions {
   }
 
   public findSubscription(subscriptionName: string): Subscription {
-    try {
-      return this.subscriptions[this.subscriptions.findIndex((s) => s.name === subscriptionName)];
-    } catch (err) {
-      return undefined;
-    }
+    return this.subscriptions[this.subscriptions.findIndex((s) => s.name === subscriptionName)];
   }
 
   public addSubscription(subscription: Subscription): Subscription {

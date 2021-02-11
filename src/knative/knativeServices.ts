@@ -29,7 +29,7 @@ export class KnativeServices {
     return KnativeServices.instance;
   }
 
-  private services: Service[];
+  private services: Service[] = [];
 
   // eslint-disable-next-line class-methods-use-this
   private updateTree(): void {
@@ -42,11 +42,7 @@ export class KnativeServices {
   }
 
   public findService(serviceName: string): Service {
-    try {
-      return this.services[this.services.findIndex((s) => s.name === serviceName)];
-    } catch (err) {
-      return undefined;
-    }
+    return this.services[this.services.findIndex((s) => s.name === serviceName)];
   }
 
   public findRevision(revisionName: string): Revision {

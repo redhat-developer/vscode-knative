@@ -24,7 +24,7 @@ export class KnativeBrokers {
     return KnativeBrokers.instance;
   }
 
-  private brokers: Broker[];
+  private brokers: Broker[] = [];
 
   // eslint-disable-next-line class-methods-use-this
   private updateTree(): void {
@@ -38,11 +38,7 @@ export class KnativeBrokers {
   }
 
   public findBroker(brokerName: string): Broker {
-    try {
-      return this.brokers[this.brokers.findIndex((s) => s.name === brokerName)];
-    } catch (err) {
-      return undefined;
-    }
+    return this.brokers[this.brokers.findIndex((s) => s.name === brokerName)];
   }
 
   public addBroker(broker: Broker): Broker {

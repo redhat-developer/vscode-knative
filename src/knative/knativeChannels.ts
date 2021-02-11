@@ -24,7 +24,7 @@ export class KnativeChannels {
     return KnativeChannels.instance;
   }
 
-  private channels: Channel[];
+  private channels: Channel[] = [];
 
   // eslint-disable-next-line class-methods-use-this
   private updateTree(): void {
@@ -38,11 +38,7 @@ export class KnativeChannels {
   }
 
   public findChannel(channelName: string): Channel {
-    try {
-      return this.channels[this.channels.findIndex((s) => s.name === channelName)];
-    } catch (err) {
-      return undefined;
-    }
+    return this.channels[this.channels.findIndex((s) => s.name === channelName)];
   }
 
   public addChannel(channel: Channel): Channel {

@@ -33,7 +33,7 @@ export class KnativeEvents {
     return KnativeEvents.instance;
   }
 
-  private events: KEvent[];
+  private events: KEvent[] = [];
 
   // eslint-disable-next-line class-methods-use-this
   private updateTree(): void {
@@ -46,11 +46,7 @@ export class KnativeEvents {
   }
 
   public findEvent(eventName: string): KEvent {
-    try {
-      return this.events[this.events.findIndex((s) => s.name === eventName)];
-    } catch (err) {
-      return undefined;
-    }
+    return this.events[this.events.findIndex((s) => s.name === eventName)];
   }
 
   public findChild(childName: string): EventTypes {

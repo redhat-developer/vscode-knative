@@ -39,7 +39,7 @@ export class KnativeTriggers {
 
   private knBroker = KnativeBrokers.Instance;
 
-  private triggers: Trigger[];
+  private triggers: Trigger[] = [];
 
   // eslint-disable-next-line class-methods-use-this
   private updateTree(): void {
@@ -53,11 +53,7 @@ export class KnativeTriggers {
   }
 
   public findTrigger(triggerName: string): Trigger {
-    try {
-      return this.triggers[this.triggers.findIndex((s) => s.name === triggerName)];
-    } catch (err) {
-      return undefined;
-    }
+    return this.triggers[this.triggers.findIndex((s) => s.name === triggerName)];
   }
 
   public addTrigger(trigger: Trigger): Trigger {
