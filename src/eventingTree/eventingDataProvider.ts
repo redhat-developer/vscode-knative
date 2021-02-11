@@ -163,6 +163,7 @@ export class EventingDataProvider implements TreeDataProvider<EventingTreeItem |
       }
     } catch (err) {
       // Catch the Rejected Promise of the Execute to list Eventing data.
+      // note: not sure this will catch the rejected promise, tried to write a unit test and can't catch the error.
       vscode.window.showErrorMessage(`Caught an error getting the Eventing data.\n ${err}`, { modal: true }, 'OK');
       return null;
     }

@@ -149,7 +149,7 @@ suite('TriggerDataProvider', () => {
     JSON.parse(JSON.stringify(multipleServiceData.items[0])),
   );
   testService0.modified = false;
-  const testService0TreeItem: ServingTreeItem = new ServingTreeItem(
+  const testService0ForTrigger0TreeItem: ServingTreeItem = new ServingTreeItem(
     testTriggerTreeItems[0],
     testService0,
     { label: 'Sink - aaa' },
@@ -180,7 +180,7 @@ suite('TriggerDataProvider', () => {
     EventingContextType.BROKER,
     vscode.TreeItemCollapsibleState.None,
   );
-  const testBroker1TreeItem: EventingTreeItem = new EventingTreeItem(
+  const testBroker1ForTrigger1TreeItem: EventingTreeItem = new EventingTreeItem(
     testTriggerTreeItems[1],
     testBroker1,
     { label: 'Sink - example-broker1' },
@@ -198,7 +198,7 @@ suite('TriggerDataProvider', () => {
     testBroker0ForTrigger0TreeItem,
     testBroker0ForTrigger1TreeItem,
     testBroker1ForTrigger2TreeItem,
-    testBroker1TreeItem,
+    testBroker1ForTrigger1TreeItem,
     testBroker1ForTrigger4TreeItem,
   ];
 
@@ -208,7 +208,7 @@ suite('TriggerDataProvider', () => {
     'InMemoryChannel',
     JSON.parse(JSON.stringify(channelData.items[0])),
   );
-  const testChannel0TreeItem: EventingTreeItem = new EventingTreeItem(
+  const testChannel0ForTrigger2TreeItem: EventingTreeItem = new EventingTreeItem(
     testTriggerTreeItems[2],
     testChannel0,
     { label: 'Sink - example-channel0' },
@@ -216,7 +216,7 @@ suite('TriggerDataProvider', () => {
     vscode.TreeItemCollapsibleState.None,
   );
 
-  const testURITreeItem: EventingTreeItem = new EventingTreeItem(
+  const testURIForTrigger4TreeItem: EventingTreeItem = new EventingTreeItem(
     testTriggerTreeItems[4],
     null,
     { label: 'Sink - https://event.receiver.uri/' },
@@ -290,7 +290,7 @@ suite('TriggerDataProvider', () => {
       await triggerDataProvider.getTriggers(eventingFolderNodes[4]);
       const result = triggerDataProvider.getTriggerChildren(testTriggerTreeItems[0]);
       assert.equals(result[0], testBrokerTreeItems[0]);
-      assert.equals(result[1], testService0TreeItem);
+      assert.equals(result[1], testService0ForTrigger0TreeItem);
       expect(result).to.have.lengthOf(2);
       expect(result[0].label.label).equals('Broker - example-broker0');
       expect(result[1].label.label).equals('Sink - aaa');
@@ -310,7 +310,7 @@ suite('TriggerDataProvider', () => {
       await triggerDataProvider.getTriggers(eventingFolderNodes[4]);
       const result = triggerDataProvider.getTriggerChildren(testTriggerTreeItems[2]);
       assert.equals(result[0], testBrokerTreeItems[2]);
-      assert.equals(result[1], testChannel0TreeItem);
+      assert.equals(result[1], testChannel0ForTrigger2TreeItem);
       expect(result).to.have.lengthOf(2);
       expect(result[0].label.label).equals('Broker - example-broker1');
       expect(result[1].label.label).equals('Sink - example-channel0');
@@ -320,7 +320,7 @@ suite('TriggerDataProvider', () => {
       await triggerDataProvider.getTriggers(eventingFolderNodes[4]);
       const result = triggerDataProvider.getTriggerChildren(testTriggerTreeItems[4]);
       assert.equals(result[0], testBrokerTreeItems[4]);
-      assert.equals(result[1], testURITreeItem);
+      assert.equals(result[1], testURIForTrigger4TreeItem);
       expect(result).to.have.lengthOf(2);
       expect(result[0].label.label).equals('Broker - example-broker1');
       expect(result[1].label.label).equals('Sink - https://event.receiver.uri/');
