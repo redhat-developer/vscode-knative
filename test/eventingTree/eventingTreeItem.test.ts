@@ -216,7 +216,7 @@ suite('EventingTreeItem', () => {
     'example-broker1',
     filters,
     'https://event.receiver.uri/',
-    JSON.parse(JSON.stringify(triggerData.items[2])),
+    JSON.parse(JSON.stringify(triggerData.items[4])),
   );
   // Trigger Tree Items
   const testTrigger0TreeItem: EventingTreeItem = new EventingTreeItem(

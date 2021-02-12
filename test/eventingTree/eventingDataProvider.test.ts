@@ -142,6 +142,18 @@ suite('EventingDataProvider', () => {
     'InMemoryChannel',
     JSON.parse(JSON.stringify(channelData.items[1])),
   );
+  const testChannel2: Channel = new Channel(
+    'example-channel2',
+    'Channels',
+    'InMemoryChannel',
+    JSON.parse(JSON.stringify(channelData.items[2])),
+  );
+  const testChannel3: Channel = new Channel(
+    'example-channel3',
+    'Channels',
+    'InMemoryChannel',
+    JSON.parse(JSON.stringify(channelData.items[3])),
+  );
 
   // Channel Tree Items
   const testChannel0TreeItem: EventingTreeItem = new EventingTreeItem(
@@ -158,7 +170,21 @@ suite('EventingDataProvider', () => {
     EventingContextType.CHANNEL,
     vscode.TreeItemCollapsibleState.Expanded,
   );
-  const testChannelTreeItems = [testChannel0TreeItem, testChannel1TreeItem];
+  const testChannel2TreeItem: EventingTreeItem = new EventingTreeItem(
+    eventingFolderNodes[2],
+    testChannel2,
+    { label: 'example-channel2' },
+    EventingContextType.CHANNEL,
+    vscode.TreeItemCollapsibleState.Expanded,
+  );
+  const testChannel3TreeItem: EventingTreeItem = new EventingTreeItem(
+    eventingFolderNodes[3],
+    testChannel3,
+    { label: 'example-channel3' },
+    EventingContextType.CHANNEL,
+    vscode.TreeItemCollapsibleState.Expanded,
+  );
+  const testChannelTreeItems = [testChannel0TreeItem, testChannel1TreeItem, testChannel2TreeItem, testChannel3TreeItem];
 
   // SOURCES
   // API Server Source
@@ -519,7 +545,7 @@ suite('EventingDataProvider', () => {
     'example-broker1',
     filters,
     'example-broker1',
-    JSON.parse(JSON.stringify(triggerData.items[2])),
+    JSON.parse(JSON.stringify(triggerData.items[3])),
   );
   const testTrigger4: Trigger = new Trigger(
     'example-trigger4',
@@ -527,7 +553,7 @@ suite('EventingDataProvider', () => {
     'example-broker1',
     filters,
     'https://event.receiver.uri/',
-    JSON.parse(JSON.stringify(triggerData.items[2])),
+    JSON.parse(JSON.stringify(triggerData.items[4])),
   );
   const testTriggers = [testTrigger0, testTrigger1, testTrigger2, testTrigger3, testTrigger4];
 
@@ -932,7 +958,7 @@ suite('EventingDataProvider', () => {
       sandbox.stub(vscode.window, 'showErrorMessage').resolves();
       sandbox.stub(eventingDataProvider.channelDataProvider, `getChannels`).resolves(testChannelTreeItems);
       const result = await eventingDataProvider.getChildren(eventingFolderNodes[1]);
-      expect(result).to.have.lengthOf(2);
+      expect(result).to.have.lengthOf(4);
       expect(result[0].description).equals('');
       expect(result[0].label.label).equals('example-channel0');
       expect(result[0].getName()).equals('example-channel0');

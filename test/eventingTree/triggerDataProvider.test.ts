@@ -89,7 +89,7 @@ suite('TriggerDataProvider', () => {
     'example-broker1',
     filters,
     'example-broker1',
-    JSON.parse(JSON.stringify(triggerData.items[2])),
+    JSON.parse(JSON.stringify(triggerData.items[3])),
   );
   const testTrigger4: Trigger = new Trigger(
     'example-trigger4',
@@ -97,7 +97,7 @@ suite('TriggerDataProvider', () => {
     'example-broker1',
     filters,
     'https://event.receiver.uri/',
-    JSON.parse(JSON.stringify(triggerData.items[2])),
+    JSON.parse(JSON.stringify(triggerData.items[4])),
   );
   const testTriggers = [testTrigger0, testTrigger1, testTrigger2, testTrigger3, testTrigger4];
   const testTrigger0TreeItem: EventingTreeItem = new EventingTreeItem(

@@ -3,16 +3,15 @@
  *  Licensed under the MIT License. See LICENSE file in the project root for license information.
  *-----------------------------------------------------------------------------------------------*/
 
-import { Uri } from 'vscode';
-import { KnativeChannels } from './knativeChannels';
-import { KnativeServices } from './knativeServices';
-import { KnativeBrokers } from './knativeBrokers';
-import { GenericSource } from './genericSource';
 import { APIServerSource } from './apiServerSource';
 import { BindingSource } from './bindingSource';
-import { PingSource } from './pingSource';
 import { Broker } from './broker';
 import { Channel } from './channel';
+import { GenericSource } from './genericSource';
+import { KnativeBrokers } from './knativeBrokers';
+import { KnativeChannels } from './knativeChannels';
+import { KnativeServices } from './knativeServices';
+import { PingSource } from './pingSource';
 import { Service } from './service';
 import { Sink } from './sink';
 import { convertStringToURI } from '../util/parse';
@@ -79,8 +78,7 @@ export class KnativeSources {
     const broker: Broker = this.knBroker.findBroker(sinkName);
     const channel: Channel = this.knChannel.findChannel(sinkName);
     const service: Service = this.knService.findService(sinkName);
-    const uri: Uri = typeof sinkName === 'string' ? convertStringToURI(sinkName) : undefined;
-    const sink: Sink = broker || channel || service || uri;
+    const sink: Sink = broker || channel || service || convertStringToURI(sinkName);
     if (sink) {
       // find this source in the master list of sources and add the sink to it
       this.findSource(source.name).childSink = sink;
