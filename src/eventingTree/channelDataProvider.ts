@@ -69,8 +69,6 @@ export class ChannelDataProvider {
           { label: 'No Channel Found' },
           EventingContextType.NONE,
           TreeItemCollapsibleState.None,
-          null,
-          null,
         ),
       ];
     }
@@ -87,8 +85,6 @@ export class ChannelDataProvider {
           { label: value.name },
           EventingContextType.CHANNEL,
           TreeItemCollapsibleState.None,
-          null,
-          null,
         );
         return obj;
       })

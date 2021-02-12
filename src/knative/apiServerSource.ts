@@ -4,7 +4,6 @@
  *-----------------------------------------------------------------------------------------------*/
 
 import { BaseSource, Metadata } from './baseSource';
-import { Sink as sinkType } from './sink';
 
 export type sourceOptions = Array<Array<string>>;
 
@@ -12,8 +11,6 @@ export class APIServerSource extends BaseSource {
   constructor(public name: string, public parent: string, public resource: string, public sink: string, public details?: Items) {
     super(name, parent, details);
   }
-
-  childSink: sinkType;
 
   static JSONToSource(value: Items): APIServerSource {
     let controller: string;

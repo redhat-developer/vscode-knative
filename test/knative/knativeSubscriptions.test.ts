@@ -215,8 +215,8 @@ suite('Knative Subscriptions', () => {
     'Subscriptions',
     'example-channel2',
     'https://event.receiver.uri/',
-    undefined,
-    undefined,
+    'https://event.receiver.uri/',
+    'https://event.receiver.uri/',
     JSON.parse(JSON.stringify(subscriptionData.items[8])),
   );
   const testSubscription4: Subscription = new Subscription(

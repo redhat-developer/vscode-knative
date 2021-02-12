@@ -151,13 +151,21 @@ suite('SourceDataProvider', () => {
     JSON.parse(JSON.stringify(sourceData.items[12])),
   );
   // ping source as Generic source
-  const testSourceGeneric: GenericSource = new GenericSource(
+  const testSourceGenericPing1: GenericSource = new GenericSource(
     'example-source-ping1',
     'Sources',
     'Source',
     'aaa',
     null,
     JSON.parse(JSON.stringify(sourceData.items[5])),
+  );
+  const testSourceGenericPing5: GenericSource = new GenericSource(
+    'example-source-ping5',
+    'Sources',
+    'Source',
+    'https://event.receiver.uri',
+    null,
+    JSON.parse(JSON.stringify(sourceData.items[13])),
   );
 
   const testSources = [
@@ -173,7 +181,8 @@ suite('SourceDataProvider', () => {
     testSourceBinding1,
     testSourceBinding2,
     testSourceBinding3,
-    testSourceGeneric,
+    testSourceGenericPing1,
+    testSourceGenericPing5,
   ];
 
   // API Server Tree Items
@@ -266,10 +275,17 @@ suite('SourceDataProvider', () => {
     vscode.TreeItemCollapsibleState.Expanded,
   );
 
-  const testSourceGenericTreeItem: EventingTreeItem = new EventingTreeItem(
+  const testSourceGenericPing1TreeItem: EventingTreeItem = new EventingTreeItem(
     eventingFolderNodes[2],
-    testSourceGeneric,
+    testSourceGenericPing1,
     { label: 'example-source-ping1' },
+    EventingContextType.SOURCE,
+    vscode.TreeItemCollapsibleState.Expanded,
+  );
+  const testSourceGenericPing5TreeItem: EventingTreeItem = new EventingTreeItem(
+    eventingFolderNodes[2],
+    testSourceGenericPing5,
+    { label: 'example-source-ping5' },
     EventingContextType.SOURCE,
     vscode.TreeItemCollapsibleState.Expanded,
   );
@@ -287,7 +303,8 @@ suite('SourceDataProvider', () => {
     testSourceBinding1TreeItem,
     testSourceBinding2TreeItem,
     testSourceBinding3TreeItem,
-    testSourceGenericTreeItem,
+    testSourceGenericPing1TreeItem,
+    testSourceGenericPing5TreeItem,
   ];
 
   // Sources without a Spec
@@ -299,10 +316,24 @@ suite('SourceDataProvider', () => {
     undefined,
     JSON.parse(JSON.stringify(sourceEmptySpec.items[0])),
   );
+  const testSourceAPI1EmptySpec: APIServerSource = new APIServerSource(
+    'example-source-apiserver1-emptySpec',
+    'Sources',
+    undefined,
+    undefined,
+    JSON.parse(JSON.stringify(sourceEmptySpec.items[1])),
+  );
   const testSource0TreeItemEmptySpec: EventingTreeItem = new EventingTreeItem(
     eventingFolderNodes[2],
     testSource0EmptySpec,
     { label: 'example-source-apiserver0-emptySpec' },
+    EventingContextType.SOURCE_APISERVER,
+    vscode.TreeItemCollapsibleState.Expanded,
+  );
+  const testSourceAPI1TreeItemEmptySpec: EventingTreeItem = new EventingTreeItem(
+    eventingFolderNodes[2],
+    testSourceAPI1EmptySpec,
+    { label: 'example-source-apiserver1-emptySpec' },
     EventingContextType.SOURCE_APISERVER,
     vscode.TreeItemCollapsibleState.Expanded,
   );
@@ -380,7 +411,7 @@ suite('SourceDataProvider', () => {
     ServingContextType.SERVICE,
     vscode.TreeItemCollapsibleState.None,
   );
-  const testService0ForSourceGenericTreeItem: ServingTreeItem = new ServingTreeItem(
+  const testService0ForSourceGenericPing1TreeItem: ServingTreeItem = new ServingTreeItem(
     testSourceTreeItems[12],
     testService0,
     { label: 'Sink - aaa' },
@@ -467,6 +498,13 @@ suite('SourceDataProvider', () => {
     EventingContextType.URI,
     vscode.TreeItemCollapsibleState.None,
   );
+  const testURIForSourceGenericPing5TreeItem: EventingTreeItem = new EventingTreeItem(
+    testSourceTreeItems[13],
+    null,
+    { label: 'Sink - https://event.receiver.uri/' },
+    EventingContextType.URI,
+    vscode.TreeItemCollapsibleState.None,
+  );
 
   beforeEach(async () => {
     sandbox.stub(vscode.window, 'showErrorMessage').resolves();
@@ -503,35 +541,35 @@ suite('SourceDataProvider', () => {
       exeStub.onSecondCall().resolves({ error: undefined, stdout: JSON.stringify(sourceData) });
       const result = await sourceDataProvider.getSources(eventingFolderNodes[2]);
       assert.equals(result[0], testSourceTreeItems[0]);
-      expect(result).to.have.lengthOf(13);
+      expect(result).to.have.lengthOf(14);
       expect(result[0].label.label).equals('example-source-apiserver0');
     });
     test('should return API source nodes', async () => {
       sandbox.stub(sourceDataProvider.knExecutor, 'execute').resolves({ error: undefined, stdout: JSON.stringify(sourceData) });
       const result = await sourceDataProvider.getSources(eventingFolderNodes[2]);
       assert.equals(result[0], testSourceTreeItems[0]);
-      expect(result).to.have.lengthOf(13);
+      expect(result).to.have.lengthOf(14);
       expect(result[0].label.label).equals('example-source-apiserver0');
     });
     test('should return Ping source nodes', async () => {
       sandbox.stub(sourceDataProvider.knExecutor, 'execute').resolves({ error: undefined, stdout: JSON.stringify(sourceData) });
       const result = await sourceDataProvider.getSources(eventingFolderNodes[2]);
       assert.equals(result[8], testSourceTreeItems[4]);
-      expect(result).to.have.lengthOf(13);
+      expect(result).to.have.lengthOf(14);
       expect(result[8].label.label).equals('example-source-ping0');
     });
     test('should return Generic source nodes', async () => {
       sandbox.stub(sourceDataProvider.knExecutor, 'execute').resolves({ error: undefined, stdout: JSON.stringify(sourceData) });
       const result = await sourceDataProvider.getSources(eventingFolderNodes[2]);
       assert.equals(result[9], testSourceTreeItems[12]);
-      expect(result).to.have.lengthOf(13);
+      expect(result).to.have.lengthOf(14);
       expect(result[9].label.label).equals('example-source-ping1');
     });
     test('should return Sink Binding source nodes', async () => {
       sandbox.stub(sourceDataProvider.knExecutor, 'execute').resolves({ error: undefined, stdout: JSON.stringify(sourceData) });
       const result = await sourceDataProvider.getSources(eventingFolderNodes[2]);
       assert.equals(result[4], testSourceTreeItems[8]);
-      expect(result).to.have.lengthOf(13);
+      expect(result).to.have.lengthOf(14);
       expect(result[4].label.label).equals('example-source-binding0');
     });
 
@@ -541,11 +579,18 @@ suite('SourceDataProvider', () => {
         .stub(sourceDataProvider.knExecutor, 'execute')
         .resolves({ error: undefined, stdout: JSON.stringify(sourceEmptySpec) });
       const result = await sourceDataProvider.getSources(eventingFolderNodes[2]);
-      // eslint-disable-next-line no-console
-      console.log(`sourceDataProvider test api source empty spec result ${result.length}`);
       assert.equals(result[0], testSourceTreeItemEmptySpecs[0]);
       expect(result).to.have.lengthOf(13);
       expect(result[0].label.label).equals('example-source-apiserver0-emptySpec');
+    });
+    test('should return API source nodes when the spec is empty but there is an empty resources node', async () => {
+      sandbox
+        .stub(sourceDataProvider.knExecutor, 'execute')
+        .resolves({ error: undefined, stdout: JSON.stringify(sourceEmptySpec) });
+      const result = await sourceDataProvider.getSources(eventingFolderNodes[2]);
+      assert.equals(result[1], testSourceAPI1TreeItemEmptySpec);
+      expect(result).to.have.lengthOf(13);
+      expect(result[1].label.label).equals('example-source-apiserver1-emptySpec');
     });
     test('should return Ping source nodes when the spec is empty', async () => {
       sandbox
@@ -698,13 +743,21 @@ suite('SourceDataProvider', () => {
     });
   });
   suite('Get Generic Source Children', () => {
-    test('should return service child node for Binding source', async () => {
+    test('should return service child node for Generic (ping) source', async () => {
       sandbox.stub(sourceDataProvider.knExecutor, 'execute').resolves({ error: undefined, stdout: JSON.stringify(sourceData) });
       await sourceDataProvider.getSources(eventingFolderNodes[2]);
       const result = sourceDataProvider.getSourceChildren(testSourceTreeItems[12]);
-      assert.equals(result[0], testService0ForSourceGenericTreeItem);
+      assert.equals(result[0], testService0ForSourceGenericPing1TreeItem);
       expect(result).to.have.lengthOf(1);
       expect(result[0].label.label).equals('Sink - aaa');
+    });
+    test('should return URI child node for Generic (ping) source', async () => {
+      sandbox.stub(sourceDataProvider.knExecutor, 'execute').resolves({ error: undefined, stdout: JSON.stringify(sourceData) });
+      await sourceDataProvider.getSources(eventingFolderNodes[2]);
+      const result = sourceDataProvider.getSourceChildren(testSourceTreeItems[13]);
+      assert.equals(result[0], testURIForSourceGenericPing5TreeItem);
+      expect(result).to.have.lengthOf(1);
+      expect(result[0].label.label).equals('Sink - https://event.receiver.uri/');
     });
   });
 });

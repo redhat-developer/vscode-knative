@@ -34,7 +34,7 @@ export class Trigger extends KnativeItem {
   static JSONToTrigger(value: Items): Trigger {
     // create a map of the filter key/value pairs
     const filters = new Map();
-    if (value.spec.filter.attributes) {
+    if (value.spec.filter?.attributes) {
       // eslint-disable-next-line no-restricted-syntax, guard-for-in
       for (const f in value.spec.filter.attributes) {
         filters.set(f, value.spec.filter.attributes[f]);

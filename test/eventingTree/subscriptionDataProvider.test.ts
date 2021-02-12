@@ -8,6 +8,7 @@ import * as brokerData from './broker.json';
 import * as channelData from './channel.json';
 import * as multipleServiceData from '../servingTree/multipleServiceServicesList.json';
 import * as subscriptionData from './subscription.json';
+import * as subscriptionEmptySpecData from './subscriptionEmptySpec.json';
 import * as subscriptionIncompleteData from './subscriptionIncomplete.json';
 import { EventingContextType, ServingContextType } from '../../src/cli/config';
 import { BrokerDataProvider } from '../../src/eventingTree/brokerDataProvider';
@@ -88,8 +89,8 @@ suite('SubscriptionDataProvider', () => {
     'Subscriptions',
     'example-channel2',
     'https://event.receiver.uri/',
-    undefined,
-    undefined,
+    'https://event.receiver.uri/',
+    'https://event.receiver.uri/',
     JSON.parse(JSON.stringify(subscriptionData.items[8])),
   );
   const testSubscription4: Subscription = new Subscription(
@@ -100,6 +101,15 @@ suite('SubscriptionDataProvider', () => {
     'example-broker1',
     'example-broker0',
     JSON.parse(JSON.stringify(subscriptionData.items[9])),
+  );
+  const testSubscription0EmptySpec: Subscription = new Subscription(
+    'example-subscription0',
+    'Subscriptions',
+    undefined,
+    undefined,
+    undefined,
+    undefined,
+    JSON.parse(JSON.stringify(subscriptionEmptySpecData.items[5])),
   );
   const testSubscriptions = [testSubscription0, testSubscription1, testSubscription2, testSubscription3, testSubscription4];
 
@@ -135,6 +145,13 @@ suite('SubscriptionDataProvider', () => {
     eventingFolderNodes[3],
     testSubscription4,
     { label: 'example-subscription4' },
+    EventingContextType.SUBSCRIPTION,
+    vscode.TreeItemCollapsibleState.Expanded,
+  );
+  const testSubscription0EmptySpecTreeItem: EventingTreeItem = new EventingTreeItem(
+    eventingFolderNodes[3],
+    testSubscription0EmptySpec,
+    { label: 'example-subscription0' },
     EventingContextType.SUBSCRIPTION,
     vscode.TreeItemCollapsibleState.Expanded,
   );
@@ -307,6 +324,15 @@ suite('SubscriptionDataProvider', () => {
       expect(result).to.have.lengthOf(10);
       expect(result[5].label.label).equals('example-subscription0');
     });
+    test('should return subscription nodes even when the spec is empty', async () => {
+      sandbox
+        .stub(subscriptionDataProvider.knExecutor, 'execute')
+        .resolves({ error: undefined, stdout: JSON.stringify(subscriptionEmptySpecData) });
+      const result = await subscriptionDataProvider.getSubscriptions(eventingFolderNodes[3]);
+      assert.equals(result[5], testSubscription0EmptySpecTreeItem);
+      expect(result).to.have.lengthOf(10);
+      expect(result[5].label.label).equals('example-subscription0');
+    });
     test('should refetch subscription info when it is incomplete, then return subscription nodes', async () => {
       const exeStub = sandbox.stub(subscriptionDataProvider.knExecutor, 'execute');
       exeStub.onFirstCall().resolves({ error: undefined, stdout: JSON.stringify(subscriptionIncompleteData) });
@@ -375,9 +401,11 @@ suite('SubscriptionDataProvider', () => {
       const result = subscriptionDataProvider.getSubscriptionChildren(testSubscriptionTreeItems[3]);
       assert.equals(result[0], testChannel2ForSubscription3TreeItem);
       assert.equals(result[1], testURIForSubscription3TreeItem);
-      expect(result).to.have.lengthOf(2);
+      expect(result).to.have.lengthOf(4);
       expect(result[0].label.label).equals('Channel - example-channel2');
       expect(result[1].label.label).equals('Subscriber - https://event.receiver.uri/');
+      expect(result[2].label.label).equals('Reply - https://event.receiver.uri/');
+      expect(result[3].label.label).equals('DeadLetterSink - https://event.receiver.uri/');
     });
     test('should return subscriber, reply, and dead letter reply child nodes', async () => {
       sandbox

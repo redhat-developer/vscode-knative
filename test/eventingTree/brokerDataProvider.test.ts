@@ -23,24 +23,20 @@ suite('BrokerDataProvider', () => {
   const brokerDataProvider: BrokerDataProvider = new BrokerDataProvider();
 
   const testBroker0: Broker = new Broker('example-broker0', 'Brokers', JSON.parse(JSON.stringify(brokerData.items[0])));
+  const testBroker1: Broker = new Broker('example-broker1', 'Brokers', JSON.parse(JSON.stringify(brokerData.items[1])));
   const testBroker0TreeItem: EventingTreeItem = new EventingTreeItem(
     eventingFolderNodes[0],
     testBroker0,
     { label: 'example-broker0' },
     EventingContextType.BROKER,
     vscode.TreeItemCollapsibleState.None,
-    null,
-    null,
   );
-  const testBroker1: Broker = new Broker('example-broker1', 'Brokers', JSON.parse(JSON.stringify(brokerData.items[1])));
   const testBroker1TreeItem: EventingTreeItem = new EventingTreeItem(
     eventingFolderNodes[0],
     testBroker1,
     { label: 'example-broker1' },
     EventingContextType.BROKER,
     vscode.TreeItemCollapsibleState.None,
-    null,
-    null,
   );
   const testBrokerTreeItems = [testBroker0TreeItem, testBroker1TreeItem];
 

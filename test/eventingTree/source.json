@@ -1336,6 +1336,98 @@
         "observedGeneration": 1,
         "sinkUri": "https://event.receiver.uri"
       }
+    },
+    {
+      "apiVersion": "sources.knative.dev/v1alpha2",
+      "kind": "Source",
+      "metadata": {
+        "annotations": {
+          "sources.knative.dev/creator": "system:admin",
+          "sources.knative.dev/lastModifier": "system:admin"
+        },
+        "creationTimestamp": "2021-01-14T14:20:02Z",
+        "generation": 1,
+        "managedFields": [
+          {
+            "apiVersion": "sources.knative.dev/v1alpha2",
+            "fieldsType": "FieldsV1",
+            "fieldsV1": {
+              "f:status": {
+                ".": {},
+                "f:ceAttributes": {},
+                "f:conditions": {},
+                "f:observedGeneration": {},
+                "f:sinkUri": {}
+              }
+            },
+            "manager": "controller",
+            "operation": "Update",
+            "time": "2021-01-14T14:20:02Z"
+          },
+          {
+            "apiVersion": "sources.knative.dev/v1alpha2",
+            "fieldsType": "FieldsV1",
+            "fieldsV1": {
+              "f:spec": {
+                ".": {},
+                "f:jsonData": {},
+                "f:schedule": {},
+                "f:sink": {
+                  ".": {},
+                  "f:uri": {}
+                }
+              }
+            },
+            "manager": "kn",
+            "operation": "Update",
+            "time": "2021-01-14T14:20:02Z"
+          }
+        ],
+        "name": "example-source-ping5",
+        "namespace": "josh",
+        "resourceVersion": "227992",
+        "selfLink": "/apis/sources.knative.dev/v1alpha2/namespaces/josh/pingsources/example-source-ping5",
+        "uid": "f3f7b17a-b3b1-4fd0-a94a-6e4ebe8eb9f6"
+      },
+      "spec": {
+        "jsonData": "{ value: \"hi uri\" }",
+        "schedule": "*/2 * * * *",
+        "sink": {
+          "uri": "https://event.receiver.uri"
+        }
+      },
+      "status": {
+        "ceAttributes": [
+          {
+            "source": "/apis/v1/namespaces/josh/pingsources/example-source-ping5",
+            "type": "dev.knative.sources.ping"
+          }
+        ],
+        "conditions": [
+          {
+            "lastTransitionTime": "2021-01-14T14:20:02Z",
+            "status": "True",
+            "type": "Deployed"
+          },
+          {
+            "lastTransitionTime": "2021-01-14T14:20:02Z",
+            "status": "True",
+            "type": "Ready"
+          },
+          {
+            "lastTransitionTime": "2021-01-14T14:20:02Z",
+            "status": "True",
+            "type": "SinkProvided"
+          },
+          {
+            "lastTransitionTime": "2021-01-14T14:20:02Z",
+            "status": "True",
+            "type": "ValidSchedule"
+          }
+        ],
+        "observedGeneration": 1,
+        "sinkUri": "https://event.receiver.uri"
+      }
     }
   ],
   "kind": "SourceList"

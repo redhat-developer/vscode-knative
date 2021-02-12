@@ -63,15 +63,7 @@ export class BrokerDataProvider {
     // Create an empty state message when there is no Broker.
     if (brokers.length === 0) {
       return [
-        new EventingTreeItem(
-          parent,
-          null,
-          { label: 'No Broker Found' },
-          EventingContextType.NONE,
-          TreeItemCollapsibleState.None,
-          null,
-          null,
-        ),
+        new EventingTreeItem(parent, null, { label: 'No Broker Found' }, EventingContextType.NONE, TreeItemCollapsibleState.None),
       ];
     }
 
@@ -87,8 +79,6 @@ export class BrokerDataProvider {
           { label: value.name },
           EventingContextType.BROKER,
           TreeItemCollapsibleState.None,
-          null,
-          null,
         );
         return obj;
       })

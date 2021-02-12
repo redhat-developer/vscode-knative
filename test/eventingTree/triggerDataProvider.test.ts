@@ -8,6 +8,7 @@ import * as brokerData from './broker.json';
 import * as channelData from './channel.json';
 import * as multipleServiceData from '../servingTree/multipleServiceServicesList.json';
 import * as triggerData from './trigger.json';
+import * as triggerEmptySpecData from './triggerEmptySpec.json';
 import * as triggerIncompleteData from './triggerIncomplete.json';
 import { EventingContextType, ServingContextType } from '../../src/cli/config';
 import { BrokerDataProvider } from '../../src/eventingTree/brokerDataProvider';
@@ -99,6 +100,14 @@ suite('TriggerDataProvider', () => {
     'https://event.receiver.uri/',
     JSON.parse(JSON.stringify(triggerData.items[4])),
   );
+  const testTrigger0Empty: Trigger = new Trigger(
+    'example-trigger0',
+    'Triggers',
+    undefined,
+    new Map(),
+    undefined,
+    JSON.parse(JSON.stringify(triggerEmptySpecData.items[0])),
+  );
   const testTriggers = [testTrigger0, testTrigger1, testTrigger2, testTrigger3, testTrigger4];
   const testTrigger0TreeItem: EventingTreeItem = new EventingTreeItem(
     eventingFolderNodes[4],
@@ -132,6 +141,13 @@ suite('TriggerDataProvider', () => {
     eventingFolderNodes[4],
     testTrigger4,
     { label: 'example-trigger4' },
+    EventingContextType.TRIGGER,
+    vscode.TreeItemCollapsibleState.Expanded,
+  );
+  const testTrigger0EmptySpecTreeItem: EventingTreeItem = new EventingTreeItem(
+    eventingFolderNodes[4],
+    testTrigger0Empty,
+    { label: 'example-trigger0' },
     EventingContextType.TRIGGER,
     vscode.TreeItemCollapsibleState.Expanded,
   );
@@ -262,6 +278,17 @@ suite('TriggerDataProvider', () => {
       assert.equals(result[0], testTriggerTreeItems[0]);
       expect(result).to.have.lengthOf(5);
       expect(result[0].label.label).equals('example-trigger0');
+    });
+    test('should return trigger nodes even when the spec is empty', async () => {
+      sandbox
+        .stub(triggerDataProvider.knExecutor, 'execute')
+        .resolves({ error: undefined, stdout: JSON.stringify(triggerEmptySpecData) });
+      const result = await triggerDataProvider.getTriggers(eventingFolderNodes[4]);
+      assert.equals(result[0], testTrigger0EmptySpecTreeItem);
+      expect(result).to.have.lengthOf(5);
+      expect(result[0].label.label).equals('example-trigger0');
+      // const foundTrigger = result[0].getKnativeItem() as Trigger;
+      // assert.isNull(foundTrigger.broker);
     });
     test('should refetch trigger info when it is incomplete, then return trigger nodes', async () => {
       const exeStub = sandbox.stub(triggerDataProvider.knExecutor, 'execute');

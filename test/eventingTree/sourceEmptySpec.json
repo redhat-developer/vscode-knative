@@ -154,6 +154,10 @@
         "uid": "3833e481-6913-4a9e-af42-2132e5908a82"
       },
       "spec": {
+        "resources": [
+          {
+          }
+        ]
       },
       "status": {
         "conditions": [

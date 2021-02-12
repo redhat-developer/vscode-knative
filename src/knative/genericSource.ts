@@ -20,16 +20,16 @@ export class GenericSource extends BaseSource {
   }
 
   static JSONToSource(value: Items): GenericSource {
-    let snk: string;
+    let sinkNameOrUri: string;
     if (value.spec.sink) {
       if (value.spec.sink.ref) {
-        snk = value.spec.sink.ref.name;
+        sinkNameOrUri = value.spec.sink.ref.name;
       }
       if (value.spec.sink.uri) {
-        snk = value.spec.sink.uri;
+        sinkNameOrUri = value.spec.sink.uri;
       }
     }
-    const source = new GenericSource(value.metadata.name, 'Sources', value.kind, snk, null, value);
+    const source = new GenericSource(value.metadata.name, 'Sources', value.kind, sinkNameOrUri, null, value);
     return source;
   }
 }

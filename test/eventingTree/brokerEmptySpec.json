@@ -1,0 +1,218 @@
+{
+  "apiVersion": "eventing.knative.dev/v1beta1",
+  "items": [
+    {
+      "apiVersion": "eventing.knative.dev/v1beta1",
+      "kind": "Broker",
+      "metadata": {
+        "annotations": {
+          "eventing.knative.dev/broker.class": "MTChannelBasedBroker",
+          "eventing.knative.dev/creator": "system:admin",
+          "eventing.knative.dev/lastModifier": "system:admin"
+        },
+        "creationTimestamp": "2021-01-14T14:19:57Z",
+        "generation": 1,
+        "managedFields": [
+          {
+            "apiVersion": "eventing.knative.dev/v1beta1",
+            "fieldsType": "FieldsV1",
+            "fieldsV1": {
+              "f:spec": {
+                ".": {},
+                "f:config": {
+                  "f:apiVersion": {},
+                  "f:kind": {},
+                  "f:name": {},
+                  "f:namespace": {}
+                }
+              },
+              "f:status": {
+                ".": {},
+                "f:address": {}
+              }
+            },
+            "manager": "kn",
+            "operation": "Update",
+            "time": "2021-01-14T14:19:57Z"
+          },
+          {
+            "apiVersion": "eventing.knative.dev/v1",
+            "fieldsType": "FieldsV1",
+            "fieldsV1": {
+              "f:status": {
+                "f:address": {
+                  "f:url": {}
+                },
+                "f:annotations": {
+                  ".": {},
+                  "f:knative.dev/channelAPIVersion": {},
+                  "f:knative.dev/channelAddress": {},
+                  "f:knative.dev/channelKind": {},
+                  "f:knative.dev/channelName": {}
+                },
+                "f:conditions": {},
+                "f:observedGeneration": {}
+              }
+            },
+            "manager": "mtchannel-broker",
+            "operation": "Update",
+            "time": "2021-01-14T14:19:57Z"
+          }
+        ],
+        "name": "example-broker0",
+        "namespace": "josh",
+        "resourceVersion": "227449",
+        "selfLink": "/apis/eventing.knative.dev/v1beta1/namespaces/josh/brokers/example-broker0",
+        "uid": "98a47794-d263-4a0f-9aa3-f90f0c5c17a0"
+      },
+      "spec": {
+      },
+      "status": {
+        "address": {
+          "url": "http://broker-ingress.knative-eventing.svc.cluster.local/josh/example-broker0"
+        },
+        "annotations": {
+          "knative.dev/channelAPIVersion": "messaging.knative.dev/v1beta1",
+          "knative.dev/channelAddress": "http://example-broker0-kne-trigger-kn-channel.josh.svc.cluster.local",
+          "knative.dev/channelKind": "InMemoryChannel",
+          "knative.dev/channelName": "example-broker0-kne-trigger"
+        },
+        "conditions": [
+          {
+            "lastTransitionTime": "2021-01-14T14:19:57Z",
+            "status": "True",
+            "type": "Addressable"
+          },
+          {
+            "lastTransitionTime": "2021-01-14T14:19:57Z",
+            "status": "True",
+            "type": "FilterReady"
+          },
+          {
+            "lastTransitionTime": "2021-01-14T14:19:57Z",
+            "status": "True",
+            "type": "IngressReady"
+          },
+          {
+            "lastTransitionTime": "2021-01-14T14:19:57Z",
+            "status": "True",
+            "type": "Ready"
+          },
+          {
+            "lastTransitionTime": "2021-01-14T14:19:57Z",
+            "status": "True",
+            "type": "TriggerChannelReady"
+          }
+        ],
+        "observedGeneration": 1
+      }
+    },
+    {
+      "apiVersion": "eventing.knative.dev/v1beta1",
+      "kind": "Broker",
+      "metadata": {
+        "annotations": {
+          "eventing.knative.dev/broker.class": "MTChannelBasedBroker",
+          "eventing.knative.dev/creator": "system:admin",
+          "eventing.knative.dev/lastModifier": "system:admin"
+        },
+        "creationTimestamp": "2021-01-14T14:19:57Z",
+        "generation": 1,
+        "managedFields": [
+          {
+            "apiVersion": "eventing.knative.dev/v1beta1",
+            "fieldsType": "FieldsV1",
+            "fieldsV1": {
+              "f:spec": {
+                ".": {},
+                "f:config": {
+                  "f:apiVersion": {},
+                  "f:kind": {},
+                  "f:name": {},
+                  "f:namespace": {}
+                }
+              },
+              "f:status": {
+                ".": {},
+                "f:address": {}
+              }
+            },
+            "manager": "kn",
+            "operation": "Update",
+            "time": "2021-01-14T14:19:57Z"
+          },
+          {
+            "apiVersion": "eventing.knative.dev/v1",
+            "fieldsType": "FieldsV1",
+            "fieldsV1": {
+              "f:status": {
+                "f:address": {
+                  "f:url": {}
+                },
+                "f:annotations": {
+                  ".": {},
+                  "f:knative.dev/channelAPIVersion": {},
+                  "f:knative.dev/channelAddress": {},
+                  "f:knative.dev/channelKind": {},
+                  "f:knative.dev/channelName": {}
+                },
+                "f:conditions": {},
+                "f:observedGeneration": {}
+              }
+            },
+            "manager": "mtchannel-broker",
+            "operation": "Update",
+            "time": "2021-01-14T14:19:57Z"
+          }
+        ],
+        "name": "example-broker1",
+        "namespace": "josh",
+        "resourceVersion": "227455",
+        "selfLink": "/apis/eventing.knative.dev/v1beta1/namespaces/josh/brokers/example-broker1",
+        "uid": "40ea2289-2aaf-469a-9429-de9bf8fd8bc6"
+      },
+      "spec": {
+      },
+      "status": {
+        "address": {
+          "url": "http://broker-ingress.knative-eventing.svc.cluster.local/josh/example-broker1"
+        },
+        "annotations": {
+          "knative.dev/channelAPIVersion": "messaging.knative.dev/v1beta1",
+          "knative.dev/channelAddress": "http://example-broker1-kne-trigger-kn-channel.josh.svc.cluster.local",
+          "knative.dev/channelKind": "InMemoryChannel",
+          "knative.dev/channelName": "example-broker1-kne-trigger"
+        },
+        "conditions": [
+          {
+            "lastTransitionTime": "2021-01-14T14:19:57Z",
+            "status": "True",
+            "type": "Addressable"
+          },
+          {
+            "lastTransitionTime": "2021-01-14T14:19:57Z",
+            "status": "True",
+            "type": "FilterReady"
+          },
+          {
+            "lastTransitionTime": "2021-01-14T14:19:57Z",
+            "status": "True",
+            "type": "IngressReady"
+          },
+          {
+            "lastTransitionTime": "2021-01-14T14:19:57Z",
+            "status": "True",
+            "type": "Ready"
+          },
+          {
+            "lastTransitionTime": "2021-01-14T14:19:57Z",
+            "status": "True",
+            "type": "TriggerChannelReady"
+          }
+        ],
+        "observedGeneration": 1
+      }
+    }
+  ],
+  "kind": "BrokerList"
+}

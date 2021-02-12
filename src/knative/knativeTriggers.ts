@@ -3,7 +3,6 @@
  *  Licensed under the MIT License. See LICENSE file in the project root for license information.
  *-----------------------------------------------------------------------------------------------*/
 
-import { Uri } from 'vscode';
 import { Trigger } from './trigger';
 import { KnativeChannels } from './knativeChannels';
 import { KnativeServices } from './knativeServices';
