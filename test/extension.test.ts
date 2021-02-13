@@ -6,12 +6,16 @@ import * as referee from '@sinonjs/referee';
 import { beforeEach } from 'mocha';
 import * as yaml from 'yaml';
 import { URL } from 'url';
-import { ServingContextType } from '../src/cli/config';
-import { ServingTreeItem } from '../src/servingTree/servingTreeItem';
+import * as brokerData from './eventingTree/broker.json';
+import * as otd from '../src/editor/knativeOpenTextDocument';
+import { EventingContextType, ServingContextType } from '../src/cli/config';
+import { EventingDataProvider } from '../src/eventingTree/eventingDataProvider';
+import { EventingTreeItem } from '../src/eventingTree/eventingTreeItem';
+import { deactivate } from '../src/extension';
+import { Broker } from '../src/knative/broker';
 import { Revision } from '../src/knative/revision';
 import { Service } from '../src/knative/service';
-import { deactivate } from '../src/extension';
-import * as otd from '../src/editor/knativeOpenTextDocument';
+import { ServingTreeItem } from '../src/servingTree/servingTreeItem';
 
 const { assert } = referee;
 chai.use(sinonChai);
@@ -26,6 +30,17 @@ suite('Knative extension', () => {
   teardown(() => {
     sandbox.restore();
   });
+
+  const eventingDataProvider: EventingDataProvider = new EventingDataProvider();
+  const eventingFolderNodes: EventingTreeItem[] = eventingDataProvider.getEventingFolders();
+  const testBroker0: Broker = new Broker('example-broker0', 'Brokers', JSON.parse(JSON.stringify(brokerData.items[0])));
+  const testBroker0TreeItem: EventingTreeItem = new EventingTreeItem(
+    eventingFolderNodes[0],
+    testBroker0,
+    { label: 'example-broker0' },
+    EventingContextType.BROKER,
+    vscode.TreeItemCollapsibleState.None,
+  );
 
   const yamlServiceContentUnfiltered = `apiVersion: serving.knative.dev/v1
 kind: Service
@@ -575,6 +590,12 @@ status:
     executeCommandStub.callThrough();
     await vscode.commands.executeCommand('knative.service.open-in-browser', example2fvz4TreeItem);
     sinon.assert.calledOnce(executeCommandStub);
+  });
+
+  test('should open an Event in the editor', async () => {
+    const openTreeItemInEditorStub = sandbox.stub(otd, 'openTreeItemInEditor').resolves();
+    await vscode.commands.executeCommand('eventing.explorer.openFile', testBroker0TreeItem);
+    sinon.assert.calledOnce(openTreeItemInEditorStub);
   });
 
   test('should open a Service in the editor', async () => {
