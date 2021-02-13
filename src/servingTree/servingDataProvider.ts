@@ -313,7 +313,8 @@ export class ServingDataProvider implements TreeDataProvider<ServingTreeItem | E
       this.refresh();
       if (node.contextValue === 'service') {
         this.ksvc.removeService(node.getName());
-      } else if (node.contextValue === 'revision' || node.contextValue === 'revision_tagged') {
+      }
+      if (node.contextValue === 'revision' || node.contextValue === 'revision_tagged') {
         this.ksvc.removeRevision(node.getName());
       }
       return null;
