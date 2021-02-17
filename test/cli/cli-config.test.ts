@@ -192,7 +192,8 @@ suite('Command CLI Config', () => {
       sandbox.stub(Platform, 'getUserHomePath').returns('/home/test/');
       sandbox.stub(KnAPI, 'getKnVersion').resolves('0.20.0');
       const result: string = await rewiredCLI.CmdCliConfig.detectOrDownload('kn');
-      assert.equals(result, `${pth.sep}home${pth.sep}test${pth.sep}.vs-kn${pth.sep}kn`);
+      const expected = Platform.OS === 'win32' ? `D:\\home\\test\\.vs-kn\\kn` : `/home/test/.vs-kn/kn`;
+      assert.equals(result, expected);
     });
     test('should return the location of the kubectl tool when using a linux OS and its been installed', async () => {
       const testData = {
@@ -216,7 +217,8 @@ suite('Command CLI Config', () => {
       sandbox.stub(Platform, 'getUserHomePath').returns('/home/test/');
       sandbox.stub(KubectlAPI, 'getKubectlVersion').resolves('1.18.8');
       const result: string = await rewiredCLI.CmdCliConfig.detectOrDownload('kubectl');
-      assert.equals(result, `${pth.sep}home${pth.sep}test${pth.sep}.vs-kubectl${pth.sep}kubectl`);
+      const expected = Platform.OS === 'win32' ? `D:\\home\\test\\.vs-kubectl\\kubectl` : `/home/test/.vs-kubectl/kubectl`;
+      assert.equals(result, expected);
     });
     test('should download the kn tool when using a linux OS and it has NOT been installed and there was an error looking for it', async () => {
       const testData = {
