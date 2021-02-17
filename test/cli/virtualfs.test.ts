@@ -41,7 +41,7 @@ suite('VirtualFileSystem', () => {
     'knreadonly://loadknativecore/service-example.yaml?ns%3DtestNamespace%26contextValue%3Dservice%26name%3Dexample%26_%3D1594328823824',
   );
   const _uriExternalFileNotKnative = Uri.parse(
-    'knreadonly://loadothercore/service-example.yaml?contextValue%3Dservice%26name%3Dexample%26_%3D1594328823824',
+    'knreadonly://loadnothercore/service-example.yaml?contextValue%3Dservice%26name%3Dexample%26_%3D1594328823824',
   );
   const _uriWorkspaceRoot = Uri.file(`${pth.sep}workspace${pth.sep}root${pth.sep}test${pth.sep}uri`);
   const testLocalServiceContent = `apiVersion: serving.knative.dev/v1 kind: Service metadata: annotations: serving.knative.dev/creator: system:admin serving.knative.dev/lastModifier: system:admin creationTimestamp: "2020-07-09T02:39:32Z" generation: 1 name: local namespace: a-serverless-example spec: template: metadata: annotations: client.knative.dev/user-image: quay.io/rhdevelopers/knative-tutorial-greeter:quarkus creationTimestamp: null name: local-qycgp-1 spec: containerConcurrency: 0 containers: - image: quay.io/rhdevelopers/knative-tutorial-greeter:quarkus name: user-container readinessProbe: successThreshold: 1 tcpSocket: port: 0 resources: {} timeoutSeconds: 300 traffic: - latestRevision: true percent: 100 `;
@@ -604,14 +604,14 @@ status:
     test('should return the content of a external yaml file from a single workspace that is editable.', async () => {
       sandbox.stub(workspace, 'workspaceFolders').value(oneWSFolders);
       const testContent: Uint8Array | Thenable<Uint8Array> = Buffer.from(externalYamlFileContent, 'utf8');
-      const foundExteranlContent: Uint8Array | Thenable<Uint8Array> = await knvfs.readFile(_uriExternalFile);
-      assert.equals(foundExteranlContent, testContent);
+      const foundExternalContent: Uint8Array | Thenable<Uint8Array> = await knvfs.readFile(_uriExternalFile);
+      assert.equals(foundExternalContent, testContent);
     });
     test('should return the content of a external yaml file from a single workspace that is readonly.', async () => {
       sandbox.stub(workspace, 'workspaceFolders').value(oneWSFolders);
       const testContent: Uint8Array | Thenable<Uint8Array> = Buffer.from(externalYamlFileContentFull, 'utf8');
-      const foundExteranlContent: Uint8Array | Thenable<Uint8Array> = await knvfs.readFile(_uriExternalFileReadonly);
-      assert.equals(foundExteranlContent, testContent);
+      const foundExternalContent: Uint8Array | Thenable<Uint8Array> = await knvfs.readFile(_uriExternalFileReadonly);
+      assert.equals(foundExternalContent, testContent);
     });
     test('should return the content of a external yaml file from a single folder for a Revision.', async () => {
       sandbox.restore();
@@ -619,8 +619,8 @@ status:
       sandbox.stub(workspace, 'workspaceFolders').value(oneWSFolders);
       sandbox.stub(knvfs.knExecutor, 'execute').resolves(cedRevision);
       const testContent: Uint8Array | Thenable<Uint8Array> = Buffer.from(example75w7vYaml, 'utf8');
-      const foundExteranlContent: Uint8Array | Thenable<Uint8Array> = await knvfs.readFile(_uriExternalFileForRevision);
-      assert.equals(foundExteranlContent, testContent);
+      const foundExternalContent: Uint8Array | Thenable<Uint8Array> = await knvfs.readFile(_uriExternalFileForRevision);
+      assert.equals(foundExternalContent, testContent);
     });
     test('should return the content of a external yaml file from a single folder for a Tagged Revision.', async () => {
       sandbox.restore();
@@ -628,8 +628,8 @@ status:
       sandbox.stub(workspace, 'workspaceFolders').value(oneWSFolders);
       sandbox.stub(knvfs.knExecutor, 'execute').resolves(cedRevision);
       const testContent: Uint8Array | Thenable<Uint8Array> = Buffer.from(example75w7vYaml, 'utf8');
-      const foundExteranlContent: Uint8Array | Thenable<Uint8Array> = await knvfs.readFile(_uriExternalFileForTaggedRevision);
-      assert.equals(foundExteranlContent, testContent);
+      const foundExternalContent: Uint8Array | Thenable<Uint8Array> = await knvfs.readFile(_uriExternalFileForTaggedRevision);
+      assert.equals(foundExternalContent, testContent);
     });
     test('should return the content of a external yaml file even if it can not find the workspace folder.', async () => {
       sandbox.stub(workspace, 'workspaceFolders').value(emptyWSFolders);
@@ -664,7 +664,7 @@ status:
       }
       assert(error);
     });
-    test('should throw an error if the resouce is not Knative.', async () => {
+    test('should throw an error if the resource is not Knative.', async () => {
       sandbox.stub(workspace, 'workspaceFolders').value(oneWSFolders);
       let error;
       try {
@@ -678,8 +678,8 @@ status:
       sandbox.stub(workspace, 'workspaceFolders').value(multipleWSFolders);
       sandbox.stub(window, 'showWorkspaceFolderPick').resolves(multipleWSFolders[0]);
       const testContent: Uint8Array | Thenable<Uint8Array> = Buffer.from(externalYamlFileContent, 'utf8');
-      const foundExteranlContent: Uint8Array | Thenable<Uint8Array> = await knvfs.readFile(_uriExternalFile);
-      assert.equals(foundExteranlContent, testContent);
+      const foundExternalContent: Uint8Array | Thenable<Uint8Array> = await knvfs.readFile(_uriExternalFile);
+      assert.equals(foundExternalContent, testContent);
     });
   });
   suite('Write File', () => {
@@ -713,7 +713,7 @@ status:
       await knvfs.writeFile(_uriLocalRevisionFile, Buffer.from(testLocalRevisionContent), { create: true, overwrite: true });
       sinon.assert.notCalled(spyWrite);
     });
-    test('should write a yaml file to folder in a workspace, if given mulitple workspaces.', async () => {
+    test('should write a yaml file to folder in a workspace, if given multiple workspaces.', async () => {
       const spyWrite = sandbox.spy(fsMock, 'writeFileSync');
       sandbox.stub(workspace, 'workspaceFolders').value(multipleWSFolders);
       sandbox.stub(window, 'showWorkspaceFolderPick').resolves(multipleWSFolders[0]);

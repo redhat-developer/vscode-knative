@@ -39,7 +39,7 @@ suite('KN API commands that will', () => {
       ['new_key2', 'NEW_VALUE2'],
     ]);
 
-    const annoationMap = new Map([
+    const annotationMap = new Map([
       ['sidecar.istio.io/inject', false],
       ['sidecar.istio.io/list', true],
     ]);
@@ -51,19 +51,19 @@ suite('KN API commands that will', () => {
 
     test('should create a service with name and image', () => {
       const command: CliCommand = {
-        cliArguments: ['service', 'create', 'mysvc', '--image', 'dev.local/ns/image:latest'],
+        cliArguments: ['service', 'create', 'mySvc', '--image', 'dev.local/ns/image:latest'],
         cliCommand: 'kn',
       };
-      const commandAPI = KnAPI.createService({ name: 'mysvc', image: 'dev.local/ns/image:latest' });
+      const commandAPI = KnAPI.createService({ name: 'mySvc', image: 'dev.local/ns/image:latest' });
       assert.equals(command.cliArguments, commandAPI.cliArguments);
     });
     test('should create a service with image using --force flag', () => {
       const command: CliCommand = {
-        cliArguments: ['service', 'create', '--force', 'mysvc', '--image', 'dev.local/ns/image:latest'],
+        cliArguments: ['service', 'create', '--force', 'mySvc', '--image', 'dev.local/ns/image:latest'],
         cliCommand: 'kn',
       };
       const commandAPI = KnAPI.createService({
-        name: 'mysvc',
+        name: 'mySvc',
         image: 'dev.local/ns/image:latest',
         force: true,
       });
@@ -71,11 +71,11 @@ suite('KN API commands that will', () => {
     });
     test('should create a service with a port', () => {
       const command: CliCommand = {
-        cliArguments: ['service', 'create', 'mysvc', '--port', '80', '--image', 'dev.local/ns/image:latest'],
+        cliArguments: ['service', 'create', 'mySvc', '--port', '80', '--image', 'dev.local/ns/image:latest'],
         cliCommand: 'kn',
       };
       const commandAPI = KnAPI.createService({
-        name: 'mysvc',
+        name: 'mySvc',
         image: 'dev.local/ns/image:latest',
         port: 80,
       });
@@ -86,7 +86,7 @@ suite('KN API commands that will', () => {
         cliArguments: [
           'service',
           'create',
-          'mysvc',
+          'mySvc',
           '--env',
           'KEY1=NEW_VALUE1',
           '--env',
@@ -97,7 +97,7 @@ suite('KN API commands that will', () => {
         cliCommand: 'kn',
       };
       const commandAPI = KnAPI.createService({
-        name: 'mysvc',
+        name: 'mySvc',
         image: 'dev.local/ns/image:latest',
         env: envMap,
       });
@@ -109,7 +109,7 @@ suite('KN API commands that will', () => {
           'service',
           'create',
           '--force',
-          'mysvc',
+          'mySvc',
           '--env',
           'KEY1=NEW_VALUE1',
           '--env',
@@ -120,7 +120,7 @@ suite('KN API commands that will', () => {
         cliCommand: 'kn',
       };
       const commandAPI = KnAPI.createService({
-        name: 'mysvc',
+        name: 'mySvc',
         image: 'dev.local/ns/image:latest',
         force: true,
         env: envMap,
@@ -129,13 +129,13 @@ suite('KN API commands that will', () => {
     });
     test('should create a service with name, image, and namespace', () => {
       const command: CliCommand = {
-        cliArguments: ['service', 'create', 'mysvc', '--image', 'dev.local/ns/image:latest', '-n', 'myns'],
+        cliArguments: ['service', 'create', 'mySvc', '--image', 'dev.local/ns/image:latest', '-n', 'myNS'],
         cliCommand: 'kn',
       };
       const commandAPI = KnAPI.createService({
-        name: 'mysvc',
+        name: 'mySvc',
         image: 'dev.local/ns/image:latest',
-        namespace: 'myns',
+        namespace: 'myNS',
       });
       assert.equals(command.cliArguments, commandAPI.cliArguments);
     });
@@ -144,7 +144,7 @@ suite('KN API commands that will', () => {
         cliArguments: [
           'service',
           'create',
-          'mysvc',
+          'mySvc',
           '--image',
           'dev.local/ns/image:latest',
           '--annotation',
@@ -155,9 +155,9 @@ suite('KN API commands that will', () => {
         cliCommand: 'kn',
       };
       const commandAPI = KnAPI.createService({
-        name: 'mysvc',
+        name: 'mySvc',
         image: 'dev.local/ns/image:latest',
-        annotation: annoationMap,
+        annotation: annotationMap,
       });
       assert.equals(command.cliArguments, commandAPI.cliArguments);
     });
@@ -166,7 +166,7 @@ suite('KN API commands that will', () => {
         cliArguments: [
           'service',
           'create',
-          'mysvc',
+          'mySvc',
           '--image',
           'dev.local/ns/image:latest',
           '--label',
@@ -177,7 +177,7 @@ suite('KN API commands that will', () => {
         cliCommand: 'kn',
       };
       const commandAPI = KnAPI.createService({
-        name: 'mysvc',
+        name: 'mySvc',
         image: 'dev.local/ns/image:latest',
         label: labelMap,
       });
@@ -189,7 +189,7 @@ suite('KN API commands that will', () => {
           'service',
           'create',
           '--force',
-          'mysvc',
+          'mySvc',
           '--port',
           '80',
           '--env',
@@ -199,7 +199,7 @@ suite('KN API commands that will', () => {
           '--image',
           'dev.local/ns/image:latest',
           '-n',
-          'myns',
+          'myNS',
           '--annotation',
           'sidecar.istio.io/inject=false',
           '--annotation',
@@ -212,13 +212,13 @@ suite('KN API commands that will', () => {
         cliCommand: 'kn',
       };
       const commandAPI = KnAPI.createService({
-        name: 'mysvc',
+        name: 'mySvc',
         image: 'dev.local/ns/image:latest',
         force: true,
         port: 80,
         env: envMap,
-        namespace: 'myns',
-        annotation: annoationMap,
+        namespace: 'myNS',
+        annotation: annotationMap,
         label: labelMap,
       });
       assert.equals(command.cliArguments, commandAPI.cliArguments);
@@ -230,7 +230,7 @@ suite('KN API commands that will', () => {
       ['new_key2', 'NEW_VALUE2'],
     ]);
 
-    const annoationMap = new Map([
+    const annotationMap = new Map([
       ['sidecar.istio.io/inject', false],
       ['sidecar.istio.io/list', true],
     ]);
@@ -267,41 +267,41 @@ suite('KN API commands that will', () => {
 
     test('should update a service with name and image', () => {
       const command: CliCommand = {
-        cliArguments: ['service', 'update', 'mysvc', '--image', 'dev.local/ns/image:latest'],
+        cliArguments: ['service', 'update', 'mySvc', '--image', 'dev.local/ns/image:latest'],
         cliCommand: 'kn',
       };
-      const commandAPI = KnAPI.updateService({ name: 'mysvc', image: 'dev.local/ns/image:latest' });
+      const commandAPI = KnAPI.updateService({ name: 'mySvc', image: 'dev.local/ns/image:latest' });
       assert.equals(command.cliArguments, commandAPI.cliArguments);
     });
     test('should update a service with a port', () => {
       const command: CliCommand = {
-        cliArguments: ['service', 'update', 'mysvc', '--port', '80'],
+        cliArguments: ['service', 'update', 'mySvc', '--port', '80'],
         cliCommand: 'kn',
       };
       const commandAPI = KnAPI.updateService({
-        name: 'mysvc',
+        name: 'mySvc',
         port: 80,
       });
       assert.equals(command.cliArguments, commandAPI.cliArguments);
     });
     test('should update a service with name and namespace', () => {
       const command: CliCommand = {
-        cliArguments: ['service', 'update', 'mysvc', '-n', 'myns'],
+        cliArguments: ['service', 'update', 'mySvc', '-n', 'myNS'],
         cliCommand: 'kn',
       };
       const commandAPI = KnAPI.updateService({
-        name: 'mysvc',
-        namespace: 'myns',
+        name: 'mySvc',
+        namespace: 'myNS',
       });
       assert.equals(command.cliArguments, commandAPI.cliArguments);
     });
     test('should update a service with multiple environment variables', () => {
       const command: CliCommand = {
-        cliArguments: ['service', 'update', 'mysvc', '--env', 'KEY1=NEW_VALUE1', '--env', 'NEW_KEY2=NEW_VALUE2'],
+        cliArguments: ['service', 'update', 'mySvc', '--env', 'KEY1=NEW_VALUE1', '--env', 'NEW_KEY2=NEW_VALUE2'],
         cliCommand: 'kn',
       };
       const commandAPI = KnAPI.updateService({
-        name: 'mysvc',
+        name: 'mySvc',
         env: envMap,
       });
       assert.equals(command.cliArguments, commandAPI.cliArguments);
@@ -311,7 +311,7 @@ suite('KN API commands that will', () => {
         cliArguments: [
           'service',
           'update',
-          'mysvc',
+          'mySvc',
           '--annotation',
           'sidecar.istio.io/inject=false',
           '--annotation',
@@ -320,73 +320,73 @@ suite('KN API commands that will', () => {
         cliCommand: 'kn',
       };
       const commandAPI = KnAPI.updateService({
-        name: 'mysvc',
-        annotation: annoationMap,
+        name: 'mySvc',
+        annotation: annotationMap,
       });
       assert.equals(command.cliArguments, commandAPI.cliArguments);
     });
     test('should update a service with labels', () => {
       const command: CliCommand = {
-        cliArguments: ['service', 'update', 'mysvc', '--label', 'key1=label1', '--label', 'key2=LABEL2'],
+        cliArguments: ['service', 'update', 'mySvc', '--label', 'key1=label1', '--label', 'key2=LABEL2'],
         cliCommand: 'kn',
       };
       const commandAPI = KnAPI.updateService({
-        name: 'mysvc',
+        name: 'mySvc',
         label: labelMap,
       });
       assert.equals(command.cliArguments, commandAPI.cliArguments);
     });
     test('should update a service with limits', () => {
       const command: CliCommand = {
-        cliArguments: ['service', 'update', 'mysvc', '--limit', 'key1=limit1', '--limit', 'key2=LIMIT2'],
+        cliArguments: ['service', 'update', 'mySvc', '--limit', 'key1=limit1', '--limit', 'key2=LIMIT2'],
         cliCommand: 'kn',
       };
       const commandAPI = KnAPI.updateService({
-        name: 'mysvc',
+        name: 'mySvc',
         limit: limitMap,
       });
       assert.equals(command.cliArguments, commandAPI.cliArguments);
     });
     test('should update a service with requests', () => {
       const command: CliCommand = {
-        cliArguments: ['service', 'update', 'mysvc', '--request', 'key1=request1', '--request', 'key2=REQUEST2'],
+        cliArguments: ['service', 'update', 'mySvc', '--request', 'key1=request1', '--request', 'key2=REQUEST2'],
         cliCommand: 'kn',
       };
       const commandAPI = KnAPI.updateService({
-        name: 'mysvc',
+        name: 'mySvc',
         request: requestMap,
       });
       assert.equals(command.cliArguments, commandAPI.cliArguments);
     });
     test('should update a service with tags', () => {
       const command: CliCommand = {
-        cliArguments: ['service', 'update', 'mysvc', '--tag', 'key1=tag1', '--tag', 'key2=TAG2'],
+        cliArguments: ['service', 'update', 'mySvc', '--tag', 'key1=tag1', '--tag', 'key2=TAG2'],
         cliCommand: 'kn',
       };
       const commandAPI = KnAPI.updateService({
-        name: 'mysvc',
+        name: 'mySvc',
         tag: tagMap,
       });
       assert.equals(command.cliArguments, commandAPI.cliArguments);
     });
     test('should update a service with traffic', () => {
       const command: CliCommand = {
-        cliArguments: ['service', 'update', 'mysvc', '--traffic', 'key1=traffic1', '--traffic', 'key2=TRAFFIC2'],
+        cliArguments: ['service', 'update', 'mySvc', '--traffic', 'key1=traffic1', '--traffic', 'key2=TRAFFIC2'],
         cliCommand: 'kn',
       };
       const commandAPI = KnAPI.updateService({
-        name: 'mysvc',
+        name: 'mySvc',
         traffic: trafficMap,
       });
       assert.equals(command.cliArguments, commandAPI.cliArguments);
     });
     test('should update a service with untag', () => {
       const command: CliCommand = {
-        cliArguments: ['service', 'update', 'mysvc', '--untag', 'key1=untag1', '--untag', 'key2=UNTAG2'],
+        cliArguments: ['service', 'update', 'mySvc', '--untag', 'key1=untag1', '--untag', 'key2=UNTAG2'],
         cliCommand: 'kn',
       };
       const commandAPI = KnAPI.updateService({
-        name: 'mysvc',
+        name: 'mySvc',
         untag: untagMap,
       });
       assert.equals(command.cliArguments, commandAPI.cliArguments);
@@ -396,13 +396,13 @@ suite('KN API commands that will', () => {
         cliArguments: [
           'service',
           'update',
-          'mysvc',
+          'mySvc',
           '--image',
           'dev.local/ns/image:latest',
           '--port',
           '80',
           '-n',
-          'myns',
+          'myNS',
           '--env',
           'KEY1=NEW_VALUE1',
           '--env',
@@ -439,12 +439,12 @@ suite('KN API commands that will', () => {
         cliCommand: 'kn',
       };
       const commandAPI = KnAPI.updateService({
-        name: 'mysvc',
+        name: 'mySvc',
         image: 'dev.local/ns/image:latest',
         port: 80,
-        namespace: 'myns',
+        namespace: 'myNS',
         env: envMap,
-        annotation: annoationMap,
+        annotation: annotationMap,
         label: labelMap,
         limit: limitMap,
         request: requestMap,
@@ -475,12 +475,12 @@ suite('KN API commands that will', () => {
       assert.equals(command.cliArguments, KnAPI.listRevisions().cliArguments);
     });
     test('should return command for listing revisions for a service', () => {
-      const sname = 'myservice';
+      const sName = 'myService';
       const command: CliCommand = {
-        cliArguments: ['revision', 'list', '-o', 'json', '-s', sname],
+        cliArguments: ['revision', 'list', '-o', 'json', '-s', sName],
         cliCommand: 'kn',
       };
-      assert.equals(command.cliArguments, KnAPI.listRevisionsForService(sname).cliArguments);
+      assert.equals(command.cliArguments, KnAPI.listRevisionsForService(sName).cliArguments);
     });
   });
 
@@ -537,12 +537,12 @@ suite('KN API commands that will', () => {
       assert.equals(command.cliArguments, KnAPI.listRoutes().cliArguments);
     });
     test('should return command for listing routes for a service', () => {
-      const sname = 'myservice';
+      const sName = 'myService';
       const command: CliCommand = {
-        cliArguments: ['route', 'list', sname, '-o', 'json'],
+        cliArguments: ['route', 'list', sName, '-o', 'json'],
         cliCommand: 'kn',
       };
-      assert.equals(command.cliArguments, KnAPI.listRoutesForService(sname).cliArguments);
+      assert.equals(command.cliArguments, KnAPI.listRoutesForService(sName).cliArguments);
     });
   });
 
@@ -613,19 +613,19 @@ suite('KN API commands that will', () => {
 
     test('should create an event source with source type and name', () => {
       const command: CliCommand = {
-        cliArguments: ['source', 'ping', 'create', 'mysvc'],
+        cliArguments: ['source', 'ping', 'create', 'mySvc'],
         cliCommand: 'kn',
       };
-      const commandAPI = KnAPI.createSource('ping', 'mysvc');
+      const commandAPI = KnAPI.createSource('ping', 'mySvc');
       assert.equals(command.cliArguments, commandAPI.cliArguments);
     });
 
     test('should create an event source with source type and name with options', () => {
       const command: CliCommand = {
-        cliArguments: ['source', 'ping', 'create', 'mysvc', '--sink', 'SINK'],
+        cliArguments: ['source', 'ping', 'create', 'mySvc', '--sink', 'SINK'],
         cliCommand: 'kn',
       };
-      const commandAPI = KnAPI.createSource('ping', 'mysvc', sink);
+      const commandAPI = KnAPI.createSource('ping', 'mySvc', sink);
       assert.equals(command.cliArguments, commandAPI.cliArguments);
     });
   });
@@ -635,19 +635,19 @@ suite('KN API commands that will', () => {
 
     test('should update an event source with source type and name', () => {
       const command: CliCommand = {
-        cliArguments: ['source', 'ping', 'update', 'mysvc'],
+        cliArguments: ['source', 'ping', 'update', 'mySvc'],
         cliCommand: 'kn',
       };
-      const commandAPI = KnAPI.updateSource('ping', 'mysvc');
+      const commandAPI = KnAPI.updateSource('ping', 'mySvc');
       assert.equals(command.cliArguments, commandAPI.cliArguments);
     });
 
     test('should update an event source with source type and name with options', () => {
       const command: CliCommand = {
-        cliArguments: ['source', 'ping', 'update', 'mysvc', '--sink', 'SINK'],
+        cliArguments: ['source', 'ping', 'update', 'mySvc', '--sink', 'SINK'],
         cliCommand: 'kn',
       };
-      const commandAPI = KnAPI.updateSource('ping', 'mysvc', sink);
+      const commandAPI = KnAPI.updateSource('ping', 'mySvc', sink);
       assert.equals(command.cliArguments, commandAPI.cliArguments);
     });
   });
@@ -655,10 +655,10 @@ suite('KN API commands that will', () => {
   suite('Delete Sources', () => {
     test('should delete an event source with source type and name', () => {
       const command: CliCommand = {
-        cliArguments: ['source', 'ping', 'delete', 'mysvc'],
+        cliArguments: ['source', 'ping', 'delete', 'mySvc'],
         cliCommand: 'kn',
       };
-      const commandAPI = KnAPI.deleteSource('ping', 'mysvc');
+      const commandAPI = KnAPI.deleteSource('ping', 'mySvc');
       assert.equals(command.cliArguments, commandAPI.cliArguments);
     });
   });
@@ -666,10 +666,10 @@ suite('KN API commands that will', () => {
   suite('Describe Sources', () => {
     test('should describe an event source with source type and name', () => {
       const command: CliCommand = {
-        cliArguments: ['source', 'ping', 'describe', 'mysvc'],
+        cliArguments: ['source', 'ping', 'describe', 'mySvc'],
         cliCommand: 'kn',
       };
-      const commandAPI = KnAPI.describeSource('ping', 'mysvc');
+      const commandAPI = KnAPI.describeSource('ping', 'mySvc');
       assert.equals(command.cliArguments, commandAPI.cliArguments);
     });
   });
@@ -690,19 +690,19 @@ suite('KN API commands that will', () => {
 
     test('should create an event subscription with subscription type and name', () => {
       const command: CliCommand = {
-        cliArguments: ['subscription', 'create', 'mysvc'],
+        cliArguments: ['subscription', 'create', 'mySvc'],
         cliCommand: 'kn',
       };
-      const commandAPI = KnAPI.createSubscription('mysvc');
+      const commandAPI = KnAPI.createSubscription('mySvc');
       assert.equals(command.cliArguments, commandAPI.cliArguments);
     });
 
     test('should create an event subscription with subscription type and name with options', () => {
       const command: CliCommand = {
-        cliArguments: ['subscription', 'create', 'mysvc', '--sink', 'SINK'],
+        cliArguments: ['subscription', 'create', 'mySvc', '--sink', 'SINK'],
         cliCommand: 'kn',
       };
-      const commandAPI = KnAPI.createSubscription('mysvc', sink);
+      const commandAPI = KnAPI.createSubscription('mySvc', sink);
       assert.equals(command.cliArguments, commandAPI.cliArguments);
     });
   });
@@ -712,19 +712,19 @@ suite('KN API commands that will', () => {
 
     test('should update an event subscription with subscription type and name', () => {
       const command: CliCommand = {
-        cliArguments: ['subscription', 'update', 'mysvc'],
+        cliArguments: ['subscription', 'update', 'mySvc'],
         cliCommand: 'kn',
       };
-      const commandAPI = KnAPI.updateSubscription('mysvc');
+      const commandAPI = KnAPI.updateSubscription('mySvc');
       assert.equals(command.cliArguments, commandAPI.cliArguments);
     });
 
     test('should update an event subscription with subscription type and name with options', () => {
       const command: CliCommand = {
-        cliArguments: ['subscription', 'update', 'mysvc', '--sink', 'SINK'],
+        cliArguments: ['subscription', 'update', 'mySvc', '--sink', 'SINK'],
         cliCommand: 'kn',
       };
-      const commandAPI = KnAPI.updateSubscription('mysvc', sink);
+      const commandAPI = KnAPI.updateSubscription('mySvc', sink);
       assert.equals(command.cliArguments, commandAPI.cliArguments);
     });
   });
@@ -732,10 +732,10 @@ suite('KN API commands that will', () => {
   suite('Delete Subscriptions', () => {
     test('should delete an event subscription with subscription type and name', () => {
       const command: CliCommand = {
-        cliArguments: ['subscription', 'delete', 'mysvc'],
+        cliArguments: ['subscription', 'delete', 'mySvc'],
         cliCommand: 'kn',
       };
-      const commandAPI = KnAPI.deleteSubscription('mysvc');
+      const commandAPI = KnAPI.deleteSubscription('mySvc');
       assert.equals(command.cliArguments, commandAPI.cliArguments);
     });
   });
@@ -756,19 +756,19 @@ suite('KN API commands that will', () => {
 
     test('should create an event trigger with name', () => {
       const command: CliCommand = {
-        cliArguments: ['trigger', 'create', 'mysvc'],
+        cliArguments: ['trigger', 'create', 'mySvc'],
         cliCommand: 'kn',
       };
-      const commandAPI = KnAPI.createTrigger('mysvc');
+      const commandAPI = KnAPI.createTrigger('mySvc');
       assert.equals(command.cliArguments, commandAPI.cliArguments);
     });
 
     test('should create an event trigger with name and options', () => {
       const command: CliCommand = {
-        cliArguments: ['trigger', 'create', 'mysvc', '--sink', 'SINK'],
+        cliArguments: ['trigger', 'create', 'mySvc', '--sink', 'SINK'],
         cliCommand: 'kn',
       };
-      const commandAPI = KnAPI.createTrigger('mysvc', sink);
+      const commandAPI = KnAPI.createTrigger('mySvc', sink);
       assert.equals(command.cliArguments, commandAPI.cliArguments);
     });
   });
@@ -778,19 +778,19 @@ suite('KN API commands that will', () => {
 
     test('should update an event trigger with name', () => {
       const command: CliCommand = {
-        cliArguments: ['trigger', 'update', 'mysvc'],
+        cliArguments: ['trigger', 'update', 'mySvc'],
         cliCommand: 'kn',
       };
-      const commandAPI = KnAPI.updateTrigger('mysvc');
+      const commandAPI = KnAPI.updateTrigger('mySvc');
       assert.equals(command.cliArguments, commandAPI.cliArguments);
     });
 
     test('should update an event trigger with name and options', () => {
       const command: CliCommand = {
-        cliArguments: ['trigger', 'update', 'mysvc', '--sink', 'SINK'],
+        cliArguments: ['trigger', 'update', 'mySvc', '--sink', 'SINK'],
         cliCommand: 'kn',
       };
-      const commandAPI = KnAPI.updateTrigger('mysvc', sink);
+      const commandAPI = KnAPI.updateTrigger('mySvc', sink);
       assert.equals(command.cliArguments, commandAPI.cliArguments);
     });
   });
@@ -798,10 +798,10 @@ suite('KN API commands that will', () => {
   suite('Delete Triggers', () => {
     test('should delete an event trigger with trigger type and name', () => {
       const command: CliCommand = {
-        cliArguments: ['trigger', 'delete', 'mysvc'],
+        cliArguments: ['trigger', 'delete', 'mySvc'],
         cliCommand: 'kn',
       };
-      const commandAPI = KnAPI.deleteTrigger('mysvc');
+      const commandAPI = KnAPI.deleteTrigger('mySvc');
       assert.equals(command.cliArguments, commandAPI.cliArguments);
     });
   });
@@ -820,10 +820,10 @@ suite('KN API commands that will', () => {
   suite('Create Brokers', () => {
     test('should create an event broker with name', () => {
       const command: CliCommand = {
-        cliArguments: ['broker', 'create', 'mysvc'],
+        cliArguments: ['broker', 'create', 'mySvc'],
         cliCommand: 'kn',
       };
-      const commandAPI = KnAPI.createBroker('mysvc');
+      const commandAPI = KnAPI.createBroker('mySvc');
       assert.equals(command.cliArguments, commandAPI.cliArguments);
     });
   });
@@ -831,10 +831,10 @@ suite('KN API commands that will', () => {
   suite('Delete Brokers', () => {
     test('should delete an event broker with broker type and name', () => {
       const command: CliCommand = {
-        cliArguments: ['broker', 'delete', 'mysvc'],
+        cliArguments: ['broker', 'delete', 'mySvc'],
         cliCommand: 'kn',
       };
-      const commandAPI = KnAPI.deleteBroker('mysvc');
+      const commandAPI = KnAPI.deleteBroker('mySvc');
       assert.equals(command.cliArguments, commandAPI.cliArguments);
     });
   });
@@ -864,10 +864,10 @@ suite('KN API commands that will', () => {
   suite('Create Channels', () => {
     test('should create an event channel with name', () => {
       const command: CliCommand = {
-        cliArguments: ['channel', 'create', 'mysvc'],
+        cliArguments: ['channel', 'create', 'mySvc'],
         cliCommand: 'kn',
       };
-      const commandAPI = KnAPI.createChannel('mysvc');
+      const commandAPI = KnAPI.createChannel('mySvc');
       assert.equals(command.cliArguments, commandAPI.cliArguments);
     });
   });
@@ -875,10 +875,10 @@ suite('KN API commands that will', () => {
   suite('Delete Channels', () => {
     test('should delete an event channel with channel type and name', () => {
       const command: CliCommand = {
-        cliArguments: ['channel', 'delete', 'mysvc'],
+        cliArguments: ['channel', 'delete', 'mySvc'],
         cliCommand: 'kn',
       };
-      const commandAPI = KnAPI.deleteChannel('mysvc');
+      const commandAPI = KnAPI.deleteChannel('mySvc');
       assert.equals(command.cliArguments, commandAPI.cliArguments);
     });
   });
