@@ -4,10 +4,10 @@
  *-----------------------------------------------------------------------------------------------*/
 
 import * as fs from 'fs';
-import { ensureDirSync, removeSync } from 'fs-extra';
+import * as fsExtra from 'fs-extra';
 import * as path from 'path';
 import { commands, Progress, ProgressLocation, Uri, window } from 'vscode';
-import { which } from 'shelljs';
+import * as shell from 'shelljs';
 import { fromFileSync } from 'hasha';
 import { satisfies } from 'semver';
 // import { KnCli, createCliCommand } from './cmdCli';
@@ -15,14 +15,16 @@ import { DownloadUtil } from '../util/download';
 import { Platform } from '../util/platform';
 import { KnAPI } from './kn-api';
 import { KubectlAPI } from './kubectl-api';
+import * as configData from './cli-config.json';
 
 // import loadJSON from '../util/parse';
-// import * as configData from './cli-config.json';
-import configData = require('./cli-config.json');
+// import configData = require('./cli-config.json');
 // const configData = './cli-config.json';
 
 export interface Config {
-  cmd: CliConfig;
+  cmd?: CliConfig;
+  kn?: CliConfig;
+  kubectl?: CliConfig;
 }
 export interface CliConfig {
   description: string;
@@ -36,7 +38,7 @@ export interface CliConfig {
   url?: string;
   sha256sum?: string;
   dlFileName?: string;
-  cmdFileName?: string;
+  cmdFileName: string;
 }
 export interface PlatformOS {
   win32: PlatformData;
@@ -46,8 +48,8 @@ export interface PlatformOS {
 export interface PlatformData {
   url: string;
   sha256sum: string;
-  dlFileName?: string;
-  cmdFileName: string;
+  dlFileName: string;
+  cmdFileName?: string;
 }
 
 /**
@@ -59,7 +61,8 @@ async function getVersion(location: string): Promise<string> {
   const [cmd] = location.split(path.sep).slice(-1);
   if (cmd === 'kn') {
     version = KnAPI.getKnVersion(location);
-  } else if (cmd === 'kubectl') {
+  }
+  if (cmd === 'kubectl') {
     version = KubectlAPI.getKubectlVersion(location);
   }
   return version;
@@ -118,7 +121,7 @@ async function selectTool(locations: string[], versionRange: string, versionLoca
         // eslint-disable-next-line no-await-in-loop
         const locationsVersion: string = await getVersion(location);
 
-        // Check if the version is a local build after a certain date or matches the given vesion range for releases version.
+        // Check if the version is a local build after a certain date or matches the given version range for releases version.
         if (Number(locationsVersion) > versionLocalBuildRange || satisfies(locationsVersion, versionRange)) {
           foundLocation = location;
           break;
@@ -134,13 +137,13 @@ async function selectTool(locations: string[], versionRange: string, versionLoca
 }
 
 export class CmdCliConfig {
-  public static loadMetadata(requirements, platform: string): Config | void {
+  public static loadMetadata(requirements: Config, platformOS: string): Config {
     const reqs = JSON.parse(JSON.stringify(requirements));
     // eslint-disable-next-line no-restricted-syntax
     for (const object in requirements) {
       if (reqs[object].platform) {
-        if (reqs[object].platform[platform]) {
-          Object.assign(reqs[object], reqs[object].platform[platform]);
+        if (reqs[object].platform[platformOS]) {
+          Object.assign(reqs[object], reqs[object].platform[platformOS]);
           delete reqs[object].platform;
         } else {
           delete reqs[object];
@@ -153,7 +156,7 @@ export class CmdCliConfig {
   /**
    * This contains the knative cli config data needed to access and run the commands.
    */
-  static tools: Config | void = CmdCliConfig.loadMetadata(configData, Platform.OS);
+  static tools: Config = CmdCliConfig.loadMetadata(configData, Platform.OS);
 
   /**
    * Reset the knative cli config data
@@ -181,7 +184,7 @@ export class CmdCliConfig {
         // Look in [HOME]/.vs-[CMD]/ for the [CMD] cli executable
         const toolCacheLocation = path.resolve(Platform.getUserHomePath(), cliFile, CmdCliConfig.tools[cmd].cmdFileName);
         // If [CMD] cli is installed, get it's install location/path
-        const whichLocation = which(cmd);
+        const whichLocation = shell.which(cmd);
         // Get a list of locations.
         const toolLocations: string[] = [whichLocation ? whichLocation.stdout : null, toolCacheLocation];
         // Check the list of locations and see if what we need is there.
@@ -206,7 +209,7 @@ export class CmdCliConfig {
             'Cancel',
           );
           // Ensure that the directory exists. If the directory structure does not exist, then create it.
-          ensureDirSync(path.resolve(Platform.getUserHomePath(), cliFile));
+          fsExtra.ensureDirSync(path.resolve(Platform.getUserHomePath(), cliFile));
           // If the user selected to download and install then do this.
           if (response === installRequest) {
             // Display a Progress notification while downloading
@@ -236,7 +239,7 @@ export class CmdCliConfig {
                 // so they can download it again.
                 if (sha256sum !== CmdCliConfig.tools[cmd].sha256sum) {
                   // Delete the file since something went wrong with the download.
-                  removeSync(toolDlLocation);
+                  fsExtra.removeSync(toolDlLocation);
                   action = await window.showInformationMessage(
                     `Checksum for downloaded ${CmdCliConfig.tools[cmd].description} v${CmdCliConfig.tools[cmd].version} is not correct.`,
                     'Download again',

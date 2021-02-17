@@ -7,7 +7,7 @@ import { beforeEach } from 'mocha';
 import { compareNodes } from '../../src/knative/knativeItem';
 
 const { assert } = referee;
-const { expect } = chai;
+// const { expect } = chai;
 chai.use(sinonChai);
 
 suite('Knative Brokers', () => {
