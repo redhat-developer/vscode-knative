@@ -2,7 +2,6 @@ import * as vscode from 'vscode';
 import * as chai from 'chai';
 import * as fs from 'fs';
 import * as fsExtra from 'fs-extra';
-import * as pth from 'path';
 import * as sinon from 'sinon';
 import * as sinonChai from 'sinon-chai';
 import * as shell from 'shelljs';
