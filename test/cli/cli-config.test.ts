@@ -2,10 +2,11 @@ import * as vscode from 'vscode';
 import * as chai from 'chai';
 import * as fs from 'fs';
 import * as fsExtra from 'fs-extra';
-import * as sinonChai from 'sinon-chai';
+import * as pth from 'path';
 import * as sinon from 'sinon';
-import * as referee from '@sinonjs/referee';
+import * as sinonChai from 'sinon-chai';
 import * as shell from 'shelljs';
+import * as referee from '@sinonjs/referee';
 import { beforeEach } from 'mocha';
 import { CmdCliConfig, Config } from '../../src/cli/cli-config';
 import { Platform } from '../../src/util/platform';
@@ -191,7 +192,7 @@ suite('Command CLI Config', () => {
       sandbox.stub(Platform, 'getUserHomePath').returns('/home/test/');
       sandbox.stub(KnAPI, 'getKnVersion').resolves('0.20.0');
       const result: string = await rewiredCLI.CmdCliConfig.detectOrDownload('kn');
-      assert.equals(result, '/home/test/.vs-kn/kn');
+      assert.equals(result, `${pth.sep}home${pth.sep}test${pth.sep}.vs-kn${pth.sep}kn`);
     });
     test('should return the location of the kubectl tool when using a linux OS and its been installed', async () => {
       const testData = {
@@ -215,7 +216,7 @@ suite('Command CLI Config', () => {
       sandbox.stub(Platform, 'getUserHomePath').returns('/home/test/');
       sandbox.stub(KubectlAPI, 'getKubectlVersion').resolves('1.18.8');
       const result: string = await rewiredCLI.CmdCliConfig.detectOrDownload('kubectl');
-      assert.equals(result, '/home/test/.vs-kubectl/kubectl');
+      assert.equals(result, `${pth.sep}home${pth.sep}test${pth.sep}.vs-kubectl${pth.sep}kubectl`);
     });
     test('should download the kn tool when using a linux OS and it has NOT been installed and there was an error looking for it', async () => {
       const testData = {
