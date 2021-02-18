@@ -6,7 +6,7 @@ import * as sinonChai from 'sinon-chai';
 import * as referee from '@sinonjs/referee';
 import { beforeEach } from 'mocha';
 import * as childProcess from 'child_process';
-import { Writable, Readable } from 'stream';
+import { Readable } from 'stream';
 import { CmdCli, cliCommandToString, createCliCommand, CliCommand, CliExitData } from '../../src/cli/cmdCli';
 
 import rewire = require('rewire');
