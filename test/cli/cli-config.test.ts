@@ -56,8 +56,6 @@ suite('Command CLI Config', () => {
       }
       if (path.toString().startsWith('/throw/error')) {
         const error = new Error('error in existsSync');
-        // eslint-disable-next-line no-console
-        console.log(`cli-config.test existsSync error ${error}`);
         throw error;
       }
       return true;
