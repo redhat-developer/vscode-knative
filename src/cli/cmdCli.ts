@@ -23,10 +23,6 @@ export interface CliCommand {
 }
 
 export function createCliCommand(cliCommand: string, ...cliArguments: string[]): CliCommand {
-  if (!cliArguments) {
-    // eslint-disable-next-line no-param-reassign
-    cliArguments = [];
-  }
   return { cliCommand, cliArguments };
 }
 
