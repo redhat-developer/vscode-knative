@@ -41,7 +41,7 @@ suite('VirtualFileSystem', () => {
     'knreadonly://loadknativecore/service-example.yaml?ns%3DtestNamespace%26contextValue%3Dservice%26name%3Dexample%26_%3D1594328823824',
   );
   const _uriExternalFileNotKnative = Uri.parse(
-    'knreadonly://loadnothercore/service-example.yaml?contextValue%3Dservice%26name%3Dexample%26_%3D1594328823824',
+    'knreadonly://loadothercore/service-example.yaml?contextValue%3Dservice%26name%3Dexample%26_%3D1594328823824',
   );
   const _uriWorkspaceRoot = Uri.file(`${pth.sep}workspace${pth.sep}root${pth.sep}test${pth.sep}uri`);
   const testLocalServiceContent = `apiVersion: serving.knative.dev/v1 kind: Service metadata: annotations: serving.knative.dev/creator: system:admin serving.knative.dev/lastModifier: system:admin creationTimestamp: "2020-07-09T02:39:32Z" generation: 1 name: local namespace: a-serverless-example spec: template: metadata: annotations: client.knative.dev/user-image: quay.io/rhdevelopers/knative-tutorial-greeter:quarkus creationTimestamp: null name: local-qycgp-1 spec: containerConcurrency: 0 containers: - image: quay.io/rhdevelopers/knative-tutorial-greeter:quarkus name: user-container readinessProbe: successThreshold: 1 tcpSocket: port: 0 resources: {} timeoutSeconds: 300 traffic: - latestRevision: true percent: 100 `;

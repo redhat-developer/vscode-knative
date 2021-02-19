@@ -46,7 +46,7 @@ export function vfsUri(
   const docName = `${context}-${name}.${outputFormat}`;
   const nonce = new Date().getTime();
   const nsQuery = namespace ? `ns=${namespace}&` : '';
-  // "knmsx://loadknativecore/serviceknative-tutorial-greeter.yaml?contextValue=service&name=knative-tutorial-greeter&_=1593030763939"
+  // "knmsx://loadknativecore/serviceKnative-tutorial-greeter.yaml?contextValue=service&name=knative-tutorial-greeter&_=1593030763939"
   const uri = `${schema}://${KN_RESOURCE_AUTHORITY}/${docName}?${nsQuery}contextValue=${context}&name=${name}&_=${nonce}`;
   return Uri.parse(uri);
 }

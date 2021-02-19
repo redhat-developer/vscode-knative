@@ -32,7 +32,7 @@ suite('Filters utility class', () => {
   test('should not replace similar password-like string or parameter annotation in given text', () => {
     expect(
       Filters.filterPassword(
-        `some string and given parameter --p 'not exacltyPass' or --p='again not a password' neither -p=someValue`,
+        `some string and given parameter --p 'not exactlyPass' or --p='again not a password' neither -p=someValue`,
       ),
     ).to.include('-p **********');
   });

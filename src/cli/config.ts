@@ -52,7 +52,7 @@ export const enum SourceType {
 
 export interface Config {
   kind: Kind;
-  apiversion: string;
+  apiVersion: string;
   ComponentSettings: ComponentSettings;
 }
 
