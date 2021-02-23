@@ -1,22 +1,20 @@
 import * as vscode from 'vscode';
+import { expect } from 'chai';
 import * as chai from 'chai';
-import * as sinonChai from 'sinon-chai';
-import * as sinon from 'sinon';
-import * as referee from '@sinonjs/referee';
 import { beforeEach } from 'mocha';
-import { ServingDataProvider } from '../../src/servingTree/servingDataProvider';
-import * as multipleServiceData from '../servingTree/multipleServiceServicesList.json';
-import * as aaaServiceRevisionData from '../servingTree/aaaServiceRevisionList.json';
-import * as bbbServiceRevisionData from '../servingTree/bbbServiceRevisionList.json';
-import * as cccServiceRevisionData from '../servingTree/cccServiceRevisionList.json';
-import * as exampleServiceRevisionData from '../servingTree/singleServiceRevisionList.json';
-import { ServingTreeItem } from '../../src/servingTree/servingTreeItem';
+import * as sinon from 'sinon';
+import * as sinonChai from 'sinon-chai';
 import { KnativeServices } from '../../src/knative/knativeServices';
 import { Revision } from '../../src/knative/revision';
 import { Service } from '../../src/knative/service';
+import { ServingDataProvider } from '../../src/servingTree/servingDataProvider';
+import { ServingTreeItem } from '../../src/servingTree/servingTreeItem';
+import * as aaaServiceRevisionData from '../servingTree/aaaServiceRevisionList.json';
+import * as bbbServiceRevisionData from '../servingTree/bbbServiceRevisionList.json';
+import * as cccServiceRevisionData from '../servingTree/cccServiceRevisionList.json';
+import * as multipleServiceData from '../servingTree/multipleServiceServicesList.json';
+import * as exampleServiceRevisionData from '../servingTree/singleServiceRevisionList.json';
 
-const { assert } = referee;
-const { expect } = chai;
 chai.use(sinonChai);
 
 suite('Knative Services', () => {
@@ -70,49 +68,49 @@ suite('Knative Services', () => {
   suite('Getting an instance', () => {
     test('should return an instance of the singleton', () => {
       const instance: KnativeServices = KnativeServices.Instance;
-      assert.equals(instance, ksvc);
+      expect(instance).to.deep.equal(ksvc);
     });
   });
   suite('Getting a Service', () => {
     test('should return a list of services from the instance', () => {
       const returnedService: Service = ksvc.getServices()[3];
-      assert.equals(service, returnedService);
+      expect(returnedService).to.deep.equal(service);
     });
   });
   suite('Finding a Service', () => {
     test('should return a service using the service name', () => {
       const returnedService: Service = ksvc.findService('example');
-      assert.equals(service, returnedService);
+      expect(returnedService).to.deep.equal(service);
     });
   });
   suite('Finding a Revision', () => {
     test('should return a revision using the revision name', () => {
       const returnedRevision: Revision = ksvc.findRevision('example-75w7v');
-      assert.equals(revision, returnedRevision);
+      expect(returnedRevision).to.deep.equal(revision);
     });
   });
   suite('Finding a Service and Revision', () => {
     test('should return an object with both service and revision using the revision name', () => {
       const returnedServiceRevision = ksvc.findRevisionAndService('example-75w7v');
-      assert.equals({ revision, service }, returnedServiceRevision);
+      expect(returnedServiceRevision).to.deep.equal({ revision, service });
     });
   });
   suite('Check Traffic', () => {
     test('should a revision with 2 traffics one tagged', () => {
       const returnedRevision = ksvc.findRevision('example-75w7v');
-      assert.equals(revision, returnedRevision);
-      chai.assert.exists(revision.traffic);
-      chai.assert.equal(revision.traffic.length, 2);
-      chai.assert.equal(revision.traffic[0].percent, 100);
-      chai.assert.equal(revision.traffic[1].tag, 'current');
+      expect(revision).to.deep.equal(returnedRevision);
+      expect(revision.traffic);
+      expect(revision.traffic).to.have.lengthOf(2);
+      expect(revision.traffic[0].percent).to.equal(100);
+      expect(revision.traffic[1].tag).to.equal('current');
     });
   });
   suite('Finding Service and Revision indexes', () => {
     test('should return an object with both service and revision using the revision name', () => {
-      const returnedServiceRevision = ksvc.findRevisionAndServiceIndex('example-75w7v');
       const revisionIndex = 0;
       const serviceIndex = 3;
-      assert.equals({ revisionIndex, serviceIndex }, returnedServiceRevision);
+      const returnedServiceRevision = ksvc.findRevisionAndServiceIndex('example-75w7v');
+      expect(returnedServiceRevision).to.deep.equal({ revisionIndex, serviceIndex });
     });
   });
   suite('Adding a Service', () => {
@@ -120,7 +118,7 @@ suite('Knative Services', () => {
       const remainingServices: Service[] = ksvc.removeService('example');
       expect(remainingServices).to.have.lengthOf(3);
       const returnedService: Service = ksvc.addService(service);
-      assert.equals(service, returnedService);
+      expect(returnedService).to.deep.equal(service);
     });
   });
   suite('Adding multiple Services', () => {
@@ -128,13 +126,13 @@ suite('Knative Services', () => {
       const remainingServices: Service[] = ksvc.removeService('example');
       expect(remainingServices).to.have.lengthOf(3);
       const returnedService: Service[] = ksvc.addServices([service]);
-      assert.equals([service], returnedService);
+      expect(returnedService).to.deep.equal([service]);
     });
   });
   suite('Updating a Service', () => {
     test('should return a list of services, including the updated one', () => {
       const returnedService: Service[] = ksvc.updateService(service);
-      assert.equals(service, returnedService[3]);
+      expect(returnedService[3]).to.deep.equal(service);
     });
   });
 
@@ -143,7 +141,7 @@ suite('Knative Services', () => {
       ksvc.removeRevision('example-2fvz4');
       ksvc.removeRevision('example-g4hm8');
       ksvc.removeRevision('example-75w7v');
-      assert.equals(service.revisions, []);
+      expect(service.revisions).to.deep.equal([]);
     });
   });
 });

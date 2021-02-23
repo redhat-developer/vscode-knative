@@ -1,14 +1,13 @@
 import * as vscode from 'vscode';
+import { expect } from 'chai';
 import * as chai from 'chai';
 import { beforeEach } from 'mocha';
 import * as sinon from 'sinon';
 import * as sinonChai from 'sinon-chai';
-import * as referee from '@sinonjs/referee';
 import { EventingContextType } from '../../src/cli/config';
 import { EventingExplorer } from '../../src/eventingTree/eventingExplorer';
 import { EventingTreeItem } from '../../src/eventingTree/eventingTreeItem';
 
-const { assert } = referee;
 chai.use(sinonChai);
 
 let eventingExplorer: EventingExplorer;
@@ -77,7 +76,7 @@ suite('EventingExplorer', () => {
     // giving the extension test enough time to dispose of it. Otherwise we would have 2 registered
     // commands for each one in EventingExplorer.
     eventingExplorer = new EventingExplorer();
-    assert.equals(eventingExplorer.registeredCommands.length, 1);
+    expect(eventingExplorer.registeredCommands).to.be.lengthOf(1);
   });
 
   test('should connect the output command to refreshing the tree', async () => {

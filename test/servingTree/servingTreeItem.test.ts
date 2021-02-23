@@ -1,19 +1,20 @@
+import * as path from 'path';
+import { URL } from 'url';
 import * as vscode from 'vscode';
+import { expect } from 'chai';
 import * as chai from 'chai';
 import { beforeEach } from 'mocha';
-import * as path from 'path';
 import * as sinon from 'sinon';
 import * as sinonChai from 'sinon-chai';
-import * as referee from '@sinonjs/referee';
 import * as yaml from 'yaml';
-import { URL } from 'url';
 import { ServingContextType } from '../../src/cli/config';
+import { compareNodes } from '../../src/knative/knativeItem';
+import * as revision from '../../src/knative/revision';
 import { Revision } from '../../src/knative/revision';
+import * as service from '../../src/knative/service';
 import { Service } from '../../src/knative/service';
 import { ServingTreeItem } from '../../src/servingTree/servingTreeItem';
-import { compareNodes } from '../../src/knative/knativeItem';
 
-const { assert } = referee;
 chai.use(sinonChai);
 
 suite('ServingTreeItem', () => {
@@ -142,7 +143,7 @@ status:
     url: http://current-exampleA-a-serverless-exampleA.apps.devcluster.openshift.com
   url: http://exampleA-a-serverless-exampleA.apps.devcluster.openshift.com
     `;
-  const jsonServiceAContentUnfiltered = yaml.parse(yamlServiceAContentUnfiltered);
+  const jsonServiceAContentUnfiltered = yaml.parse(yamlServiceAContentUnfiltered) as service.Items;
   const testServiceA: Service = new Service(
     'exampleA',
     'http://exampleA-a-serverless-exampleA.apps.devcluster.openshift.com',
@@ -274,7 +275,7 @@ status:
   observedGeneration: 1
   serviceName: exampleA-75w7v
   `;
-  const exampleA75w7vJson = yaml.parse(exampleA75w7vYaml);
+  const exampleA75w7vJson = yaml.parse(exampleA75w7vYaml) as revision.Items;
   const exampleA75w7vRevision: Revision = new Revision('exampleA-75w7v', 'exampleA', exampleA75w7vJson, [
     {
       tag: null,
@@ -411,7 +412,7 @@ status:
   observedGeneration: 1
   serviceName: exampleA-2fvz4
     `;
-  const exampleA2fvz4Json = yaml.parse(exampleA2fvz4Yaml);
+  const exampleA2fvz4Json = yaml.parse(exampleA2fvz4Yaml) as revision.Items;
   const exampleA2fvz4Revision: Revision = new Revision('exampleA-2fvz4', 'exampleA', exampleA2fvz4Json);
   const exampleA2fvz4TreeItemNoTraffic: ServingTreeItem = new ServingTreeItem(
     testServiceATreeItem,
@@ -540,7 +541,7 @@ status:
     url: http://current-exampleB-a-serverless-exampleB.apps.devcluster.openshift.com
   url: http://exampleB-a-serverless-exampleB.apps.devcluster.openshift.com
     `;
-  const jsonServiceBContentUnfiltered = yaml.parse(yamlServiceBContentUnfiltered);
+  const jsonServiceBContentUnfiltered = yaml.parse(yamlServiceBContentUnfiltered) as service.Items;
   const testServiceB: Service = new Service(
     'exampleB',
     'http://exampleB-a-serverless-exampleB.apps.devcluster.openshift.com',
@@ -672,7 +673,7 @@ status:
   observedGeneration: 1
   serviceName: exampleB-75w7v
   `;
-  const exampleB75w7vJson = yaml.parse(exampleB75w7vYaml);
+  const exampleB75w7vJson = yaml.parse(exampleB75w7vYaml) as revision.Items;
   const exampleB75w7vRevision: Revision = new Revision('exampleB-75w7v', 'exampleB', exampleB75w7vJson, [
     {
       tag: null,
@@ -703,22 +704,22 @@ status:
 
   test('should compare 2 nodes and return a positive number when they are NOT in alphabetical order', () => {
     const compareResult: number = compareNodes(testServiceBTreeItem, testServiceATreeItem);
-    assert.equals(compareResult, 1);
+    expect(compareResult).to.equal(1);
   });
 
   test('should compare 2 nodes and return a negative number when they are NOT in alphabetical order', () => {
     const compareResult: number = compareNodes(testServiceATreeItem, testServiceBTreeItem);
-    assert.equals(compareResult, -1);
+    expect(compareResult).to.equal(-1);
   });
 
   test('should compare 2 modified nodes and return a positive number when they are NOT in alphabetical order', () => {
     const compareResult: number = compareNodes(testServiceBTreeItemModified, testServiceATreeItemModified);
-    assert.equals(compareResult, 1);
+    expect(compareResult).to.equal(1);
   });
 
   test('should compare 2 modified nodes and return a negative number when they are NOT in alphabetical order', () => {
     const compareResult: number = compareNodes(testServiceATreeItemModified, testServiceBTreeItemModified);
-    assert.equals(compareResult, -1);
+    expect(compareResult).to.equal(-1);
   });
 
   test('should compare 2 nodes and return a positive number when the first has no context', () => {
@@ -733,7 +734,7 @@ status:
     );
 
     const compareResult: number = compareNodes(testServiceBTreeItem, NoServiceContextTreeItem);
-    assert.equals(compareResult, 1);
+    expect(compareResult).to.equal(1);
   });
 
   test('should compare 2 nodes and return a negative number when the second has no context', () => {
@@ -748,42 +749,42 @@ status:
     );
 
     const compareResult: number = compareNodes(NoServiceContextTreeItem, testServiceBTreeItem);
-    assert.equals(compareResult, -1);
+    expect(compareResult).to.equal(-1);
   });
 
   test('should create a tree item and set the traffic labels correctly', () => {
     const revLabel = exampleA75w7vTreeItemModified.label.label;
-    assert.equals(revLabel, `exampleA-75w7v (100%)`);
+    expect(revLabel).to.equal(`exampleA-75w7v (100%)`);
   });
 
   test('should get the icon path', () => {
-    const revPath = exampleA75w7vTreeItemModified.iconPath;
     const localDir = __dirname;
     // use regex for search since the backslash for windows needs to be escaped in a regex string
     const expected = vscode.Uri.file(
       `${localDir.substring(0, localDir.search(/out.test/))}images${path.sep}context${path.sep}revision.svg`,
     );
-    assert.equals(revPath, expected);
+    const revPath = exampleA75w7vTreeItemModified.iconPath;
+    expect(revPath).to.deep.equal(expected);
   });
 
   test('should get the tooltip', () => {
     const tested = exampleB75w7vTreeItem.tooltip;
-    assert.equals(tested, `Revision: exampleB-75w7v`);
+    expect(tested).to.equal(`Revision: exampleB-75w7v`);
   });
 
   test('should get the description, it should be the tags for a Revision', () => {
     const tested = exampleB75w7vTreeItem.description;
-    assert.equals(tested, 'latest current ');
+    expect(tested).to.equal('latest current ');
   });
 
   test('should get the description and it should be blank when not modified', () => {
     const tested = testServiceATreeItem.description;
-    assert.equals(tested, '');
+    expect(tested).to.equal('');
   });
 
   test('should get the description and it should modified when modified', () => {
     const tested = testServiceATreeItemModified.description;
-    assert.equals(tested, 'modified');
+    expect(tested).to.equal('modified');
   });
 
   test('should get the command for selected tree item and return undefined if No Service Found', () => {
@@ -797,17 +798,18 @@ status:
       null,
     );
     const tested = noServiceFoundTreeItem.command;
-    assert.isUndefined(tested);
+    // eslint-disable-next-line no-unused-expressions
+    expect(tested).to.be.undefined;
   });
 
   test('should get the command for selected tree item and return Edit if modified', () => {
     const tested = testServiceATreeItemModified.command;
-    assert.equals(tested.command, 'service.explorer.edit');
+    expect(tested.command).to.equal('service.explorer.edit');
   });
 
   test('should get the command for selected tree item and return Describe if NOT modified', () => {
     const tested = testServiceATreeItem.command;
-    assert.equals(tested.command, 'service.explorer.openFile');
+    expect(tested.command).to.equal('service.explorer.openFile');
   });
 
   test('should get the children of Not Found', () => {
@@ -821,26 +823,26 @@ status:
       null,
     );
     const tested = noServiceFoundTreeItem.getChildren();
-    assert.equals(tested, []);
+    expect(tested).to.deep.equal([]);
   });
 
   test('should get the children of Revision', () => {
     const tested = exampleA2fvz4TreeItemNoTraffic.getChildren();
-    assert.equals(tested, []);
+    expect(tested).to.deep.equal([]);
   });
 
   test('should get the children of Tagged Revision', () => {
     const tested = exampleA75w7vTreeItemModified.getChildren();
-    assert.equals(tested, []);
+    expect(tested).to.deep.equal([]);
   });
 
   test('should get the children of Service', () => {
     const tested = testServiceATreeItem.getChildren();
-    assert.equals(tested, []);
+    expect(tested).to.deep.equal([]);
   });
 
   test('should get the children of a Modified Service', () => {
     const tested = testServiceATreeItemModified.getChildren();
-    assert.equals(tested, []);
+    expect(tested).to.deep.equal([]);
   });
 });

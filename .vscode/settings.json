@@ -95,6 +95,8 @@
     "serviceaccount",
     "sinkbindings",
     "sinonjs",
+    "spawnargs",
+    "spawnfile",
     "subresources",
     "thenable",
     "triggerb",

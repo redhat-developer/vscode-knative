@@ -1,12 +1,14 @@
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import * as vscode from 'vscode';
+import { expect } from 'chai';
 import * as chai from 'chai';
 import { beforeEach } from 'mocha';
+import rewire = require('rewire');
 import * as sinon from 'sinon';
 import * as sinonChai from 'sinon-chai';
-import * as referee from '@sinonjs/referee';
 import * as brokerData from './broker.json';
 import * as channelData from './channel.json';
-import * as multipleServiceData from '../servingTree/multipleServiceServicesList.json';
 import * as sourceData from './source.json';
 import * as subscriptionData from './subscription.json';
 import * as triggerData from './trigger.json';
@@ -23,27 +25,26 @@ import { BindingSource } from '../../src/knative/bindingSource';
 import { Broker } from '../../src/knative/broker';
 import { Channel } from '../../src/knative/channel';
 import { GenericSource } from '../../src/knative/genericSource';
+import { KnativeItem } from '../../src/knative/knativeItem';
 import { KnativeServices } from '../../src/knative/knativeServices';
-import { KnativeSubscriptions } from '../../src/knative/knativeSubscriptions';
 import { KnativeSources } from '../../src/knative/knativeSources';
+import { KnativeSubscriptions } from '../../src/knative/knativeSubscriptions';
 import { KnativeTriggers } from '../../src/knative/knativeTriggers';
 import { PingSource } from '../../src/knative/pingSource';
 import { Service } from '../../src/knative/service';
-import { ServingDataProvider } from '../../src/servingTree/servingDataProvider';
-import { ServingTreeItem } from '../../src/servingTree/servingTreeItem';
-import { KnativeItem } from '../../src/knative/knativeItem';
 import { Subscription } from '../../src/knative/subscription';
 import { Trigger } from '../../src/knative/trigger';
+import { ServingDataProvider } from '../../src/servingTree/servingDataProvider';
+import { ServingTreeItem } from '../../src/servingTree/servingTreeItem';
+import * as multipleServiceData from '../servingTree/multipleServiceServicesList.json';
 
-import rewire = require('rewire');
 const rewiredEventingDataProvider = rewire('../../src/eventingTree/eventingDataProvider');
 
-const { assert } = referee;
-const { expect } = chai;
 chai.use(sinonChai);
 
 suite('EventingDataProvider', () => {
   const sandbox = sinon.createSandbox();
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
   const edp = new rewiredEventingDataProvider.EventingDataProvider();
   const eventingDataProvider: EventingDataProvider = new EventingDataProvider();
   const brokerDataProvider: BrokerDataProvider = new BrokerDataProvider();
@@ -898,7 +899,7 @@ suite('EventingDataProvider', () => {
   suite('Getting Eventing folders', () => {
     test('should return the folder tree element of the eventing concepts', () => {
       eventingTreeItems = eventingDataProvider.getEventingFolders();
-      assert.equals(eventingTreeItems[0].getName(), 'Brokers');
+      expect(eventingTreeItems[0].getName(), 'Brokers');
     });
   });
 
@@ -915,7 +916,7 @@ suite('EventingDataProvider', () => {
         null,
       );
       const item: vscode.TreeItem = await eventingDataProvider.getTreeItem(treeItem);
-      assert.equals(item, treeItem);
+      expect(item).to.deep.equal(treeItem);
     });
   });
 
@@ -925,10 +926,10 @@ suite('EventingDataProvider', () => {
       sandbox.stub(vscode.window, 'showErrorMessage').resolves();
       const result = await eventingDataProvider.getChildren();
       expect(result).to.have.lengthOf(5);
-      expect(result[0].description).equals('');
-      expect(result[0].label.label).equals('Brokers');
-      expect(result[0].getName()).equals('Brokers');
-      expect(result[0].tooltip).equals('');
+      expect(result[0].description).to.equal('');
+      expect(result[0].label.label).to.equal('Brokers');
+      expect(result[0].getName()).to.equal('Brokers');
+      expect(result[0].tooltip).to.equal('');
     });
     test('should return a child of "No Broker Found" when there is no data returned for Brokers', async () => {
       sandbox.restore();
@@ -937,10 +938,10 @@ suite('EventingDataProvider', () => {
       sandbox.stub(b.knExecutor, 'execute').resolves({ error: undefined, stdout: `No brokers found.` });
       const result = await eventingDataProvider.getChildren(eventingFolderNodes[0]);
       expect(result).to.have.lengthOf(1);
-      expect(result[0].description).equals('');
-      expect(result[0].description).equals('');
-      expect(result[0].label.label).equals('No Broker Found');
-      expect(result[0].getName()).equals('No Broker Found');
+      expect(result[0].description).to.equal('');
+      expect(result[0].description).to.equal('');
+      expect(result[0].label.label).to.equal('No Broker Found');
+      expect(result[0].getName()).to.equal('No Broker Found');
     });
     test('should return multiple Broker tree nodes', async () => {
       sandbox.restore();
@@ -948,10 +949,10 @@ suite('EventingDataProvider', () => {
       sandbox.stub(eventingDataProvider.brokerDataProvider, `getBrokers`).resolves(testBrokerTreeItems);
       const result = await eventingDataProvider.getChildren(eventingFolderNodes[0]);
       expect(result).to.have.lengthOf(2);
-      expect(result[0].description).equals('');
-      expect(result[0].label.label).equals('example-broker0');
-      expect(result[0].getName()).equals('example-broker0');
-      expect(result[0].tooltip).equals('');
+      expect(result[0].description).to.equal('');
+      expect(result[0].label.label).to.equal('example-broker0');
+      expect(result[0].getName()).to.equal('example-broker0');
+      expect(result[0].tooltip).to.equal('');
     });
     test('should return multiple Channel tree nodes', async () => {
       sandbox.restore();
@@ -959,10 +960,10 @@ suite('EventingDataProvider', () => {
       sandbox.stub(eventingDataProvider.channelDataProvider, `getChannels`).resolves(testChannelTreeItems);
       const result = await eventingDataProvider.getChildren(eventingFolderNodes[1]);
       expect(result).to.have.lengthOf(4);
-      expect(result[0].description).equals('');
-      expect(result[0].label.label).equals('example-channel0');
-      expect(result[0].getName()).equals('example-channel0');
-      expect(result[0].tooltip).equals('');
+      expect(result[0].description).to.equal('');
+      expect(result[0].label.label).to.equal('example-channel0');
+      expect(result[0].getName()).to.equal('example-channel0');
+      expect(result[0].tooltip).to.equal('');
     });
     test('should return multiple Source tree nodes', async () => {
       sandbox.restore();
@@ -970,10 +971,10 @@ suite('EventingDataProvider', () => {
       sandbox.stub(eventingDataProvider.sourceDataProvider, `getSources`).resolves(testSourceTreeItems);
       const result = await eventingDataProvider.getChildren(eventingFolderNodes[2]);
       expect(result).to.have.lengthOf(13);
-      expect(result[0].description).equals('');
-      expect(result[0].label.label).equals('example-source-apiserver0');
-      expect(result[0].getName()).equals('example-source-apiserver0');
-      expect(result[0].tooltip).equals('');
+      expect(result[0].description).to.equal('');
+      expect(result[0].label.label).to.equal('example-source-apiserver0');
+      expect(result[0].getName()).to.equal('example-source-apiserver0');
+      expect(result[0].tooltip).to.equal('');
     });
     test('should return children of an API Server Source', async () => {
       sandbox
@@ -981,19 +982,19 @@ suite('EventingDataProvider', () => {
         .resolves([testBroker0ForSourceApiserver1TreeItem]);
       const result = await eventingDataProvider.getChildren(testSourceTreeItems[1]);
       expect(result).to.have.lengthOf(1);
-      expect(result[0].description).equals('');
-      expect(result[0].label.label).equals('Sink - example-broker0');
-      expect(result[0].getName()).equals('Sink - example-broker0');
-      expect(result[0].tooltip).equals('');
+      expect(result[0].description).to.equal('');
+      expect(result[0].label.label).to.equal('Sink - example-broker0');
+      expect(result[0].getName()).to.equal('Sink - example-broker0');
+      expect(result[0].tooltip).to.equal('');
     });
     test('should return children of a Ping Source', async () => {
       sandbox.stub(eventingDataProvider.sourceDataProvider, `getSourceChildren`).resolves([testService0ForSourcePing0TreeItem]);
       const result = await eventingDataProvider.getChildren(testSourceTreeItems[4]);
       expect(result).to.have.lengthOf(1);
-      expect(result[0].description).equals('');
-      expect(result[0].label.label).equals('Sink - aaa');
-      expect(result[0].getName()).equals('Sink - aaa');
-      expect(result[0].tooltip).equals('Service: Sink - aaa');
+      expect(result[0].description).to.equal('');
+      expect(result[0].label.label).to.equal('Sink - aaa');
+      expect(result[0].getName()).to.equal('Sink - aaa');
+      expect(result[0].tooltip).to.equal('Service: Sink - aaa');
     });
     test('should return children of a Binding Source', async () => {
       sandbox
@@ -1001,10 +1002,10 @@ suite('EventingDataProvider', () => {
         .resolves([testService0ForSourceBinding0TreeItem]);
       const result = await eventingDataProvider.getChildren(testSourceTreeItems[8]);
       expect(result).to.have.lengthOf(1);
-      expect(result[0].description).equals('');
-      expect(result[0].label.label).equals('Sink - aaa');
-      expect(result[0].getName()).equals('Sink - aaa');
-      expect(result[0].tooltip).equals('Service: Sink - aaa');
+      expect(result[0].description).to.equal('');
+      expect(result[0].label.label).to.equal('Sink - aaa');
+      expect(result[0].getName()).to.equal('Sink - aaa');
+      expect(result[0].tooltip).to.equal('Service: Sink - aaa');
     });
     test('should return multiple Subscription tree nodes', async () => {
       sandbox.restore();
@@ -1012,10 +1013,10 @@ suite('EventingDataProvider', () => {
       sandbox.stub(eventingDataProvider.subscriptionDataProvider, `getSubscriptions`).resolves(testSubscriptionTreeItems);
       const result = await eventingDataProvider.getChildren(eventingFolderNodes[3]);
       expect(result).to.have.lengthOf(5);
-      expect(result[0].description).equals('');
-      expect(result[0].label.label).equals('example-subscription0');
-      expect(result[0].getName()).equals('example-subscription0');
-      expect(result[0].tooltip).equals('');
+      expect(result[0].description).to.equal('');
+      expect(result[0].label.label).to.equal('example-subscription0');
+      expect(result[0].getName()).to.equal('example-subscription0');
+      expect(result[0].tooltip).to.equal('');
     });
     test('should return children of a Subscription', async () => {
       sandbox
@@ -1023,10 +1024,10 @@ suite('EventingDataProvider', () => {
         .resolves([testChannel0ForSubscription0TreeItem, testService0ForSubscription0TreeItem]);
       const result = await eventingDataProvider.getChildren(testSubscriptionTreeItems[0]);
       expect(result).to.have.lengthOf(2);
-      expect(result[0].description).equals('');
-      expect(result[0].label.label).equals('Channel - example-channel0');
-      expect(result[0].getName()).equals('Channel - example-channel0');
-      expect(result[0].tooltip).equals('');
+      expect(result[0].description).to.equal('');
+      expect(result[0].label.label).to.equal('Channel - example-channel0');
+      expect(result[0].getName()).to.equal('Channel - example-channel0');
+      expect(result[0].tooltip).to.equal('');
     });
     test('should return multiple Trigger tree nodes', async () => {
       sandbox.restore();
@@ -1034,10 +1035,10 @@ suite('EventingDataProvider', () => {
       sandbox.stub(eventingDataProvider.triggerDataProvider, `getTriggers`).resolves(testTriggerTreeItems);
       const result = await eventingDataProvider.getChildren(eventingFolderNodes[4]);
       expect(result).to.have.lengthOf(5);
-      expect(result[0].description).equals('');
-      expect(result[0].label.label).equals('example-trigger0');
-      expect(result[0].getName()).equals('example-trigger0');
-      expect(result[0].tooltip).equals('');
+      expect(result[0].description).to.equal('');
+      expect(result[0].label.label).to.equal('example-trigger0');
+      expect(result[0].getName()).to.equal('example-trigger0');
+      expect(result[0].tooltip).to.equal('');
     });
     test('should return children of a Trigger', async () => {
       sandbox
@@ -1045,10 +1046,10 @@ suite('EventingDataProvider', () => {
         .resolves([testBroker0ForTrigger0TreeItem, testService0ForTrigger0TreeItem]);
       const result = await eventingDataProvider.getChildren(testTriggerTreeItems[0]);
       expect(result).to.have.lengthOf(2);
-      expect(result[0].description).equals('');
-      expect(result[0].label.label).equals('Broker - example-broker0');
-      expect(result[0].getName()).equals('Broker - example-broker0');
-      expect(result[0].tooltip).equals('');
+      expect(result[0].description).to.equal('');
+      expect(result[0].label.label).to.equal('Broker - example-broker0');
+      expect(result[0].getName()).to.equal('Broker - example-broker0');
+      expect(result[0].tooltip).to.equal('');
     });
     // test('should throw an error when the promise is rejected trying to get eventing children', async () => {
     //   sandbox.restore();
@@ -1061,14 +1062,14 @@ suite('EventingDataProvider', () => {
     //   chai
     //     .expect(showErrorArgs[0])
     //     .to.include('Caught an error getting the Eventing data.\n Forced rejection of the Promise for a test');
-    //   assert.equals(result, null);
+    //   expect(result, null);
     // });
   });
 
   suite('Getting a Parent Item', () => {
     test('should return null for a top level folder', () => {
       const item: EventingTreeItem | ServingTreeItem = eventingDataProvider.getParent(eventingFolderNodes[0]);
-      assert.equals(item, null);
+      expect(item, null);
     });
     test('should return the Broker folder for a Broker instance', async () => {
       // set parent folders
@@ -1076,7 +1077,7 @@ suite('EventingDataProvider', () => {
       sandbox.stub(eventingDataProvider.brokerDataProvider, `getBrokers`).resolves(testBrokerTreeItems);
       const result = await eventingDataProvider.getChildren(eventingTreeItems[0]);
       const item: EventingTreeItem | ServingTreeItem = eventingDataProvider.getParent(result[0]);
-      assert.equals(item.getName(), 'Brokers');
+      expect(item.getName(), 'Brokers');
     });
   });
 });

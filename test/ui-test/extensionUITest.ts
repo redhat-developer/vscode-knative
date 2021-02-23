@@ -1,5 +1,4 @@
 import { expect } from 'chai';
-import { DialogHandler } from 'vscode-extension-tester-native';
 import {
   ActivityBar,
   ExtensionsViewSection,
@@ -9,6 +8,7 @@ import {
   WebDriver,
   VSBrowser,
 } from 'vscode-extension-tester';
+import { DialogHandler } from 'vscode-extension-tester-native';
 import { KNativeConstants } from './common/constants';
 import { cleanUpNotifications } from './common/testUtils';
 /**
@@ -27,9 +27,7 @@ export function extensionsUITest(): void {
       const view = new ActivityBar().getViewControl('Extensions');
       const sideBar = await view.openView();
       const section = (await sideBar.getContent().getSection('Installed')) as ExtensionsViewSection;
-      const item = await driver.wait(async () => {
-        return section.findItem(`@installed ${KNativeConstants.KNATIVE_EXTENSION_NAME}`);
-      }, 3000);
+      const item = await driver.wait(async () => section.findItem(`@installed ${KNativeConstants.KNATIVE_EXTENSION_NAME}`), 3000);
       expect(item).to.be.an.instanceOf(ExtensionsViewItem);
       expect(await item.getTitle()).to.equal(KNativeConstants.KNATIVE_EXTENSION_NAME);
     });
@@ -39,9 +37,7 @@ export function extensionsUITest(): void {
         const view = new ActivityBar().getViewControl('Extensions');
         const sideBar = await view.openView();
         const section = (await sideBar.getContent().getSection('Installed')) as ExtensionsViewSection;
-        const item = await driver.wait(async () => {
-          return section.findItem(`@installed ${KNativeConstants.YAML_EXTENSION_NAME}`);
-        }, 3000);
+        const item = await driver.wait(async () => section.findItem(`@installed ${KNativeConstants.YAML_EXTENSION_NAME}`), 3000);
         expect(item).to.be.an.instanceOf(ExtensionsViewItem);
         expect(await item.getTitle()).to.equal(KNativeConstants.YAML_EXTENSION_NAME);
       });
@@ -97,10 +93,8 @@ export function extensionsUITest(): void {
               KNativeConstants.ACTION_ITEM_ADD_SERVICE,
               KNativeConstants.ACTION_ITEM_REFRESH,
               KNativeConstants.ACTION_ITEM_REPORT_ISSUE,
-              // eslint-disable-next-line max-nested-callbacks
-            ].some((expectedTitle) => {
-              return title.includes(expectedTitle);
-            }),
+              // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call, max-nested-callbacks
+            ].some((expectedTitle) => title.includes(expectedTitle)),
           );
         });
       });

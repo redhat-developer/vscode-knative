@@ -4,27 +4,33 @@
  *-----------------------------------------------------------------------------------------------*/
 
 import * as fs from 'fs';
-import * as fsExtra from 'fs-extra';
 import * as path from 'path';
 import { commands, Progress, ProgressLocation, Uri, window } from 'vscode';
-import * as shell from 'shelljs';
+import * as fsExtra from 'fs-extra';
 import { fromFileSync } from 'hasha';
 import { satisfies } from 'semver';
+import * as shell from 'shelljs';
 // import { KnCli, createCliCommand } from './cmdCli';
-import { DownloadUtil } from '../util/download';
-import { Platform } from '../util/platform';
+import * as configData from './cli-config.json';
 import { KnAPI } from './kn-api';
 import { KubectlAPI } from './kubectl-api';
-import * as configData from './cli-config.json';
+import { DownloadUtil } from '../util/download';
+import { Platform } from '../util/platform';
 
 // import loadJSON from '../util/parse';
 // import configData = require('./cli-config.json');
 // const configData = './cli-config.json';
 
-export interface Config {
-  cmd?: CliConfig;
-  kn?: CliConfig;
-  kubectl?: CliConfig;
+export interface PlatformData {
+  url: string;
+  sha256sum: string;
+  dlFileName: string;
+  cmdFileName?: string;
+}
+export interface PlatformOS {
+  win32: PlatformData;
+  darwin: PlatformData;
+  linux: PlatformData;
 }
 export interface CliConfig {
   description: string;
@@ -34,22 +40,18 @@ export interface CliConfig {
   versionRange: string;
   versionRangeLabel: string;
   filePrefix: string;
+  cmdFileName: string;
+  versionLocalBuildRange?: number;
   platform?: PlatformOS;
   url?: string;
   sha256sum?: string;
   dlFileName?: string;
-  cmdFileName: string;
+  location?: string;
 }
-export interface PlatformOS {
-  win32: PlatformData;
-  darwin: PlatformData;
-  linux: PlatformData;
-}
-export interface PlatformData {
-  url: string;
-  sha256sum: string;
-  dlFileName: string;
-  cmdFileName?: string;
+export interface Config {
+  cmd?: CliConfig;
+  kn?: CliConfig;
+  kubectl?: CliConfig;
 }
 
 /**
@@ -130,7 +132,7 @@ async function selectTool(locations: string[], versionRange: string, versionLoca
     }
     return foundLocation;
   } catch (error) {
-    // eslint-disable-next-line no-console
+    // eslint-disable-next-line no-console, @typescript-eslint/restrict-template-expressions
     console.log(`The selectTool method had an error: ${error}`);
     return undefined;
   }
@@ -138,18 +140,17 @@ async function selectTool(locations: string[], versionRange: string, versionLoca
 
 export class CmdCliConfig {
   public static loadMetadata(requirements: Config, platformOS: string): Config {
-    const reqs = JSON.parse(JSON.stringify(requirements));
-    // eslint-disable-next-line no-restricted-syntax
-    for (const object in requirements) {
-      if (reqs[object].platform) {
-        if (reqs[object].platform[platformOS]) {
-          Object.assign(reqs[object], reqs[object].platform[platformOS]);
-          delete reqs[object].platform;
+    const reqs = JSON.parse(JSON.stringify(requirements)) as Config;
+    Object.keys(requirements).forEach((object) => {
+      if ((reqs[object] as CliConfig).platform) {
+        if ((reqs[object] as CliConfig).platform[platformOS]) {
+          Object.assign(reqs[object], (reqs[object] as CliConfig).platform[platformOS]);
+          delete (reqs[object] as CliConfig).platform;
         } else {
           delete reqs[object];
         }
       }
-    }
+    });
     return reqs;
   }
 
@@ -176,13 +177,17 @@ export class CmdCliConfig {
   static async detectOrDownload(cmd: string): Promise<string> {
     try {
       // If the location of the cli has been set, then read it.
-      let toolLocation: string = CmdCliConfig.tools[cmd].location;
+      let toolLocation: string = (CmdCliConfig.tools[cmd] as CliConfig).location;
 
       // So if the tool location hasn't been set then we need to figure that out.
       if (toolLocation === undefined) {
         const cliFile = `.vs-${cmd}`;
         // Look in [HOME]/.vs-[CMD]/ for the [CMD] cli executable
-        const toolCacheLocation = path.resolve(Platform.getUserHomePath(), cliFile, CmdCliConfig.tools[cmd].cmdFileName);
+        const toolCacheLocation = path.resolve(
+          Platform.getUserHomePath(),
+          cliFile,
+          (CmdCliConfig.tools[cmd] as CliConfig).cmdFileName,
+        );
         // If [CMD] cli is installed, get it's install location/path
         const whichLocation = shell.which(cmd);
         // Get a list of locations.
@@ -191,19 +196,25 @@ export class CmdCliConfig {
         // selectTool(toolLocations, KnCliConfig.tools[cmd].versionRange).then((foundToolLocation) => {
         let foundToolLocation: string = await selectTool(
           toolLocations,
-          CmdCliConfig.tools[cmd].versionRange,
-          CmdCliConfig.tools[cmd].versionLocalBuildRange,
+          (CmdCliConfig.tools[cmd] as CliConfig).versionRange,
+          (CmdCliConfig.tools[cmd] as CliConfig).versionLocalBuildRange,
         );
         // If the cli tool is still not found then we will need to install it.
         if (foundToolLocation === undefined || foundToolLocation === null) {
           // Set the download location for the cli executable.
-          const toolDlLocation = path.resolve(Platform.getUserHomePath(), cliFile, CmdCliConfig.tools[cmd].dlFileName);
+          const toolDlLocation = path.resolve(
+            Platform.getUserHomePath(),
+            cliFile,
+            (CmdCliConfig.tools[cmd] as CliConfig).dlFileName,
+          );
           // Message for expected version number
-          const installRequest = `Download and install v${CmdCliConfig.tools[cmd].version}`;
+          const installRequest = `Download and install v${(CmdCliConfig.tools[cmd] as CliConfig).version}`;
           // Create a pop-up that asks to download and install.
           // let response: string;
           const response: string = await window.showInformationMessage(
-            `Cannot find ${CmdCliConfig.tools[cmd].description} ${CmdCliConfig.tools[cmd].versionRangeLabel}.`,
+            `Cannot find ${(CmdCliConfig.tools[cmd] as CliConfig).description} ${
+              (CmdCliConfig.tools[cmd] as CliConfig).versionRangeLabel
+            }.`,
             installRequest,
             'Help',
             'Cancel',
@@ -217,14 +228,14 @@ export class CmdCliConfig {
               {
                 cancellable: true,
                 location: ProgressLocation.Notification,
-                title: `Downloading ${CmdCliConfig.tools[cmd].description}`,
+                title: `Downloading ${(CmdCliConfig.tools[cmd] as CliConfig).description}`,
               },
               async (
                 progress: Progress<{ increment: number; message: string }>,
                 // token: CancellationToken,
               ) => {
                 await DownloadUtil.downloadFile(
-                  CmdCliConfig.tools[cmd].url,
+                  (CmdCliConfig.tools[cmd] as CliConfig).url,
                   toolDlLocation,
                   // token,
                   (dlProgress, increment) => progress.report({ increment, message: `${dlProgress}%` }),
@@ -237,11 +248,13 @@ export class CmdCliConfig {
                 let action = 'hash matches so install it';
                 // Check the hash against the one on file to make sure it downloaded. If it doesn't match tell the user,
                 // so they can download it again.
-                if (sha256sum !== CmdCliConfig.tools[cmd].sha256sum) {
+                if (sha256sum !== (CmdCliConfig.tools[cmd] as CliConfig).sha256sum) {
                   // Delete the file since something went wrong with the download.
                   fsExtra.removeSync(toolDlLocation);
                   action = await window.showInformationMessage(
-                    `Checksum for downloaded ${CmdCliConfig.tools[cmd].description} v${CmdCliConfig.tools[cmd].version} is not correct.`,
+                    `Checksum for downloaded ${(CmdCliConfig.tools[cmd] as CliConfig).description} v${
+                      (CmdCliConfig.tools[cmd] as CliConfig).version
+                    } is not correct.`,
                     'Download again',
                     'Cancel',
                   );
@@ -249,7 +262,7 @@ export class CmdCliConfig {
 
                 if (action === 'Download again') {
                   // If the download failed and we need to start it over, recursively call it.
-                  CmdCliConfig.detectOrDownload(cmd);
+                  await CmdCliConfig.detectOrDownload(cmd);
                 } else if (action !== 'Cancel') {
                   // The downloaded file is an executable and we need to rename it to [CMD]
                   fs.renameSync(toolDlLocation, toolCacheLocation);
@@ -262,7 +275,7 @@ export class CmdCliConfig {
               },
             );
           } else if (response === `Help`) {
-            commands.executeCommand(
+            await commands.executeCommand(
               'vscode.open',
               Uri.parse(`https://github.com/talamer/vscode-knative/blob/master/README.md#requirements`),
             );
@@ -270,7 +283,7 @@ export class CmdCliConfig {
         }
         if (foundToolLocation) {
           // eslint-disable-next-line require-atomic-updates
-          CmdCliConfig.tools[cmd].location = foundToolLocation;
+          (CmdCliConfig.tools[cmd] as CliConfig).location = foundToolLocation;
         }
         toolLocation = foundToolLocation;
         // });

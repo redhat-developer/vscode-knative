@@ -3,12 +3,12 @@
  *  Licensed under the MIT License. See LICENSE file in the project root for license information.
  *-----------------------------------------------------------------------------------------------*/
 
-import { KEvent } from './kEvent';
 import { Broker } from './broker';
 import { Channel } from './channel';
+import { KEvent } from './kEvent';
+import { SourceTypes } from './knativeSources';
 import { Subscription } from './subscription';
 import { Trigger } from './trigger';
-import { SourceTypes } from './knativeSources';
 
 export type EventTypes = Broker | Channel | SourceTypes | Subscription | Trigger;
 type childEvent = { child: EventTypes; event: KEvent };

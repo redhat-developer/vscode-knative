@@ -13,13 +13,13 @@ export interface CliExitData {
   readonly stdout: string;
   readonly stderr?: string;
 }
-export interface Cli {
-  execute(cmd: CliCommand, opts?: SpawnOptions): Promise<CliExitData>;
-}
-
 export interface CliCommand {
   cliCommand: string;
   cliArguments: string[];
+}
+
+export interface Cli {
+  execute(cmd: CliCommand, opts?: SpawnOptions): Promise<CliExitData>;
 }
 
 export function createCliCommand(cliCommand: string, ...cliArguments: string[]): CliCommand {
@@ -82,21 +82,33 @@ export class CmdCli implements Cli {
         // do not reject it here, because caller in some cases need the error and the streams
         // to make a decision
         // eslint-disable-next-line no-console
-        console.error(`error: ${err}`);
+        console.error(`error: ${err.message}`);
         error = err;
       });
       command.on('exit', () => {
         if (error) {
+          // let message: string | undefined;
           if (typeof error === 'string' && error.search('no such host') > 0) {
-            window.showErrorMessage(`The cluster is not up. Please log into a running cluster.`, { modal: true }, 'OK');
-          } else if (typeof error === 'string' && error.search('no configuration') > 0) {
-            window.showErrorMessage(`The kubeconfig file can't be found.`, { modal: true }, 'OK');
-          } else if (typeof error === 'string' && error.search('no Knative') > 0) {
-            window.showErrorMessage(
-              `The Knative / Serving Operator is not installed. Please install it to use this extension.`,
-              { modal: true },
-              'OK',
+            window.showErrorMessage(`The cluster is not up. Please log into a running cluster.`, { modal: true }, 'OK').then(
+              () => 'OK',
+              () => undefined,
             );
+          } else if (typeof error === 'string' && error.search('no configuration') > 0) {
+            window.showErrorMessage(`The kubeconfig file can't be found.`, { modal: true }, 'OK').then(
+              () => 'OK',
+              () => undefined,
+            );
+          } else if (typeof error === 'string' && error.search('no Knative') > 0) {
+            window
+              .showErrorMessage(
+                `The Knative / Serving Operator is not installed. Please install it to use this extension.`,
+                { modal: true },
+                'OK',
+              )
+              .then(
+                () => 'OK',
+                () => undefined,
+              );
           } else {
             reject(error);
           }

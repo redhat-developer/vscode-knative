@@ -3,60 +3,82 @@
  *  Licensed under the MIT License. See LICENSE file in the project root for license information.
  *-----------------------------------------------------------------------------------------------*/
 
-import { ProviderResult, TreeItemCollapsibleState, Uri, TreeItem, Command, TreeItemLabel } from 'vscode';
 import * as path from 'path';
+import { ProviderResult, TreeItemCollapsibleState, Uri, TreeItem, Command, TreeItemLabel } from 'vscode';
+import format = require('string-format');
 import { ServingContextType } from '../cli/config';
+import { EventingTreeItem } from '../eventingTree/eventingTreeItem';
 import { KnativeItem } from '../knative/knativeItem';
 import { Revision, Traffic } from '../knative/revision';
-import { EventingTreeItem } from '../eventingTree/eventingTreeItem';
-
-import format = require('string-format');
 
 const { Collapsed } = TreeItemCollapsibleState;
 
-const CONTEXT_DATA = {
+type contextTreeItemDataType = {
+  icon: string;
+  tooltip: string;
+  description: string;
+  getChildren: () => [];
+};
+
+type contextDataType = {
+  none: contextTreeItemDataType;
+  revision: contextTreeItemDataType;
+  // eslint-disable-next-line camelcase
+  revision_tagged: contextTreeItemDataType;
+  service: contextTreeItemDataType;
+  // eslint-disable-next-line camelcase
+  service_modified: contextTreeItemDataType;
+};
+
+const CONTEXT_DATA: contextDataType = {
   none: {
     icon: '',
     tooltip: 'Not Found',
     description: '',
-    getChildren: (): undefined[] => [],
+    getChildren: () => [],
   },
   revision: {
     icon: 'revision.svg',
     // icon: 'REV.svg',
     tooltip: 'Revision: {name}',
     description: '',
-    getChildren: (): undefined[] => [],
+    getChildren: () => [],
   },
-  // eslint-disable-next-line @typescript-eslint/camelcase
   revision_tagged: {
     icon: 'revision.svg',
     // icon: 'REV.svg',
     tooltip: 'Revision: {name}',
     description: '',
-    getChildren: (): undefined[] => [],
+    getChildren: () => [],
   },
   service: {
     icon: 'service.svg',
     // icon: 'SVC.svg',
     tooltip: 'Service: {name}',
     description: '',
-    getChildren: (): undefined[] => [],
+    getChildren: () => [],
   },
-  // eslint-disable-next-line @typescript-eslint/camelcase
   service_modified: {
     icon: 'service.svg',
     // icon: 'SVC.svg',
     tooltip: 'Service: {name} modified',
     description: 'modified',
-    getChildren: (): undefined[] => [],
+    getChildren: () => [],
   },
 };
 
 export class ServingTreeItem extends TreeItem {
-  private name: string;
+  private name: string = undefined;
 
-  private desc: string;
+  private desc: string = undefined;
+
+  public command: Command = undefined;
+
+  public tooltip: string = undefined;
+
+  public iconPath: Uri = undefined;
+
+  public description: string = undefined;
 
   constructor(
     private parent: ServingTreeItem | EventingTreeItem,
@@ -95,55 +117,26 @@ export class ServingTreeItem extends TreeItem {
         }
       }
     }
-  }
-
-  // private explorerPath: string;
-
-  // get path(): string {
-  //   if (!this.explorerPath) {
-  //     let parent: ServingTreeItem;
-  //     const segments: string[] = [];
-  //     do {
-  //       segments.splice(0, 0, this.getName());
-  //       parent = this.getParent();
-  //     } while (parent);
-  //     this.explorerPath = path.join(...segments);
-  //   }
-  //   return this.explorerPath;
-  // }
-
-  get iconPath(): Uri {
-    return Uri.file(path.join(__dirname, `../../../images/context`, CONTEXT_DATA[this.contextValue].icon));
-  }
-
-  get tooltip(): string {
-    return format(CONTEXT_DATA[this.contextValue].tooltip, this);
-  }
-
-  // The description is the text after the label. It is grey and a smaller font.
-  get description(): string {
-    return this.desc || CONTEXT_DATA[this.contextValue].description;
-  }
-
-  get command(): Command {
-    if (this.name === 'No Service Found') {
-      return;
-    }
-    let c: Command;
     if (this.contextValue === 'service_modified') {
-      c = {
+      this.command = {
         command: 'service.explorer.edit',
         title: 'Edit',
         arguments: [this],
       };
-    } else {
-      c = {
+    } else if (this.name !== 'No Service Found') {
+      this.command = {
         command: 'service.explorer.openFile',
         title: 'Describe',
         arguments: [this],
       };
     }
-    return c;
+    if (CONTEXT_DATA[this.contextValue]) {
+      this.tooltip = format((CONTEXT_DATA[this.contextValue] as contextTreeItemDataType).tooltip, this);
+      this.iconPath = Uri.file(
+        path.join(__dirname, `../../../images/context`, (CONTEXT_DATA[this.contextValue] as contextTreeItemDataType).icon),
+      );
+      this.description = this.desc || (CONTEXT_DATA[this.contextValue] as contextTreeItemDataType).description;
+    }
   }
 
   getName(): string {
@@ -151,7 +144,7 @@ export class ServingTreeItem extends TreeItem {
   }
 
   getChildren(): ProviderResult<ServingTreeItem[]> {
-    return CONTEXT_DATA[this.contextValue].getChildren();
+    return (CONTEXT_DATA[this.contextValue] as contextTreeItemDataType).getChildren();
   }
 
   getParent(): ServingTreeItem | EventingTreeItem {

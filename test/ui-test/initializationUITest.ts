@@ -29,6 +29,7 @@ export function knativeInitializationUITest(): void {
       } catch (error) {
         assert.fail(`Error notification appeared during cluster loading`);
       }
+      // eslint-disable-next-line @typescript-eslint/no-floating-promises
       driver.wait(async () => !(await sideBar.getContent().hasProgress()), 3000);
       expect(await sideBar.getContent().getText()).to.equal(KNativeConstants.NO_SERVICE_FOUND);
       const sections = await sideBar.getContent().getSections();

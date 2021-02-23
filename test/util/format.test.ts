@@ -1,9 +1,13 @@
+/*-----------------------------------------------------------------------------------------------
+ *  Copyright (c) Red Hat, Inc. All rights reserved.
+ *  Licensed under the MIT License. See LICENSE file in the project root for license information.
+ *-----------------------------------------------------------------------------------------------*/
+
+import { expect } from 'chai';
 import * as chai from 'chai';
 import * as sinonChai from 'sinon-chai';
-import * as referee from '@sinonjs/referee';
 import { prettifyJson } from '../../src/util/format';
 
-const { assert } = referee;
 chai.use(sinonChai);
 
 suite('Format', () => {
@@ -18,10 +22,12 @@ suite('Format', () => {
 
   test('should convert unstructured JSON into nicely formatted JSON', () => {
     const convertedJson = prettifyJson(startingJSON);
-    assert.equals(convertedJson, expectedJSON);
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
+    expect(convertedJson).to.equal(expectedJSON);
   });
   test('should catch when a token is included', () => {
     const convertedTokenJson = prettifyJson(startingTokenJSON);
-    assert.equals(convertedTokenJson, expectedTokenJSON);
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
+    expect(convertedTokenJson).to.equal(expectedTokenJSON);
   });
 });

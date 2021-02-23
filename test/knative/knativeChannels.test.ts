@@ -1,15 +1,13 @@
 import * as vscode from 'vscode';
+import { expect } from 'chai';
 import * as chai from 'chai';
-import * as sinonChai from 'sinon-chai';
-import * as sinon from 'sinon';
-import * as referee from '@sinonjs/referee';
 import { beforeEach } from 'mocha';
-import * as channelData from '../eventingTree/channel.json';
-import { KnativeChannels } from '../../src/knative/knativeChannels';
+import * as sinon from 'sinon';
+import * as sinonChai from 'sinon-chai';
 import { Channel } from '../../src/knative/channel';
+import { KnativeChannels } from '../../src/knative/knativeChannels';
+import * as channelData from '../eventingTree/channel.json';
 
-const { assert } = referee;
-const { expect } = chai;
 chai.use(sinonChai);
 
 suite('Knative Channels', () => {
@@ -42,19 +40,19 @@ suite('Knative Channels', () => {
   suite('Getting an instance', () => {
     test('should return an instance of the singleton', () => {
       const instance: KnativeChannels = KnativeChannels.Instance;
-      assert.equals(instance, knativeChannels);
+      expect(instance).to.deep.equal(knativeChannels);
     });
   });
   suite('Getting a Channel', () => {
     test('should return a list of channels from the instance', () => {
       const returnedChannel: Channel = knativeChannels.getChannels()[0];
-      assert.equals(testChannel0, returnedChannel);
+      expect(returnedChannel).to.deep.equal(testChannel0);
     });
   });
   suite('Finding a Channel', () => {
     test('should return a channel using the channel name', () => {
       const returnedChannel: Channel = knativeChannels.findChannel('example-channel0');
-      assert.equals(testChannel0, returnedChannel);
+      expect(returnedChannel).to.deep.equal(testChannel0);
     });
   });
   suite('Adding a Channel', () => {
@@ -62,7 +60,7 @@ suite('Knative Channels', () => {
       const remainingChannels: Channel[] = knativeChannels.removeChannel('example-channel1');
       expect(remainingChannels).to.have.lengthOf(1);
       const returnedChannel: Channel = knativeChannels.addChannel(testChannel1);
-      assert.equals(testChannel1, returnedChannel);
+      expect(returnedChannel).to.deep.equal(testChannel1);
     });
   });
   suite('Adding multiple channels', () => {
@@ -70,13 +68,13 @@ suite('Knative Channels', () => {
       const remainingChannels: Channel[] = knativeChannels.removeChannel('example-channel1');
       expect(remainingChannels).to.have.lengthOf(1);
       const returnedChannels: Channel[] = knativeChannels.addChannels(testChannels);
-      assert.equals(testChannels, returnedChannels);
+      expect(returnedChannels).to.deep.equal(testChannels);
     });
   });
   suite('Updating a Channel', () => {
     test('should return a list of channels, including the updated one', () => {
       const returnedChannels: Channel[] = knativeChannels.updateChannel(testChannel1);
-      assert.equals(testChannels, returnedChannels);
+      expect(returnedChannels).to.deep.equal(testChannels);
     });
   });
 });

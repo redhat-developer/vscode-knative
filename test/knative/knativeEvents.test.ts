@@ -1,20 +1,18 @@
 import * as vscode from 'vscode';
+import { expect } from 'chai';
 import * as chai from 'chai';
-import * as sinonChai from 'sinon-chai';
-import * as sinon from 'sinon';
-import * as referee from '@sinonjs/referee';
 import { beforeEach } from 'mocha';
-import * as brokerData from '../eventingTree/broker.json';
-import * as triggerData from '../eventingTree/trigger.json';
-import { KnativeEvents } from '../../src/knative/knativeEvents';
-import { KEvent } from '../../src/knative/kEvent';
+import * as sinon from 'sinon';
+import * as sinonChai from 'sinon-chai';
 import { EventingDataProvider } from '../../src/eventingTree/eventingDataProvider';
 import { EventingTreeItem } from '../../src/eventingTree/eventingTreeItem';
 import { Broker } from '../../src/knative/broker';
+import { KEvent } from '../../src/knative/kEvent';
+import { KnativeEvents } from '../../src/knative/knativeEvents';
 import { Trigger } from '../../src/knative/trigger';
+import * as brokerData from '../eventingTree/broker.json';
+import * as triggerData from '../eventingTree/trigger.json';
 
-const { assert } = referee;
-const { expect } = chai;
 chai.use(sinonChai);
 
 suite('Knative Events', () => {
@@ -65,39 +63,39 @@ suite('Knative Events', () => {
   suite('Getting an instance', () => {
     test('should return an instance of the singleton', () => {
       const instance: KnativeEvents = KnativeEvents.Instance;
-      assert.equals(instance, knativeEvents);
+      expect(instance).to.deep.equal(knativeEvents);
     });
   });
   suite('Getting an Event', () => {
     test('should return a list of events from the instance', () => {
       const returnedEvent: KEvent = knativeEvents.getEvents()[0];
-      assert.equals(brokerEventFolder, returnedEvent);
+      expect(returnedEvent).to.deep.equal(brokerEventFolder);
     });
   });
   suite('Finding an Event', () => {
     test('should return an event using the event name', () => {
       const returnedEvent: KEvent = knativeEvents.findEvent('Brokers');
-      assert.equals(brokerEventFolder, returnedEvent);
+      expect(returnedEvent).to.deep.equal(brokerEventFolder);
     });
   });
   suite('Finding a Child', () => {
     test('should return a child using the child name', () => {
       const returnedEvent = knativeEvents.findChild('example-trigger1');
-      assert.equals(testTrigger1, returnedEvent);
+      expect(returnedEvent).to.deep.equal(testTrigger1);
     });
   });
   suite('Finding an Event and Child', () => {
     test('should return an object with both event and child using the child name', () => {
       const returnedEvent = knativeEvents.findChildAndEvent('example-trigger1');
-      assert.equals({ child: testTrigger1, event: triggerEventFolder }, returnedEvent);
+      expect(returnedEvent).to.deep.equal({ child: testTrigger1, event: triggerEventFolder });
     });
   });
   suite('Finding Event and Child indexes', () => {
     test('should return an object with both event and child using the child name', () => {
-      const returnedEvent = knativeEvents.findChildAndEventIndex('example-trigger1');
       const childIndex = 1;
       const eventIndex = 4;
-      assert.equals({ childIndex, eventIndex }, returnedEvent);
+      const returnedEvent = knativeEvents.findChildAndEventIndex('example-trigger1');
+      expect(returnedEvent).to.deep.equal({ childIndex, eventIndex });
     });
   });
   suite('Adding an Event', () => {
@@ -105,7 +103,7 @@ suite('Knative Events', () => {
       const remainingEvents: KEvent[] = knativeEvents.removeEvent('Brokers');
       expect(remainingEvents).to.have.lengthOf(4);
       const returnedEvent: KEvent = knativeEvents.addEvent(brokerEventFolder);
-      assert.equals(brokerEventFolder, returnedEvent);
+      expect(returnedEvent).to.deep.equal(brokerEventFolder);
     });
   });
   suite('Adding multiple Events', () => {
@@ -113,13 +111,13 @@ suite('Knative Events', () => {
       const remainingEvents: KEvent[] = knativeEvents.removeEvent('Brokers');
       expect(remainingEvents).to.have.lengthOf(4);
       const returnedEvent: KEvent[] = knativeEvents.addEvents([brokerEventFolder]);
-      assert.equals([brokerEventFolder], returnedEvent);
+      expect(returnedEvent).to.deep.equal([brokerEventFolder]);
     });
   });
   suite('Updating an Event', () => {
     test('should return a list of events, including the updated one', () => {
       const returnedEvent: KEvent[] = knativeEvents.updateEvent(brokerEventFolder);
-      assert.equals(brokerEventFolder, returnedEvent[0]);
+      expect(returnedEvent[0]).to.deep.equal(brokerEventFolder);
     });
   });
   suite('Removing an Event child', () => {

@@ -8,11 +8,11 @@ import { KN_RESOURCE_SCHEME } from './cli/virtualfs';
 import { openTreeItemInEditor } from './editor/knativeOpenTextDocument';
 import { KnativeReadonlyProvider, KN_READONLY_SCHEME } from './editor/knativeReadonlyProvider';
 import { EventingExplorer } from './eventingTree/eventingExplorer';
+import { EventingTreeItem } from './eventingTree/eventingTreeItem';
 import { Revision } from './knative/revision';
 import { Service } from './knative/service';
-import { ServingTreeItem } from './servingTree/servingTreeItem';
 import { ServingExplorer } from './servingTree/servingExplorer';
-import { EventingTreeItem } from './eventingTree/eventingTreeItem';
+import { ServingTreeItem } from './servingTree/servingTreeItem';
 
 let disposable: vscode.Disposable[];
 
@@ -33,20 +33,18 @@ export function activate(extensionContext: vscode.ExtensionContext): void {
   // Now provide the implementation of the command with registerCommand.
   // The commandId parameter must match the command field in package.json.
   disposable = [
-    vscode.commands.registerCommand('knative.service.open-in-browser', (treeItem: ServingTreeItem) => {
+    vscode.commands.registerCommand('knative.service.open-in-browser', async (treeItem: ServingTreeItem) => {
       const item = treeItem.getKnativeItem();
       if (item instanceof Service) {
-        vscode.commands.executeCommand('vscode.open', vscode.Uri.parse(item.image));
+        await vscode.commands.executeCommand('vscode.open', vscode.Uri.parse(item.image));
       }
       if (item instanceof Revision) {
         if (item.traffic) {
           // Find the first tagged traffic & open the URL. There can be more than one tagged traffics
           // however for our purposes opening the first one should be enough.
-          const taggedTraffic = item.traffic.find((val) => {
-            return val.tag;
-          });
+          const taggedTraffic = item.traffic.find((val) => val.tag);
           if (taggedTraffic) {
-            vscode.commands.executeCommand('vscode.open', vscode.Uri.parse(taggedTraffic.url.toString()));
+            await vscode.commands.executeCommand('vscode.open', vscode.Uri.parse(taggedTraffic.url.toString()));
           }
         }
       }

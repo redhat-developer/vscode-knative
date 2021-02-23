@@ -1,33 +1,36 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+import * as path from 'path';
+import { URL } from 'url';
 import * as vscode from 'vscode';
+import { expect } from 'chai';
 import * as chai from 'chai';
 import { beforeEach } from 'mocha';
-import * as path from 'path';
+import rewire = require('rewire');
 import * as sinon from 'sinon';
 import * as sinonChai from 'sinon-chai';
-import * as referee from '@sinonjs/referee';
 import * as yaml from 'yaml';
-import { URL } from 'url';
-import * as singleServiceData from './singleServiceServiceList.json';
 import * as singleServiceRevisionData from './singleServiceRevisionList.json';
+import * as singleServiceData from './singleServiceServiceList.json';
 import { ServingContextType } from '../../src/cli/config';
 import * as vfs from '../../src/cli/virtualfs';
-import { KnativeItem } from '../../src/knative/knativeItem';
-import { Revision } from '../../src/knative/revision';
-import { Service, CreateService } from '../../src/knative/service';
-import { ServingTreeItem } from '../../src/servingTree/servingTreeItem';
-import { ServingDataProvider } from '../../src/servingTree/servingDataProvider';
 import { EventingTreeItem } from '../../src/eventingTree/eventingTreeItem';
-
-import rewire = require('rewire');
+import { KnativeItem } from '../../src/knative/knativeItem';
+import * as revision from '../../src/knative/revision';
+import { Revision } from '../../src/knative/revision';
+import * as service from '../../src/knative/service';
+import { Service, CreateService } from '../../src/knative/service';
+import { ServingDataProvider } from '../../src/servingTree/servingDataProvider';
+import { ServingTreeItem } from '../../src/servingTree/servingTreeItem';
 
 const rewiredServingDataProvider = rewire('../../src/servingTree/servingDataProvider');
 
-const { assert } = referee;
-const { expect } = chai;
 chai.use(sinonChai);
 
 suite('ServingDataProvider', () => {
   const sandbox = sinon.createSandbox();
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
   const sdp = new rewiredServingDataProvider.ServingDataProvider();
   const servingDataProvider: ServingDataProvider = new ServingDataProvider();
   let serviceTreeItems: ServingTreeItem[];
@@ -200,7 +203,7 @@ status:
     url: http://current-example-a-serverless-example.apps.devcluster.openshift.com
   url: http://example-a-serverless-example.apps.devcluster.openshift.com
     `;
-  const jsonServiceContentUnfiltered = yaml.parse(yamlServiceContentUnfiltered);
+  const jsonServiceContentUnfiltered = yaml.parse(yamlServiceContentUnfiltered) as service.Items;
   const testService: Service = new Service(
     'example',
     'http://example-a-serverless-example.apps.devcluster.openshift.com',
@@ -332,7 +335,7 @@ status:
   observedGeneration: 1
   serviceName: example-75w7v
   `;
-  const example75w7vJson = yaml.parse(example75w7vYaml);
+  const example75w7vJson = yaml.parse(example75w7vYaml) as revision.Items;
   const example75w7vRevision: Revision = new Revision('example-75w7v', 'example', example75w7vJson, [
     {
       tag: null,
@@ -459,7 +462,7 @@ status:
   observedGeneration: 1
   serviceName: example-g4hm8
     `;
-  const exampleG4hm8Json = yaml.parse(exampleG4hm8Yaml);
+  const exampleG4hm8Json = yaml.parse(exampleG4hm8Yaml) as revision.Items;
   const exampleG4hm8Revision: Revision = new Revision('example-g4hm8', 'example', exampleG4hm8Json);
   const exampleG4hm8TreeItem: ServingTreeItem = new ServingTreeItem(
     testServiceTreeItem,
@@ -571,7 +574,7 @@ status:
   observedGeneration: 1
   serviceName: example-2fvz4
     `;
-  const example2fvz4Json = yaml.parse(example2fvz4Yaml);
+  const example2fvz4Json = yaml.parse(example2fvz4Yaml) as revision.Items;
   const example2fvz4Revision: Revision = new Revision('example-2fvz4', 'example', example2fvz4Json, [
     {
       tag: 'old',
@@ -666,7 +669,7 @@ status:
         null,
       );
       const item: vscode.TreeItem = await servingDataProvider.getTreeItem(treeItem);
-      assert.equals(item, treeItem);
+      expect(item).to.equal(treeItem);
     });
   });
 
@@ -677,9 +680,9 @@ status:
       sandbox.stub(servingDataProvider.knExecutor, 'execute').resolves({ error: undefined, stdout: 'No services found.' });
       const result = await servingDataProvider.getChildren();
       expect(result).to.have.lengthOf(1);
-      expect(result[0].description).equals('');
-      expect(result[0].label.label).equals('No Service Found');
-      expect(result[0].getName()).equals('No Service Found');
+      expect(result[0].description).to.equal('');
+      expect(result[0].label.label).to.equal('No Service Found');
+      expect(result[0].getName()).to.equal('No Service Found');
     });
     test('should return a single Service tree node when called from root with one Service', async () => {
       sandbox.restore();
@@ -689,10 +692,10 @@ status:
         .resolves({ error: undefined, stdout: JSON.stringify(singleServiceData) });
       const result = await servingDataProvider.getChildren();
       expect(result).to.have.lengthOf(1);
-      expect(result[0].description).equals('');
-      expect(result[0].label.label).equals('example');
-      expect(result[0].getName()).equals('example');
-      expect(result[0].tooltip).equals('Service: example');
+      expect(result[0].description).to.equal('');
+      expect(result[0].label.label).to.equal('example');
+      expect(result[0].getName()).to.equal('example');
+      expect(result[0].tooltip).to.equal('Service: example');
     });
     test('should return multiple Revision tree nodes', async () => {
       sandbox.restore();
@@ -700,10 +703,10 @@ status:
       sandbox.stub(servingDataProvider, `getRevisions`).resolves(exampleRevisionTreeItems);
       const result = await servingDataProvider.getChildren(testServiceTreeItem);
       expect(result).to.have.lengthOf(3);
-      expect(result[0].description).equals('latest current ');
-      expect(result[0].label.label).equals('example-75w7v (100%)');
-      expect(result[0].getName()).equals('example-75w7v');
-      expect(result[0].tooltip).equals('Revision: example-75w7v');
+      expect(result[0].description).to.equal('latest current ');
+      expect(result[0].label.label).to.equal('example-75w7v (100%)');
+      expect(result[0].getName()).to.equal('example-75w7v');
+      expect(result[0].tooltip).to.equal('Revision: example-75w7v');
     });
     test('should return multiple Revision tree nodes when the Service is modified', async () => {
       sandbox.restore();
@@ -711,10 +714,10 @@ status:
       sandbox.stub(servingDataProvider, `getRevisions`).resolves(exampleRevisionTreeItems);
       const result = await servingDataProvider.getChildren(testServiceTreeItemModified);
       expect(result).to.have.lengthOf(3);
-      expect(result[0].description).equals('latest current ');
-      expect(result[0].label.label).equals('example-75w7v (100%)');
-      expect(result[0].getName()).equals('example-75w7v');
-      expect(result[0].tooltip).equals('Revision: example-75w7v');
+      expect(result[0].description).to.equal('latest current ');
+      expect(result[0].label.label).to.equal('example-75w7v (100%)');
+      expect(result[0].getName()).to.equal('example-75w7v');
+      expect(result[0].tooltip).to.equal('Revision: example-75w7v');
     });
   });
 
@@ -731,12 +734,12 @@ status:
         null,
       );
       const item: ServingTreeItem | EventingTreeItem = servingDataProvider.getParent(parent);
-      assert.equals(item, null);
+      expect(item).to.equal(null);
     });
     test('should return the Service of the Revision', async () => {
       const result = await servingDataProvider.getRevisions(serviceTreeItems[0]);
       const item: ServingTreeItem | EventingTreeItem = servingDataProvider.getParent(result[0]);
-      assert.equals(item, serviceTreeItems[0]);
+      expect(item).to.equal(serviceTreeItems[0]);
     });
   });
 
@@ -767,7 +770,7 @@ status:
       stub.rejects('In a test, rejecting a promise to get Revisions');
       const result = await sdp.getRevisions(testServiceTreeItem);
       sinon.assert.calledOnce(spy);
-      assert.equals(result, null);
+      expect(result).to.equal(null);
       // sinon.assert.threw(spy);
       // assert(spy.threw());
     });
@@ -782,7 +785,7 @@ status:
       sandbox.stub(sdp, 'isNodeModifiedLocally').resolves(false);
       const result: ServingTreeItem = await sdp.getServices();
       sinon.assert.calledOnce(spy);
-      assert.equals(result[0], testServiceTreeItem);
+      expect(result[0]).to.deep.equal(testServiceTreeItem);
     });
 
     test('should return a list of Services, even if they are modified', async () => {
@@ -793,7 +796,7 @@ status:
       sandbox.stub(sdp, 'isNodeModifiedLocally').resolves(true);
       const result: ServingTreeItem = await sdp.getServices();
       sinon.assert.calledOnce(spy);
-      assert.equals(result[0], testServiceTreeItemModified);
+      expect(result[0]).to.deep.equal(testServiceTreeItemModified);
     });
 
     test(`should rerun the List command if it does not get complete data, when is no Conditions, then return a list of Services`, async () => {
@@ -808,7 +811,7 @@ status:
       stub.resolves({ error: undefined, stdout: JSON.stringify(singleServiceData) });
       const result: ServingTreeItem = await sdp.getServices();
       sinon.assert.calledTwice(spy);
-      assert.equals(result[0], testServiceTreeItem);
+      expect(result[0]).to.deep.equal(testServiceTreeItem);
     });
   });
 
@@ -883,7 +886,7 @@ status:
       sandbox.restore();
       sandbox.stub(vscode.window, 'showInputBox').resolves('some/url');
       const result: string = await sdp.getUrl();
-      assert.equals('some/url', result);
+      expect('some/url').to.equal(result);
     });
   });
 
@@ -920,7 +923,7 @@ status:
       },
     };
 
-    let revertIB;
+    let revertIB: () => void;
     beforeEach(() => {
       sandbox.restore();
       revertIB = rewiredServingDataProvider.__set__('vscode.window', windowMock);
@@ -940,7 +943,7 @@ status:
       sandbox.stub(sdp.ksvc, 'findService').returns(undefined);
       showInformationMessageIndex = 0;
       const result: CreateService = await sdp.getName(`quay.io/test-group/knative-tutorial-greeter:quarkus`);
-      assert.equals(result, serviceExpected);
+      expect(result).to.deep.equal(serviceExpected);
     });
 
     test('should ask for a new name if the default is used and overwrite the original', async () => {
@@ -952,7 +955,7 @@ status:
       sandbox.stub(sdp.ksvc, 'findService').returns(true);
       showInformationMessageIndex = 0;
       const result: CreateService = await sdp.getName(`quay.io/test-group/knative-tutorial-greeter:quarkus`);
-      assert.equals(result, serviceExpected);
+      expect(result).to.deep.equal(serviceExpected);
     });
 
     test('should ask for a new name if the default is used and change to a new name', async () => {
@@ -964,7 +967,7 @@ status:
       sandbox.stub(sdp.ksvc, 'findService').returns(true);
       showInformationMessageIndex = 1;
       const result: CreateService = await sdp.getName(`quay.io/test-group/knative-tutorial-greeter:quarkus`);
-      assert.equals(result, serviceExpected);
+      expect(result).to.deep.equal(serviceExpected);
     });
 
     test('should return null if there is no name', async () => {
@@ -972,7 +975,7 @@ status:
       showInformationMessageIndex = 1;
       sandbox.stub(windowMock, 'showInputBox').resolves(null);
       const result: CreateService = await sdp.getName('not/a/valid/url');
-      assert.equals(result, null);
+      expect(result).to.deep.equal(null);
     });
   });
 
@@ -1005,7 +1008,8 @@ status:
       const stubDelete = sandbox.stub(sdp.knvfs, 'delete').resolves();
       const result: ServingTreeItem[] = await sdp.addService();
       sinon.assert.calledOnce(stubDelete);
-      assert.isUndefined(result);
+      // eslint-disable-next-line no-unused-expressions
+      expect(result).to.be.undefined;
     });
 
     test('should return undefined if there is a failure to create the the service', async () => {
@@ -1036,7 +1040,8 @@ status:
       const stubDelete = sandbox.stub(sdp.knvfs, 'delete').resolves();
       const result: ServingTreeItem[] = await sdp.addService();
       sinon.assert.calledOnce(stubDelete);
-      assert.isUndefined(result);
+      // eslint-disable-next-line no-unused-expressions
+      expect(result).to.be.undefined;
     });
 
     test('should return null if the new file can not be found', async () => {
@@ -1066,7 +1071,7 @@ status:
       const stubDelete = sandbox.stub(sdp.knvfs, 'delete').resolves();
       const result: ServingTreeItem[] = await sdp.addService();
       sinon.assert.notCalled(stubDelete);
-      assert.equals(result, null);
+      expect(result).to.equal(null);
     });
     test('should throw an error if there is no workspace open', async () => {
       const serviceToCreate: CreateService = {
@@ -1083,7 +1088,7 @@ status:
       const stubDelete = sandbox.stub(sdp.knvfs, 'delete').resolves();
       const result: ServingTreeItem[] = await sdp.addService();
       sinon.assert.notCalled(stubDelete);
-      assert.equals(result, null);
+      expect(result).to.equal(null);
     });
     test('should return undefined if the file being created already exists', async () => {
       const serviceToCreate: CreateService = {
@@ -1103,7 +1108,8 @@ status:
       const stubDelete = sandbox.stub(sdp.knvfs, 'delete').resolves();
       const result: ServingTreeItem[] = await sdp.addService();
       sinon.assert.notCalled(stubDelete);
-      assert.isUndefined(result);
+      // eslint-disable-next-line no-unused-expressions
+      expect(result).to.be.undefined;
     });
     test('should return null if no image string is provided', async () => {
       sandbox.restore();
@@ -1112,7 +1118,7 @@ status:
       const stubDelete = sandbox.stub(sdp.knvfs, 'delete').resolves();
       const result: ServingTreeItem[] = await sdp.addService();
       sinon.assert.notCalled(stubDelete);
-      assert.equals(result, null);
+      expect(result).to.equal(null);
     });
     test('should return null if no name string is provided', async () => {
       const serviceToCreate: CreateService = {
@@ -1127,7 +1133,7 @@ status:
       const stubDelete = sandbox.stub(sdp.knvfs, 'delete').resolves();
       const result: ServingTreeItem[] = await sdp.addService();
       sinon.assert.notCalled(stubDelete);
-      assert.equals(result, null);
+      expect(result).to.equal(null);
     });
   });
 
@@ -1142,7 +1148,8 @@ status:
       const stubUpdate = sandbox.stub(sdp.ksvc, 'updateService').returns(undefined);
       const result: ServingTreeItem[] = await sdp.addTag(exampleG4hm8TreeItem);
       sinon.assert.calledOnce(stubUpdate);
-      assert.isUndefined(result);
+      // eslint-disable-next-line no-unused-expressions
+      expect(result).to.be.undefined;
     });
 
     test('should get a tag name and add it to the Revision', async () => {
@@ -1155,7 +1162,7 @@ status:
       const stubUpdate = sandbox.stub(sdp.ksvc, 'updateService').returns(undefined);
       const result: ServingTreeItem[] = await sdp.addTag(exampleG4hm8TreeItem);
       sinon.assert.calledOnce(stubUpdate);
-      assert.equals(result, null);
+      expect(result).to.equal(null);
     });
   });
 
@@ -1169,7 +1176,7 @@ status:
       sandbox.stub(vscode.window, 'showErrorMessage').resolves();
       sandbox.stub(sdp.knvfs, 'readDirectoryAsync').resolves(files);
       const result: ServingTreeItem[] = await sdp.getLocalYamlPathForNode(testServiceTreeItemModified);
-      assert.equals(result, expectedPath);
+      expect(result).to.equal(expectedPath);
     });
     test('should return an empty string if file is not found', async () => {
       const files: [string, vscode.FileType][] = [[`/home/user/code/service-different.yaml`, 1]];
@@ -1177,14 +1184,14 @@ status:
       sandbox.stub(vscode.window, 'showErrorMessage').resolves();
       sandbox.stub(sdp.knvfs, 'readDirectoryAsync').resolves(files);
       const result: ServingTreeItem[] = await sdp.getLocalYamlPathForNode(testServiceTreeItemModified);
-      assert.equals(result, '');
+      expect(result).to.equal('');
     });
     test('should return null if no files are found', async () => {
       sandbox.restore();
       sandbox.stub(vscode.window, 'showErrorMessage').resolves();
       sandbox.stub(sdp.knvfs, 'readDirectoryAsync').rejects();
       const result: ServingTreeItem[] = await sdp.getLocalYamlPathForNode(testServiceTreeItemModified);
-      assert.equals(result, null);
+      expect(result).to.equal(null);
     });
   });
 
@@ -1197,7 +1204,7 @@ status:
       sandbox.stub(vscode.window, 'showErrorMessage').resolves();
       sandbox.stub(sdp.knvfs, 'readDirectoryAsync').resolves(files);
       const result: boolean = await sdp.isNodeModifiedLocally('example');
-      assert.equals(result, true);
+      expect(result).to.equal(true);
     });
     test('should return false if file is not found', async () => {
       const files: [string, vscode.FileType][] = [
@@ -1207,14 +1214,14 @@ status:
       sandbox.stub(vscode.window, 'showErrorMessage').resolves();
       sandbox.stub(sdp.knvfs, 'readDirectoryAsync').resolves(files);
       const result: boolean = await sdp.isNodeModifiedLocally('example');
-      assert.equals(result, false);
+      expect(result).to.equal(false);
     });
     test('should return null if no files are found', async () => {
       sandbox.restore();
       sandbox.stub(vscode.window, 'showErrorMessage').resolves();
       sandbox.stub(sdp.knvfs, 'readDirectoryAsync').rejects();
       const result: boolean = await sdp.isNodeModifiedLocally('example');
-      assert.equals(result, null);
+      expect(result).to.equal(null);
     });
   });
 
@@ -1249,8 +1256,8 @@ status:
     //   },
     // };
 
-    // let revertIB;
-    let revertIB2;
+    // let revertIB: () => void;
+    let revertIB2: () => void;
     beforeEach(() => {
       sandbox.restore();
       // revertIB = rewiredServingDataProvider.__set__('vscode.workspace', workspaceMock);
@@ -1423,7 +1430,7 @@ status:
         .stub(servingDataProvider.knExecutor, 'execute')
         .resolves({ error: 'Please log in to the cluster', stdout: undefined, stderr: 'Please log in to the cluster' });
       const result: boolean = await servingDataProvider.requireLogin();
-      assert.equals(result, true);
+      expect(result).to.equal(true);
     });
   });
 });

@@ -4,10 +4,10 @@
  *-----------------------------------------------------------------------------------------------*/
 
 import * as vscode from 'vscode';
-import { vfsUri, KN_RESOURCE_SCHEME } from '../cli/virtualfs';
-import { ServingTreeItem } from '../servingTree/servingTreeItem';
 import { KN_READONLY_SCHEME } from './knativeReadonlyProvider';
+import { vfsUri, KN_RESOURCE_SCHEME } from '../cli/virtualfs';
 import { EventingTreeItem } from '../eventingTree/eventingTreeItem';
+import { ServingTreeItem } from '../servingTree/servingTreeItem';
 
 /**
  * This is set up as a Command. It can be called from a menu or by clicking on the tree item.
@@ -35,13 +35,14 @@ export async function openTreeItemInEditor(
   const uri = vfsUri(schema, contextValue, name, outputFormat);
 
   await vscode.workspace.openTextDocument(uri).then(
-    (doc) => {
+    async (doc) => {
       if (doc) {
-        vscode.window.showTextDocument(doc, { preserveFocus: true, preview: true });
+        await vscode.window.showTextDocument(doc, { preserveFocus: true, preview: true });
       } else {
-        throw Error(`Error loading resource located at ${uri}`);
+        throw Error(`Error loading resource located at ${uri.toString()}`);
       }
     },
+    // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
     (err) => vscode.window.showErrorMessage(`Error loading document: ${err}`),
   );
 }

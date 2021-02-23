@@ -3,14 +3,14 @@
  *  Licensed under the MIT License. See LICENSE file in the project root for license information.
  *-----------------------------------------------------------------------------------------------*/
 
+import * as path from 'path';
 import { Disposable, extensions, TreeView, Uri, version, window, workspace } from 'vscode';
 import * as vscode from 'vscode';
-import * as path from 'path';
-import { Platform } from '../util/platform';
-import { ServingTreeItem } from './servingTreeItem';
 import { ServingDataProvider } from './servingDataProvider';
-import { WatchUtil, FileContentChangeNotifier } from '../util/watch';
+import { ServingTreeItem } from './servingTreeItem';
 import { EventingTreeItem } from '../eventingTree/eventingTreeItem';
+import { Platform } from '../util/platform';
+import { WatchUtil, FileContentChangeNotifier } from '../util/watch';
 
 const kubeConfigFolder: string = path.join(Platform.getUserHomePath(), '.kube');
 const kubeconfigParam: string[][] = [[kubeConfigFolder, 'config']];
@@ -32,8 +32,11 @@ export class ServingExplorer implements Disposable {
 
   // eslint-disable-next-line class-methods-use-this
   public issueUrl(): string {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const { packageJSON } = extensions.getExtension('redhat.vscode-knative');
+    // eslint-disable-next-line @typescript-eslint/restrict-template-expressions, @typescript-eslint/no-unsafe-member-access
     const body = [`VS Code version: ${version}`, `OS: ${Platform.OS}`, `Extension version: ${packageJSON.version}`].join('\n');
+    // eslint-disable-next-line @typescript-eslint/restrict-template-expressions, @typescript-eslint/no-unsafe-member-access
     return `${packageJSON.bugs}/new?labels=kind/bug&title=&body=**Environment**\n${body}\n**Description**`;
   }
 

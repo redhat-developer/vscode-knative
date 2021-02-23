@@ -1,8 +1,12 @@
-import { assert, expect } from 'chai';
-import { loadJSON } from '../../src/util/parse';
+/*-----------------------------------------------------------------------------------------------
+ *  Copyright (c) Red Hat, Inc. All rights reserved.
+ *  Licensed under the MIT License. See LICENSE file in the project root for license information.
+ *-----------------------------------------------------------------------------------------------*/
 
-import fs = require('fs');
-import path = require('path');
+import * as fs from 'fs';
+import * as path from 'path';
+import { expect, assert } from 'chai';
+import { loadJSON } from '../../src/util/parse';
 
 suite('Parse utility class', () => {
   const json = {

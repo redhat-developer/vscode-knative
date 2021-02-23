@@ -5,23 +5,23 @@
 
 import { TreeItemCollapsibleState, Uri } from 'vscode';
 import { EventingTreeItem } from './eventingTreeItem';
-import { Execute, loadItems } from '../cli/execute';
 import { CliExitData } from '../cli/cmdCli';
-import { KnAPI } from '../cli/kn-api';
 import { EventingContextType, ServingContextType } from '../cli/config';
-import { compareNodes } from '../knative/knativeItem';
-import { GenericSource } from '../knative/genericSource';
+import { Execute, loadItems } from '../cli/execute';
+import { KnAPI } from '../cli/kn-api';
 import { APIServerSource } from '../knative/apiServerSource';
-import { KnativeSources, SourceTypes } from '../knative/knativeSources';
-import { KnativeEvents } from '../knative/knativeEvents';
 import { Items, BaseSource } from '../knative/baseSource';
 import { BindingSource } from '../knative/bindingSource';
-import { PingSource } from '../knative/pingSource';
-import { ServingTreeItem } from '../servingTree/servingTreeItem';
-import { Sink } from '../knative/sink';
 import { Broker } from '../knative/broker';
 import { Channel } from '../knative/channel';
+import { GenericSource } from '../knative/genericSource';
+import { KnativeEvents } from '../knative/knativeEvents';
+import { compareNodes } from '../knative/knativeItem';
+import { KnativeSources, SourceTypes } from '../knative/knativeSources';
+import { PingSource } from '../knative/pingSource';
 import { Service } from '../knative/service';
+import { Sink } from '../knative/sink';
+import { ServingTreeItem } from '../servingTree/servingTreeItem';
 
 export class SourceDataProvider {
   public knExecutor = new Execute();

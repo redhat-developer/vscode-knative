@@ -3,14 +3,14 @@
  *  Licensed under the MIT License. See LICENSE file in the project root for license information.
  *-----------------------------------------------------------------------------------------------*/
 
-import { Subscription } from './subscription';
-import { Channel } from './channel';
-import { KnativeChannels } from './knativeChannels';
-import { Sink } from './sink';
-import { KnativeServices } from './knativeServices';
-import { KnativeBrokers } from './knativeBrokers';
 import { Broker } from './broker';
+import { Channel } from './channel';
+import { KnativeBrokers } from './knativeBrokers';
+import { KnativeChannels } from './knativeChannels';
+import { KnativeServices } from './knativeServices';
 import { Service } from './service';
+import { Sink } from './sink';
+import { Subscription } from './subscription';
 import { convertStringToURI } from '../util/parse';
 
 /**

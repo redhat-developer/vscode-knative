@@ -1,20 +1,18 @@
 import * as vscode from 'vscode';
+import { expect } from 'chai';
 import * as chai from 'chai';
 import { beforeEach } from 'mocha';
 import * as sinon from 'sinon';
 import * as sinonChai from 'sinon-chai';
-import * as referee from '@sinonjs/referee';
 import * as channelData from './channel.json';
 import * as channelEmptySpecData from './channelEmptySpec.json';
 import * as channelIncompleteData from './channelIncomplete.json';
 import { EventingContextType } from '../../src/cli/config';
+import { ChannelDataProvider } from '../../src/eventingTree/channelDataProvider';
 import { EventingDataProvider } from '../../src/eventingTree/eventingDataProvider';
 import { EventingTreeItem } from '../../src/eventingTree/eventingTreeItem';
-import { ChannelDataProvider } from '../../src/eventingTree/channelDataProvider';
 import { Channel } from '../../src/knative/channel';
 
-const { assert } = referee;
-const { expect } = chai;
 chai.use(sinonChai);
 
 suite('ChannelDataProvider', () => {
@@ -81,19 +79,19 @@ suite('ChannelDataProvider', () => {
       sandbox.stub(channelDataProvider.knExecutor, 'execute').resolves({ error: undefined, stdout: `No channels found.` });
       const result = await channelDataProvider.getChannels(eventingFolderNodes[1]);
       expect(result).to.have.lengthOf(1);
-      expect(result[0].description).equals('');
-      expect(result[0].description).equals('');
-      expect(result[0].label.label).equals('No Channel Found');
-      expect(result[0].getName()).equals('No Channel Found');
+      expect(result[0].description).to.equal('');
+      expect(result[0].description).to.equal('');
+      expect(result[0].label.label).to.equal('No Channel Found');
+      expect(result[0].getName()).to.equal('No Channel Found');
     });
     test('should return channel nodes', async () => {
       sandbox.restore();
       sandbox.stub(vscode.window, 'showErrorMessage').resolves();
       sandbox.stub(channelDataProvider.knExecutor, 'execute').resolves({ error: undefined, stdout: JSON.stringify(channelData) });
       const result = await channelDataProvider.getChannels(eventingFolderNodes[1]);
-      assert.equals(result[0], testChannelTreeItems[0]);
+      expect(result[0]).to.deep.equal(testChannelTreeItems[0]);
       expect(result).to.have.lengthOf(4);
-      expect(result[0].label.label).equals('example-channel0');
+      expect(result[0].label.label).to.equal('example-channel0');
     });
     test('should return channel nodes when the spec is empty', async () => {
       sandbox.restore();
@@ -102,9 +100,9 @@ suite('ChannelDataProvider', () => {
         .stub(channelDataProvider.knExecutor, 'execute')
         .resolves({ error: undefined, stdout: JSON.stringify(channelEmptySpecData) });
       const result = await channelDataProvider.getChannels(eventingFolderNodes[1]);
-      assert.equals(result[0], testChannel0EmptySpecTreeItem);
+      expect(result[0]).to.deep.equal(testChannel0EmptySpecTreeItem);
       expect(result).to.have.lengthOf(4);
-      expect(result[0].label.label).equals('example-channel0');
+      expect(result[0].label.label).to.equal('example-channel0');
     });
     test('should refetch channel info when it is incomplete, then return channel nodes', async () => {
       sandbox.restore();
@@ -113,9 +111,9 @@ suite('ChannelDataProvider', () => {
       exeStub.onFirstCall().resolves({ error: undefined, stdout: JSON.stringify(channelIncompleteData) });
       exeStub.onSecondCall().resolves({ error: undefined, stdout: JSON.stringify(channelData) });
       const result = await channelDataProvider.getChannels(eventingFolderNodes[1]);
-      assert.equals(result[0], testChannelTreeItems[0]);
+      expect(result[0]).to.deep.equal(testChannelTreeItems[0]);
       expect(result).to.have.lengthOf(4);
-      expect(result[0].label.label).equals('example-channel0');
+      expect(result[0].label.label).to.equal('example-channel0');
     });
   });
 });

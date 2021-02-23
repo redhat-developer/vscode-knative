@@ -1,5 +1,5 @@
-import { expect } from 'chai';
 import { URL } from 'url';
+import { expect } from 'chai';
 import * as revision from '../../src/knative/revision';
 
 suite('Revision class', () => {
@@ -72,6 +72,7 @@ suite('Revision class', () => {
       revision.Revision.toRevision(itemsObj2, trafficObj);
     } catch (err) {
       expect(err).to.be.instanceOf(TypeError);
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       expect(err.message).to.include('Cannot read property');
     }
     itemsObj2.metadata.ownerReferences = undefined;
@@ -79,6 +80,7 @@ suite('Revision class', () => {
       revision.Revision.toRevision(itemsObj2, trafficObj);
     } catch (err) {
       expect(err).to.be.instanceOf(TypeError);
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       expect(err.message).to.include('Cannot read property');
     }
   });

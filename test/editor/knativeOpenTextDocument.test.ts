@@ -1,14 +1,17 @@
-import * as vscode from 'vscode';
-import * as chai from 'chai';
-import * as sinonChai from 'sinon-chai';
-import * as sinon from 'sinon';
-import * as yaml from 'yaml';
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import { fail } from 'assert';
+import * as vscode from 'vscode';
+import { expect } from 'chai';
+import * as chai from 'chai';
+import * as sinon from 'sinon';
+import * as sinonChai from 'sinon-chai';
+import * as yaml from 'yaml';
 import { ServingContextType } from '../../src/cli/config';
 import * as virtualfs from '../../src/cli/virtualfs';
 import { openTreeItemInEditor } from '../../src/editor/knativeOpenTextDocument';
-import { ServingTreeItem } from '../../src/servingTree/servingTreeItem';
+import * as service from '../../src/knative/service';
 import { Service } from '../../src/knative/service';
+import { ServingTreeItem } from '../../src/servingTree/servingTreeItem';
 
 chai.use(sinonChai);
 
@@ -132,7 +135,7 @@ status:
   url: http://example-a-serverless-example.apps.devcluster.openshift.com
 `;
   const uriObject = ('uri' as unknown) as vscode.Uri;
-  const jsonServiceContentUnfiltered = yaml.parse(yamlServiceContentUnfiltered);
+  const jsonServiceContentUnfiltered = yaml.parse(yamlServiceContentUnfiltered) as service.Items;
   const showTextDocOptions = { preserveFocus: true, preview: true };
   const textDocumentObject = ('textDoc' as unknown) as vscode.TextDocument;
   const testService: Service = new Service(
@@ -180,7 +183,7 @@ status:
     sinon.assert.calledWith(stubOpenTextDoc, sinon.match(uriObject));
     // verify inner promise call and passed arguments
     sinon.assert.calledOnce(spyShowTextDoc);
-    chai.expect(spyShowTextDoc.firstCall.args.length).to.eq(2);
+    expect(spyShowTextDoc.firstCall.args.length).to.eq(2);
     sinon.assert.calledWith(spyShowTextDoc, sinon.match(textDocumentObject), sinon.match(showTextDocOptions));
     // verify that no show error was reached in the code
     sinon.assert.notCalled(stubShowError);
@@ -200,8 +203,8 @@ status:
       await openTreeItemInEditor(testServiceTreeItem, 'yaml', false);
       fail('Expected Error was not thrown when there is no doc when opening a Service tree item in editor');
     } catch (error) {
-      chai.expect(error).to.be.instanceOf(Error);
-      chai.expect(error.message).to.include('Error loading resource located at');
+      expect(error).to.be.instanceOf(Error);
+      expect(error.message).to.include('Error loading resource located at');
     }
     sinon.assert.notCalled(spyShowTextDoc);
     sinon.assert.notCalled(stubShowError);
@@ -213,8 +216,8 @@ status:
       await openTreeItemInEditor(testServiceTreeItemModified, 'yaml', true);
       fail('Expected Error was not thrown when there is no doc when opening a Service tree item in editor');
     } catch (error) {
-      chai.expect(error).to.be.instanceOf(Error);
-      chai.expect(error.message).to.include('Error loading resource located at');
+      expect(error).to.be.instanceOf(Error);
+      expect(error.message).to.include('Error loading resource located at');
     }
     sinon.assert.notCalled(spyShowTextDoc);
   });
@@ -226,7 +229,7 @@ status:
     sinon.assert.notCalled(spyShowTextDoc);
     sinon.assert.calledOnce(stubShowError);
     const showErrorArgs = stubShowError.firstCall.args;
-    chai.expect(showErrorArgs.length).to.eq(1);
-    chai.expect(showErrorArgs[0]).to.include('Error loading document: myError');
+    expect(showErrorArgs).to.be.lengthOf(1);
+    expect(showErrorArgs[0]).to.include('Error loading document: myError');
   });
 });

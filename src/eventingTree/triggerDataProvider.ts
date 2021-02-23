@@ -5,19 +5,19 @@
 
 import { TreeItemCollapsibleState, Uri } from 'vscode';
 import { EventingTreeItem } from './eventingTreeItem';
-import { Execute, loadItems } from '../cli/execute';
 import { CliExitData } from '../cli/cmdCli';
-import { KnAPI } from '../cli/kn-api';
 import { EventingContextType, ServingContextType } from '../cli/config';
-import { compareNodes } from '../knative/knativeItem';
-import { Trigger } from '../knative/trigger';
-import { KnativeTriggers } from '../knative/knativeTriggers';
-import { KnativeEvents } from '../knative/knativeEvents';
-import { ServingTreeItem } from '../servingTree/servingTreeItem';
-import { Sink } from '../knative/sink';
-import { Service } from '../knative/service';
-import { Channel } from '../knative/channel';
+import { Execute, loadItems } from '../cli/execute';
+import { KnAPI } from '../cli/kn-api';
 import { Broker } from '../knative/broker';
+import { Channel } from '../knative/channel';
+import { KnativeEvents } from '../knative/knativeEvents';
+import { compareNodes } from '../knative/knativeItem';
+import { KnativeTriggers } from '../knative/knativeTriggers';
+import { Service } from '../knative/service';
+import { Sink } from '../knative/sink';
+import { Trigger } from '../knative/trigger';
+import { ServingTreeItem } from '../servingTree/servingTreeItem';
 
 export class TriggerDataProvider {
   public knExecutor = new Execute();

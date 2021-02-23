@@ -1,12 +1,9 @@
 import * as vscode from 'vscode';
+import { expect } from 'chai';
 import * as chai from 'chai';
-import * as sinonChai from 'sinon-chai';
-import * as sinon from 'sinon';
-import * as referee from '@sinonjs/referee';
 import { beforeEach } from 'mocha';
-import * as brokerData from '../eventingTree/broker.json';
-import * as channelData from '../eventingTree/channel.json';
-import * as sourceData from '../eventingTree/source.json';
+import * as sinon from 'sinon';
+import * as sinonChai from 'sinon-chai';
 import { APIServerSource } from '../../src/knative/apiServerSource';
 import { BindingSource } from '../../src/knative/bindingSource';
 import { Broker } from '../../src/knative/broker';
@@ -18,9 +15,10 @@ import { KnativeSources, SourceTypes } from '../../src/knative/knativeSources';
 import { PingSource } from '../../src/knative/pingSource';
 import { Service } from '../../src/knative/service';
 import { Sink } from '../../src/knative/sink';
+import * as brokerData from '../eventingTree/broker.json';
+import * as channelData from '../eventingTree/channel.json';
+import * as sourceData from '../eventingTree/source.json';
 
-const { assert } = referee;
-const { expect } = chai;
 chai.use(sinonChai);
 
 suite('Knative Sources', () => {
@@ -212,19 +210,19 @@ suite('Knative Sources', () => {
   suite('Getting an instance', () => {
     test('should return an instance of the singleton', () => {
       const instance: KnativeSources = KnativeSources.Instance;
-      assert.equals(instance, knativeSources);
+      expect(instance).to.deep.equal(knativeSources);
     });
   });
   suite('Getting a Source', () => {
     test('should return a list of sources from the instance', () => {
       const returnedSource: SourceTypes = knativeSources.getSources()[0];
-      assert.equals(testSourceApiserver0, returnedSource);
+      expect(returnedSource).to.deep.equal(testSourceApiserver0);
     });
   });
   suite('Finding a Source', () => {
     test('should return a source using the source name', () => {
       const returnedSource: SourceTypes = knativeSources.findSource('example-source-apiserver0');
-      assert.equals(testSourceApiserver0, returnedSource);
+      expect(returnedSource).to.deep.equal(testSourceApiserver0);
     });
   });
   suite('Adding a Source', () => {
@@ -232,7 +230,7 @@ suite('Knative Sources', () => {
       const remainingSources: SourceTypes[] = knativeSources.removeSource('example-source-apiserver1');
       expect(remainingSources).to.have.lengthOf(14);
       const returnedSource: SourceTypes = knativeSources.addSource(testSourceApiserver1);
-      assert.equals(testSourceApiserver1, returnedSource);
+      expect(returnedSource).to.deep.equal(testSourceApiserver1);
     });
   });
   suite('Adding multiple Sources', () => {
@@ -240,27 +238,30 @@ suite('Knative Sources', () => {
       const remainingSources: SourceTypes[] = knativeSources.removeSource('example-source-apiserver1');
       expect(remainingSources).to.have.lengthOf(14);
       const returnedSources: SourceTypes[] = knativeSources.addSources(testSources);
-      assert.equals(testSources, returnedSources);
+      expect(returnedSources).to.deep.equal(testSources);
     });
   });
   suite('Adding a Sink', () => {
     test('should add a Sink to the parent source and return the Sink added', () => {
       const returnedSink: Service = knativeSources.addSink(testSourceApiserver0) as Service;
-      assert.equals(returnedSink.name, 'aaa');
+      expect(returnedSink.name).to.equal('aaa');
+      expect(returnedSink).to.have.own.property('name').to.equal('aaa');
     });
     test('should return null when adding a Sink to the parent source that does not have a Sink listed', () => {
       const returnedSink: Sink = knativeSources.addSink(testSourceGenericEmpty);
-      assert.isNull(returnedSink);
+      // eslint-disable-next-line no-unused-expressions
+      expect(returnedSink).to.be.null;
     });
     test('should return undefined when adding a Sink to the parent source that has an unused Sink name', () => {
       const returnedSink: Sink = knativeSources.addSink(testSourceGenericMissing);
-      assert.isUndefined(returnedSink);
+      // eslint-disable-next-line no-unused-expressions
+      expect(returnedSink).to.be.undefined;
     });
   });
   suite('Updating a Source', () => {
     test('should return a list of sources, including the updated one', () => {
       const returnedSources: SourceTypes[] = knativeSources.updateSource(testSourceApiserver1);
-      assert.equals(testSources, returnedSources);
+      expect(returnedSources).to.deep.equal(testSources);
     });
   });
 });

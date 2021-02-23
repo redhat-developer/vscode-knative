@@ -1,12 +1,11 @@
 import { Uri } from 'vscode';
+import { expect } from 'chai';
 import * as chai from 'chai';
-import * as sinonChai from 'sinon-chai';
 import * as sinon from 'sinon';
-import * as referee from '@sinonjs/referee';
+import * as sinonChai from 'sinon-chai';
 import { KnativeReadonlyProvider } from '../../src/editor/knativeReadonlyProvider';
 import { ServingDataProvider } from '../../src/servingTree/servingDataProvider';
 
-const { assert } = referee;
 chai.use(sinonChai);
 
 suite('Readonly Provider', () => {
@@ -137,6 +136,6 @@ suite('Readonly Provider', () => {
   test('should display text', async () => {
     sandbox.stub(knrp.knvfs, 'loadResource').resolves(externalYamlFileContentFull);
     const fetchedData: string = await knrp.provideTextDocumentContent(_uriExternalFileReadonly);
-    assert(fetchedData, externalYamlFileContentFull);
+    expect(fetchedData).to.deep.equal(externalYamlFileContentFull);
   });
 });

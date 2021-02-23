@@ -1,26 +1,24 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
-import * as vscode from 'vscode';
-import * as chai from 'chai';
-import * as sinon from 'sinon';
-import * as sinonChai from 'sinon-chai';
-import * as referee from '@sinonjs/referee';
-import { beforeEach } from 'mocha';
 import * as childProcess from 'child_process';
 import { Readable } from 'stream';
-import { CmdCli, cliCommandToString, createCliCommand, CliCommand, CliExitData } from '../../src/cli/cmdCli';
-
+import * as vscode from 'vscode';
+import { expect } from 'chai';
+import * as chai from 'chai';
+import { beforeEach } from 'mocha';
 import rewire = require('rewire');
+import * as sinon from 'sinon';
+import * as sinonChai from 'sinon-chai';
+import { CmdCli, cliCommandToString, createCliCommand, CliCommand, CliExitData } from '../../src/cli/cmdCli';
 
 const rewiredCLI = rewire('../../src/cli/cmdCli');
 
-const { assert } = referee;
 chai.use(sinonChai);
 
 suite('Create CLI Command', () => {
   test('should return the CliCommand', () => {
     const args = ['service', 'list', '-o', 'json'];
     const result: CliCommand = createCliCommand('kn', ...args);
-    assert.equals(result, { cliCommand: 'kn', cliArguments: args });
+    expect(result).to.deep.equal({ cliCommand: 'kn', cliArguments: args });
   });
 });
 suite('Convert CLI Command to a String', () => {
@@ -28,12 +26,13 @@ suite('Convert CLI Command to a String', () => {
     const args = ['service', 'list', '-o', 'json'];
     const command = { cliCommand: 'kn', cliArguments: args };
     const result: string = cliCommandToString(command);
-    assert.equals(result, 'kn service list -o json');
+    expect(result).to.equal('kn service list -o json');
   });
 });
 suite('Command CLI', () => {
   const sandbox = sinon.createSandbox();
   const cmdCli = CmdCli.getInstance();
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
   const rewiredCmdCli = rewiredCLI.CmdCli.getInstance();
   beforeEach(() => {
     sandbox.stub(vscode.window, 'showErrorMessage').resolves();
@@ -45,10 +44,13 @@ suite('Command CLI', () => {
 
   test('should create a singleton of the CmdCli', () => {
     const cmdCliInstance = CmdCli.getInstance();
-    assert.equals(cmdCliInstance, cmdCli);
+    expect(cmdCliInstance).to.deep.equal(cmdCli);
   });
   test('should show the output channel when showOutputChannel is called', () => {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     const spy = sandbox.spy(rewiredCmdCli.knOutputChannel, 'show');
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
+    // eslint-disable-next-line
     rewiredCmdCli.showOutputChannel();
     sinon.assert.calledOnce(spy);
   });
@@ -71,6 +73,10 @@ suite('Command CLI', () => {
       killed: false,
       pid: 1234,
       connected: false,
+      exitCode: null,
+      signalCode: null,
+      spawnargs: null,
+      spawnfile: null,
       kill(): boolean {
         return false;
       },
@@ -113,9 +119,11 @@ suite('Command CLI', () => {
       getMaxListeners(): number {
         return 123;
       },
+      // eslint-disable-next-line @typescript-eslint/ban-types
       listeners(): Function[] {
         return null;
       },
+      // eslint-disable-next-line @typescript-eslint/ban-types
       rawListeners(): Function[] {
         return null;
       },
@@ -133,12 +141,13 @@ suite('Command CLI', () => {
       .then((value) => {
         result = value;
       })
-      .catch((err) => {
+      .catch((err: NodeJS.ErrnoException) => {
         // eslint-disable-next-line no-console
-        console.log(`cmdCli test execute error - ${err}`);
+        console.log(`cmdCli test execute error - ${err.message}`);
       });
     // const result = await cmdCli.execute(createCliCommand('kn', 'version'));
-    assert.isUndefined(result);
+    // eslint-disable-next-line no-unused-expressions
+    expect(result).to.be.undefined;
     sinon.assert.calledOnce(stubSpawn);
   });
 });

@@ -1,15 +1,13 @@
 import * as vscode from 'vscode';
+import { expect } from 'chai';
 import * as chai from 'chai';
-import * as sinonChai from 'sinon-chai';
-import * as sinon from 'sinon';
-import * as referee from '@sinonjs/referee';
 import { beforeEach } from 'mocha';
-import * as brokerData from '../eventingTree/broker.json';
-import { KnativeBrokers } from '../../src/knative/knativeBrokers';
+import * as sinon from 'sinon';
+import * as sinonChai from 'sinon-chai';
 import { Broker } from '../../src/knative/broker';
+import { KnativeBrokers } from '../../src/knative/knativeBrokers';
+import * as brokerData from '../eventingTree/broker.json';
 
-const { assert } = referee;
-const { expect } = chai;
 chai.use(sinonChai);
 
 suite('Knative Brokers', () => {
@@ -32,19 +30,19 @@ suite('Knative Brokers', () => {
   suite('Getting an instance', () => {
     test('should return an instance of the singleton', () => {
       const instance: KnativeBrokers = KnativeBrokers.Instance;
-      assert.equals(instance, knativeBrokers);
+      expect(instance).to.deep.equal(knativeBrokers);
     });
   });
   suite('Getting a Broker', () => {
     test('should return a list of brokers from the instance', () => {
       const returnedBroker: Broker = knativeBrokers.getBrokers()[0];
-      assert.equals(testBroker0, returnedBroker);
+      expect(returnedBroker).to.deep.equal(testBroker0);
     });
   });
   suite('Finding a Broker', () => {
     test('should return a broker using the broker name', () => {
       const returnedBroker: Broker = knativeBrokers.findBroker('example-broker0');
-      assert.equals(testBroker0, returnedBroker);
+      expect(returnedBroker).to.deep.equal(testBroker0);
     });
   });
   suite('Adding a Broker', () => {
@@ -52,7 +50,7 @@ suite('Knative Brokers', () => {
       const remainingBrokers: Broker[] = knativeBrokers.removeBroker('example-broker1');
       expect(remainingBrokers).to.have.lengthOf(1);
       const returnedBroker: Broker = knativeBrokers.addBroker(testBroker1);
-      assert.equals(testBroker1, returnedBroker);
+      expect(returnedBroker).to.deep.equal(testBroker1);
     });
   });
   suite('Adding multiple Brokers', () => {
@@ -60,13 +58,13 @@ suite('Knative Brokers', () => {
       const remainingBrokers: Broker[] = knativeBrokers.removeBroker('example-broker1');
       expect(remainingBrokers).to.have.lengthOf(1);
       const returnedBrokers: Broker[] = knativeBrokers.addBrokers(testBrokers);
-      assert.equals(testBrokers, returnedBrokers);
+      expect(returnedBrokers).to.deep.equal(testBrokers);
     });
   });
   suite('Updating a Broker', () => {
     test('should return a list of brokers, including the updated one', () => {
       const returnedBrokers: Broker[] = knativeBrokers.updateBroker(testBroker1);
-      assert.equals(testBrokers, returnedBrokers);
+      expect(returnedBrokers).to.deep.equal(testBrokers);
     });
   });
 });

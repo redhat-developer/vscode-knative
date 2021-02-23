@@ -1,15 +1,11 @@
-// import * as vscode from 'vscode';
-import * as chai from 'chai';
-import * as sinonChai from 'sinon-chai';
+import rewire = require('rewire');
 import * as sinon from 'sinon';
 
-import rewire = require('rewire');
 const rewiredKnOutputChannel = rewire('../../src/output/knOutputChannel');
-
-chai.use(sinonChai);
 
 suite('Output Channel', () => {
   const sandbox = sinon.createSandbox();
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
   const op = new rewiredKnOutputChannel.KnOutputChannel();
 
   teardown(() => {
@@ -17,15 +13,19 @@ suite('Output Channel', () => {
   });
 
   test('should print text', () => {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     const channelSpy = sandbox.spy(op.channel, 'append');
     const text = `hello\n`;
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
     op.print(text);
     sandbox.assert.calledOnce(channelSpy);
   });
 
   test('should add a new line if none exists when it prints text', () => {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     const channelSpy = sandbox.spy(op.channel, 'append');
     const text = `hello`;
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
     op.print(text);
     sandbox.assert.calledTwice(channelSpy);
   });

@@ -1,16 +1,14 @@
-/* eslint-disable @typescript-eslint/no-empty-function */
 import * as vscode from 'vscode';
+import { expect } from 'chai';
 import * as chai from 'chai';
+import { beforeEach } from 'mocha';
 import * as sinon from 'sinon';
 import * as sinonChai from 'sinon-chai';
-import * as referee from '@sinonjs/referee';
-import { beforeEach } from 'mocha';
+import { CmdCliConfig } from '../../src/cli/cli-config';
 import * as cmdCli from '../../src/cli/cmdCli';
 import { Execute, loadItems } from '../../src/cli/execute';
-import { CmdCliConfig } from '../../src/cli/cli-config';
 import { WindowUtil } from '../../src/util/windowUtils';
 
-const { assert } = referee;
 chai.use(sinonChai);
 
 suite('Create CLI Command', () => {
@@ -99,10 +97,10 @@ suite('Create CLI Command', () => {
 suite('Load Items', () => {
   test('should return JSON from results', () => {
     const result = loadItems({ error: undefined, stdout: '{"items": {"test": "data"}}' });
-    assert.equals(result, { test: 'data' });
+    expect(result).to.deep.equal({ test: 'data' });
   });
   test('should return empty JSON from results with "items"', () => {
     const result = loadItems({ error: undefined, stdout: '{"test": "data"}' });
-    assert.equals(result, []);
+    expect(result).to.deep.equal([]);
   });
 });

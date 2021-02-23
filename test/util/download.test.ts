@@ -2,17 +2,16 @@
  *  Copyright (c) Red Hat, Inc. All rights reserved.
  *  Licensed under the MIT License. See LICENSE file in the project root for license information.
  *-----------------------------------------------------------------------------------------------*/
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import * as chai from 'chai';
-import * as sinonChai from 'sinon-chai';
-import * as sinon from 'sinon';
+
 import { EventEmitter } from 'events';
 import * as os from 'os';
 import * as path from 'path';
+import { expect } from 'chai';
+import * as chai from 'chai';
+import * as pq from 'proxyquire';
+import * as sinon from 'sinon';
+import * as sinonChai from 'sinon-chai';
 
-import pq = require('proxyquire');
-
-const { expect } = chai;
 chai.use(sinonChai);
 
 suite('Download Util', () => {
@@ -26,8 +25,10 @@ suite('Download Util', () => {
     streamEmitter = new EventEmitter();
     // eslint-disable-next-line dot-notation
     requestEmitter['pipe'] = (): EventEmitter => streamEmitter;
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
     progressMock = pq('../../src/util/download', {
       'request-progress': () => requestEmitter,
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-return
       request: (_: any) => _,
     }).DownloadUtil;
   });
@@ -38,11 +39,13 @@ suite('Download Util', () => {
 
   test('reports download progress', () => {
     const callback = sandbox.stub();
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
     const result = progressMock.downloadFile('url', path.join(os.tmpdir(), 'toFile'), callback);
     requestEmitter.emit('progress', { percent: 0.33 });
     requestEmitter.emit('progress', { percent: 0.66 });
     requestEmitter.emit('end');
     streamEmitter.emit('close');
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
     return result.then(() => {
       expect(callback).calledWith(33, 33);
       expect(callback).calledWith(66, 33);
@@ -51,26 +54,26 @@ suite('Download Util', () => {
   });
 
   test('fails when download fails', () => {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
     const result = progressMock.downloadFile('url', path.join(os.tmpdir(), 'toFile'));
     requestEmitter.emit('error', new Error('failure'));
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
     return result
-      .then(() => {
-        return Promise.reject(Error('No failure reported'));
-      })
+      .then(() => Promise.reject(Error('No failure reported')))
       .catch((err: Error) => {
-        expect(err.message).equals('failure');
+        expect(err.message).to.equal('failure');
       });
   });
 
   test('fails when stream fails', () => {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
     const result = progressMock.downloadFile('url', path.join(os.tmpdir(), 'toFile'));
     streamEmitter.emit('error', new Error('failure'));
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
     return result
-      .then(() => {
-        return Promise.reject(Error('No failure reported'));
-      })
+      .then(() => Promise.reject(Error('No failure reported')))
       .catch((err: Error) => {
-        expect(err.message).equals('failure');
+        expect(err.message).to.equal('failure');
       });
   });
 });

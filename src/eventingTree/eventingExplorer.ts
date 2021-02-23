@@ -3,14 +3,14 @@
  *  Licensed under the MIT License. See LICENSE file in the project root for license information.
  *-----------------------------------------------------------------------------------------------*/
 
+import * as path from 'path';
 import { Disposable, TreeView, window, workspace } from 'vscode';
 import * as vscode from 'vscode';
-import * as path from 'path';
-import { Platform } from '../util/platform';
-import { EventingTreeItem } from './eventingTreeItem';
 import { EventingDataProvider } from './eventingDataProvider';
-import { WatchUtil, FileContentChangeNotifier } from '../util/watch';
+import { EventingTreeItem } from './eventingTreeItem';
 import { ServingTreeItem } from '../servingTree/servingTreeItem';
+import { Platform } from '../util/platform';
+import { WatchUtil, FileContentChangeNotifier } from '../util/watch';
 
 const kubeConfigFolder: string = path.join(Platform.getUserHomePath(), '.kube');
 const kubeconfigParam: string[][] = [[kubeConfigFolder, 'config']];

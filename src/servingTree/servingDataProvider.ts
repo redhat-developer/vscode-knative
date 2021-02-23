@@ -3,6 +3,9 @@
  *  Licensed under the MIT License. See LICENSE file in the project root for license information.
  *-----------------------------------------------------------------------------------------------*/
 
+import * as path from 'path';
+import * as vscode from 'vscode';
+// import * as validator from 'validator';
 import {
   Event,
   EventEmitter,
@@ -14,24 +17,22 @@ import {
   TreeItemCollapsibleState,
   Uri,
 } from 'vscode';
-import * as vscode from 'vscode';
-// import * as validator from 'validator';
-import * as path from 'path';
 import * as yaml from 'yaml';
 import { ServingTreeItem } from './servingTreeItem';
-import { Execute, loadItems } from '../cli/execute';
 import { CliExitData } from '../cli/cmdCli';
+import { ServingContextType } from '../cli/config';
+import { Execute, loadItems } from '../cli/execute';
 import { KnAPI } from '../cli/kn-api';
 import { KubectlAPI } from '../cli/kubectl-api';
-import { ServingContextType } from '../cli/config';
-import { compareNodes } from '../knative/knativeItem';
-import { Service, CreateService, UpdateService } from '../knative/service';
-import { Revision, Items, Traffic } from '../knative/revision';
-import { KnativeServices } from '../knative/knativeServices';
 import { KnativeResourceVirtualFileSystemProvider, KN_RESOURCE_SCHEME } from '../cli/virtualfs';
 import * as vfs from '../cli/virtualfs';
-import { KnOutputChannel, OutputChannel } from '../output/knOutputChannel';
 import { EventingTreeItem } from '../eventingTree/eventingTreeItem';
+import { compareNodes } from '../knative/knativeItem';
+import { KnativeServices } from '../knative/knativeServices';
+import { Revision, Items, Traffic } from '../knative/revision';
+import * as svc from '../knative/service';
+import { Service, CreateService, UpdateService } from '../knative/service';
+import { KnOutputChannel, OutputChannel } from '../output/knOutputChannel';
 
 export class ServingDataProvider implements TreeDataProvider<ServingTreeItem | EventingTreeItem> {
   public knExecutor = new Execute();
@@ -167,7 +168,8 @@ export class ServingDataProvider implements TreeDataProvider<ServingTreeItem | E
       result = await this.getRevisionData(parentService);
     } catch (err) {
       // Catch the Rejected Promise of the Execute to list Revisions.
-      vscode.window.showErrorMessage(
+      await vscode.window.showErrorMessage(
+        // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
         `Caught an error getting the Revision for ${parentService.getName()}.\n ${err}`,
         { modal: true },
         'OK',
@@ -177,7 +179,8 @@ export class ServingDataProvider implements TreeDataProvider<ServingTreeItem | E
 
     if (result.error) {
       // If we get an error back and not data, tell the user and stop processing it.
-      vscode.window.showErrorMessage(
+      await vscode.window.showErrorMessage(
+        // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
         `Failed to get the Revision for ${parentService.getName()}.\n ${result.error}`,
         { modal: true },
         'OK',
@@ -193,9 +196,7 @@ export class ServingDataProvider implements TreeDataProvider<ServingTreeItem | E
       // Pull the data out of the Items object in the JSON results
       loadItems(result).map((value: Items) => {
         // get the revision name, check it against the list of traffic from the parent, then pass in the traffic if found
-        const revisionTraffic: Traffic[] = traffic.filter((val): boolean => {
-          return value.metadata.name === val.revisionName;
-        });
+        const revisionTraffic: Traffic[] = traffic.filter((val): boolean => value.metadata.name === val.revisionName);
         return Revision.toRevision(value, revisionTraffic);
       }),
     );
@@ -416,7 +417,7 @@ export class ServingDataProvider implements TreeDataProvider<ServingTreeItem | E
       // Add the dir if missing or read it and fetch the files in it
       files = await this.knvfs.readDirectoryAsync();
     } catch (err) {
-      // eslint-disable-next-line no-console
+      // eslint-disable-next-line no-console, @typescript-eslint/restrict-template-expressions
       console.log(`servingDataProvider.addService Error trying to read directory.\n ${err}`);
       // throw err;
       return null;
@@ -436,7 +437,7 @@ export class ServingDataProvider implements TreeDataProvider<ServingTreeItem | E
       // Create the base yaml for creating a Service.
       const stringContent = yaml.parse(
         `apiVersion: serving.knative.dev/v1\nkind: Service\nmetadata:\n  name: ${serveObj.name}\nspec:\n  template:\n    spec:\n      containers:\n      - image: ${serveObj.image}`,
-      );
+      ) as svc.Items;
       const yamlContent = yaml.stringify(stringContent);
       // Read the string version of the yaml into a file
       await this.knvfs.writeFile(newUri, Buffer.from(yamlContent, 'utf8'), {
@@ -453,7 +454,7 @@ export class ServingDataProvider implements TreeDataProvider<ServingTreeItem | E
       try {
         await this.knExecutor.execute(KubectlAPI.applyYAML(filePath, { override: true }));
       } catch (err) {
-        // eslint-disable-next-line no-console
+        // eslint-disable-next-line no-console, @typescript-eslint/restrict-template-expressions
         console.log(`Error while using kubectl apply to create. ${err}`);
       }
 
@@ -509,7 +510,7 @@ export class ServingDataProvider implements TreeDataProvider<ServingTreeItem | E
     try {
       files = await this.knvfs.readDirectoryAsync();
     } catch (err) {
-      // eslint-disable-next-line no-console
+      // eslint-disable-next-line no-console, @typescript-eslint/restrict-template-expressions
       console.log(`servingDataProvider.getLocalYamlPathForNode Error trying to read directory.\n ${err}`);
       // throw err;
       return null;
@@ -563,7 +564,7 @@ export class ServingDataProvider implements TreeDataProvider<ServingTreeItem | E
       const result: CliExitData = await this.knExecutor.execute(KubectlAPI.applyYAML(fileURI, { override: false }));
       // Delete the yaml that was pushed if there was no error
       if (result.error) {
-        // eslint-disable-next-line no-console
+        // eslint-disable-next-line no-console, @typescript-eslint/restrict-template-expressions
         console.log(`updateServiceFromYaml result.error = ${result.error}`);
         // deal with the error that is passed on but not thrown by the Promise.
         throw result.error;
@@ -576,7 +577,7 @@ export class ServingDataProvider implements TreeDataProvider<ServingTreeItem | E
           'Delete',
         );
         if (response === 'Delete') {
-          this.knvfs.delete(Uri.file(fileURI), { recursive: false });
+          await this.knvfs.delete(Uri.file(fileURI), { recursive: false });
         }
       } else {
         // Delete the local YAML file that was uploaded.
@@ -589,14 +590,14 @@ export class ServingDataProvider implements TreeDataProvider<ServingTreeItem | E
           );
         }
         if (response === 'Delete') {
-          this.knvfs.delete(Uri.file(fileURI), { recursive: false });
+          await this.knvfs.delete(Uri.file(fileURI), { recursive: false });
         }
       }
     } catch (error) {
       if (typeof error === 'string' && error.search('validation failed') > 0) {
         // eslint-disable-next-line @typescript-eslint/prefer-string-starts-ends-with
         const fileName = error.slice(error.lastIndexOf('validation failed:'));
-        vscode.window.showErrorMessage(
+        await vscode.window.showErrorMessage(
           `The YAMl file failed validation with the following error.\n\n${fileName}`,
           { modal: true },
           'OK',
@@ -609,7 +610,7 @@ export class ServingDataProvider implements TreeDataProvider<ServingTreeItem | E
         console.log(`updateServiceFromYaml undefinedWarning; error = ${error}`);
         // do nothing it was a warning
       } else {
-        // eslint-disable-next-line no-console
+        // eslint-disable-next-line no-console, @typescript-eslint/restrict-template-expressions
         console.log(`updateServiceFromYaml error = ${error}`);
         await vscode.window.showErrorMessage(`There was an error while uploading the YAML. `, { modal: true }, 'OK');
       }
@@ -628,7 +629,7 @@ export class ServingDataProvider implements TreeDataProvider<ServingTreeItem | E
       'Delete',
     );
     if (response === 'Delete') {
-      this.knvfs.delete(Uri.file(fileURI), { recursive: false });
+      await this.knvfs.delete(Uri.file(fileURI), { recursive: false });
       this.refresh();
     }
   }

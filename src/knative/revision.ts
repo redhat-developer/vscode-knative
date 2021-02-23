@@ -1,3 +1,4 @@
+/* eslint-disable no-use-before-define */
 /*-----------------------------------------------------------------------------------------------
  *  Copyright (c) Red Hat, Inc. All rights reserved.
  *  Licensed under the MIT License. See LICENSE file in the project root for license information.
@@ -80,9 +81,9 @@ export interface ManagedFields {
   time: string;
 }
 export interface FieldsV1 {
-  'f:metadata'?: {} | null;
-  'f:spec'?: {} | null;
-  'f:status'?: {} | null;
+  'f:metadata'?: Record<string, unknown> | null;
+  'f:spec'?: Record<string, unknown> | null;
+  'f:status'?: Record<string, unknown> | null;
 }
 export interface OwnerReferencesEntity {
   apiVersion: string;
@@ -116,8 +117,8 @@ export interface TcpSocket {
   port: number;
 }
 export interface Resources {
-  limits: {};
-  requests: {};
+  limits: Record<string, unknown>;
+  requests: Record<string, unknown>;
 }
 export interface Status {
   conditions?: Conditions[] | null;

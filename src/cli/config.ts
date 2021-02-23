@@ -50,12 +50,6 @@ export const enum SourceType {
   BINARY = 'binary',
 }
 
-export interface Config {
-  kind: Kind;
-  apiVersion: string;
-  ComponentSettings: ComponentSettings;
-}
-
 export interface ComponentSettings {
   Type: string;
   SourceLocation: string;
@@ -68,6 +62,12 @@ export interface ComponentSettings {
   Ports: string[];
 }
 
+export interface Config {
+  kind: Kind;
+  apiVersion: string;
+  ComponentSettings: ComponentSettings;
+}
+
 export function getOutputFormat(): string {
-  return workspace.getConfiguration(EXTENSION_CONFIG_KEY)['vs-knative.outputFormat'];
+  return workspace.getConfiguration(EXTENSION_CONFIG_KEY)['vs-knative.outputFormat'] as string;
 }

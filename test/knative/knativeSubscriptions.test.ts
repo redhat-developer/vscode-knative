@@ -1,13 +1,10 @@
+/* eslint-disable no-unused-expressions */
 import * as vscode from 'vscode';
+import { expect } from 'chai';
 import * as chai from 'chai';
-import * as sinonChai from 'sinon-chai';
-import * as sinon from 'sinon';
-import * as referee from '@sinonjs/referee';
 import { beforeEach } from 'mocha';
-import * as brokerData from '../eventingTree/broker.json';
-import * as channelData from '../eventingTree/channel.json';
-import * as sourceData from '../eventingTree/source.json';
-import * as subscriptionData from '../eventingTree/subscription.json';
+import * as sinon from 'sinon';
+import * as sinonChai from 'sinon-chai';
 import { APIServerSource } from '../../src/knative/apiServerSource';
 import { BindingSource } from '../../src/knative/bindingSource';
 import { Broker } from '../../src/knative/broker';
@@ -21,9 +18,11 @@ import { PingSource } from '../../src/knative/pingSource';
 import { Service } from '../../src/knative/service';
 import { Sink } from '../../src/knative/sink';
 import { Subscription } from '../../src/knative/subscription';
+import * as brokerData from '../eventingTree/broker.json';
+import * as channelData from '../eventingTree/channel.json';
+import * as sourceData from '../eventingTree/source.json';
+import * as subscriptionData from '../eventingTree/subscription.json';
 
-const { assert } = referee;
-const { expect } = chai;
 chai.use(sinonChai);
 
 suite('Knative Subscriptions', () => {
@@ -272,19 +271,19 @@ suite('Knative Subscriptions', () => {
   suite('Getting an instance', () => {
     test('should return an instance of the singleton', () => {
       const instance: KnativeSubscriptions = KnativeSubscriptions.Instance;
-      assert.equals(instance, knativeSubscriptions);
+      expect(instance).to.deep.equal(knativeSubscriptions);
     });
   });
   suite('Getting a Subscription', () => {
     test('should return a list of subscriptions from the instance', () => {
       const returnedSubscription: Subscription = knativeSubscriptions.getSubscriptions()[0];
-      assert.equals(testSubscription0, returnedSubscription);
+      expect(returnedSubscription).to.deep.equal(testSubscription0);
     });
   });
   suite('Finding a Subscription', () => {
     test('should return a subscription using the subscription name', () => {
       const returnedSubscription: Subscription = knativeSubscriptions.findSubscription('example-subscription0');
-      assert.equals(testSubscription0, returnedSubscription);
+      expect(returnedSubscription).to.deep.equal(testSubscription0);
     });
   });
   suite('Adding a Subscription', () => {
@@ -292,7 +291,7 @@ suite('Knative Subscriptions', () => {
       const remainingSubscriptions: Subscription[] = knativeSubscriptions.removeSubscription('example-subscription1');
       expect(remainingSubscriptions).to.have.lengthOf(6);
       const returnedSubscription: Subscription = knativeSubscriptions.addSubscription(testSubscription1);
-      assert.equals(testSubscription1, returnedSubscription);
+      expect(returnedSubscription).to.deep.equal(testSubscription1);
     });
   });
   suite('Adding multiple Subscriptions', () => {
@@ -300,71 +299,71 @@ suite('Knative Subscriptions', () => {
       const remainingSubscriptions: Subscription[] = knativeSubscriptions.removeSubscription('example-subscription1');
       expect(remainingSubscriptions).to.have.lengthOf(6);
       const returnedSubscriptions: Subscription[] = knativeSubscriptions.addSubscriptions(testSubscriptions);
-      assert.equals(testSubscriptions, returnedSubscriptions);
+      expect(returnedSubscriptions).to.deep.equal(testSubscriptions);
     });
   });
 
   suite('Adding a Channel', () => {
     test('should add a Channel to the parent subscription and return the Channel added', () => {
       const returnedChannel: Channel = knativeSubscriptions.addChannel(testSubscription4);
-      assert.equals(returnedChannel.name, 'example-channel3');
+      expect(returnedChannel.name).to.equal('example-channel3');
     });
     test('should return null when adding a Channel to the parent subscription that does not have a channel listed', () => {
       const returnedChannel: Channel = knativeSubscriptions.addChannel(testSubscription0Empty);
-      assert.isNull(returnedChannel);
+      expect(returnedChannel).to.be.null;
     });
     test('should return undefined when adding a Channel to the parent subscription that has an unused channel name', () => {
       const returnedChannel: Channel = knativeSubscriptions.addChannel(testSubscription1Empty);
-      assert.isUndefined(returnedChannel);
+      expect(returnedChannel).to.be.undefined;
     });
   });
   suite('Adding a Sink', () => {
     test('should add a Sink to the parent subscription and return the Sink added', () => {
       const returnedSink: Service = knativeSubscriptions.addSink(testSubscription4) as Service;
-      assert.equals(returnedSink.name, 'aaa');
+      expect(returnedSink.name).to.equal('aaa');
     });
     test('should return null when adding a Sink to the parent subscription that does not have a Sink listed', () => {
       const returnedSink: Sink = knativeSubscriptions.addSink(testSubscription0Empty);
-      assert.isNull(returnedSink);
+      expect(returnedSink).to.be.null;
     });
     test('should return undefined when adding a Sink to the parent subscription that has an unused Sink name', () => {
       const returnedSink: Sink = knativeSubscriptions.addSink(testSubscription1Empty);
-      assert.isUndefined(returnedSink);
+      expect(returnedSink).to.be.undefined;
     });
   });
   suite('Adding a Sink Dead Letter', () => {
     test('should add a Sink to the parent subscription and return the Sink added', () => {
       const returnedSink: Broker = knativeSubscriptions.addSinkDeadLetter(testSubscription4) as Broker;
-      assert.equals(returnedSink.name, 'example-broker1');
+      expect(returnedSink.name).to.equal('example-broker1');
     });
     test('should return null when adding a Sink to the parent subscription that does not have a Sink listed', () => {
       const returnedSink: Sink = knativeSubscriptions.addSinkDeadLetter(testSubscription0Empty);
-      assert.isNull(returnedSink);
+      expect(returnedSink).to.be.null;
     });
     test('should return undefined when adding a Sink to the parent subscription that has an unused Sink name', () => {
       const returnedSink: Sink = knativeSubscriptions.addSinkDeadLetter(testSubscription1Empty);
-      assert.isUndefined(returnedSink);
+      expect(returnedSink).to.be.undefined;
     });
   });
   suite('Adding a Sink Reply', () => {
     test('should add a Sink to the parent subscription and return the Sink added', () => {
       const returnedSink: Broker = knativeSubscriptions.addSinkReply(testSubscription4) as Broker;
-      assert.equals(returnedSink.name, 'example-broker0');
+      expect(returnedSink.name).to.equal('example-broker0');
     });
     test('should return null when adding a Sink to the parent subscription that does not have a Sink listed', () => {
       const returnedSink: Sink = knativeSubscriptions.addSinkReply(testSubscription0Empty);
-      assert.isNull(returnedSink);
+      expect(returnedSink).to.be.null;
     });
     test('should return undefined when adding a Sink to the parent subscription that has an unused Sink name', () => {
       const returnedSink: Sink = knativeSubscriptions.addSinkReply(testSubscription1Empty);
-      assert.isUndefined(returnedSink);
+      expect(returnedSink).to.be.undefined;
     });
   });
 
   suite('Updating a Subscription', () => {
     test('should return a list of subscriptions, including the updated one', () => {
       const returnedSubscriptions: Subscription[] = knativeSubscriptions.updateSubscription(testSubscription1);
-      assert.equals(testSubscriptions, returnedSubscriptions);
+      expect(returnedSubscriptions).to.deep.equal(testSubscriptions);
     });
   });
 });

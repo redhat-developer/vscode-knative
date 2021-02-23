@@ -4,7 +4,7 @@
 
 [Knative](https://knative.tips/intro/knative/) (pronounced kay-native) is a set of open source components for Kubernetes that implements functionality to:
 
-  * run stateless workloads such as microservices
+  * run stateless workloads such as micro-services
   * event subscription, delivery and handling
 
 on Kubernetes clusters.

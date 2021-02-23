@@ -3,8 +3,8 @@
  *  Licensed under the MIT License. See LICENSE file in the project root for license information.
  *-----------------------------------------------------------------------------------------------*/
 
-import { Service } from './service';
 import { Revision } from './revision';
+import { Service } from './service';
 // import { compareNodes } from '../kn/knativeTreeObject';
 
 type revisionService = { revision: Revision; service: Service };

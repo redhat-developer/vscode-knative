@@ -5,7 +5,7 @@ import { Notification, VSBrowser, NotificationType, Workbench, SideBarView } fro
  */
 export async function getNotifications(...types: NotificationType[]): Promise<Notification[]> {
   const center = await new Workbench().openNotificationsCenter();
-  const notifications = [];
+  const notifications: Notification[] = [];
   types.map(async (type) => {
     notifications.push(...(await center.getNotifications(type)));
   });
@@ -50,10 +50,11 @@ export async function notificationExists(text: string): Promise<boolean> {
 }
 
 export async function safeNotificationExists(text: string): Promise<boolean> {
-  let result;
+  let result: boolean;
   try {
     result = await notificationExists(text);
   } catch (err) {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     if (err.name === 'StaleElementReferenceError') {
       result = await notificationExists(text);
     } else {
@@ -63,14 +64,18 @@ export async function safeNotificationExists(text: string): Promise<boolean> {
   return result;
 }
 
+// eslint-disable-next-line @typescript-eslint/ban-types
 export async function waitForEvent(func: Function, timeout: number): Promise<unknown | undefined> {
   const obj = await VSBrowser.instance.driver.wait(func, timeout);
   return obj;
 }
 
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export const asyncFilter = async (arr, predicate): Promise<void> => {
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
   const results = await Promise.all(arr.map(predicate));
 
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
   return arr.filter((_v, index) => results[index]);
 };
 

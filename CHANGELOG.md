@@ -76,7 +76,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Patch to allow locally built versions of the `kn` cli tool.
 - Patch to add a `Refresh` button the explorer.
-- Patch to fix the `Report Issue` button in the exporer.
+- Patch to fix the `Report Issue` button in the explorer.
 - Patch to add a default value when no Service is found.
 
 ## 0.1.3 (2020/03/08)

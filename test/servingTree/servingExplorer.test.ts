@@ -1,18 +1,19 @@
+import { URL } from 'url';
 import * as vscode from 'vscode';
+import { expect } from 'chai';
 import * as chai from 'chai';
 import { beforeEach } from 'mocha';
 import * as sinon from 'sinon';
 import * as sinonChai from 'sinon-chai';
-import * as referee from '@sinonjs/referee';
 import * as yaml from 'yaml';
-import { URL } from 'url';
 import { ServingContextType } from '../../src/cli/config';
+import * as revision from '../../src/knative/revision';
 import { Revision } from '../../src/knative/revision';
+import * as service from '../../src/knative/service';
 import { Service } from '../../src/knative/service';
-import { ServingTreeItem } from '../../src/servingTree/servingTreeItem';
 import { ServingExplorer } from '../../src/servingTree/servingExplorer';
+import { ServingTreeItem } from '../../src/servingTree/servingTreeItem';
 
-const { assert } = referee;
 chai.use(sinonChai);
 
 let servingExplorer: ServingExplorer;
@@ -144,7 +145,7 @@ status:
     url: http://current-example-a-serverless-example.apps.devcluster.openshift.com
   url: http://example-a-serverless-example.apps.devcluster.openshift.com
     `;
-  const jsonServiceContentUnfiltered = yaml.parse(yamlServiceContentUnfiltered);
+  const jsonServiceContentUnfiltered = yaml.parse(yamlServiceContentUnfiltered) as service.Items;
   const testService: Service = new Service(
     'example',
     'http://example-a-serverless-example.apps.devcluster.openshift.com',
@@ -276,7 +277,7 @@ status:
   observedGeneration: 1
   serviceName: example-75w7v
   `;
-  const example75w7vJson = yaml.parse(example75w7vYaml);
+  const example75w7vJson = yaml.parse(example75w7vYaml) as revision.Items;
   const example75w7vRevision: Revision = new Revision('example-75w7v', 'example', example75w7vJson, [
     {
       tag: null,
@@ -310,7 +311,7 @@ status:
     // giving the extension test enough time to dispose of it. Otherwise we would have 2 registered
     // commands for each one in ServingExplorer.
     servingExplorer = new ServingExplorer();
-    assert.equals(servingExplorer.registeredCommands.length, 8);
+    expect(servingExplorer.registeredCommands.length).to.equal(8);
   });
 
   test('should connect the output command to showing the knative output channel', async () => {
