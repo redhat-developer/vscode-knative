@@ -1,12 +1,11 @@
 import * as vscode from 'vscode';
+import { expect } from 'chai';
 import * as chai from 'chai';
 import { beforeEach } from 'mocha';
 import * as sinon from 'sinon';
 import * as sinonChai from 'sinon-chai';
-import * as referee from '@sinonjs/referee';
 import * as brokerData from './broker.json';
 import * as channelData from './channel.json';
-import * as multipleServiceData from '../servingTree/multipleServiceServicesList.json';
 import * as sourceData from './source.json';
 import * as sourceEmptySpec from './sourceEmptySpec.json';
 import * as sourceIncompleteData from './sourceIncomplete.json';
@@ -27,9 +26,8 @@ import { PingSource } from '../../src/knative/pingSource';
 import { Service } from '../../src/knative/service';
 import { ServingDataProvider } from '../../src/servingTree/servingDataProvider';
 import { ServingTreeItem } from '../../src/servingTree/servingTreeItem';
+import * as multipleServiceData from '../servingTree/multipleServiceServicesList.json';
 
-const { assert } = referee;
-const { expect } = chai;
 chai.use(sinonChai);
 
 suite('SourceDataProvider', () => {
@@ -530,47 +528,47 @@ suite('SourceDataProvider', () => {
       sandbox.stub(sourceDataProvider.knExecutor, 'execute').resolves({ error: undefined, stdout: `No sources found.` });
       const result = await sourceDataProvider.getSources(eventingFolderNodes[2]);
       expect(result).to.have.lengthOf(1);
-      expect(result[0].description).equals('');
-      expect(result[0].description).equals('');
-      expect(result[0].label.label).equals('No Source Found');
-      expect(result[0].getName()).equals('No Source Found');
+      expect(result[0].description).to.equal('');
+      expect(result[0].description).to.equal('');
+      expect(result[0].label.label).to.equal('No Source Found');
+      expect(result[0].getName()).to.equal('No Source Found');
     });
     test('should refetch source info when it is incomplete, then return source nodes', async () => {
       const exeStub = sandbox.stub(sourceDataProvider.knExecutor, 'execute');
       exeStub.onFirstCall().resolves({ error: undefined, stdout: JSON.stringify(sourceIncompleteData) });
       exeStub.onSecondCall().resolves({ error: undefined, stdout: JSON.stringify(sourceData) });
       const result = await sourceDataProvider.getSources(eventingFolderNodes[2]);
-      assert.equals(result[0], testSourceTreeItems[0]);
+      expect(result[0]).to.deep.equal(testSourceTreeItems[0]);
       expect(result).to.have.lengthOf(14);
-      expect(result[0].label.label).equals('example-source-apiserver0');
+      expect(result[0].label.label).to.equal('example-source-apiserver0');
     });
     test('should return API source nodes', async () => {
       sandbox.stub(sourceDataProvider.knExecutor, 'execute').resolves({ error: undefined, stdout: JSON.stringify(sourceData) });
       const result = await sourceDataProvider.getSources(eventingFolderNodes[2]);
-      assert.equals(result[0], testSourceTreeItems[0]);
+      expect(result[0]).to.deep.equal(testSourceTreeItems[0]);
       expect(result).to.have.lengthOf(14);
-      expect(result[0].label.label).equals('example-source-apiserver0');
+      expect(result[0].label.label).to.equal('example-source-apiserver0');
     });
     test('should return Ping source nodes', async () => {
       sandbox.stub(sourceDataProvider.knExecutor, 'execute').resolves({ error: undefined, stdout: JSON.stringify(sourceData) });
       const result = await sourceDataProvider.getSources(eventingFolderNodes[2]);
-      assert.equals(result[8], testSourceTreeItems[4]);
+      expect(result[8]).to.deep.equal(testSourceTreeItems[4]);
       expect(result).to.have.lengthOf(14);
-      expect(result[8].label.label).equals('example-source-ping0');
+      expect(result[8].label.label).to.equal('example-source-ping0');
     });
     test('should return Generic source nodes', async () => {
       sandbox.stub(sourceDataProvider.knExecutor, 'execute').resolves({ error: undefined, stdout: JSON.stringify(sourceData) });
       const result = await sourceDataProvider.getSources(eventingFolderNodes[2]);
-      assert.equals(result[9], testSourceTreeItems[12]);
+      expect(result[9]).to.deep.equal(testSourceTreeItems[12]);
       expect(result).to.have.lengthOf(14);
-      expect(result[9].label.label).equals('example-source-ping1');
+      expect(result[9].label.label).to.equal('example-source-ping1');
     });
     test('should return Sink Binding source nodes', async () => {
       sandbox.stub(sourceDataProvider.knExecutor, 'execute').resolves({ error: undefined, stdout: JSON.stringify(sourceData) });
       const result = await sourceDataProvider.getSources(eventingFolderNodes[2]);
-      assert.equals(result[4], testSourceTreeItems[8]);
+      expect(result[4]).to.deep.equal(testSourceTreeItems[8]);
       expect(result).to.have.lengthOf(14);
-      expect(result[4].label.label).equals('example-source-binding0');
+      expect(result[4].label.label).to.equal('example-source-binding0');
     });
 
     // Test when the spec is empty
@@ -579,45 +577,45 @@ suite('SourceDataProvider', () => {
         .stub(sourceDataProvider.knExecutor, 'execute')
         .resolves({ error: undefined, stdout: JSON.stringify(sourceEmptySpec) });
       const result = await sourceDataProvider.getSources(eventingFolderNodes[2]);
-      assert.equals(result[0], testSourceTreeItemEmptySpecs[0]);
+      expect(result[0]).to.deep.equal(testSourceTreeItemEmptySpecs[0]);
       expect(result).to.have.lengthOf(13);
-      expect(result[0].label.label).equals('example-source-apiserver0-emptySpec');
+      expect(result[0].label.label).to.equal('example-source-apiserver0-emptySpec');
     });
     test('should return API source nodes when the spec is empty but there is an empty resources node', async () => {
       sandbox
         .stub(sourceDataProvider.knExecutor, 'execute')
         .resolves({ error: undefined, stdout: JSON.stringify(sourceEmptySpec) });
       const result = await sourceDataProvider.getSources(eventingFolderNodes[2]);
-      assert.equals(result[1], testSourceAPI1TreeItemEmptySpec);
+      expect(result[1]).to.deep.equal(testSourceAPI1TreeItemEmptySpec);
       expect(result).to.have.lengthOf(13);
-      expect(result[1].label.label).equals('example-source-apiserver1-emptySpec');
+      expect(result[1].label.label).to.equal('example-source-apiserver1-emptySpec');
     });
     test('should return Ping source nodes when the spec is empty', async () => {
       sandbox
         .stub(sourceDataProvider.knExecutor, 'execute')
         .resolves({ error: undefined, stdout: JSON.stringify(sourceEmptySpec) });
       const result = await sourceDataProvider.getSources(eventingFolderNodes[2]);
-      assert.equals(result[8], testSourceTreeItemEmptySpecs[1]);
+      expect(result[8]).to.deep.equal(testSourceTreeItemEmptySpecs[1]);
       expect(result).to.have.lengthOf(13);
-      expect(result[8].label.label).equals('example-source-ping0-emptySpec');
+      expect(result[8].label.label).to.equal('example-source-ping0-emptySpec');
     });
     test('should return Generic source nodes when the spec is empty', async () => {
       sandbox
         .stub(sourceDataProvider.knExecutor, 'execute')
         .resolves({ error: undefined, stdout: JSON.stringify(sourceEmptySpec) });
       const result = await sourceDataProvider.getSources(eventingFolderNodes[2]);
-      assert.equals(result[9], testSourceTreeItemEmptySpecs[2]);
+      expect(result[9]).to.deep.equal(testSourceTreeItemEmptySpecs[2]);
       expect(result).to.have.lengthOf(13);
-      expect(result[9].label.label).equals('example-source-ping1-emptySpec');
+      expect(result[9].label.label).to.equal('example-source-ping1-emptySpec');
     });
     test('should return Sink Binding source nodes when the spec is empty', async () => {
       sandbox
         .stub(sourceDataProvider.knExecutor, 'execute')
         .resolves({ error: undefined, stdout: JSON.stringify(sourceEmptySpec) });
       const result = await sourceDataProvider.getSources(eventingFolderNodes[2]);
-      assert.equals(result[4], testSourceTreeItemEmptySpecs[3]);
+      expect(result[4]).to.deep.equal(testSourceTreeItemEmptySpecs[3]);
       expect(result).to.have.lengthOf(13);
-      expect(result[4].label.label).equals('example-source-binding0-emptySpec');
+      expect(result[4].label.label).to.equal('example-source-binding0-emptySpec');
     });
   });
   suite('Get Missing Source Children', () => {
@@ -626,9 +624,9 @@ suite('SourceDataProvider', () => {
       await sourceDataProvider.getSources(eventingFolderNodes[2]);
       const result = sourceDataProvider.getSourceChildren(testSourceMissingDataTreeItem);
       expect(result).to.have.lengthOf(1);
-      expect(result[0].description).equals('');
-      expect(result[0].label.label).equals('Sink Not Found');
-      expect(result[0].getName()).equals('Sink Not Found');
+      expect(result[0].description).to.equal('');
+      expect(result[0].label.label).to.equal('Sink Not Found');
+      expect(result[0].getName()).to.equal('Sink Not Found');
     });
   });
   suite('Get Api Server Source Children', () => {
@@ -637,41 +635,41 @@ suite('SourceDataProvider', () => {
       await sourceDataProvider.getSources(eventingFolderNodes[2]);
       const result = sourceDataProvider.getSourceChildren(testSourceMissingDataTreeItem);
       expect(result).to.have.lengthOf(1);
-      expect(result[0].description).equals('');
-      expect(result[0].label.label).equals('Sink Not Found');
-      expect(result[0].getName()).equals('Sink Not Found');
+      expect(result[0].description).to.equal('');
+      expect(result[0].label.label).to.equal('Sink Not Found');
+      expect(result[0].getName()).to.equal('Sink Not Found');
     });
     test('should return service child node for Api Server source', async () => {
       sandbox.stub(sourceDataProvider.knExecutor, 'execute').resolves({ error: undefined, stdout: JSON.stringify(sourceData) });
       await sourceDataProvider.getSources(eventingFolderNodes[2]);
       const result = sourceDataProvider.getSourceChildren(testSourceTreeItems[0]);
-      assert.equals(result[0], testService0ForSourceApiserver0TreeItem);
+      expect(result[0]).to.deep.equal(testService0ForSourceApiserver0TreeItem);
       expect(result).to.have.lengthOf(1);
-      expect(result[0].label.label).equals('Sink - aaa');
+      expect(result[0].label.label).to.equal('Sink - aaa');
     });
     test('should return broker child node for Api Server source', async () => {
       sandbox.stub(sourceDataProvider.knExecutor, 'execute').resolves({ error: undefined, stdout: JSON.stringify(sourceData) });
       await sourceDataProvider.getSources(eventingFolderNodes[2]);
       const result = sourceDataProvider.getSourceChildren(testSourceTreeItems[1]);
-      assert.equals(result[0], testBroker0ForSourceApiserver1TreeItem);
+      expect(result[0]).to.deep.equal(testBroker0ForSourceApiserver1TreeItem);
       expect(result).to.have.lengthOf(1);
-      expect(result[0].label.label).equals('Sink - example-broker0');
+      expect(result[0].label.label).to.equal('Sink - example-broker0');
     });
     test('should return channel child node for Api Server source', async () => {
       sandbox.stub(sourceDataProvider.knExecutor, 'execute').resolves({ error: undefined, stdout: JSON.stringify(sourceData) });
       await sourceDataProvider.getSources(eventingFolderNodes[2]);
       const result = sourceDataProvider.getSourceChildren(testSourceTreeItems[2]);
-      assert.equals(result[0], testChannel0ForSourceApiserver2TreeItem);
+      expect(result[0]).to.deep.equal(testChannel0ForSourceApiserver2TreeItem);
       expect(result).to.have.lengthOf(1);
-      expect(result[0].label.label).equals('Sink - example-channel0');
+      expect(result[0].label.label).to.equal('Sink - example-channel0');
     });
     test('should return URI child node for Api Server source', async () => {
       sandbox.stub(sourceDataProvider.knExecutor, 'execute').resolves({ error: undefined, stdout: JSON.stringify(sourceData) });
       await sourceDataProvider.getSources(eventingFolderNodes[2]);
       const result = sourceDataProvider.getSourceChildren(testSourceTreeItems[3]);
-      assert.equals(result[0], testURIForSourceApiserver3TreeItem);
+      expect(result[0]).to.deep.equal(testURIForSourceApiserver3TreeItem);
       expect(result).to.have.lengthOf(1);
-      expect(result[0].label.label).equals('Sink - https://event.receiver.uri/');
+      expect(result[0].label.label).to.equal('Sink - https://event.receiver.uri/');
     });
   });
   suite('Get Ping Source Children', () => {
@@ -679,33 +677,33 @@ suite('SourceDataProvider', () => {
       sandbox.stub(sourceDataProvider.knExecutor, 'execute').resolves({ error: undefined, stdout: JSON.stringify(sourceData) });
       await sourceDataProvider.getSources(eventingFolderNodes[2]);
       const result = sourceDataProvider.getSourceChildren(testSourceTreeItems[4]);
-      assert.equals(result[0], testService0ForSourcePing0TreeItem);
+      expect(result[0]).to.deep.equal(testService0ForSourcePing0TreeItem);
       expect(result).to.have.lengthOf(1);
-      expect(result[0].label.label).equals('Sink - aaa');
+      expect(result[0].label.label).to.equal('Sink - aaa');
     });
     test('should return broker child node for Ping source', async () => {
       sandbox.stub(sourceDataProvider.knExecutor, 'execute').resolves({ error: undefined, stdout: JSON.stringify(sourceData) });
       await sourceDataProvider.getSources(eventingFolderNodes[2]);
       const result = sourceDataProvider.getSourceChildren(testSourceTreeItems[5]);
-      assert.equals(result[0], testBroker0ForSourcePing1TreeItem);
+      expect(result[0]).to.deep.equal(testBroker0ForSourcePing1TreeItem);
       expect(result).to.have.lengthOf(1);
-      expect(result[0].label.label).equals('Sink - example-broker0');
+      expect(result[0].label.label).to.equal('Sink - example-broker0');
     });
     test('should return channel child node for Ping source', async () => {
       sandbox.stub(sourceDataProvider.knExecutor, 'execute').resolves({ error: undefined, stdout: JSON.stringify(sourceData) });
       await sourceDataProvider.getSources(eventingFolderNodes[2]);
       const result = sourceDataProvider.getSourceChildren(testSourceTreeItems[6]);
-      assert.equals(result[0], testChannel0ForSourcePing2TreeItem);
+      expect(result[0]).to.deep.equal(testChannel0ForSourcePing2TreeItem);
       expect(result).to.have.lengthOf(1);
-      expect(result[0].label.label).equals('Sink - example-channel0');
+      expect(result[0].label.label).to.equal('Sink - example-channel0');
     });
     test('should return URI child node for Ping source', async () => {
       sandbox.stub(sourceDataProvider.knExecutor, 'execute').resolves({ error: undefined, stdout: JSON.stringify(sourceData) });
       await sourceDataProvider.getSources(eventingFolderNodes[2]);
       const result = sourceDataProvider.getSourceChildren(testSourceTreeItems[7]);
-      assert.equals(result[0], testURIForSourcePing3TreeItem);
+      expect(result[0]).to.deep.equal(testURIForSourcePing3TreeItem);
       expect(result).to.have.lengthOf(1);
-      expect(result[0].label.label).equals('Sink - https://event.receiver.uri/');
+      expect(result[0].label.label).to.equal('Sink - https://event.receiver.uri/');
     });
   });
   suite('Get Binding Source Children', () => {
@@ -713,33 +711,33 @@ suite('SourceDataProvider', () => {
       sandbox.stub(sourceDataProvider.knExecutor, 'execute').resolves({ error: undefined, stdout: JSON.stringify(sourceData) });
       await sourceDataProvider.getSources(eventingFolderNodes[2]);
       const result = sourceDataProvider.getSourceChildren(testSourceTreeItems[8]);
-      assert.equals(result[0], testService0ForSourceBinding0TreeItem);
+      expect(result[0]).to.deep.equal(testService0ForSourceBinding0TreeItem);
       expect(result).to.have.lengthOf(1);
-      expect(result[0].label.label).equals('Sink - aaa');
+      expect(result[0].label.label).to.equal('Sink - aaa');
     });
     test('should return broker child node for Binding source', async () => {
       sandbox.stub(sourceDataProvider.knExecutor, 'execute').resolves({ error: undefined, stdout: JSON.stringify(sourceData) });
       await sourceDataProvider.getSources(eventingFolderNodes[2]);
       const result = sourceDataProvider.getSourceChildren(testSourceTreeItems[9]);
-      assert.equals(result[0], testBroker0ForSourceBinding1TreeItem);
+      expect(result[0]).to.deep.equal(testBroker0ForSourceBinding1TreeItem);
       expect(result).to.have.lengthOf(1);
-      expect(result[0].label.label).equals('Sink - example-broker0');
+      expect(result[0].label.label).to.equal('Sink - example-broker0');
     });
     test('should return channel child node for Binding source', async () => {
       sandbox.stub(sourceDataProvider.knExecutor, 'execute').resolves({ error: undefined, stdout: JSON.stringify(sourceData) });
       await sourceDataProvider.getSources(eventingFolderNodes[2]);
       const result = sourceDataProvider.getSourceChildren(testSourceTreeItems[10]);
-      assert.equals(result[0], testChannel0ForSourceBinding2TreeItem);
+      expect(result[0]).to.deep.equal(testChannel0ForSourceBinding2TreeItem);
       expect(result).to.have.lengthOf(1);
-      expect(result[0].label.label).equals('Sink - example-channel0');
+      expect(result[0].label.label).to.equal('Sink - example-channel0');
     });
     test('should return URI child node for Binding source', async () => {
       sandbox.stub(sourceDataProvider.knExecutor, 'execute').resolves({ error: undefined, stdout: JSON.stringify(sourceData) });
       await sourceDataProvider.getSources(eventingFolderNodes[2]);
       const result = sourceDataProvider.getSourceChildren(testSourceTreeItems[11]);
-      assert.equals(result[0], testURIForSourceBinding3TreeItem);
+      expect(result[0]).to.deep.equal(testURIForSourceBinding3TreeItem);
       expect(result).to.have.lengthOf(1);
-      expect(result[0].label.label).equals('Sink - https://event.receiver.uri/');
+      expect(result[0].label.label).to.equal('Sink - https://event.receiver.uri/');
     });
   });
   suite('Get Generic Source Children', () => {
@@ -747,17 +745,17 @@ suite('SourceDataProvider', () => {
       sandbox.stub(sourceDataProvider.knExecutor, 'execute').resolves({ error: undefined, stdout: JSON.stringify(sourceData) });
       await sourceDataProvider.getSources(eventingFolderNodes[2]);
       const result = sourceDataProvider.getSourceChildren(testSourceTreeItems[12]);
-      assert.equals(result[0], testService0ForSourceGenericPing1TreeItem);
+      expect(result[0]).to.deep.equal(testService0ForSourceGenericPing1TreeItem);
       expect(result).to.have.lengthOf(1);
-      expect(result[0].label.label).equals('Sink - aaa');
+      expect(result[0].label.label).to.equal('Sink - aaa');
     });
     test('should return URI child node for Generic (ping) source', async () => {
       sandbox.stub(sourceDataProvider.knExecutor, 'execute').resolves({ error: undefined, stdout: JSON.stringify(sourceData) });
       await sourceDataProvider.getSources(eventingFolderNodes[2]);
       const result = sourceDataProvider.getSourceChildren(testSourceTreeItems[13]);
-      assert.equals(result[0], testURIForSourceGenericPing5TreeItem);
+      expect(result[0]).to.deep.equal(testURIForSourceGenericPing5TreeItem);
       expect(result).to.have.lengthOf(1);
-      expect(result[0].label.label).equals('Sink - https://event.receiver.uri/');
+      expect(result[0].label.label).to.equal('Sink - https://event.receiver.uri/');
     });
   });
 });

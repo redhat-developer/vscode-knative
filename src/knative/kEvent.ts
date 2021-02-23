@@ -6,9 +6,9 @@
 import { Broker } from './broker';
 import { Channel } from './channel';
 import { KnativeItem } from './knativeItem';
+import { SourceTypes } from './knativeSources';
 import { Subscription } from './subscription';
 import { Trigger } from './trigger';
-import { SourceTypes } from './knativeSources';
 
 export class KEvent extends KnativeItem {
   constructor(public name: string) {

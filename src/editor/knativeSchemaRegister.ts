@@ -27,6 +27,8 @@ function onRequestSchemaContent(schemaUri: string): string | undefined {
 }
 
 export async function registerSchema(): Promise<void> {
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
   const yamlExtensionAPI = await extensions.getExtension('redhat.vscode-yaml').activate();
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
   yamlExtensionAPI.registerContributor(SCHEME, onRequestSchemaURI, onRequestSchemaContent, `apiVersion: serving.knative.dev/v1`);
 }

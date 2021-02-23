@@ -1,20 +1,19 @@
 import * as vscode from 'vscode';
+import { expect } from 'chai';
 import * as chai from 'chai';
 import { beforeEach } from 'mocha';
 import * as sinon from 'sinon';
 import * as sinonChai from 'sinon-chai';
-import * as referee from '@sinonjs/referee';
 import * as brokerData from './broker.json';
 import * as channelData from './channel.json';
-import * as multipleServiceData from '../servingTree/multipleServiceServicesList.json';
 import * as triggerData from './trigger.json';
 import * as triggerEmptySpecData from './triggerEmptySpec.json';
 import * as triggerIncompleteData from './triggerIncomplete.json';
 import { EventingContextType, ServingContextType } from '../../src/cli/config';
 import { BrokerDataProvider } from '../../src/eventingTree/brokerDataProvider';
 import { ChannelDataProvider } from '../../src/eventingTree/channelDataProvider';
-import { EventingTreeItem } from '../../src/eventingTree/eventingTreeItem';
 import { EventingDataProvider } from '../../src/eventingTree/eventingDataProvider';
+import { EventingTreeItem } from '../../src/eventingTree/eventingTreeItem';
 import { TriggerDataProvider } from '../../src/eventingTree/triggerDataProvider';
 import { Broker } from '../../src/knative/broker';
 import { Channel } from '../../src/knative/channel';
@@ -24,9 +23,8 @@ import { Service } from '../../src/knative/service';
 import { Trigger } from '../../src/knative/trigger';
 import { ServingDataProvider } from '../../src/servingTree/servingDataProvider';
 import { ServingTreeItem } from '../../src/servingTree/servingTreeItem';
+import * as multipleServiceData from '../servingTree/multipleServiceServicesList.json';
 
-const { assert } = referee;
-const { expect } = chai;
 chai.use(sinonChai);
 
 suite('TriggerDataProvider', () => {
@@ -268,25 +266,25 @@ suite('TriggerDataProvider', () => {
       sandbox.stub(triggerDataProvider.knExecutor, 'execute').resolves({ error: undefined, stdout: `No triggers found.` });
       const result = await triggerDataProvider.getTriggers(eventingFolderNodes[4]);
       expect(result).to.have.lengthOf(1);
-      expect(result[0].description).equals('');
-      expect(result[0].label.label).equals('No Trigger Found');
-      expect(result[0].getName()).equals('No Trigger Found');
+      expect(result[0].description).to.equal('');
+      expect(result[0].label.label).to.equal('No Trigger Found');
+      expect(result[0].getName()).to.equal('No Trigger Found');
     });
     test('should return trigger nodes', async () => {
       sandbox.stub(triggerDataProvider.knExecutor, 'execute').resolves({ error: undefined, stdout: JSON.stringify(triggerData) });
       const result = await triggerDataProvider.getTriggers(eventingFolderNodes[4]);
-      assert.equals(result[0], testTriggerTreeItems[0]);
+      expect(result[0]).to.deep.equal(testTriggerTreeItems[0]);
       expect(result).to.have.lengthOf(5);
-      expect(result[0].label.label).equals('example-trigger0');
+      expect(result[0].label.label).to.equal('example-trigger0');
     });
     test('should return trigger nodes even when the spec is empty', async () => {
       sandbox
         .stub(triggerDataProvider.knExecutor, 'execute')
         .resolves({ error: undefined, stdout: JSON.stringify(triggerEmptySpecData) });
       const result = await triggerDataProvider.getTriggers(eventingFolderNodes[4]);
-      assert.equals(result[0], testTrigger0EmptySpecTreeItem);
+      expect(result[0]).to.deep.equal(testTrigger0EmptySpecTreeItem);
       expect(result).to.have.lengthOf(5);
-      expect(result[0].label.label).equals('example-trigger0');
+      expect(result[0].label.label).to.equal('example-trigger0');
       // const foundTrigger = result[0].getKnativeItem() as Trigger;
       // assert.isNull(foundTrigger.broker);
     });
@@ -295,9 +293,9 @@ suite('TriggerDataProvider', () => {
       exeStub.onFirstCall().resolves({ error: undefined, stdout: JSON.stringify(triggerIncompleteData) });
       exeStub.onSecondCall().resolves({ error: undefined, stdout: JSON.stringify(triggerData) });
       const result = await triggerDataProvider.getTriggers(eventingFolderNodes[4]);
-      assert.equals(result[0], testTriggerTreeItems[0]);
+      expect(result[0]).to.deep.equal(testTriggerTreeItems[0]);
       expect(result).to.have.lengthOf(5);
-      expect(result[0].label.label).equals('example-trigger0');
+      expect(result[0].label.label).to.equal('example-trigger0');
     });
   });
   suite('Get Trigger Children', () => {
@@ -306,51 +304,51 @@ suite('TriggerDataProvider', () => {
       await triggerDataProvider.getTriggers(eventingFolderNodes[4]);
       const result = triggerDataProvider.getTriggerChildren(testTriggerMissingTreeItem);
       expect(result).to.have.lengthOf(2);
-      expect(result[0].description).equals('');
-      expect(result[0].label.label).equals('Broker Not Found');
-      expect(result[0].getName()).equals('Broker Not Found');
-      expect(result[1].label.label).equals('Sink Not Found');
-      expect(result[1].getName()).equals('Sink Not Found');
+      expect(result[0].description).to.equal('');
+      expect(result[0].label.label).to.equal('Broker Not Found');
+      expect(result[0].getName()).to.equal('Broker Not Found');
+      expect(result[1].label.label).to.equal('Sink Not Found');
+      expect(result[1].getName()).to.equal('Sink Not Found');
     });
     test('should return service child nodes', async () => {
       sandbox.stub(triggerDataProvider.knExecutor, 'execute').resolves({ error: undefined, stdout: JSON.stringify(triggerData) });
       await triggerDataProvider.getTriggers(eventingFolderNodes[4]);
       const result = triggerDataProvider.getTriggerChildren(testTriggerTreeItems[0]);
-      assert.equals(result[0], testBrokerTreeItems[0]);
-      assert.equals(result[1], testService0ForTrigger0TreeItem);
+      expect(result[0]).to.deep.equal(testBrokerTreeItems[0]);
+      expect(result[1]).to.deep.equal(testService0ForTrigger0TreeItem);
       expect(result).to.have.lengthOf(2);
-      expect(result[0].label.label).equals('Broker - example-broker0');
-      expect(result[1].label.label).equals('Sink - aaa');
+      expect(result[0].label.label).to.equal('Broker - example-broker0');
+      expect(result[1].label.label).to.equal('Sink - aaa');
     });
     test('should return broker child nodes', async () => {
       sandbox.stub(triggerDataProvider.knExecutor, 'execute').resolves({ error: undefined, stdout: JSON.stringify(triggerData) });
       await triggerDataProvider.getTriggers(eventingFolderNodes[4]);
       const result = triggerDataProvider.getTriggerChildren(testTriggerTreeItems[1]);
-      assert.equals(result[0], testBrokerTreeItems[1]);
-      assert.equals(result[1], testBrokerTreeItems[3]);
+      expect(result[0]).to.deep.equal(testBrokerTreeItems[1]);
+      expect(result[1]).to.deep.equal(testBrokerTreeItems[3]);
       expect(result).to.have.lengthOf(2);
-      expect(result[0].label.label).equals('Broker - example-broker0');
-      expect(result[1].label.label).equals('Sink - example-broker1');
+      expect(result[0].label.label).to.equal('Broker - example-broker0');
+      expect(result[1].label.label).to.equal('Sink - example-broker1');
     });
     test('should return channel child nodes', async () => {
       sandbox.stub(triggerDataProvider.knExecutor, 'execute').resolves({ error: undefined, stdout: JSON.stringify(triggerData) });
       await triggerDataProvider.getTriggers(eventingFolderNodes[4]);
       const result = triggerDataProvider.getTriggerChildren(testTriggerTreeItems[2]);
-      assert.equals(result[0], testBrokerTreeItems[2]);
-      assert.equals(result[1], testChannel0ForTrigger2TreeItem);
+      expect(result[0]).to.deep.equal(testBrokerTreeItems[2]);
+      expect(result[1]).to.deep.equal(testChannel0ForTrigger2TreeItem);
       expect(result).to.have.lengthOf(2);
-      expect(result[0].label.label).equals('Broker - example-broker1');
-      expect(result[1].label.label).equals('Sink - example-channel0');
+      expect(result[0].label.label).to.equal('Broker - example-broker1');
+      expect(result[1].label.label).to.equal('Sink - example-channel0');
     });
     test('should return URI child nodes', async () => {
       sandbox.stub(triggerDataProvider.knExecutor, 'execute').resolves({ error: undefined, stdout: JSON.stringify(triggerData) });
       await triggerDataProvider.getTriggers(eventingFolderNodes[4]);
       const result = triggerDataProvider.getTriggerChildren(testTriggerTreeItems[4]);
-      assert.equals(result[0], testBrokerTreeItems[4]);
-      assert.equals(result[1], testURIForTrigger4TreeItem);
+      expect(result[0]).to.deep.equal(testBrokerTreeItems[4]);
+      expect(result[1]).to.deep.equal(testURIForTrigger4TreeItem);
       expect(result).to.have.lengthOf(2);
-      expect(result[0].label.label).equals('Broker - example-broker1');
-      expect(result[1].label.label).equals('Sink - https://event.receiver.uri/');
+      expect(result[0].label.label).to.equal('Broker - example-broker1');
+      expect(result[1].label.label).to.equal('Sink - https://event.receiver.uri/');
     });
   });
 });

@@ -1,10 +1,10 @@
+import * as path from 'path';
 import * as vscode from 'vscode';
+import { expect } from 'chai';
 import * as chai from 'chai';
 import { beforeEach } from 'mocha';
-import * as path from 'path';
 import * as sinon from 'sinon';
 import * as sinonChai from 'sinon-chai';
-import * as referee from '@sinonjs/referee';
 import * as brokerData from './broker.json';
 import * as channelData from './channel.json';
 import * as sourceData from './source.json';
@@ -12,16 +12,15 @@ import * as subscriptionData from './subscription.json';
 import * as triggerData from './trigger.json';
 import { EventingContextType } from '../../src/cli/config';
 import { EventingTreeItem } from '../../src/eventingTree/eventingTreeItem';
-import { Broker } from '../../src/knative/broker';
-import { GenericSource } from '../../src/knative/genericSource';
 import { APIServerSource } from '../../src/knative/apiServerSource';
-import { PingSource } from '../../src/knative/pingSource';
 import { BindingSource } from '../../src/knative/bindingSource';
+import { Broker } from '../../src/knative/broker';
 import { Channel } from '../../src/knative/channel';
+import { GenericSource } from '../../src/knative/genericSource';
+import { PingSource } from '../../src/knative/pingSource';
 import { Subscription } from '../../src/knative/subscription';
 import { Trigger } from '../../src/knative/trigger';
 
-const { assert } = referee;
 chai.use(sinonChai);
 
 suite('EventingTreeItem', () => {
@@ -250,17 +249,17 @@ suite('EventingTreeItem', () => {
     const expected = vscode.Uri.file(
       `${localDir.substring(0, localDir.search(/out.test/))}images${path.sep}context${path.sep}broker.svg`,
     );
-    assert.equals(revPath, expected);
+    expect(revPath).to.deep.equal(expected);
   });
 
   test('should get the tooltip', () => {
     const tested = testBroker0TreeItem.tooltip;
-    assert.equals(tested, ``);
+    expect(tested).to.equal(``);
   });
 
   test('should get the description and it should be blank', () => {
     const tested = testBroker0TreeItem.description;
-    assert.equals(tested, '');
+    expect(tested).to.equal('');
   });
 
   test('should get the command for selected tree item and return undefined if No Broker Found', () => {
@@ -274,12 +273,13 @@ suite('EventingTreeItem', () => {
       null,
     );
     const tested = noBrokerFoundTreeItem.command;
-    assert.isUndefined(tested);
+    // eslint-disable-next-line no-unused-expressions
+    expect(tested).to.be.undefined;
   });
 
   test('should get the command for selected tree item and return Describe if NOT modified', () => {
     const tested = testBroker0TreeItem.command;
-    assert.equals(tested.command, 'eventing.explorer.openFile');
+    expect(tested.command).to.equal('eventing.explorer.openFile');
   });
 
   test('should get the children of Not Found', () => {
@@ -293,75 +293,75 @@ suite('EventingTreeItem', () => {
       null,
     );
     const tested = noBrokerFoundTreeItem.getChildren();
-    assert.equals(tested, []);
+    expect(tested).to.deep.equal([]);
   });
 
   test('should get the children of the Broker Folder', () => {
     const tested = eventingFolderNodes[0].getChildren();
-    assert.equals(tested, []);
+    expect(tested).to.deep.equal([]);
   });
 
   test('should get the children of a Broker', () => {
     const tested = testBroker0TreeItem.getChildren();
-    assert.equals(tested, []);
+    expect(tested).to.deep.equal([]);
   });
 
   test('should get the children of the Channel Folder', () => {
     const tested = eventingFolderNodes[1].getChildren();
-    assert.equals(tested, []);
+    expect(tested).to.deep.equal([]);
   });
 
   test('should get the children of a Channel', () => {
     const tested = testChannel0TreeItem.getChildren();
-    assert.equals(tested, []);
+    expect(tested).to.deep.equal([]);
   });
 
   test('should get the children of the Source Folder', () => {
     const tested = eventingFolderNodes[2].getChildren();
-    assert.equals(tested, []);
+    expect(tested).to.deep.equal([]);
   });
 
   test('should get the children of a source_apiserver', () => {
     const tested = testSource0TreeItem.getChildren();
-    assert.equals(tested, []);
+    expect(tested).to.deep.equal([]);
   });
 
   test('should get the children of a source_ping', () => {
     const tested = testSource1TreeItem.getChildren();
-    assert.equals(tested, []);
+    expect(tested).to.deep.equal([]);
   });
 
   test('should get the children of a source_generic', () => {
     const tested = testSource2TreeItem.getChildren();
-    assert.equals(tested, []);
+    expect(tested).to.deep.equal([]);
   });
 
   test('should get the children of a source_binding', () => {
     const tested = testSource3TreeItem.getChildren();
-    assert.equals(tested, []);
+    expect(tested).to.deep.equal([]);
   });
 
   test('should get the children of the Subscription Folder', () => {
     const tested = eventingFolderNodes[3].getChildren();
-    assert.equals(tested, []);
+    expect(tested).to.deep.equal([]);
   });
 
   test('should get the children of a Subscription', () => {
     const tested = testSubscription0TreeItem.getChildren();
-    assert.equals(tested, []);
+    expect(tested).to.deep.equal([]);
   });
 
   test('should get the children of the Trigger Folder', () => {
     const tested = eventingFolderNodes[4].getChildren();
-    assert.equals(tested, []);
+    expect(tested).to.deep.equal([]);
   });
   test('should get the children of a Trigger', () => {
     const tested = testTrigger0TreeItem.getChildren();
-    assert.equals(tested, []);
+    expect(tested).to.deep.equal([]);
   });
 
   test('should get the children of a URI', () => {
     const tested = testURIForTrigger4TreeItem.getChildren();
-    assert.equals(tested, []);
+    expect(tested).to.deep.equal([]);
   });
 });

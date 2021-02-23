@@ -13,16 +13,16 @@ import {
   TreeItemCollapsibleState,
 } from 'vscode';
 import * as vscode from 'vscode';
-import { EventingTreeItem } from './eventingTreeItem';
 import { BrokerDataProvider } from './brokerDataProvider';
 import { ChannelDataProvider } from './channelDataProvider';
+import { EventingTreeItem } from './eventingTreeItem';
 import { SourceDataProvider } from './sourceDataProvider';
 import { SubscriptionDataProvider } from './subscriptionDataProvider';
 import { TriggerDataProvider } from './triggerDataProvider';
 import { EventingContextType } from '../cli/config';
 import { KnativeResourceVirtualFileSystemProvider } from '../cli/virtualfs';
-import { KnativeEvents } from '../knative/knativeEvents';
 import { KEvent } from '../knative/kEvent';
+import { KnativeEvents } from '../knative/knativeEvents';
 import { ServingTreeItem } from '../servingTree/servingTreeItem';
 
 export class EventingDataProvider implements TreeDataProvider<EventingTreeItem | ServingTreeItem> {
@@ -164,7 +164,8 @@ export class EventingDataProvider implements TreeDataProvider<EventingTreeItem |
     } catch (err) {
       // Catch the Rejected Promise of the Execute to list Eventing data.
       // note: not sure this will catch the rejected promise, tried to write a unit test and can't catch the error.
-      vscode.window.showErrorMessage(`Caught an error getting the Eventing data.\n ${err}`, { modal: true }, 'OK');
+      // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+      await vscode.window.showErrorMessage(`Caught an error getting the Eventing data.\n ${err}`, { modal: true }, 'OK');
       return null;
     }
 
@@ -177,11 +178,7 @@ export class EventingDataProvider implements TreeDataProvider<EventingTreeItem |
   public getEventingFolders(): EventingTreeItem[] {
     const eventingConcepts = ['Brokers', 'Channels', 'Sources', 'Subscriptions', 'Triggers'];
 
-    const events: KEvent[] = eventingConcepts.map(
-      (e): KEvent => {
-        return new KEvent(e);
-      },
-    );
+    const events: KEvent[] = eventingConcepts.map((e): KEvent => new KEvent(e));
 
     this.events.addEvents(events);
 

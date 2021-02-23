@@ -5,14 +5,14 @@
 
 import { TreeItemCollapsibleState } from 'vscode';
 import { EventingTreeItem } from './eventingTreeItem';
-import { Execute, loadItems } from '../cli/execute';
 import { CliExitData } from '../cli/cmdCli';
-import { KnAPI } from '../cli/kn-api';
 import { EventingContextType } from '../cli/config';
-import { compareNodes } from '../knative/knativeItem';
+import { Execute, loadItems } from '../cli/execute';
+import { KnAPI } from '../cli/kn-api';
 import { Channel } from '../knative/channel';
 import { KnativeChannels } from '../knative/knativeChannels';
 import { KnativeEvents } from '../knative/knativeEvents';
+import { compareNodes } from '../knative/knativeItem';
 
 export class ChannelDataProvider {
   public knExecutor = new Execute();

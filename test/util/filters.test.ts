@@ -1,7 +1,11 @@
-import { expect } from 'chai';
-import { Filters } from '../../src/util/filters';
+/*-----------------------------------------------------------------------------------------------
+ *  Copyright (c) Red Hat, Inc. All rights reserved.
+ *  Licensed under the MIT License. See LICENSE file in the project root for license information.
+ *-----------------------------------------------------------------------------------------------*/
 
-import sinon = require('sinon');
+import { expect } from 'chai';
+import * as sinon from 'sinon';
+import { Filters } from '../../src/util/filters';
 
 suite('Filters utility class', () => {
   const sandbox = sinon.createSandbox();

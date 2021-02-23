@@ -1,19 +1,17 @@
 import * as vscode from 'vscode';
+import { expect } from 'chai';
 import * as chai from 'chai';
 import { beforeEach } from 'mocha';
 import * as sinon from 'sinon';
 import * as sinonChai from 'sinon-chai';
-import * as referee from '@sinonjs/referee';
 import * as brokerData from './broker.json';
 import * as brokerIncompleteData from './brokerIncomplete.json';
 import { EventingContextType } from '../../src/cli/config';
-import { Broker } from '../../src/knative/broker';
+import { BrokerDataProvider } from '../../src/eventingTree/brokerDataProvider';
 import { EventingDataProvider } from '../../src/eventingTree/eventingDataProvider';
 import { EventingTreeItem } from '../../src/eventingTree/eventingTreeItem';
-import { BrokerDataProvider } from '../../src/eventingTree/brokerDataProvider';
+import { Broker } from '../../src/knative/broker';
 
-const { assert } = referee;
-const { expect } = chai;
 chai.use(sinonChai);
 
 suite('BrokerDataProvider', () => {
@@ -54,19 +52,19 @@ suite('BrokerDataProvider', () => {
       sandbox.stub(brokerDataProvider.knExecutor, 'execute').resolves({ error: undefined, stdout: `No brokers found.` });
       const result = await brokerDataProvider.getBrokers(eventingFolderNodes[0]);
       expect(result).to.have.lengthOf(1);
-      expect(result[0].description).equals('');
-      expect(result[0].description).equals('');
-      expect(result[0].label.label).equals('No Broker Found');
-      expect(result[0].getName()).equals('No Broker Found');
+      expect(result[0].description).to.equal('');
+      expect(result[0].description).to.equal('');
+      expect(result[0].label.label).to.equal('No Broker Found');
+      expect(result[0].getName()).to.equal('No Broker Found');
     });
     test('should return broker nodes', async () => {
       sandbox.restore();
       sandbox.stub(vscode.window, 'showErrorMessage').resolves();
       sandbox.stub(brokerDataProvider.knExecutor, 'execute').resolves({ error: undefined, stdout: JSON.stringify(brokerData) });
       const result = await brokerDataProvider.getBrokers(eventingFolderNodes[0]);
-      assert.equals(result[0], testBrokerTreeItems[0]);
+      expect(result[0]).to.deep.equal(testBrokerTreeItems[0]);
       expect(result).to.have.lengthOf(2);
-      expect(result[0].label.label).equals('example-broker0');
+      expect(result[0].label.label).to.equal('example-broker0');
     });
     test('should refetch broker info when it is incomplete, then return broker nodes', async () => {
       sandbox.restore();
@@ -75,9 +73,9 @@ suite('BrokerDataProvider', () => {
       exeStub.onFirstCall().resolves({ error: undefined, stdout: JSON.stringify(brokerIncompleteData) });
       exeStub.onSecondCall().resolves({ error: undefined, stdout: JSON.stringify(brokerData) });
       const result = await brokerDataProvider.getBrokers(eventingFolderNodes[0]);
-      assert.equals(result[0], testBrokerTreeItems[0]);
+      expect(result[0]).to.deep.equal(testBrokerTreeItems[0]);
       expect(result).to.have.lengthOf(2);
-      expect(result[0].label.label).equals('example-broker0');
+      expect(result[0].label.label).to.equal('example-broker0');
     });
   });
 });

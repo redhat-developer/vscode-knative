@@ -82,7 +82,7 @@ export class KnAPI {
     if (createServiceObj.annotation) {
       createServiceObj.annotation.forEach((value, key) => {
         commandArguments.push('--annotation');
-        commandArguments.push(`${key}=${value}`);
+        commandArguments.push(`${key}=${value.toString()}`);
       });
     }
     // If labels were added then include them all.
@@ -149,7 +149,7 @@ export class KnAPI {
     if (updateServiceObj.annotation) {
       updateServiceObj.annotation.forEach((value, key) => {
         commandArguments.push('--annotation');
-        commandArguments.push(`${key}=${value}`);
+        commandArguments.push(`${key}=${value.toString()}`);
       });
     }
     // If labels were added then include them all.

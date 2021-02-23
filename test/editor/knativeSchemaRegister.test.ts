@@ -1,14 +1,11 @@
-import * as chai from 'chai';
-import * as sinonChai from 'sinon-chai';
-import * as serviceSchema from '../../schemas/knservice.json';
-
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+import { expect } from 'chai';
 import rewire = require('rewire');
-import sinon = require('sinon');
+import * as serviceSchema from '../../schemas/knservice.json';
 
 const rewiredSchemaRegister = rewire('../../src/editor/knativeSchemaRegister');
 const schemaJSON = JSON.stringify(serviceSchema);
-
-chai.use(sinonChai);
 
 suite('Register Schema', () => {
   const uriMock = rewiredSchemaRegister.__get__('onRequestSchemaURI');
@@ -20,18 +17,18 @@ suite('Register Schema', () => {
 
   test('should return the schema URI when requested', () => {
     const returnedSchema: string = uriMock(knmsxUriString);
-    sinon.assert.match(returnedSchema, `knmsx://schema/knative`);
+    expect(returnedSchema, `knmsx://schema/knative`);
   });
   test('should return undefined when the schema is knreadonly instead of returning the URI', () => {
     const returnedSchema: string = uriMock(knreadonlyUriString);
-    sinon.assert.match(returnedSchema, undefined);
+    expect(returnedSchema, undefined);
   });
   test('should return the schema content', () => {
     const returnedSchema: string = contentMock(knmsxUriString);
-    sinon.assert.match(returnedSchema, schemaJSON);
+    expect(returnedSchema, schemaJSON);
   });
   test('should return undefined when the schema ia knreadonly instead of returning the schema content', () => {
     const returnedSchema: string = contentMock(knreadonlyUriString);
-    sinon.assert.match(returnedSchema, undefined);
+    expect(returnedSchema, undefined);
   });
 });

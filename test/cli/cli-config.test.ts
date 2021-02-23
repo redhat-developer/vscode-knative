@@ -1,31 +1,32 @@
-import * as vscode from 'vscode';
-import * as chai from 'chai';
+/* eslint-disable no-unused-expressions */
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import * as fs from 'fs';
+import * as vscode from 'vscode';
+import { expect } from 'chai';
+import * as chai from 'chai';
 import * as fsExtra from 'fs-extra';
+import { beforeEach } from 'mocha';
+import rewire = require('rewire');
+import * as shell from 'shelljs';
 import * as sinon from 'sinon';
 import * as sinonChai from 'sinon-chai';
-import * as shell from 'shelljs';
-import * as referee from '@sinonjs/referee';
-import { beforeEach } from 'mocha';
 import { CmdCliConfig, Config } from '../../src/cli/cli-config';
-import { Platform } from '../../src/util/platform';
+import * as configData from '../../src/cli/cli-config.json';
 import { KnAPI } from '../../src/cli/kn-api';
 import { KubectlAPI } from '../../src/cli/kubectl-api';
-import * as configData from '../../src/cli/cli-config.json';
-
-import rewire = require('rewire');
+import { Platform } from '../../src/util/platform';
 
 const rewiredCLI = rewire('../../src/cli/cli-config');
 // import configData = require('../../src/cli/cli-config.json');
 
-const { assert } = referee;
-// const { expect } = chai;
 chai.use(sinonChai);
 
 suite('Command CLI Config', () => {
   const sandbox = sinon.createSandbox();
-  let revertCLI: Function;
-  let revertFS: Function;
+  let revertCLI: () => void;
+  let revertFS: () => void;
 
   const shellMock = {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -85,19 +86,19 @@ suite('Command CLI Config', () => {
   suite('load metadata', () => {
     test('should load metadata for Windows', () => {
       const requirements: Config = CmdCliConfig.loadMetadata(configData, 'win32');
-      assert.equals(requirements.kn.dlFileName, 'kn-windows-amd64.exe');
+      expect(requirements.kn.dlFileName, 'kn-windows-amd64.exe');
     });
     test('should load metadata for Mac', () => {
       const requirements: Config = CmdCliConfig.loadMetadata(configData, 'darwin');
-      assert.equals(requirements.kn.dlFileName, 'kn-darwin-amd64');
+      expect(requirements.kn.dlFileName, 'kn-darwin-amd64');
     });
     test('should load metadata for Linux', () => {
       const requirements: Config = CmdCliConfig.loadMetadata(configData, 'linux');
-      assert.equals(requirements.kn.dlFileName, 'kn-linux-amd64');
+      expect(requirements.kn.dlFileName, 'kn-linux-amd64');
     });
     test('should return undefined for a non-supported OS name like testOS', () => {
       const requirements: Config = CmdCliConfig.loadMetadata(configData, 'testOS');
-      assert.isUndefined(requirements.kn);
+      expect(requirements.kn).to.be.undefined;
     });
     test('should not load metadata if the platform object is missing', () => {
       const testData = {
@@ -115,8 +116,8 @@ suite('Command CLI Config', () => {
         },
       };
       const requirements: Config = CmdCliConfig.loadMetadata(testData, 'linux');
-      assert.isUndefined(requirements.kn.platform);
-      assert.equals(requirements.kn.dlFileName, 'kn');
+      expect(requirements.kn.platform).to.be.undefined;
+      expect(requirements.kn.dlFileName, 'kn');
     });
   });
 
@@ -140,7 +141,7 @@ suite('Command CLI Config', () => {
       };
       sandbox.stub(CmdCliConfig, 'loadMetadata').returns(testData);
       CmdCliConfig.resetConfiguration();
-      assert.equals(CmdCliConfig.tools.kn.dlFileName, 'kn-linux-amd64');
+      expect(CmdCliConfig.tools.kn.dlFileName, 'kn-linux-amd64');
     });
   });
 
@@ -165,7 +166,7 @@ suite('Command CLI Config', () => {
       };
       CmdCliConfig.tools = testData;
       const result: string = await CmdCliConfig.detectOrDownload('kn');
-      assert.equals(result, '/home/test/.vs-kn/kn');
+      expect(result, '/home/test/.vs-kn/kn');
     });
     test('should return the location of the kn tool when using a linux OS and its been installed', async () => {
       const testData = {
@@ -190,7 +191,7 @@ suite('Command CLI Config', () => {
       sandbox.stub(KnAPI, 'getKnVersion').resolves('0.20.0');
       const result: string = await rewiredCLI.CmdCliConfig.detectOrDownload('kn');
       const expected = Platform.OS === 'win32' ? `D:\\home\\test\\.vs-kn\\kn` : `/home/test/.vs-kn/kn`;
-      assert.equals(result, expected);
+      expect(result, expected);
     });
     test('should return the location of the kubectl tool when using a linux OS and its been installed', async () => {
       const testData = {
@@ -215,7 +216,7 @@ suite('Command CLI Config', () => {
       sandbox.stub(KubectlAPI, 'getKubectlVersion').resolves('1.18.8');
       const result: string = await rewiredCLI.CmdCliConfig.detectOrDownload('kubectl');
       const expected = Platform.OS === 'win32' ? `D:\\home\\test\\.vs-kubectl\\kubectl` : `/home/test/.vs-kubectl/kubectl`;
-      assert.equals(result, expected);
+      expect(result, expected);
     });
     test('should download the kn tool when using a linux OS and it has NOT been installed and there was an error looking for it', async () => {
       const testData = {
@@ -247,7 +248,7 @@ suite('Command CLI Config', () => {
       // Set a lower version to fail the check for finding the version
       sandbox.stub(KnAPI, 'getKnVersion').resolves('0.19.0');
       const result: string = await rewiredCLI.CmdCliConfig.detectOrDownload('kn');
-      assert.isUndefined(result);
+      expect(result).to.be.undefined;
     });
     test('should download the kn tool when using a linux OS and it has NOT been installed', async () => {
       const testData = {
@@ -279,7 +280,7 @@ suite('Command CLI Config', () => {
       // Set a lower version to fail the check for finding the version
       sandbox.stub(KnAPI, 'getKnVersion').resolves('0.19.0');
       const result: string = await rewiredCLI.CmdCliConfig.detectOrDownload('kn');
-      assert.isUndefined(result);
+      expect(result).to.be.undefined;
     });
     test('should open the requirements page if Help is selected when downloading the kn tool when using a linux OS and it has NOT been installed', async () => {
       const testData = {
@@ -311,7 +312,7 @@ suite('Command CLI Config', () => {
       // Set a lower version to fail the check for finding the version
       sandbox.stub(KnAPI, 'getKnVersion').resolves('0.19.0');
       const result: string = await rewiredCLI.CmdCliConfig.detectOrDownload('kn');
-      assert.isUndefined(result);
+      expect(result).to.be.undefined;
     });
     test('should do nothing if Cancel is selected when downloading the kn tool when using a linux OS and it has NOT been installed', async () => {
       const testData = {
@@ -342,7 +343,7 @@ suite('Command CLI Config', () => {
       // Set a lower version to fail the check for finding the version
       sandbox.stub(KnAPI, 'getKnVersion').resolves('0.19.0');
       const result: string = await rewiredCLI.CmdCliConfig.detectOrDownload('kn');
-      assert.isUndefined(result);
+      expect(result).to.be.undefined;
     });
   });
 });

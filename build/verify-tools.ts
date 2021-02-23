@@ -6,17 +6,17 @@
 
 // import { CancellationToken } from 'vscode';
 import { exec } from 'child_process';
+import { tmpdir } from 'os';
+import { join, resolve } from 'path';
 import { existsSync } from 'fs-extra';
 import { fromFile } from 'hasha';
 import { sync } from 'mkdirp';
-import { tmpdir } from 'os';
-import { join, resolve } from 'path';
-// import { Config } from '../src/cli/cli-config';
+import configData = require('../src/cli/cli-config.json');
 import { DownloadUtil } from '../src/util/download';
+// import { Config } from '../src/cli/cli-config';
 // import loadJSON from '../src/util/parse';
 
 // const configData = '../src/cli/cli-config.json';
-import configData = require('../src/cli/cli-config.json');
 
 async function downloadFileAndCreateSha256(
   targetFolder: string,
@@ -41,12 +41,17 @@ async function downloadFileAndCreateSha256(
 
 function verifyTools(): void {
   Object.keys(configData).forEach((key) => {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     Object.keys(configData[key].platform).forEach((OS) => {
       const targetFolder = resolve(tmpdir(), OS);
+      // eslint-disable-next-line @typescript-eslint/no-floating-promises
       downloadFileAndCreateSha256(
         targetFolder,
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
         configData[key].platform[OS].dlFileName,
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
         configData[key].platform[OS].url,
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
         configData[key].platform[OS].sha256sum,
       );
     });

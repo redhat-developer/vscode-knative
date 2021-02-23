@@ -1,12 +1,11 @@
 import * as vscode from 'vscode';
+import { expect } from 'chai';
 import * as chai from 'chai';
 import { beforeEach } from 'mocha';
 import * as sinon from 'sinon';
 import * as sinonChai from 'sinon-chai';
-import * as referee from '@sinonjs/referee';
 import * as brokerData from './broker.json';
 import * as channelData from './channel.json';
-import * as multipleServiceData from '../servingTree/multipleServiceServicesList.json';
 import * as subscriptionData from './subscription.json';
 import * as subscriptionEmptySpecData from './subscriptionEmptySpec.json';
 import * as subscriptionIncompleteData from './subscriptionIncomplete.json';
@@ -24,9 +23,8 @@ import { Service } from '../../src/knative/service';
 import { Subscription } from '../../src/knative/subscription';
 import { ServingDataProvider } from '../../src/servingTree/servingDataProvider';
 import { ServingTreeItem } from '../../src/servingTree/servingTreeItem';
+import * as multipleServiceData from '../servingTree/multipleServiceServicesList.json';
 
-const { assert } = referee;
-const { expect } = chai;
 chai.use(sinonChai);
 
 suite('SubscriptionDataProvider', () => {
@@ -310,37 +308,37 @@ suite('SubscriptionDataProvider', () => {
         .resolves({ error: undefined, stdout: `No subscriptions found.` });
       const result = await subscriptionDataProvider.getSubscriptions(eventingFolderNodes[3]);
       expect(result).to.have.lengthOf(1);
-      expect(result[0].description).equals('');
-      expect(result[0].description).equals('');
-      expect(result[0].label.label).equals('No Subscription Found');
-      expect(result[0].getName()).equals('No Subscription Found');
+      expect(result[0].description).to.equal('');
+      expect(result[0].description).to.equal('');
+      expect(result[0].label.label).to.equal('No Subscription Found');
+      expect(result[0].getName()).to.equal('No Subscription Found');
     });
     test('should return subscription nodes', async () => {
       sandbox
         .stub(subscriptionDataProvider.knExecutor, 'execute')
         .resolves({ error: undefined, stdout: JSON.stringify(subscriptionData) });
       const result = await subscriptionDataProvider.getSubscriptions(eventingFolderNodes[3]);
-      assert.equals(result[5], testSubscriptionTreeItems[0]);
+      expect(result[5]).to.deep.equal(testSubscriptionTreeItems[0]);
       expect(result).to.have.lengthOf(10);
-      expect(result[5].label.label).equals('example-subscription0');
+      expect(result[5].label.label).to.equal('example-subscription0');
     });
     test('should return subscription nodes even when the spec is empty', async () => {
       sandbox
         .stub(subscriptionDataProvider.knExecutor, 'execute')
         .resolves({ error: undefined, stdout: JSON.stringify(subscriptionEmptySpecData) });
       const result = await subscriptionDataProvider.getSubscriptions(eventingFolderNodes[3]);
-      assert.equals(result[5], testSubscription0EmptySpecTreeItem);
+      expect(result[5]).to.deep.equal(testSubscription0EmptySpecTreeItem);
       expect(result).to.have.lengthOf(10);
-      expect(result[5].label.label).equals('example-subscription0');
+      expect(result[5].label.label).to.equal('example-subscription0');
     });
     test('should refetch subscription info when it is incomplete, then return subscription nodes', async () => {
       const exeStub = sandbox.stub(subscriptionDataProvider.knExecutor, 'execute');
       exeStub.onFirstCall().resolves({ error: undefined, stdout: JSON.stringify(subscriptionIncompleteData) });
       exeStub.onSecondCall().resolves({ error: undefined, stdout: JSON.stringify(subscriptionData) });
       const result = await subscriptionDataProvider.getSubscriptions(eventingFolderNodes[3]);
-      assert.equals(result[5], testSubscriptionTreeItems[0]);
+      expect(result[5]).to.deep.equal(testSubscriptionTreeItems[0]);
       expect(result).to.have.lengthOf(10);
-      expect(result[5].label.label).equals('example-subscription0');
+      expect(result[5].label.label).to.equal('example-subscription0');
     });
   });
   suite('Get subscription Children', () => {
@@ -351,11 +349,11 @@ suite('SubscriptionDataProvider', () => {
       await subscriptionDataProvider.getSubscriptions(eventingFolderNodes[3]);
       const result = subscriptionDataProvider.getSubscriptionChildren(testSubscriptionMissingTreeItem);
       expect(result).to.have.lengthOf(2);
-      expect(result[0].description).equals('');
-      expect(result[0].label.label).equals('Channel Not Found');
-      expect(result[0].getName()).equals('Channel Not Found');
-      expect(result[1].label.label).equals('Subscriber Not Found');
-      expect(result[1].getName()).equals('Subscriber Not Found');
+      expect(result[0].description).to.equal('');
+      expect(result[0].label.label).to.equal('Channel Not Found');
+      expect(result[0].getName()).to.equal('Channel Not Found');
+      expect(result[1].label.label).to.equal('Subscriber Not Found');
+      expect(result[1].getName()).to.equal('Subscriber Not Found');
     });
     test('should return service child nodes', async () => {
       sandbox
@@ -363,11 +361,11 @@ suite('SubscriptionDataProvider', () => {
         .resolves({ error: undefined, stdout: JSON.stringify(subscriptionData) });
       await subscriptionDataProvider.getSubscriptions(eventingFolderNodes[3]);
       const result = subscriptionDataProvider.getSubscriptionChildren(testSubscriptionTreeItems[0]);
-      assert.equals(result[0], testChannel0ForSubscription0TreeItem);
-      assert.equals(result[1], testService0ForSubscription0TreeItem);
+      expect(result[0]).to.deep.equal(testChannel0ForSubscription0TreeItem);
+      expect(result[1]).to.deep.equal(testService0ForSubscription0TreeItem);
       expect(result).to.have.lengthOf(2);
-      expect(result[0].label.label).equals('Channel - example-channel0');
-      expect(result[1].label.label).equals('Subscriber - aaa');
+      expect(result[0].label.label).to.equal('Channel - example-channel0');
+      expect(result[1].label.label).to.equal('Subscriber - aaa');
     });
     test('should return broker child nodes', async () => {
       sandbox
@@ -375,11 +373,11 @@ suite('SubscriptionDataProvider', () => {
         .resolves({ error: undefined, stdout: JSON.stringify(subscriptionData) });
       await subscriptionDataProvider.getSubscriptions(eventingFolderNodes[3]);
       const result = subscriptionDataProvider.getSubscriptionChildren(testSubscriptionTreeItems[1]);
-      assert.equals(result[0], testChannel0ForSubscription1TreeItem);
-      assert.equals(result[1], testBroker0ForSubscription1TreeItem);
+      expect(result[0]).to.deep.equal(testChannel0ForSubscription1TreeItem);
+      expect(result[1]).to.deep.equal(testBroker0ForSubscription1TreeItem);
       expect(result).to.have.lengthOf(2);
-      expect(result[0].label.label).equals('Channel - example-channel0');
-      expect(result[1].label.label).equals('Subscriber - example-broker0');
+      expect(result[0].label.label).to.equal('Channel - example-channel0');
+      expect(result[1].label.label).to.equal('Subscriber - example-broker0');
     });
     test('should return channel child nodes', async () => {
       sandbox
@@ -387,11 +385,11 @@ suite('SubscriptionDataProvider', () => {
         .resolves({ error: undefined, stdout: JSON.stringify(subscriptionData) });
       await subscriptionDataProvider.getSubscriptions(eventingFolderNodes[3]);
       const result = subscriptionDataProvider.getSubscriptionChildren(testSubscriptionTreeItems[2]);
-      assert.equals(result[0], testChannel1ForSubscription2TreeItem);
-      assert.equals(result[1], testChannel0ForSubscription2TreeItem);
+      expect(result[0]).to.deep.equal(testChannel1ForSubscription2TreeItem);
+      expect(result[1]).to.deep.equal(testChannel0ForSubscription2TreeItem);
       expect(result).to.have.lengthOf(2);
-      expect(result[0].label.label).equals('Channel - example-channel1');
-      expect(result[1].label.label).equals('Subscriber - example-channel0');
+      expect(result[0].label.label).to.equal('Channel - example-channel1');
+      expect(result[1].label.label).to.equal('Subscriber - example-channel0');
     });
     test('should return URI child nodes', async () => {
       sandbox
@@ -399,13 +397,13 @@ suite('SubscriptionDataProvider', () => {
         .resolves({ error: undefined, stdout: JSON.stringify(subscriptionData) });
       await subscriptionDataProvider.getSubscriptions(eventingFolderNodes[3]);
       const result = subscriptionDataProvider.getSubscriptionChildren(testSubscriptionTreeItems[3]);
-      assert.equals(result[0], testChannel2ForSubscription3TreeItem);
-      assert.equals(result[1], testURIForSubscription3TreeItem);
+      expect(result[0]).to.deep.equal(testChannel2ForSubscription3TreeItem);
+      expect(result[1]).to.deep.equal(testURIForSubscription3TreeItem);
       expect(result).to.have.lengthOf(4);
-      expect(result[0].label.label).equals('Channel - example-channel2');
-      expect(result[1].label.label).equals('Subscriber - https://event.receiver.uri/');
-      expect(result[2].label.label).equals('Reply - https://event.receiver.uri/');
-      expect(result[3].label.label).equals('DeadLetterSink - https://event.receiver.uri/');
+      expect(result[0].label.label).to.equal('Channel - example-channel2');
+      expect(result[1].label.label).to.equal('Subscriber - https://event.receiver.uri/');
+      expect(result[2].label.label).to.equal('Reply - https://event.receiver.uri/');
+      expect(result[3].label.label).to.equal('DeadLetterSink - https://event.receiver.uri/');
     });
     test('should return subscriber, reply, and dead letter reply child nodes', async () => {
       sandbox
@@ -413,15 +411,15 @@ suite('SubscriptionDataProvider', () => {
         .resolves({ error: undefined, stdout: JSON.stringify(subscriptionData) });
       await subscriptionDataProvider.getSubscriptions(eventingFolderNodes[3]);
       const result = subscriptionDataProvider.getSubscriptionChildren(testSubscriptionTreeItems[4]);
-      assert.equals(result[0], testChannel3ForSubscription4TreeItem);
-      assert.equals(result[1], testService0ForSubscription4TreeItem);
-      assert.equals(result[2], testBroker0ForSubscription4TreeItem);
-      assert.equals(result[3], testBroker1ForSubscription4TreeItem);
+      expect(result[0]).to.deep.equal(testChannel3ForSubscription4TreeItem);
+      expect(result[1]).to.deep.equal(testService0ForSubscription4TreeItem);
+      expect(result[2]).to.deep.equal(testBroker0ForSubscription4TreeItem);
+      expect(result[3]).to.deep.equal(testBroker1ForSubscription4TreeItem);
       expect(result).to.have.lengthOf(4);
-      expect(result[0].label.label).equals('Channel - example-channel3');
-      expect(result[1].label.label).equals('Subscriber - aaa');
-      expect(result[2].label.label).equals('Reply - example-broker0');
-      expect(result[3].label.label).equals('DeadLetterSink - example-broker1');
+      expect(result[0].label.label).to.equal('Channel - example-channel3');
+      expect(result[1].label.label).to.equal('Subscriber - aaa');
+      expect(result[2].label.label).to.equal('Reply - example-broker0');
+      expect(result[3].label.label).to.equal('DeadLetterSink - example-broker1');
     });
   });
 });

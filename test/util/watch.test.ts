@@ -3,16 +3,15 @@
  *  Licensed under the MIT License. See LICENSE file in the project root for license information.
  *-----------------------------------------------------------------------------------------------*/
 
-import * as chai from 'chai';
-import * as sinonChai from 'sinon-chai';
-import * as sinon from 'sinon';
-import * as fs from 'fs-extra';
 import * as path from 'path';
+import { expect } from 'chai';
+import * as chai from 'chai';
+import * as fs from 'fs-extra';
+import * as sinon from 'sinon';
+import * as sinonChai from 'sinon-chai';
+import * as tmp from 'tmp';
 import { WatchUtil } from '../../src/util/watch';
 
-import tmp = require('tmp');
-
-const { expect } = chai;
 chai.use(sinonChai);
 
 suite('File Watch Utility', () => {
@@ -61,8 +60,8 @@ suite('File Watch Utility', () => {
     }, 1000);
     return new Promise((res) => {
       notifier.emitter.on('file-changed', (file) => {
-        expect(file).equals(undefined);
-        res();
+        expect(file).to.equal(undefined);
+        res(null);
       });
     });
   });

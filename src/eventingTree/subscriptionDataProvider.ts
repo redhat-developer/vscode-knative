@@ -5,18 +5,18 @@
 
 import { TreeItemCollapsibleState, Uri } from 'vscode';
 import { EventingTreeItem } from './eventingTreeItem';
-import { Execute, loadItems } from '../cli/execute';
 import { CliExitData } from '../cli/cmdCli';
-import { KnAPI } from '../cli/kn-api';
 import { EventingContextType, ServingContextType } from '../cli/config';
-import { compareNodes } from '../knative/knativeItem';
-import { Subscription } from '../knative/subscription';
-import { KnativeSubscriptions } from '../knative/knativeSubscriptions';
-import { KnativeEvents } from '../knative/knativeEvents';
-import { Channel } from '../knative/channel';
-import { Sink } from '../knative/sink';
+import { Execute, loadItems } from '../cli/execute';
+import { KnAPI } from '../cli/kn-api';
 import { Broker } from '../knative/broker';
+import { Channel } from '../knative/channel';
+import { KnativeEvents } from '../knative/knativeEvents';
+import { compareNodes } from '../knative/knativeItem';
+import { KnativeSubscriptions } from '../knative/knativeSubscriptions';
 import { Service } from '../knative/service';
+import { Sink } from '../knative/sink';
+import { Subscription } from '../knative/subscription';
 import { ServingTreeItem } from '../servingTree/servingTreeItem';
 
 export class SubscriptionDataProvider {
@@ -36,11 +36,7 @@ export class SubscriptionDataProvider {
     let subscriptions: Subscription[] = [];
     // Get the raw data from the cli call.
     const result: CliExitData = await this.knExecutor.execute(KnAPI.listSubscriptions());
-    subscriptions = this.kSubs.addSubscriptions(
-      loadItems(result).map((value) => {
-        return Subscription.JSONToSubscription(value);
-      }),
-    );
+    subscriptions = this.kSubs.addSubscriptions(loadItems(result).map((value) => Subscription.JSONToSubscription(value)));
     // If there are no Subscriptions found then stop looking and we can post 'No Subscriptions Found`
     if (subscriptions.length === 0) {
       return subscriptions;

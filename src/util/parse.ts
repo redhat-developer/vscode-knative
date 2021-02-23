@@ -3,8 +3,8 @@
  *  Licensed under the MIT License. See LICENSE file in the project root for license information.
  *-----------------------------------------------------------------------------------------------*/
 
-import { Uri } from 'vscode';
 import { readFile } from 'fs';
+import { Uri } from 'vscode';
 
 /**
  * Promisify fs.readFile to parse JSON from a file.

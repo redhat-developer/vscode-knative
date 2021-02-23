@@ -3,8 +3,8 @@
  *  Licensed under the MIT License. See LICENSE file in the project root for license information.
  *-----------------------------------------------------------------------------------------------*/
 
-import { window, Terminal, TerminalOptions } from 'vscode';
 import * as path from 'path';
+import { window, Terminal, TerminalOptions } from 'vscode';
 
 /**
  * Utility for VSCode windows.

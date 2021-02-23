@@ -3,8 +3,8 @@
  *  Licensed under the MIT License. See LICENSE file in the project root for license information.
  *-----------------------------------------------------------------------------------------------*/
 
-import { Terminal } from 'vscode';
 import * as path from 'path';
+import { Terminal } from 'vscode';
 import { CmdCliConfig } from './cli-config';
 import { CmdCli, Cli, CliCommand, CliExitData, cliCommandToString } from './cmdCli';
 import { WindowUtil } from '../util/windowUtils';
@@ -49,12 +49,15 @@ export function loadItems(result: CliExitData): any[] {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let data: any[] = [];
   try {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const { items } = JSON.parse(result.stdout);
     if (items) {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       data = items;
     }
   } catch (ignore) {
     // do nothing
   }
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-return
   return data;
 }

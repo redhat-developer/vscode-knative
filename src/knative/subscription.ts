@@ -1,11 +1,12 @@
+/* eslint-disable no-use-before-define */
 /*-----------------------------------------------------------------------------------------------
  *  Copyright (c) Red Hat, Inc. All rights reserved.
  *  Licensed under the MIT License. See LICENSE file in the project root for license information.
  *-----------------------------------------------------------------------------------------------*/
 
 import { Channel } from './channel';
-import { Sink } from './sink';
 import { KnativeItem } from './knativeItem';
+import { Sink } from './sink';
 
 export class Subscription extends KnativeItem {
   constructor(
@@ -107,9 +108,9 @@ export interface ManagedFieldsEntity {
   time: string;
 }
 export interface FieldsV1 {
-  'f:metadata'?: {} | null;
-  'f:spec'?: {} | null;
-  'f:status'?: {} | null;
+  'f:metadata'?: Record<string, unknown> | null;
+  'f:spec'?: Record<string, unknown> | null;
+  'f:status'?: Record<string, unknown> | null;
 }
 export interface OwnerReferencesEntity {
   apiVersion: string;

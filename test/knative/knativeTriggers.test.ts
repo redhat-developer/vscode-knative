@@ -1,13 +1,10 @@
+/* eslint-disable no-unused-expressions */
 import * as vscode from 'vscode';
+import { expect } from 'chai';
 import * as chai from 'chai';
-import * as sinonChai from 'sinon-chai';
-import * as sinon from 'sinon';
-import * as referee from '@sinonjs/referee';
 import { beforeEach } from 'mocha';
-import * as triggerData from '../eventingTree/trigger.json';
-import * as brokerData from '../eventingTree/broker.json';
-import * as channelData from '../eventingTree/channel.json';
-import * as sourceData from '../eventingTree/source.json';
+import * as sinon from 'sinon';
+import * as sinonChai from 'sinon-chai';
 import { APIServerSource } from '../../src/knative/apiServerSource';
 import { BindingSource } from '../../src/knative/bindingSource';
 import { Broker } from '../../src/knative/broker';
@@ -16,14 +13,16 @@ import { GenericSource } from '../../src/knative/genericSource';
 import { KnativeBrokers } from '../../src/knative/knativeBrokers';
 import { KnativeChannels } from '../../src/knative/knativeChannels';
 import { KnativeSources } from '../../src/knative/knativeSources';
+import { KnativeTriggers } from '../../src/knative/knativeTriggers';
 import { PingSource } from '../../src/knative/pingSource';
 import { Service } from '../../src/knative/service';
 import { Sink } from '../../src/knative/sink';
-import { KnativeTriggers } from '../../src/knative/knativeTriggers';
 import { Trigger } from '../../src/knative/trigger';
+import * as brokerData from '../eventingTree/broker.json';
+import * as channelData from '../eventingTree/channel.json';
+import * as sourceData from '../eventingTree/source.json';
+import * as triggerData from '../eventingTree/trigger.json';
 
-const { assert } = referee;
-const { expect } = chai;
 chai.use(sinonChai);
 
 suite('Knative Triggers', () => {
@@ -259,19 +258,19 @@ suite('Knative Triggers', () => {
   suite('Getting an instance', () => {
     test('should return an instance of the singleton', () => {
       const instance: KnativeTriggers = KnativeTriggers.Instance;
-      assert.equals(instance, knativeTriggers);
+      expect(instance).to.deep.equal(knativeTriggers);
     });
   });
   suite('Getting a Trigger', () => {
     test('should return a list of triggers from the instance', () => {
       const returnedTrigger: Trigger = knativeTriggers.getTriggers()[0];
-      assert.equals(returnedTrigger, testTrigger0);
+      expect(returnedTrigger).to.deep.equal(testTrigger0);
     });
   });
   suite('Finding a Trigger', () => {
     test('should return a trigger using the trigger name', () => {
       const returnedTrigger: Trigger = knativeTriggers.findTrigger('example-trigger0');
-      assert.equals(returnedTrigger, testTrigger0);
+      expect(returnedTrigger).to.deep.equal(testTrigger0);
     });
   });
   suite('Adding a Trigger', () => {
@@ -279,7 +278,7 @@ suite('Knative Triggers', () => {
       const remainingTriggers: Trigger[] = knativeTriggers.removeTrigger('example-trigger1');
       expect(remainingTriggers).to.have.lengthOf(4);
       const returnedTrigger: Trigger = knativeTriggers.addTrigger(testTrigger1);
-      assert.equals(returnedTrigger, testTrigger1);
+      expect(returnedTrigger).to.deep.equal(testTrigger1);
     });
   });
   suite('Adding multiple Triggers', () => {
@@ -287,41 +286,41 @@ suite('Knative Triggers', () => {
       const remainingTriggers: Trigger[] = knativeTriggers.removeTrigger('example-trigger1');
       expect(remainingTriggers).to.have.lengthOf(4);
       const returnedTriggers: Trigger[] = knativeTriggers.addTriggers(testTriggers);
-      assert.equals(returnedTriggers, testTriggers);
+      expect(returnedTriggers).to.deep.equal(testTriggers);
     });
   });
   suite('Adding a Broker', () => {
     test('should add a Broker to the parent trigger and return the Broker added', () => {
       const returnedBroker: Broker = knativeTriggers.addBroker(testTrigger0);
-      assert.equals(returnedBroker.name, 'example-broker0');
+      expect(returnedBroker.name).to.equal('example-broker0');
     });
     test('should return null when adding a Broker to the parent trigger that does not have a broker listed', () => {
       const returnedBroker: Broker = knativeTriggers.addBroker(testTrigger0Empty);
-      assert.isNull(returnedBroker);
+      expect(returnedBroker).to.be.null;
     });
     test('should return undefined when adding a Broker to the parent trigger that has an unused broker name', () => {
       const returnedBroker: Broker = knativeTriggers.addBroker(testTrigger0Missing);
-      assert.isUndefined(returnedBroker);
+      expect(returnedBroker).to.be.undefined;
     });
   });
   suite('Adding a Sink', () => {
     test('should add a Sink to the parent trigger and return the Sink added', () => {
       const returnedSink: Service = knativeTriggers.addSink(testTrigger0) as Service;
-      assert.equals(returnedSink.name, 'aaa');
+      expect(returnedSink.name).to.equal('aaa');
     });
     test('should return null when adding a Sink to the parent trigger that does not have a Sink listed', () => {
       const returnedSink: Sink = knativeTriggers.addSink(testTrigger0Empty);
-      assert.isNull(returnedSink);
+      expect(returnedSink).to.be.null;
     });
     test('should return undefined when adding a Sink to the parent trigger that has an unused Sink name', () => {
       const returnedSink: Sink = knativeTriggers.addSink(testTrigger0Missing);
-      assert.isUndefined(returnedSink);
+      expect(returnedSink).to.be.undefined;
     });
   });
   suite('Updating a Trigger', () => {
     test('should return a list of triggers, including the updated one', () => {
       const returnedTriggers: Trigger[] = knativeTriggers.updateTrigger(testTrigger1);
-      assert.equals(returnedTriggers, testTriggers);
+      expect(returnedTriggers).to.deep.equal(testTriggers);
     });
   });
 });

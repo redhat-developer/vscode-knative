@@ -3,12 +3,12 @@
  *  Licensed under the MIT License. See LICENSE file in the project root for license information.
  *-----------------------------------------------------------------------------------------------*/
 
+import { expect } from 'chai';
 import * as chai from 'chai';
-import * as sinonChai from 'sinon-chai';
 import * as sinon from 'sinon';
+import * as sinonChai from 'sinon-chai';
 import { Platform } from '../../src/util/platform';
 
-const { expect } = chai;
 chai.use(sinonChai);
 
 suite('Platform Utility', () => {
@@ -19,7 +19,7 @@ suite('Platform Utility', () => {
 
   test('getOS returns the platform name', () => {
     const os = Platform.getOS();
-    expect(os).equals(process.platform);
+    expect(os).to.equal(process.platform);
   });
 
   test('OS delegates to getOS', () => {
@@ -27,12 +27,12 @@ suite('Platform Utility', () => {
     const os = Platform.OS;
 
     expect(spy.calledOnce);
-    expect(os).equals(process.platform);
+    expect(os).to.equal(process.platform);
   });
 
   test('getEnv returns the platform environment', () => {
     const env = Platform.getEnv();
-    expect(env).equals(process.env);
+    expect(env).to.equal(process.env);
   });
 
   test('ENV delegates to getENV', () => {
@@ -40,15 +40,15 @@ suite('Platform Utility', () => {
     const env = Platform.ENV;
 
     expect(spy.calledOnce);
-    expect(env).equals(process.env);
+    expect(env).to.equal(process.env);
   });
 
   test('getUserHomePath returns the path to user home', () => {
     const home = Platform.getUserHomePath();
     if (process.platform === 'win32') {
-      expect(home).equals(process.env.USERPROFILE);
+      expect(home).to.equal(process.env.USERPROFILE);
     } else {
-      expect(home).equals(process.env.HOME);
+      expect(home).to.equal(process.env.HOME);
     }
   });
 });

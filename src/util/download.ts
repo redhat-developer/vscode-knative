@@ -4,7 +4,6 @@
  *-----------------------------------------------------------------------------------------------*/
 
 import * as fs from 'fs-extra';
-
 import request = require('request');
 import progress = require('request-progress');
 
@@ -17,11 +16,14 @@ export class DownloadUtil {
   ): Promise<void> {
     return new Promise((resolve, reject) => {
       let previous = 0;
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
       progress(request(fromUrl), {
         throttle: throttle || 250,
         delay: 0,
         lengthHeader: 'content-length',
       })
+        // eslint-disable-next-line @typescript-eslint/no-empty-function
+        .on('response', () => {})
         .on('progress', (state: { percent: number }) => {
           const current = Math.round(state.percent * 100);
           if (current !== previous && progressCallBack) {

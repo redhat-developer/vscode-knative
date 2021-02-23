@@ -3,12 +3,11 @@
  *  Licensed under the MIT License. See LICENSE file in the project root for license information.
  *-----------------------------------------------------------------------------------------------*/
 
-import { createReadStream, FSWatcher } from 'fs';
-import { ensureDirSync, watch } from 'fs-extra';
-import { join } from 'path';
 import { EventEmitter } from 'events';
-
+import { createReadStream, FSWatcher } from 'fs';
+import { join } from 'path';
 import byline = require('byline');
+import { ensureDirSync, watch } from 'fs-extra';
 
 export interface FileContentChangeNotifier {
   readonly watcher: FSWatcher;
@@ -28,12 +27,15 @@ export class WatchUtil {
         }
         timer = setTimeout(() => {
           timer = undefined;
-          WatchUtil.grep(join(location, filename), /current-context:.*/).then((newContext: string) => {
-            if (context !== newContext) {
-              emitter.emit('file-changed');
-              context = newContext;
-            }
-          });
+          WatchUtil.grep(join(location, filename), /current-context:.*/)
+            .then((newContext: string) => {
+              if (context !== newContext) {
+                emitter.emit('file-changed');
+                context = newContext;
+              }
+            })
+            // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+            .catch((error) => `There was an error looking for the file. ${error}`);
         }, 500);
       }
     });

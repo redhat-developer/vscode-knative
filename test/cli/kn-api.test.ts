@@ -1,28 +1,27 @@
+import { expect } from 'chai';
 import * as chai from 'chai';
-import * as sinonChai from 'sinon-chai';
-import * as sinon from 'sinon';
-import * as referee from '@sinonjs/referee';
-import { KnAPI } from '../../src/cli/kn-api';
-import { CliCommand, CmdCli } from '../../src/cli/cmdCli';
-
 import rewire = require('rewire');
+import * as sinon from 'sinon';
+import * as sinonChai from 'sinon-chai';
+import { CliCommand, CmdCli } from '../../src/cli/cmdCli';
+import { KnAPI } from '../../src/cli/kn-api';
 
-const { assert } = referee;
-const { expect } = chai;
 chai.use(sinonChai);
 
 suite('KN CLI Command', () => {
   test('should create a proper command string', () => {
     const api = rewire('../../src/cli/kn-api');
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const knCliCommand = api.__get__('knCliCommand');
     const knArguments: string[] = ['service', 'list'];
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
     const commandApi: CliCommand = knCliCommand(knArguments);
     const command: CliCommand = {
       cliArguments: ['service', 'list'],
       cliCommand: 'kn',
     };
 
-    assert.equals(command, commandApi);
+    expect(commandApi).to.deep.equal(command);
   });
 });
 
@@ -55,7 +54,7 @@ suite('KN API commands that will', () => {
         cliCommand: 'kn',
       };
       const commandAPI = KnAPI.createService({ name: 'mySvc', image: 'dev.local/ns/image:latest' });
-      assert.equals(command.cliArguments, commandAPI.cliArguments);
+      expect(commandAPI.cliArguments).to.deep.equal(command.cliArguments);
     });
     test('should create a service with image using --force flag', () => {
       const command: CliCommand = {
@@ -67,7 +66,7 @@ suite('KN API commands that will', () => {
         image: 'dev.local/ns/image:latest',
         force: true,
       });
-      assert.equals(command.cliArguments, commandAPI.cliArguments);
+      expect(commandAPI.cliArguments).to.deep.equal(command.cliArguments);
     });
     test('should create a service with a port', () => {
       const command: CliCommand = {
@@ -79,7 +78,7 @@ suite('KN API commands that will', () => {
         image: 'dev.local/ns/image:latest',
         port: 80,
       });
-      assert.equals(command.cliArguments, commandAPI.cliArguments);
+      expect(commandAPI.cliArguments).to.deep.equal(command.cliArguments);
     });
     test('should create a service with multiple environment variables', () => {
       const command: CliCommand = {
@@ -101,7 +100,7 @@ suite('KN API commands that will', () => {
         image: 'dev.local/ns/image:latest',
         env: envMap,
       });
-      assert.equals(command.cliArguments, commandAPI.cliArguments);
+      expect(commandAPI.cliArguments).to.deep.equal(command.cliArguments);
     });
     test('should create a service with multiple environment variables using --force flag', () => {
       const command: CliCommand = {
@@ -125,7 +124,7 @@ suite('KN API commands that will', () => {
         force: true,
         env: envMap,
       });
-      assert.equals(command.cliArguments, commandAPI.cliArguments);
+      expect(commandAPI.cliArguments).to.deep.equal(command.cliArguments);
     });
     test('should create a service with name, image, and namespace', () => {
       const command: CliCommand = {
@@ -137,7 +136,7 @@ suite('KN API commands that will', () => {
         image: 'dev.local/ns/image:latest',
         namespace: 'myNS',
       });
-      assert.equals(command.cliArguments, commandAPI.cliArguments);
+      expect(commandAPI.cliArguments).to.deep.equal(command.cliArguments);
     });
     test('should create a service with annotations', () => {
       const command: CliCommand = {
@@ -159,7 +158,7 @@ suite('KN API commands that will', () => {
         image: 'dev.local/ns/image:latest',
         annotation: annotationMap,
       });
-      assert.equals(command.cliArguments, commandAPI.cliArguments);
+      expect(commandAPI.cliArguments).to.deep.equal(command.cliArguments);
     });
     test('should create a service with labels', () => {
       const command: CliCommand = {
@@ -181,7 +180,7 @@ suite('KN API commands that will', () => {
         image: 'dev.local/ns/image:latest',
         label: labelMap,
       });
-      assert.equals(command.cliArguments, commandAPI.cliArguments);
+      expect(commandAPI.cliArguments).to.deep.equal(command.cliArguments);
     });
     test('should create a service with all the options applied', () => {
       const command: CliCommand = {
@@ -221,7 +220,7 @@ suite('KN API commands that will', () => {
         annotation: annotationMap,
         label: labelMap,
       });
-      assert.equals(command.cliArguments, commandAPI.cliArguments);
+      expect(commandAPI.cliArguments).to.deep.equal(command.cliArguments);
     });
   });
   suite('Update a Service', () => {
@@ -271,7 +270,7 @@ suite('KN API commands that will', () => {
         cliCommand: 'kn',
       };
       const commandAPI = KnAPI.updateService({ name: 'mySvc', image: 'dev.local/ns/image:latest' });
-      assert.equals(command.cliArguments, commandAPI.cliArguments);
+      expect(commandAPI.cliArguments).to.deep.equal(command.cliArguments);
     });
     test('should update a service with a port', () => {
       const command: CliCommand = {
@@ -282,7 +281,7 @@ suite('KN API commands that will', () => {
         name: 'mySvc',
         port: 80,
       });
-      assert.equals(command.cliArguments, commandAPI.cliArguments);
+      expect(commandAPI.cliArguments).to.deep.equal(command.cliArguments);
     });
     test('should update a service with name and namespace', () => {
       const command: CliCommand = {
@@ -293,7 +292,7 @@ suite('KN API commands that will', () => {
         name: 'mySvc',
         namespace: 'myNS',
       });
-      assert.equals(command.cliArguments, commandAPI.cliArguments);
+      expect(commandAPI.cliArguments).to.deep.equal(command.cliArguments);
     });
     test('should update a service with multiple environment variables', () => {
       const command: CliCommand = {
@@ -304,7 +303,7 @@ suite('KN API commands that will', () => {
         name: 'mySvc',
         env: envMap,
       });
-      assert.equals(command.cliArguments, commandAPI.cliArguments);
+      expect(commandAPI.cliArguments).to.deep.equal(command.cliArguments);
     });
     test('should update a service with annotations', () => {
       const command: CliCommand = {
@@ -323,7 +322,7 @@ suite('KN API commands that will', () => {
         name: 'mySvc',
         annotation: annotationMap,
       });
-      assert.equals(command.cliArguments, commandAPI.cliArguments);
+      expect(commandAPI.cliArguments).to.deep.equal(command.cliArguments);
     });
     test('should update a service with labels', () => {
       const command: CliCommand = {
@@ -334,7 +333,7 @@ suite('KN API commands that will', () => {
         name: 'mySvc',
         label: labelMap,
       });
-      assert.equals(command.cliArguments, commandAPI.cliArguments);
+      expect(commandAPI.cliArguments).to.deep.equal(command.cliArguments);
     });
     test('should update a service with limits', () => {
       const command: CliCommand = {
@@ -345,7 +344,7 @@ suite('KN API commands that will', () => {
         name: 'mySvc',
         limit: limitMap,
       });
-      assert.equals(command.cliArguments, commandAPI.cliArguments);
+      expect(commandAPI.cliArguments).to.deep.equal(command.cliArguments);
     });
     test('should update a service with requests', () => {
       const command: CliCommand = {
@@ -356,7 +355,7 @@ suite('KN API commands that will', () => {
         name: 'mySvc',
         request: requestMap,
       });
-      assert.equals(command.cliArguments, commandAPI.cliArguments);
+      expect(commandAPI.cliArguments).to.deep.equal(command.cliArguments);
     });
     test('should update a service with tags', () => {
       const command: CliCommand = {
@@ -367,7 +366,7 @@ suite('KN API commands that will', () => {
         name: 'mySvc',
         tag: tagMap,
       });
-      assert.equals(command.cliArguments, commandAPI.cliArguments);
+      expect(commandAPI.cliArguments).to.deep.equal(command.cliArguments);
     });
     test('should update a service with traffic', () => {
       const command: CliCommand = {
@@ -378,7 +377,7 @@ suite('KN API commands that will', () => {
         name: 'mySvc',
         traffic: trafficMap,
       });
-      assert.equals(command.cliArguments, commandAPI.cliArguments);
+      expect(commandAPI.cliArguments).to.deep.equal(command.cliArguments);
     });
     test('should update a service with untag', () => {
       const command: CliCommand = {
@@ -389,7 +388,7 @@ suite('KN API commands that will', () => {
         name: 'mySvc',
         untag: untagMap,
       });
-      assert.equals(command.cliArguments, commandAPI.cliArguments);
+      expect(commandAPI.cliArguments).to.deep.equal(command.cliArguments);
     });
     test('should update a service with all the options applied', () => {
       const command: CliCommand = {
@@ -452,7 +451,7 @@ suite('KN API commands that will', () => {
         traffic: trafficMap,
         untag: untagMap,
       });
-      assert.equals(command.cliArguments, commandAPI.cliArguments);
+      expect(commandAPI.cliArguments).to.deep.equal(command.cliArguments);
     });
   });
   suite('List Services', () => {
@@ -462,7 +461,7 @@ suite('KN API commands that will', () => {
         cliCommand: 'kn',
       };
       const commandAPI = KnAPI.listServices();
-      assert.equals(command.cliArguments, commandAPI.cliArguments);
+      expect(commandAPI.cliArguments).to.deep.equal(command.cliArguments);
     });
   });
 
@@ -472,7 +471,7 @@ suite('KN API commands that will', () => {
         cliArguments: ['revision', 'list', '-o', 'json'],
         cliCommand: 'kn',
       };
-      assert.equals(command.cliArguments, KnAPI.listRevisions().cliArguments);
+      expect(command.cliArguments).to.deep.equal(KnAPI.listRevisions().cliArguments);
     });
     test('should return command for listing revisions for a service', () => {
       const sName = 'myService';
@@ -480,7 +479,7 @@ suite('KN API commands that will', () => {
         cliArguments: ['revision', 'list', '-o', 'json', '-s', sName],
         cliCommand: 'kn',
       };
-      assert.equals(command.cliArguments, KnAPI.listRevisionsForService(sName).cliArguments);
+      expect(command.cliArguments).to.deep.equal(KnAPI.listRevisionsForService(sName).cliArguments);
     });
   });
 
@@ -493,7 +492,7 @@ suite('KN API commands that will', () => {
         cliArguments: [feature, 'describe', name, '-o', outputFormat],
         cliCommand: 'kn',
       };
-      assert.equals(command.cliArguments, KnAPI.describeFeature(feature, name, outputFormat).cliArguments);
+      expect(command.cliArguments).to.deep.equal(KnAPI.describeFeature(feature, name, outputFormat).cliArguments);
     });
     test('should return command for describing the service foo in YAML', () => {
       const feature = 'service';
@@ -503,7 +502,7 @@ suite('KN API commands that will', () => {
         cliArguments: [feature, 'describe', name, '-o', outputFormat],
         cliCommand: 'kn',
       };
-      assert.equals(command.cliArguments, KnAPI.describeFeature(feature, name, outputFormat).cliArguments);
+      expect(command.cliArguments).to.deep.equal(KnAPI.describeFeature(feature, name, outputFormat).cliArguments);
     });
     test('should return command for describing the service foo when no output is set', () => {
       const feature = 'service';
@@ -512,7 +511,7 @@ suite('KN API commands that will', () => {
         cliArguments: [feature, 'describe', name],
         cliCommand: 'kn',
       };
-      assert.equals(command.cliArguments, KnAPI.describeFeature(feature, name).cliArguments);
+      expect(command.cliArguments).to.deep.equal(KnAPI.describeFeature(feature, name).cliArguments);
     });
   });
 
@@ -524,7 +523,7 @@ suite('KN API commands that will', () => {
         cliArguments: [feature, 'delete', name],
         cliCommand: 'kn',
       };
-      assert.equals(command.cliArguments, KnAPI.deleteFeature(feature, name).cliArguments);
+      expect(command.cliArguments).to.deep.equal(KnAPI.deleteFeature(feature, name).cliArguments);
     });
   });
 
@@ -534,7 +533,7 @@ suite('KN API commands that will', () => {
         cliArguments: ['route', 'list', '-o', 'json'],
         cliCommand: 'kn',
       };
-      assert.equals(command.cliArguments, KnAPI.listRoutes().cliArguments);
+      expect(command.cliArguments).to.deep.equal(KnAPI.listRoutes().cliArguments);
     });
     test('should return command for listing routes for a service', () => {
       const sName = 'myService';
@@ -542,7 +541,7 @@ suite('KN API commands that will', () => {
         cliArguments: ['route', 'list', sName, '-o', 'json'],
         cliCommand: 'kn',
       };
-      assert.equals(command.cliArguments, KnAPI.listRoutesForService(sName).cliArguments);
+      expect(command.cliArguments).to.deep.equal(KnAPI.listRoutesForService(sName).cliArguments);
     });
   });
 
@@ -552,7 +551,7 @@ suite('KN API commands that will', () => {
         cliArguments: ['version'],
         cliCommand: 'kn',
       };
-      assert.equals(command.cliArguments, KnAPI.printKnVersion().cliArguments);
+      expect(command.cliArguments).to.deep.equal(KnAPI.printKnVersion().cliArguments);
     });
   });
 
@@ -560,29 +559,29 @@ suite('KN API commands that will', () => {
     test('should return the version number for a stable release', async () => {
       sandbox.stub(CmdCli.getInstance(), 'execute').resolves({ error: undefined, stdout: 'Version:      v0.14.0' });
       const version = await KnAPI.getKnVersion('path/to/kubectl');
-      expect(version).equals('0.14.0');
+      expect(version).to.equal('0.14.0');
     });
     test('should return the version number for a nightly release', async () => {
       sandbox
         .stub(CmdCli.getInstance(), 'execute')
         .resolves({ error: undefined, stdout: 'Version:      v20200309-local-34433f6' });
       const version = await KnAPI.getKnVersion('path/to/kubectl');
-      expect(version).equals('20200309');
+      expect(version).to.equal('20200309');
     });
     test('should return Undefined when the version is not the correct text', async () => {
       sandbox.stub(CmdCli.getInstance(), 'execute').resolves({ error: undefined, stdout: 'not the version text' });
       const version = await KnAPI.getKnVersion('path/to/kubectl');
-      expect(version).equals(undefined);
+      expect(version).to.equal(undefined);
     });
     test('should return Undefined when the version is not returned', async () => {
       sandbox.stub(CmdCli.getInstance(), 'execute').resolves({ error: undefined, stdout: undefined });
       const version = await KnAPI.getKnVersion('path/to/kubectl');
-      expect(version).equals(undefined);
+      expect(version).to.equal(undefined);
     });
     test('should return Undefined for errors', async () => {
       sandbox.stub(CmdCli.getInstance(), 'execute').throws({ error: 'Error generated by a test', stdout: undefined });
       const version = await KnAPI.getKnVersion('path/to/kubectl');
-      expect(version).equals(undefined);
+      expect(version).to.equal(undefined);
     });
   });
 
@@ -593,7 +592,7 @@ suite('KN API commands that will', () => {
         cliCommand: 'kn',
       };
       const commandAPI = KnAPI.listSources();
-      assert.equals(command.cliArguments, commandAPI.cliArguments);
+      expect(commandAPI.cliArguments).to.deep.equal(command.cliArguments);
     });
   });
 
@@ -604,7 +603,7 @@ suite('KN API commands that will', () => {
         cliCommand: 'kn',
       };
       const commandAPI = KnAPI.listSourceTypes();
-      assert.equals(command.cliArguments, commandAPI.cliArguments);
+      expect(commandAPI.cliArguments).to.deep.equal(command.cliArguments);
     });
   });
 
@@ -617,7 +616,7 @@ suite('KN API commands that will', () => {
         cliCommand: 'kn',
       };
       const commandAPI = KnAPI.createSource('ping', 'mySvc');
-      assert.equals(command.cliArguments, commandAPI.cliArguments);
+      expect(commandAPI.cliArguments).to.deep.equal(command.cliArguments);
     });
 
     test('should create an event source with source type and name with options', () => {
@@ -626,7 +625,7 @@ suite('KN API commands that will', () => {
         cliCommand: 'kn',
       };
       const commandAPI = KnAPI.createSource('ping', 'mySvc', sink);
-      assert.equals(command.cliArguments, commandAPI.cliArguments);
+      expect(commandAPI.cliArguments).to.deep.equal(command.cliArguments);
     });
   });
 
@@ -639,7 +638,7 @@ suite('KN API commands that will', () => {
         cliCommand: 'kn',
       };
       const commandAPI = KnAPI.updateSource('ping', 'mySvc');
-      assert.equals(command.cliArguments, commandAPI.cliArguments);
+      expect(commandAPI.cliArguments).to.deep.equal(command.cliArguments);
     });
 
     test('should update an event source with source type and name with options', () => {
@@ -648,7 +647,7 @@ suite('KN API commands that will', () => {
         cliCommand: 'kn',
       };
       const commandAPI = KnAPI.updateSource('ping', 'mySvc', sink);
-      assert.equals(command.cliArguments, commandAPI.cliArguments);
+      expect(commandAPI.cliArguments).to.deep.equal(command.cliArguments);
     });
   });
 
@@ -659,7 +658,7 @@ suite('KN API commands that will', () => {
         cliCommand: 'kn',
       };
       const commandAPI = KnAPI.deleteSource('ping', 'mySvc');
-      assert.equals(command.cliArguments, commandAPI.cliArguments);
+      expect(commandAPI.cliArguments).to.deep.equal(command.cliArguments);
     });
   });
 
@@ -670,7 +669,7 @@ suite('KN API commands that will', () => {
         cliCommand: 'kn',
       };
       const commandAPI = KnAPI.describeSource('ping', 'mySvc');
-      assert.equals(command.cliArguments, commandAPI.cliArguments);
+      expect(commandAPI.cliArguments).to.deep.equal(command.cliArguments);
     });
   });
 
@@ -681,7 +680,7 @@ suite('KN API commands that will', () => {
         cliCommand: 'kn',
       };
       const commandAPI = KnAPI.listSubscriptions();
-      assert.equals(command.cliArguments, commandAPI.cliArguments);
+      expect(commandAPI.cliArguments).to.deep.equal(command.cliArguments);
     });
   });
 
@@ -694,7 +693,7 @@ suite('KN API commands that will', () => {
         cliCommand: 'kn',
       };
       const commandAPI = KnAPI.createSubscription('mySvc');
-      assert.equals(command.cliArguments, commandAPI.cliArguments);
+      expect(commandAPI.cliArguments).to.deep.equal(command.cliArguments);
     });
 
     test('should create an event subscription with subscription type and name with options', () => {
@@ -703,7 +702,7 @@ suite('KN API commands that will', () => {
         cliCommand: 'kn',
       };
       const commandAPI = KnAPI.createSubscription('mySvc', sink);
-      assert.equals(command.cliArguments, commandAPI.cliArguments);
+      expect(commandAPI.cliArguments).to.deep.equal(command.cliArguments);
     });
   });
 
@@ -716,7 +715,7 @@ suite('KN API commands that will', () => {
         cliCommand: 'kn',
       };
       const commandAPI = KnAPI.updateSubscription('mySvc');
-      assert.equals(command.cliArguments, commandAPI.cliArguments);
+      expect(commandAPI.cliArguments).to.deep.equal(command.cliArguments);
     });
 
     test('should update an event subscription with subscription type and name with options', () => {
@@ -725,7 +724,7 @@ suite('KN API commands that will', () => {
         cliCommand: 'kn',
       };
       const commandAPI = KnAPI.updateSubscription('mySvc', sink);
-      assert.equals(command.cliArguments, commandAPI.cliArguments);
+      expect(commandAPI.cliArguments).to.deep.equal(command.cliArguments);
     });
   });
 
@@ -736,7 +735,7 @@ suite('KN API commands that will', () => {
         cliCommand: 'kn',
       };
       const commandAPI = KnAPI.deleteSubscription('mySvc');
-      assert.equals(command.cliArguments, commandAPI.cliArguments);
+      expect(commandAPI.cliArguments).to.deep.equal(command.cliArguments);
     });
   });
 
@@ -747,7 +746,7 @@ suite('KN API commands that will', () => {
         cliCommand: 'kn',
       };
       const commandAPI = KnAPI.listTriggers();
-      assert.equals(command.cliArguments, commandAPI.cliArguments);
+      expect(commandAPI.cliArguments).to.deep.equal(command.cliArguments);
     });
   });
 
@@ -760,7 +759,7 @@ suite('KN API commands that will', () => {
         cliCommand: 'kn',
       };
       const commandAPI = KnAPI.createTrigger('mySvc');
-      assert.equals(command.cliArguments, commandAPI.cliArguments);
+      expect(commandAPI.cliArguments).to.deep.equal(command.cliArguments);
     });
 
     test('should create an event trigger with name and options', () => {
@@ -769,7 +768,7 @@ suite('KN API commands that will', () => {
         cliCommand: 'kn',
       };
       const commandAPI = KnAPI.createTrigger('mySvc', sink);
-      assert.equals(command.cliArguments, commandAPI.cliArguments);
+      expect(commandAPI.cliArguments).to.deep.equal(command.cliArguments);
     });
   });
 
@@ -782,7 +781,7 @@ suite('KN API commands that will', () => {
         cliCommand: 'kn',
       };
       const commandAPI = KnAPI.updateTrigger('mySvc');
-      assert.equals(command.cliArguments, commandAPI.cliArguments);
+      expect(commandAPI.cliArguments).to.deep.equal(command.cliArguments);
     });
 
     test('should update an event trigger with name and options', () => {
@@ -791,7 +790,7 @@ suite('KN API commands that will', () => {
         cliCommand: 'kn',
       };
       const commandAPI = KnAPI.updateTrigger('mySvc', sink);
-      assert.equals(command.cliArguments, commandAPI.cliArguments);
+      expect(commandAPI.cliArguments).to.deep.equal(command.cliArguments);
     });
   });
 
@@ -802,7 +801,7 @@ suite('KN API commands that will', () => {
         cliCommand: 'kn',
       };
       const commandAPI = KnAPI.deleteTrigger('mySvc');
-      assert.equals(command.cliArguments, commandAPI.cliArguments);
+      expect(commandAPI.cliArguments).to.deep.equal(command.cliArguments);
     });
   });
 
@@ -813,7 +812,7 @@ suite('KN API commands that will', () => {
         cliCommand: 'kn',
       };
       const commandAPI = KnAPI.listBrokers();
-      assert.equals(command.cliArguments, commandAPI.cliArguments);
+      expect(commandAPI.cliArguments).to.deep.equal(command.cliArguments);
     });
   });
 
@@ -824,7 +823,7 @@ suite('KN API commands that will', () => {
         cliCommand: 'kn',
       };
       const commandAPI = KnAPI.createBroker('mySvc');
-      assert.equals(command.cliArguments, commandAPI.cliArguments);
+      expect(commandAPI.cliArguments).to.deep.equal(command.cliArguments);
     });
   });
 
@@ -835,7 +834,7 @@ suite('KN API commands that will', () => {
         cliCommand: 'kn',
       };
       const commandAPI = KnAPI.deleteBroker('mySvc');
-      assert.equals(command.cliArguments, commandAPI.cliArguments);
+      expect(commandAPI.cliArguments).to.deep.equal(command.cliArguments);
     });
   });
 
@@ -846,7 +845,7 @@ suite('KN API commands that will', () => {
         cliCommand: 'kn',
       };
       const commandAPI = KnAPI.listChannels();
-      assert.equals(command.cliArguments, commandAPI.cliArguments);
+      expect(commandAPI.cliArguments).to.deep.equal(command.cliArguments);
     });
   });
 
@@ -857,7 +856,7 @@ suite('KN API commands that will', () => {
         cliCommand: 'kn',
       };
       const commandAPI = KnAPI.listChannelTypes();
-      assert.equals(command.cliArguments, commandAPI.cliArguments);
+      expect(commandAPI.cliArguments).to.deep.equal(command.cliArguments);
     });
   });
 
@@ -868,7 +867,7 @@ suite('KN API commands that will', () => {
         cliCommand: 'kn',
       };
       const commandAPI = KnAPI.createChannel('mySvc');
-      assert.equals(command.cliArguments, commandAPI.cliArguments);
+      expect(commandAPI.cliArguments).to.deep.equal(command.cliArguments);
     });
   });
 
@@ -879,7 +878,7 @@ suite('KN API commands that will', () => {
         cliCommand: 'kn',
       };
       const commandAPI = KnAPI.deleteChannel('mySvc');
-      assert.equals(command.cliArguments, commandAPI.cliArguments);
+      expect(commandAPI.cliArguments).to.deep.equal(command.cliArguments);
     });
   });
 });

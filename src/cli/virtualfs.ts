@@ -6,6 +6,9 @@
  *  Licensed under the MIT License. See LICENSE file in the project root for license information.
  *-----------------------------------------------------------------------------------------------*/
 
+import * as fs from 'fs';
+import * as path from 'path';
+import * as querystring from 'querystring';
 import {
   Disposable,
   Event,
@@ -20,16 +23,13 @@ import {
   workspace,
   WorkspaceFolder,
 } from 'vscode';
-import * as path from 'path';
-import * as fs from 'fs';
-import * as querystring from 'querystring';
 import * as yaml from 'yaml';
-import { Execute } from './execute';
 import { CliExitData } from './cmdCli';
-import { KnAPI } from './kn-api';
 import * as config from './config';
-import { Errorable } from '../util/errorable';
+import { Execute } from './execute';
+import { KnAPI } from './kn-api';
 import { registerSchema } from '../editor/knativeSchemaRegister';
+import { Errorable } from '../util/errorable';
 
 export const KN_RESOURCE_SCHEME = 'knmsx';
 export const KN_RESOURCE_AUTHORITY = 'loadknativecore';
@@ -53,7 +53,7 @@ export function vfsUri(
 
 export async function showWorkspaceFolderPick(): Promise<WorkspaceFolder | undefined> {
   if (!workspace.workspaceFolders) {
-    window.showErrorMessage('This command requires an open Workspace folder.', { modal: true }, 'OK');
+    await window.showErrorMessage('This command requires an open Workspace folder.', { modal: true }, 'OK');
     return undefined;
   }
   if (workspace.workspaceFolders.length === 1) {
@@ -68,7 +68,7 @@ export async function selectRootFolder(): Promise<string | undefined> {
     return undefined;
   }
   if (folder.uri.scheme !== 'file') {
-    window.showErrorMessage('This command requires a filesystem folder'); // TODO: make it not
+    await window.showErrorMessage('This command requires a filesystem folder'); // TODO: make it not
     return undefined;
   }
   return folder.uri.fsPath;
@@ -218,7 +218,7 @@ export class KnativeResourceVirtualFileSystemProvider implements FileSystemProvi
     const eced = await this.execLoadResource(uri.scheme, resourceAuthority, ns, context, name, outputFormat);
 
     if (Errorable.failed(eced)) {
-      window.showErrorMessage(eced.error[0]);
+      await window.showErrorMessage(eced.error[0]);
       throw eced.error[0];
     }
 
@@ -267,14 +267,23 @@ export class KnativeResourceVirtualFileSystemProvider implements FileSystemProvi
     if (ced.error) {
       return ced;
     }
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const doc = yaml.parse(ced.stdout);
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     delete doc.metadata.creationTimestamp;
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     delete doc.metadata.generation;
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     delete doc.metadata.managedFields;
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     delete doc.metadata.resourceVersion;
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     delete doc.metadata.selfLink;
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     delete doc.metadata.uid;
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     delete doc.spec.template.metadata;
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     delete doc.status;
 
     const cleanStdout = yaml.stringify(doc);

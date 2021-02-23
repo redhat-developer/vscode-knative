@@ -5,14 +5,14 @@
 
 import { TreeItemCollapsibleState } from 'vscode';
 import { EventingTreeItem } from './eventingTreeItem';
-import { Execute, loadItems } from '../cli/execute';
 import { CliExitData } from '../cli/cmdCli';
-import { KnAPI } from '../cli/kn-api';
 import { EventingContextType } from '../cli/config';
-import { compareNodes } from '../knative/knativeItem';
+import { Execute, loadItems } from '../cli/execute';
+import { KnAPI } from '../cli/kn-api';
 import { Broker } from '../knative/broker';
 import { KnativeBrokers } from '../knative/knativeBrokers';
 import { KnativeEvents } from '../knative/knativeEvents';
+import { compareNodes } from '../knative/knativeItem';
 
 export class BrokerDataProvider {
   public knExecutor = new Execute();

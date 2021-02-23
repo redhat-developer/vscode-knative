@@ -1,24 +1,26 @@
-import * as vscode from 'vscode';
-import * as chai from 'chai';
-import * as sinonChai from 'sinon-chai';
-import * as sinon from 'sinon';
-import * as referee from '@sinonjs/referee';
-import { beforeEach } from 'mocha';
-import * as yaml from 'yaml';
+/*-----------------------------------------------------------------------------------------------
+ *  Copyright (c) Red Hat, Inc. All rights reserved.
+ *  Licensed under the MIT License. See LICENSE file in the project root for license information.
+ *-----------------------------------------------------------------------------------------------*/
+
 import { URL } from 'url';
+import * as vscode from 'vscode';
+import { expect } from 'chai';
+import { beforeEach } from 'mocha';
+import * as sinon from 'sinon';
+import * as yaml from 'yaml';
 import * as brokerData from './eventingTree/broker.json';
-import * as otd from '../src/editor/knativeOpenTextDocument';
 import { EventingContextType, ServingContextType } from '../src/cli/config';
+import * as otd from '../src/editor/knativeOpenTextDocument';
 import { EventingDataProvider } from '../src/eventingTree/eventingDataProvider';
 import { EventingTreeItem } from '../src/eventingTree/eventingTreeItem';
 import { deactivate } from '../src/extension';
 import { Broker } from '../src/knative/broker';
+import * as revision from '../src/knative/revision';
 import { Revision } from '../src/knative/revision';
+import * as service from '../src/knative/service';
 import { Service } from '../src/knative/service';
 import { ServingTreeItem } from '../src/servingTree/servingTreeItem';
-
-const { assert } = referee;
-chai.use(sinonChai);
 
 suite('Knative extension', () => {
   const sandbox = sinon.createSandbox();
@@ -158,7 +160,7 @@ status:
     url: http://current-example-a-serverless-example.apps.devcluster.openshift.com
   url: http://example-a-serverless-example.apps.devcluster.openshift.com
   `;
-  const jsonServiceContentUnfiltered = yaml.parse(yamlServiceContentUnfiltered);
+  const jsonServiceContentUnfiltered = yaml.parse(yamlServiceContentUnfiltered) as service.Items;
   const testService: Service = new Service(
     'example',
     'http://example-a-serverless-example.apps.devcluster.openshift.com',
@@ -284,7 +286,7 @@ status:
   observedGeneration: 1
   serviceName: example-75w7v
   `;
-  const example75w7vJson = yaml.parse(example75w7vYaml);
+  const example75w7vJson = yaml.parse(example75w7vYaml) as revision.Items;
   const example75w7vRevision: Revision = new Revision('example-75w7v', 'example', example75w7vJson, [
     {
       tag: null,
@@ -411,7 +413,7 @@ status:
   observedGeneration: 1
   serviceName: example-g4hm8
     `;
-  const exampleG4hm8Json = yaml.parse(exampleG4hm8Yaml);
+  const exampleG4hm8Json = yaml.parse(exampleG4hm8Yaml) as revision.Items;
   const exampleG4hm8Revision: Revision = new Revision('example-g4hm8', 'example', exampleG4hm8Json);
   const exampleG4hm8TreeItem: ServingTreeItem = new ServingTreeItem(
     testServiceTreeItem,
@@ -523,7 +525,7 @@ status:
   observedGeneration: 1
   serviceName: example-2fvz4
     `;
-  const example2fvz4Json = yaml.parse(example2fvz4Yaml);
+  const example2fvz4Json = yaml.parse(example2fvz4Yaml) as revision.Items;
   const example2fvz4Revision: Revision = new Revision('example-2fvz4', 'example', example2fvz4Json, [
     {
       tag: null,
@@ -547,7 +549,8 @@ status:
   const image = vscode.Uri.parse('http://example-a-serverless-example.apps.devcluster.openshift.com');
   const imageTagged = vscode.Uri.parse('http://current-example-a-serverless-example.apps.devcluster.openshift.com');
   test('should be present', () => {
-    assert(vscode.extensions.getExtension('redhat.vscode-knative'));
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+    expect(vscode.extensions.getExtension('redhat.vscode-knative'));
   });
 
   test('should activate', async () => {
