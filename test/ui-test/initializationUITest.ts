@@ -9,7 +9,7 @@ import { getNotifications, cleanUpNotifications } from './common/testUtils';
 export function knativeInitializationUITest(): void {
   let driver: WebDriver;
 
-  before(async function setup() {
+  before(async () => {
     await cleanUpNotifications();
     // process.env.KUBECONFIG = '/home/odockal/kubeconfig';
     driver = VSBrowser.instance.driver;

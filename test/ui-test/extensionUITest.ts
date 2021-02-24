@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 import { expect } from 'chai';
 import {
   ActivityBar,
@@ -73,25 +72,17 @@ export function extensionsUITest(): void {
 
     it('view should show kn cli download notification after being opened', async function context() {
       this.timeout(10000);
-      await driver.wait(async () => {
-        return safeNotificationExists('Cannot find Knative CLI');
-      }, 7000);
+      await driver.wait(async () => safeNotificationExists('Cannot find Knative CLI'), 7000);
     });
 
     it('allows to download missing kn cli using notification', async function context() {
       this.timeout(90000);
-      const notification = await driver.wait(async () => {
-        return findNotification('Cannot find Knative CLI');
-      }, 5000);
+      const notification = await driver.wait(async () => findNotification('Cannot find Knative CLI'), 5000);
       const actions = await notification.getActions();
       const actionsTexts = await Promise.all(actions.map(async (item) => item.getText()));
-      const downloadActionText = actionsTexts.find((item) => {
-        return item.includes('Download') ? item : undefined;
-      });
+      const downloadActionText = actionsTexts.find((item) => (item.includes('Download') ? item : undefined));
       await notification.takeAction(downloadActionText);
-      await driver.wait(async () => {
-        return findNotification('Downloading Knative CLI');
-      }, 3000);
+      await driver.wait(async () => findNotification('Downloading Knative CLI'), 3000);
       await driver.wait(async () => {
         const exists = await safeNotificationExists('Downloading Knative CLI');
         return !exists;

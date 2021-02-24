@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 import { Notification, VSBrowser, NotificationType, Workbench, SideBarView } from 'vscode-extension-tester';
 
 /**
@@ -6,7 +5,7 @@ import { Notification, VSBrowser, NotificationType, Workbench, SideBarView } fro
  */
 export async function getNotifications(...types: NotificationType[]): Promise<Notification[]> {
   const center = await new Workbench().openNotificationsCenter();
-  const notifications = [];
+  const notifications: Notification[] = [];
   await Promise.all(
     types.map(async (type) => {
       notifications.push(...(await center.getNotifications(type)));
