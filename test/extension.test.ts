@@ -10,6 +10,7 @@ import { beforeEach } from 'mocha';
 import * as sinon from 'sinon';
 import * as yaml from 'yaml';
 import * as brokerData from './eventingTree/broker.json';
+import { CmdCliConfig } from '../src/cli/cli-config';
 import { EventingContextType, ServingContextType } from '../src/cli/config';
 import * as otd from '../src/editor/knativeOpenTextDocument';
 import { EventingDataProvider } from '../src/eventingTree/eventingDataProvider';
@@ -27,6 +28,7 @@ suite('Knative extension', () => {
 
   beforeEach(() => {
     sandbox.stub(vscode.window, 'showErrorMessage').resolves();
+    sandbox.stub(CmdCliConfig, 'detectOrDownload');
   });
 
   teardown(() => {
