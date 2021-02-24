@@ -4,6 +4,7 @@
  *-----------------------------------------------------------------------------------------------*/
 
 import * as vscode from 'vscode';
+import { CmdCliConfig } from './cli/cli-config';
 import { KN_RESOURCE_SCHEME } from './cli/virtualfs';
 import { openTreeItemInEditor } from './editor/knativeOpenTextDocument';
 import { KnativeReadonlyProvider, KN_READONLY_SCHEME } from './editor/knativeReadonlyProvider';
@@ -22,7 +23,9 @@ let disposable: vscode.Disposable[];
  *
  * @param extensionContext
  */
-export function activate(extensionContext: vscode.ExtensionContext): void {
+export async function activate(extensionContext: vscode.ExtensionContext): Promise<void> {
+  // Call the detect early here so that we avoid race conditions when the information is needed later.
+  await CmdCliConfig.detectOrDownload('kn');
   const servingExplorer = new ServingExplorer();
   // register a content provider for the knative readonly scheme
   const knReadonlyProvider = new KnativeReadonlyProvider(servingExplorer.treeDataProvider.knvfs);
