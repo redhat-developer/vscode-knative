@@ -483,7 +483,7 @@ export class ServingDataProvider implements TreeDataProvider<ServingTreeItem | E
         console.log(`Error while using kn apply to create.\n ${error}`);
         if (typeof error === 'string' && error.search('Unable to fetch image') > 0) {
           const indexOfErrorMessage = error.indexOf('Unable to fetch image');
-          const indexOfColon = error.indexOf(':', indexOfErrorMessage);
+          const indexOfColon = error.indexOf(': ', indexOfErrorMessage);
           const errorMessage = error.substring(indexOfErrorMessage, indexOfColon);
           await vscode.window.showErrorMessage(
             // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
