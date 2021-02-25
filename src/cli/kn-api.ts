@@ -21,6 +21,17 @@ type op = Array<Array<string>>;
  */
 export class KnAPI {
   /**
+   * Create / Update by applying a yaml file.
+   */
+  static applyYAML(yamlPath: string, options: { override: boolean }): CliCommand {
+    const a = ['service', 'apply', '-f', yamlPath];
+    if (options.override) {
+      a.push('--force');
+    }
+    return knCliCommand(a);
+  }
+
+  /**
    *
    * @param createServiceObj - a CreateService object that requires name and URL.
    *

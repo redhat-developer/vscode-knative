@@ -10,6 +10,7 @@ import { ServingContextType } from '../cli/config';
 import { EventingTreeItem } from '../eventingTree/eventingTreeItem';
 import { KnativeItem } from '../knative/knativeItem';
 import { Revision, Traffic } from '../knative/revision';
+import { Service } from '../knative/service';
 
 const { Collapsed } = TreeItemCollapsibleState;
 
@@ -116,6 +117,24 @@ export class ServingTreeItem extends TreeItem {
           this.label.label = `${this.label.label} (${percentTraffic}%)`;
         }
       }
+      if (
+        rev.details &&
+        rev.details.status.conditions[0].status === 'False' &&
+        rev.details.status.conditions[0].type === 'ContainerHealthy' &&
+        rev.details.status.conditions[0].reason
+      ) {
+        this.tooltip = rev.details.status.conditions[0].message;
+      }
+    } else if (contextValue === 'service' || contextValue === 'service_modified') {
+      const svc: Service = item as Service;
+      if (
+        svc.details &&
+        svc.details.status.conditions[0].status === 'False' &&
+        svc.details.status.conditions[0].type === 'ConfigurationsReady' &&
+        svc.details.status.conditions[0].reason
+      ) {
+        this.tooltip = svc.details.status.conditions[0].message;
+      }
     }
     if (this.contextValue === 'service_modified') {
       this.command = {
@@ -131,7 +150,7 @@ export class ServingTreeItem extends TreeItem {
       };
     }
     if (CONTEXT_DATA[this.contextValue]) {
-      this.tooltip = format((CONTEXT_DATA[this.contextValue] as contextTreeItemDataType).tooltip, this);
+      this.tooltip = this.tooltip || format((CONTEXT_DATA[this.contextValue] as contextTreeItemDataType).tooltip, this);
       this.iconPath = Uri.file(
         path.join(__dirname, `../../../images/context`, (CONTEXT_DATA[this.contextValue] as contextTreeItemDataType).icon),
       );

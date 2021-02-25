@@ -1,0 +1,87 @@
+apiVersion: serving.knative.dev/v1
+kind: Service
+metadata:
+  annotations:
+    serving.knative.dev/creator: system:admin
+    serving.knative.dev/lastModifier: system:admin
+  creationTimestamp: "2020-07-23T22:53:04Z"
+  generation: 5
+  managedFields:
+  - apiVersion: serving.knative.dev/v1
+    fieldsType: FieldsV1
+    fieldsV1:
+      f:status:
+        .: {}
+        f:conditions: {}
+        f:latestCreatedRevisionName: {}
+        f:observedGeneration: {}
+        f:url: {}
+    manager: controller
+    operation: Update
+    time: "2020-07-23T23:23:59Z"
+  - apiVersion: serving.knative.dev/v1
+    fieldsType: FieldsV1
+    fieldsV1:
+      f:spec:
+        .: {}
+        f:template:
+          .: {}
+          f:metadata:
+            .: {}
+            f:annotations:
+              .: {}
+              f:client.knative.dev/user-image: {}
+            f:creationTimestamp: {}
+            f:name: {}
+          f:spec:
+            .: {}
+            f:containers: {}
+    manager: kn
+    operation: Update
+    time: "2020-07-23T23:23:59Z"
+  name: example
+  namespace: a-serverless-example
+  resourceVersion: "81373"
+  uid: b643305a-c4b1-4c45-8efb-f8edb1c86623
+spec:
+  template:
+    metadata:
+      annotations:
+        client.knative.dev/user-image: quay.io/rhdevelopers
+      creationTimestamp: null
+      name: example-zpyvk-1
+    spec:
+      containerConcurrency: 0
+      containers:
+      - image: quay.io/rhdevelopers
+        name: user-container
+        readinessProbe:
+          successThreshold: 1
+          tcpSocket:
+            port: 0
+        resources: {}
+      enableServiceLinks: false
+      timeoutSeconds: 300
+  traffic:
+  - latestRevision: true
+    percent: 100
+status:
+  conditions:
+  - lastTransitionTime: "2020-07-23T23:23:08Z"
+    message: 'Revision "example-zpyvk-1" failed with message: Unable to fetch image "quay.io/rhdevelopers": failed to resolve image to digest: HEAD https://quay.io/v2/rhdevelopers/manifests/latest: unsupported status code 404.'
+    reason: RevisionFailed
+    status: "False"
+    type: ConfigurationsReady
+  - lastTransitionTime: "2020-07-23T23:23:59Z"
+    message: Configuration "example" does not have any ready Revision.
+    reason: RevisionMissing
+    status: "False"
+    type: Ready
+  - lastTransitionTime: "2020-07-23T23:23:59Z"
+    message: Configuration "example" does not have any ready Revision.
+    reason: RevisionMissing
+    status: "False"
+    type: RoutesReady
+  latestCreatedRevisionName: example-75w7v
+  observedGeneration: 5
+  url: http://example-a-serverless-example.apps.devcluster.openshift.com

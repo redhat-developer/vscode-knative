@@ -14,7 +14,7 @@ function kubectlCliCommand(cmdArguments: string[]): CliCommand {
  */
 export class KubectlAPI {
   /**
-   * Return the list of Knative Services in JSON format.
+   * Create / Update by applying a yaml file.
    */
   static applyYAML(yamlPath: string, options: { override: boolean }): CliCommand {
     const a = ['apply', '-f', yamlPath];

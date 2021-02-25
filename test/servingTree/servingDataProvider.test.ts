@@ -11,6 +11,8 @@ import rewire = require('rewire');
 import * as sinon from 'sinon';
 import * as sinonChai from 'sinon-chai';
 import * as yaml from 'yaml';
+import * as singleServiceFailedRevisionRevisionList from './singleServiceFailedRevisionRevisionList.json';
+import * as singleServiceFailedRevisionServiceList from './singleServiceFailedRevisionServiceList.json';
 import * as singleServiceRevisionData from './singleServiceRevisionList.json';
 import * as singleServiceData from './singleServiceServiceList.json';
 import { ServingContextType } from '../../src/cli/config';
@@ -230,6 +232,111 @@ status:
     testServiceModified,
     { label: 'example' },
     ServingContextType.SERVICE_MODIFIED,
+    vscode.TreeItemCollapsibleState.Expanded,
+    null,
+    null,
+  );
+
+  const yamlServiceFailedRevisionContentUnfiltered = `apiVersion: serving.knative.dev/v1
+kind: Service
+metadata:
+  annotations:
+    serving.knative.dev/creator: system:admin
+    serving.knative.dev/lastModifier: system:admin
+  creationTimestamp: "2020-07-23T22:53:04Z"
+  generation: 5
+  managedFields:
+  - apiVersion: serving.knative.dev/v1
+    fieldsType: FieldsV1
+    fieldsV1:
+      f:status:
+        .: {}
+        f:conditions: {}
+        f:latestCreatedRevisionName: {}
+        f:observedGeneration: {}
+        f:url: {}
+    manager: controller
+    operation: Update
+    time: "2020-07-23T23:23:59Z"
+  - apiVersion: serving.knative.dev/v1
+    fieldsType: FieldsV1
+    fieldsV1:
+      f:spec:
+        .: {}
+        f:template:
+          .: {}
+          f:metadata:
+            .: {}
+            f:annotations:
+              .: {}
+              f:client.knative.dev/user-image: {}
+            f:creationTimestamp: {}
+            f:name: {}
+          f:spec:
+            .: {}
+            f:containers: {}
+    manager: kn
+    operation: Update
+    time: "2020-07-23T23:23:59Z"
+  name: example
+  namespace: a-serverless-example
+  resourceVersion: "81373"
+  uid: b643305a-c4b1-4c45-8efb-f8edb1c86623
+spec:
+  template:
+    metadata:
+      annotations:
+        client.knative.dev/user-image: quay.io/rhdevelopers
+      creationTimestamp: null
+      name: example-zpyvk-1
+    spec:
+      containerConcurrency: 0
+      containers:
+      - image: quay.io/rhdevelopers
+        name: user-container
+        readinessProbe:
+          successThreshold: 1
+          tcpSocket:
+            port: 0
+        resources: {}
+      enableServiceLinks: false
+      timeoutSeconds: 300
+  traffic:
+  - latestRevision: true
+    percent: 100
+status:
+  conditions:
+  - lastTransitionTime: "2020-07-23T23:23:08Z"
+    message: 'Revision "example-zpyvk-1" failed with message: Unable to fetch image "quay.io/rhdevelopers": failed to resolve image to digest: HEAD https://quay.io/v2/rhdevelopers/manifests/latest: unsupported status code 404.'
+    reason: RevisionFailed
+    status: "False"
+    type: ConfigurationsReady
+  - lastTransitionTime: "2020-07-23T23:23:59Z"
+    message: Configuration "example" does not have any ready Revision.
+    reason: RevisionMissing
+    status: "False"
+    type: Ready
+  - lastTransitionTime: "2020-07-23T23:23:59Z"
+    message: Configuration "example" does not have any ready Revision.
+    reason: RevisionMissing
+    status: "False"
+    type: RoutesReady
+  latestCreatedRevisionName: example-75w7v
+  observedGeneration: 5
+  url: http://example-a-serverless-example.apps.devcluster.openshift.com
+    `;
+  const jsonServiceFailedRevisionContentUnfiltered = yaml.parse(yamlServiceFailedRevisionContentUnfiltered) as service.Items;
+  const testServiceFailedRevision: Service = new Service(
+    'example',
+    'http://example-a-serverless-example.apps.devcluster.openshift.com',
+    jsonServiceFailedRevisionContentUnfiltered,
+  );
+  testServiceFailedRevision.modified = false;
+  const testServiceFailedRevisionTreeItem: ServingTreeItem = new ServingTreeItem(
+    null,
+    testServiceFailedRevision,
+    { label: 'example' },
+    ServingContextType.SERVICE,
     vscode.TreeItemCollapsibleState.Expanded,
     null,
     null,
@@ -762,6 +869,17 @@ status:
       await sdp.getRevisions(testServiceTreeItem);
       sinon.assert.calledTwice(spy);
     });
+    test('should get a list of Revisions even when the Revisions do not have a container', async () => {
+      sandbox.restore();
+      sandbox.stub(vscode.window, 'showErrorMessage').resolves();
+      const stub = sandbox.stub(sdp.knExecutor, 'execute');
+      stub.resolves({ error: undefined, stdout: JSON.stringify(singleServiceFailedRevisionRevisionList) });
+      const spy = sandbox.spy(sdp, 'getRevisionData');
+      const result: ServingTreeItem[] = await sdp.getRevisions(testServiceFailedRevisionTreeItem);
+      sinon.assert.calledOnce(spy);
+      expect((result[0].item as Revision).details.status.conditions[0].status).to.equal('False');
+      expect((result[0].item as Revision).details.status.conditions[0].reason).to.equal('ContainerMissing');
+    });
     test('should throw an error when the promise rejects when trying to get Revision data', async () => {
       sandbox.restore();
       sandbox.stub(vscode.window, 'showErrorMessage').resolves();
@@ -786,6 +904,19 @@ status:
       const result: ServingTreeItem = await sdp.getServices();
       sinon.assert.calledOnce(spy);
       expect(result[0]).to.deep.equal(testServiceTreeItem);
+    });
+
+    test('should return a list of Services even when the Revision is not created', async () => {
+      sandbox.restore();
+      const spy = sandbox.spy(sdp, 'getServicesList');
+      sandbox
+        .stub(sdp.knExecutor, 'execute')
+        .resolves({ error: undefined, stdout: JSON.stringify(singleServiceFailedRevisionServiceList) });
+      sandbox.stub(sdp, 'isNodeModifiedLocally').resolves(false);
+      const result: ServingTreeItem[] = (await sdp.getServices()) as ServingTreeItem[];
+      sinon.assert.calledOnce(spy);
+      expect((result[0].item as Service).details.status.conditions[0].status).to.equal('False');
+      expect((result[0].item as Service).details.status.conditions[0].reason).to.equal('RevisionFailed');
     });
 
     test('should return a list of Services, even if they are modified', async () => {
@@ -1012,7 +1143,43 @@ status:
       expect(result).to.be.undefined;
     });
 
-    test('should return undefined if there is a failure to create the the service', async () => {
+    // TODO: Figure out a way to get .rejects() to send a String instead of an Object.
+    //       This makes it impossible to test without altering the code it is meant to test.
+    // test('should take user input, add Service to cluster, display an error message when the image is not found, and return it as a tree item', async () => {
+    //   const serviceToCreate: CreateService = {
+    //     name: `knative-tutorial-greeter`,
+    //     image: `quay.io/test-group`,
+    //     force: false,
+    //   };
+    //   const _uriExternalFile = vscode.Uri.parse(
+    //     'knmsx://loadknativecore/service-knative-tutorial-greeter.yaml?contextValue%3Dservice%26name%3Dknative-tutorial-greeter%26_%3D1594328823824',
+    //   );
+    //   const files: [string, vscode.FileType][] = [
+    //     [
+    //       `knmsx://loadknativecore/service-knative-tutorial-greeter.yaml?contextValue%3Dservice%26name%3Dknative-tutorial-greeter%26_%3D1594328823824`,
+    //       1,
+    //     ],
+    //   ];
+    //   sandbox.restore();
+    //   const spyErrorMessage = sandbox.stub(vscode.window, 'showErrorMessage').resolves();
+    //   sandbox.stub(sdp, 'getUrl').resolves(`quay.io/test-group`);
+    //   sandbox.stub(sdp, 'getName').resolves(serviceToCreate);
+    //   sandbox.stub(sdp.ksvc, 'addService').returns(undefined);
+    //   sandbox.stub(sdp.knvfs, 'readDirectoryAsync').resolves(files);
+    //   sandbox.stub(vfs, 'vfsUri').returns(_uriExternalFile);
+    //   sandbox.stub(sdp.knvfs, 'writeFile').returns(undefined);
+    //   sandbox.stub(vfs, 'getFilePathAsync').resolves('true');
+    //   const errorMessage = `undefinedError: RevisionFailed: Revision "knative-tutorial-greeter-00001" failed with message: Unable to fetch image "quay.io/test-group": failed to resolve image to digest: HEAD https://quay.io/v2/test-group/manifests/latest: unsupported status code 404.`;
+    //   sandbox.stub(sdp.knExecutor, 'execute').rejects(errorMessage);
+    //   const stubDelete = sandbox.stub(sdp.knvfs, 'delete').resolves();
+    //   const result: ServingTreeItem[] = await sdp.addService();
+    //   sinon.assert.calledOnce(stubDelete);
+    //   sinon.assert.calledOnce(spyErrorMessage);
+    //   // eslint-disable-next-line no-unused-expressions
+    //   expect(result).to.be.undefined;
+    // });
+
+    test('should return undefined if there is a failure to create the service', async () => {
       const serviceToCreate: CreateService = {
         name: `knative-tutorial-greeter`,
         image: `quay.io/test-group/knative-tutorial-greeter:quarkus`,

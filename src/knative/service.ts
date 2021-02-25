@@ -225,6 +225,8 @@ export interface Address {
 }
 export interface Conditions {
   lastTransitionTime: string;
+  message?: string;
+  reason?: string;
   status: string;
   type: string;
 }

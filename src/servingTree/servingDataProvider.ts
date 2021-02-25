@@ -23,7 +23,6 @@ import { CliExitData } from '../cli/cmdCli';
 import { ServingContextType } from '../cli/config';
 import { Execute, loadItems } from '../cli/execute';
 import { KnAPI } from '../cli/kn-api';
-import { KubectlAPI } from '../cli/kubectl-api';
 import { KnativeResourceVirtualFileSystemProvider, KN_RESOURCE_SCHEME } from '../cli/virtualfs';
 import * as vfs from '../cli/virtualfs';
 import { EventingTreeItem } from '../eventingTree/eventingTreeItem';
@@ -195,6 +194,14 @@ export class ServingDataProvider implements TreeDataProvider<ServingTreeItem | E
     const revisions: Revision[] = this.ksvc.addRevisions(
       // Pull the data out of the Items object in the JSON results
       loadItems(result).map((value: Items) => {
+        // If there was an error in the Revision, then there will be no traffic. Just make one without traffic.
+        if (
+          service.details.status.conditions[0].status === 'False' &&
+          service.details.status.conditions[0].type === 'ConfigurationsReady' &&
+          service.details.status.conditions[0].reason
+        ) {
+          return Revision.toRevision(value);
+        }
         // get the revision name, check it against the list of traffic from the parent, then pass in the traffic if found
         const revisionTraffic: Traffic[] = traffic.filter((val): boolean => value.metadata.name === val.revisionName);
         return Revision.toRevision(value, revisionTraffic);
@@ -204,6 +211,24 @@ export class ServingDataProvider implements TreeDataProvider<ServingTreeItem | E
     // Create the Revision tree item for each one found.
     const revisionTreeObjects: ServingTreeItem[] = revisions.map<ServingTreeItem>((value) => {
       let context = ServingContextType.REVISION;
+      if (
+        service.details.status.conditions[0].status === 'False' &&
+        service.details.status.conditions[0].type === 'ConfigurationsReady' &&
+        service.details.status.conditions[0].reason
+      ) {
+        const obj: ServingTreeItem = new ServingTreeItem(
+          parentService,
+          value,
+          {
+            label: `${service.details.status.conditions[0].reason} ${value.details.status.conditions[0].reason} - ${value.name}`,
+          },
+          context,
+          TreeItemCollapsibleState.None,
+          null,
+          null,
+        );
+        return obj;
+      }
       if (value.traffic && value.traffic.find((val) => val.tag)) {
         context = ServingContextType.REVISION_TAGGED;
       }
@@ -244,8 +269,8 @@ export class ServingDataProvider implements TreeDataProvider<ServingTreeItem | E
     services.find((s): boolean => {
       if (
         s.details.status.conditions === undefined ||
-        s.details.status.traffic === undefined ||
-        s.details.status.conditions[0].status !== 'True'
+        (s.details.status.traffic === undefined && !s.details.status.conditions[0].reason) ||
+        (s.details.status.conditions[0].status !== 'True' && !s.details.status.conditions[0].reason)
       ) {
         serviceNotReady = true;
         return serviceNotReady;
@@ -450,12 +475,23 @@ export class ServingDataProvider implements TreeDataProvider<ServingTreeItem | E
         // We couldn't make or find the location to write the temp file.
         return null;
       }
-      // Create the Service with kubectl apply
+      // Create the Service with kn apply
       try {
-        await this.knExecutor.execute(KubectlAPI.applyYAML(filePath, { override: true }));
-      } catch (err) {
+        await this.knExecutor.execute(KnAPI.applyYAML(filePath, { override: true }));
+      } catch (error) {
         // eslint-disable-next-line no-console, @typescript-eslint/restrict-template-expressions
-        console.log(`Error while using kubectl apply to create. ${err}`);
+        console.log(`Error while using kn apply to create.\n ${error}`);
+        if (typeof error === 'string' && error.search('Unable to fetch image') > 0) {
+          const indexOfErrorMessage = error.indexOf('Unable to fetch image');
+          const indexOfColon = error.indexOf(':', indexOfErrorMessage);
+          const errorMessage = error.substring(indexOfErrorMessage, indexOfColon);
+          await vscode.window.showErrorMessage(
+            // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+            `The Revision failed to be created.\n${errorMessage}`,
+            { modal: true },
+            'OK',
+          );
+        }
       }
 
       await this.knvfs.delete(Uri.file(filePath), { recursive: false });
@@ -561,7 +597,7 @@ export class ServingDataProvider implements TreeDataProvider<ServingTreeItem | E
 
     try {
       // push the updated YAML back to the cluster
-      const result: CliExitData = await this.knExecutor.execute(KubectlAPI.applyYAML(fileURI, { override: false }));
+      const result: CliExitData = await this.knExecutor.execute(KnAPI.applyYAML(fileURI, { override: false }));
       // Delete the yaml that was pushed if there was no error
       if (result.error) {
         // eslint-disable-next-line no-console, @typescript-eslint/restrict-template-expressions

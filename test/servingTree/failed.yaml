@@ -1,0 +1,87 @@
+apiVersion: serving.knative.dev/v1
+kind: Service
+metadata:
+  annotations:
+    serving.knative.dev/creator: system:admin
+    serving.knative.dev/lastModifier: system:admin
+  creationTimestamp: "2021-02-24T22:32:46Z"
+  generation: 1
+  managedFields:
+  - apiVersion: serving.knative.dev/v1
+    fieldsType: FieldsV1
+    fieldsV1:
+      f:status:
+        .: {}
+        f:conditions: {}
+        f:latestCreatedRevisionName: {}
+        f:observedGeneration: {}
+        f:url: {}
+    manager: controller
+    operation: Update
+    time: "2021-02-24T22:32:46Z"
+  - apiVersion: serving.knative.dev/v1
+    fieldsType: FieldsV1
+    fieldsV1:
+      f:spec:
+        .: {}
+        f:template:
+          .: {}
+          f:metadata:
+            .: {}
+            f:annotations:
+              .: {}
+              f:client.knative.dev/user-image: {}
+            f:creationTimestamp: {}
+            f:name: {}
+          f:spec:
+            .: {}
+            f:containers: {}
+    manager: kn
+    operation: Update
+    time: "2021-02-24T22:32:46Z"
+  name: aaa
+  namespace: josh
+  resourceVersion: "707360"
+  uid: 9ac18760-90a1-4b52-a522-c615e5591dfa
+spec:
+  template:
+    metadata:
+      annotations:
+        client.knative.dev/user-image: quay.io/rhdevelopers
+      creationTimestamp: null
+      name: aaa-zpyvk-1
+    spec:
+      containerConcurrency: 0
+      containers:
+      - image: quay.io/rhdevelopers
+        name: user-container
+        readinessProbe:
+          successThreshold: 1
+          tcpSocket:
+            port: 0
+        resources: {}
+      enableServiceLinks: false
+      timeoutSeconds: 300
+  traffic:
+  - latestRevision: true
+    percent: 100
+status:
+  conditions:
+  - lastTransitionTime: "2021-02-24T22:32:46Z"
+    message: 'Revision "aaa-zpyvk-1" failed with message: Unable to fetch image "quay.io/rhdevelopers": failed to resolve image to digest: HEAD https://quay.io/v2/rhdevelopers/manifests/latest: unsupported status code 404.'
+    reason: RevisionFailed
+    status: "False"
+    type: ConfigurationsReady
+  - lastTransitionTime: "2021-02-24T22:32:46Z"
+    message: Configuration "aaa" does not have any ready Revision.
+    reason: RevisionMissing
+    status: "False"
+    type: Ready
+  - lastTransitionTime: "2021-02-24T22:32:46Z"
+    message: Configuration "aaa" does not have any ready Revision.
+    reason: RevisionMissing
+    status: "False"
+    type: RoutesReady
+  latestCreatedRevisionName: aaa-zpyvk-1
+  observedGeneration: 1
+  url: http://aaa-josh.apps.rhamilto.devcluster.openshift.com

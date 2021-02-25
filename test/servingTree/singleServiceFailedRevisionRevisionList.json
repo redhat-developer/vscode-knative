@@ -1,0 +1,132 @@
+{
+  "apiVersion": "serving.knative.dev/v1",
+  "items": [
+    {
+      "apiVersion": "serving.knative.dev/v1",
+      "kind": "Revision",
+      "metadata": {
+        "annotations": {
+          "serving.knative.dev/creator": "system:admin",
+          "serving.knative.dev/routes": "example",
+          "serving.knative.dev/routingStateModified": "2020-07-23T22:53:04Z"
+        },
+        "creationTimestamp": "2020-07-23T22:53:04Z",
+        "generation": 1,
+        "labels": {
+          "serving.knative.dev/configuration": "example",
+          "serving.knative.dev/configurationGeneration": "1",
+          "serving.knative.dev/routingState": "active",
+          "serving.knative.dev/service": "example"
+        },
+        "managedFields": [
+          {
+            "apiVersion": "serving.knative.dev/v1",
+            "fieldsType": "FieldsV1",
+            "fieldsV1": {
+              "f:metadata": {
+                "f:annotations": {
+                  ".": {},
+                  "f:serving.knative.dev/creator": {},
+                  "f:serving.knative.dev/routes": {},
+                  "f:serving.knative.dev/routingStateModified": {}
+                },
+                "f:labels": {
+                  ".": {},
+                  "f:serving.knative.dev/configuration": {},
+                  "f:serving.knative.dev/configurationGeneration": {},
+                  "f:serving.knative.dev/routingState": {},
+                  "f:serving.knative.dev/service": {}
+                },
+                "f:ownerReferences": {
+                  ".": {},
+                  "k:{\"uid\":\"44de9281-8fff-4aeb-8a69-7bea9947f43d\"}": {
+                    ".": {},
+                    "f:apiVersion": {},
+                    "f:blockOwnerDeletion": {},
+                    "f:controller": {},
+                    "f:kind": {},
+                    "f:name": {},
+                    "f:uid": {}
+                  }
+                }
+              },
+              "f:spec": {
+                ".": {},
+                "f:containerConcurrency": {},
+                "f:containers": {},
+                "f:enableServiceLinks": {},
+                "f:timeoutSeconds": {}
+              },
+              "f:status": {
+                ".": {},
+                "f:conditions": {},
+                "f:observedGeneration": {}
+              }
+            },
+            "manager": "controller",
+            "operation": "Update",
+            "time": "2020-07-23T23:23:52Z"
+          }
+        ],
+        "name": "example-2fvz4",
+        "namespace": "a-serverless-example",
+        "ownerReferences": [
+          {
+            "apiVersion": "serving.knative.dev/v1",
+            "blockOwnerDeletion": true,
+            "controller": true,
+            "kind": "Configuration",
+            "name": "example",
+            "uid": "44de9281-8fff-4aeb-8a69-7bea9947f43d"
+          }
+        ],
+        "resourceVersion": "81118",
+        "uid": "38d9e4ce-a187-40f2-bc51-d50be5596e01"
+      },
+      "spec": {
+        "containerConcurrency": 0,
+        "containers": [
+          {
+            "image": "quay.io/rhdevelopers",
+            "name": "user-container",
+            "readinessProbe": {
+              "successThreshold": 1,
+              "tcpSocket": {
+                "port": 0
+              }
+            },
+            "resources": {}
+          }
+        ],
+        "enableServiceLinks": false,
+        "timeoutSeconds": 300
+      },
+      "status": {
+        "conditions": [
+          {
+            "lastTransitionTime": "2020-07-23T22:54:24Z",
+            "message": "Unable to fetch image \"quay.io/rhdevelopers\": failed to resolve image to digest: HEAD https://quay.io/v2/rhdevelopers/manifests/latest: unsupported status code 404",
+            "reason": "ContainerMissing",
+            "status": "False",
+            "type": "ContainerHealthy"
+          },
+          {
+            "lastTransitionTime": "2020-07-23T22:53:24Z",
+            "message": "Unable to fetch image \"quay.io/rhdevelopers\": failed to resolve image to digest: HEAD https://quay.io/v2/rhdevelopers/manifests/latest: unsupported status code 404",
+            "reason": "ContainerMissing",
+            "status": "False",
+            "type": "Ready"
+          },
+          {
+            "lastTransitionTime": "2020-07-23T22:53:24Z",
+            "reason": "ResolvingDigests",
+            "status": "Unknown",
+            "type": "ResourcesAvailable"
+          }
+        ],
+        "observedGeneration": 1
+      }
+    }
+  ],
+  "kind": "RevisionList"
+}
