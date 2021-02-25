@@ -10,7 +10,7 @@ import {
 } from 'vscode-extension-tester';
 import { DialogHandler } from 'vscode-extension-tester-native';
 import { KNativeConstants } from './common/constants';
-import { cleanUpNotifications } from './common/testUtils';
+import { cleanUpNotifications, findNotification, safeNotificationExists } from './common/testUtils';
 /**
  * @author Ondrej Dockal <odockal@redhat.com>
  */
@@ -54,7 +54,7 @@ export function extensionsUITest(): void {
     });
   });
 
-  describe('Knative Activity Bar', () => {
+  describe('Knative extension', () => {
     let view: ViewControl;
     let sideBar: SideBarView;
 
@@ -63,10 +63,30 @@ export function extensionsUITest(): void {
       sideBar = await view.openView();
     });
 
-    it('should be available', async function context() {
+    it('Activity Bar should be available', async function context() {
       this.timeout(10000);
+      expect(await sideBar.isDisplayed()).to.equal(true);
       const titlePart = sideBar.getTitlePart();
       expect(await titlePart.getTitle()).to.equal(KNativeConstants.KNATIVE_EXTENSION_BAR_NAME);
+    });
+
+    it('view should show kn cli download notification after being opened', async function context() {
+      this.timeout(10000);
+      await driver.wait(async () => safeNotificationExists('Cannot find Knative CLI'), 7000);
+    });
+
+    it('allows to download missing kn cli using notification', async function context() {
+      this.timeout(90000);
+      const notification = await driver.wait(async () => findNotification('Cannot find Knative CLI'), 5000);
+      const actions = await notification.getActions();
+      const actionsTexts = await Promise.all(actions.map(async (item) => item.getText()));
+      const downloadActionText = actionsTexts.find((item) => (item.includes('Download') ? item : undefined));
+      await notification.takeAction(downloadActionText);
+      await driver.wait(async () => findNotification('Downloading Knative CLI'), 3000);
+      await driver.wait(async () => {
+        const exists = await safeNotificationExists('Downloading Knative CLI');
+        return !exists;
+      }, 80000);
     });
 
     it('should contain Serving and Eventing sections', async function context() {
