@@ -280,7 +280,7 @@
         },
         {
           "command": "service.explorer.tag",
-          "when": "view == knativeServingProjectExplorer && viewItem == service || viewItem =~ /revision.*/g",
+          "when": "view == knativeServingProjectExplorer && viewItem =~ /revision.*/g",
           "group": "c2"
         }
       ],
