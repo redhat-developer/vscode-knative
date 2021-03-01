@@ -107,8 +107,8 @@ export class ServingTreeItem extends TreeItem {
             // Traffic percent can be assigned to latest and a tag. It needs to be totalled.
             percentTraffic += val.percent ? val.percent : 0;
             // There can be more than one tag, so collect all of them. Then add it to the Description.
-            tagComposite += `${val.latestRevision ? 'latest' : ''}`;
-            tagComposite += `${val.tag ? val.tag : ''} `;
+            tagComposite += `${val.latestRevision ? 'latest ' : ''}`;
+            tagComposite += `${val.tag ? `${val.tag} ` : ''}`;
           }
         });
         this.desc = tagComposite;
