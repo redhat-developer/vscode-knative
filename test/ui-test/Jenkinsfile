@@ -87,6 +87,11 @@ timeout(time: 90, unit: 'MINUTES') {
     stage('UI Tests') {
       wrap([$class: 'Xvnc']) {
         dir('vscode-knative') {
+          sh """
+          if [ -f \$HOME/.vs-kn/kn ]; then
+            rm \$HOME/.vs-kn/kn
+          fi
+          """
           try {
             sh "npm run ui-test"
           }
