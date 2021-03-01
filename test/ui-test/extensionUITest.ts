@@ -71,13 +71,13 @@ export function extensionsUITest(): void {
     });
 
     it('view should show kn cli download notification after being opened', async function context() {
-      this.timeout(10000);
-      await driver.wait(async () => safeNotificationExists('Cannot find Knative CLI'), 7000);
+      this.timeout(15000);
+      await driver.wait(async () => safeNotificationExists('Cannot find Knative CLI'), 10000);
     });
 
     it('allows to download missing kn cli using notification', async function context() {
-      this.timeout(90000);
-      const notification = await driver.wait(async () => findNotification('Cannot find Knative CLI'), 5000);
+      this.timeout(100000);
+      const notification = await driver.wait(async () => findNotification('Cannot find Knative CLI'), 10000);
       const actions = await notification.getActions();
       const actionsTexts = await Promise.all(actions.map(async (item) => item.getText()));
       const downloadActionText = actionsTexts.find((item) => (item.includes('Download') ? item : undefined));

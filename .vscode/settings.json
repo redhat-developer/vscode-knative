@@ -104,6 +104,7 @@
     "triggercef",
     "triggerfcdd",
     "virtualfs",
-    "vsix"
+    "vsix",
+    "zpyvk"
   ]
 }

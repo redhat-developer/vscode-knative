@@ -52,6 +52,26 @@ export class CmdCli implements Cli {
     this.knOutputChannel.show();
   }
 
+  private static clusterErrorNotReported = true;
+
+  private static kubeconfigErrorNotReported = true;
+
+  private static servingErrorNotReported = true;
+
+  /**
+   * Reset the error flags after 5 sec, so they can be checked again the next time execute is run.
+   */
+  // eslint-disable-next-line class-methods-use-this
+  static resetErrorFlags(): void {
+    setTimeout(() => {
+      CmdCli.clusterErrorNotReported = true;
+
+      CmdCli.kubeconfigErrorNotReported = true;
+
+      CmdCli.servingErrorNotReported = true;
+    }, 5000);
+  }
+
   /**
    * Spin off a child process that will execute the cli command passed in.
    *
@@ -89,31 +109,44 @@ export class CmdCli implements Cli {
         if (error) {
           // let message: string | undefined;
           if (typeof error === 'string' && error.search('no such host') > 0) {
-            window.showErrorMessage(`The cluster is not up. Please log into a running cluster.`, { modal: true }, 'OK').then(
-              () => 'OK',
-              () => undefined,
-            );
-          } else if (typeof error === 'string' && error.search('no configuration') > 0) {
-            window.showErrorMessage(`The kubeconfig file can't be found.`, { modal: true }, 'OK').then(
-              () => 'OK',
-              () => undefined,
-            );
-          } else if (typeof error === 'string' && error.search('no Knative') > 0) {
-            window
-              .showErrorMessage(
-                `The Knative / Serving Operator is not installed. Please install it to use this extension.`,
-                { modal: true },
-                'OK',
-              )
-              .then(
+            if (CmdCli.clusterErrorNotReported) {
+              CmdCli.clusterErrorNotReported = false;
+              window.showErrorMessage(`The cluster is not up. Please log into a running cluster.`, { modal: true }, 'OK').then(
                 () => 'OK',
                 () => undefined,
               );
+            }
+          } else if (typeof error === 'string' && error.search('Config not found') > 0) {
+            if (CmdCli.kubeconfigErrorNotReported) {
+              CmdCli.kubeconfigErrorNotReported = false;
+              window.showErrorMessage(`The kubeconfig file can't be found.`, { modal: true }, 'OK').then(
+                () => 'OK',
+                () => undefined,
+              );
+            }
+          } else if (
+            typeof error === 'string' &&
+            (error.search('no Knative') > 0 || error.search('knative.dev is forbidden: User') > 0)
+          ) {
+            if (CmdCli.servingErrorNotReported) {
+              CmdCli.servingErrorNotReported = false;
+              window
+                .showErrorMessage(
+                  `The Knative / Serving Operator is not installed. Please install it to use this extension.`,
+                  { modal: true },
+                  'OK',
+                )
+                .then(
+                  () => 'OK',
+                  () => undefined,
+                );
+            }
           } else {
             reject(error);
           }
+        } else {
+          resolve({ error, stdout });
         }
-        resolve({ error, stdout });
       });
       // command.on('close', () => {
       //   resolve({ error, stdout });
