@@ -5,6 +5,28 @@ All notable changes to the "vscode-knative" extension will be documented in this
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 0.9.3 (2021/03/1)
+
+-  Update to a new set of icons
+-  Validate image #30
+-  Convert `kubectl apply` to `kn apply`
+-  Update all dependencies
+-  Fix Notification pop up for downloading kn cli sometimes does not appear #125
+-  Fix Severing tree not loads when service has a not-existing image #133
+-  Fix Cannot add service from an image URL in latest Knative (0.8.1) #109
+-  Fix Error while quickly switching editor between revisions #66 
+-  Fix Wrong display of tag #130
+-  Fix Add tag on service command failed #129 
+-  Fix Create closes tree kind #52 
+-  Fix Error/failure report propagation into vscode-knative from cluster #79 
+-  Fix When user is not logged in to the current cluster extension shows 'undefinedUnauthorized' error message #68 
+-  Fix There is a slightly different behavior between how Kubernetes ext. and Knative ext. search for kubeconfig file #78 
+-  Fix Import a Service kind/story #86
+-  Fix Error if the connected cluster does not have knative #65
+-  Fix Wrong error reporting if Knative Eventing is not installed #128
+-  Fix 'No Service Found' item has context menu of regular Service item #67
+-  Fix Adding validation for Add service inputs #77
+
 ## 0.9.2 (2021/01/19)
 
 -  Display Eventing children
