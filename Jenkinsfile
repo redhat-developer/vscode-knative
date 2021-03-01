@@ -28,7 +28,17 @@ node('rhel8'){
 
   stage('UI Tests') {
     wrap([$class: 'Xvnc']) {
-      sh "npm run base-ui-test"
+      try {
+        sh """
+        if [ -f \$HOME/.vs-kn/kn ]; then
+            rm \$HOME/.vs-kn/kn
+        fi
+        """
+        sh "npm run base-ui-test"
+      }
+      finally {
+        archiveArtifacts artifacts: 'test-resources/*.log,test-resources/**/*.png'
+      }
     }
   }
 
