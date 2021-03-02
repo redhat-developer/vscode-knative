@@ -108,7 +108,7 @@ export class CmdCli implements Cli {
       command.on('exit', () => {
         if (error) {
           // let message: string | undefined;
-          if (typeof error === 'string' && error.search('no such host') > 0) {
+          if (typeof error === 'string' && error.search('no such host') > 0 && error.search('failed to resolve image') === 0) {
             if (CmdCli.clusterErrorNotReported) {
               CmdCli.clusterErrorNotReported = false;
               window.showErrorMessage(`The cluster is not up. Please log into a running cluster.`, { modal: true }, 'OK').then(
