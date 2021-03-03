@@ -106,7 +106,7 @@ export class CmdCli implements Cli {
         error = err;
       });
       command.on('exit', () => {
-        if (error) {
+        if (error && stdout === '') {
           // let message: string | undefined;
           if (typeof error === 'string' && error.search('no such host') > 0 && error.search('failed to resolve image') === 0) {
             if (CmdCli.clusterErrorNotReported) {

@@ -36,7 +36,7 @@ export class Execute {
 
     const ced = this.cli
       .execute(cmd, cwd ? { cwd } : {})
-      .then((result) => (result.error && fail ? Promise.reject(result.error) : result))
+      .then((result) => (result.error && result.stdout === '' && fail ? Promise.reject(result.error) : result))
       .catch((err) => (fail ? Promise.reject(err) : Promise.resolve({ error: null, stdout: '', stderr: '' })));
 
     CmdCli.resetErrorFlags();
