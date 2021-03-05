@@ -35,7 +35,13 @@ export class SubscriptionDataProvider {
   private async getSubscriptionsList(): Promise<Subscription[]> {
     let subscriptions: Subscription[] = [];
     // Get the raw data from the cli call.
-    const result: CliExitData = await this.knExecutor.execute(KnAPI.listSubscriptions());
+    let result: CliExitData;
+    try {
+      result = await this.knExecutor.execute(KnAPI.listSubscriptions());
+    } catch (err) {
+      // eslint-disable-next-line no-console, @typescript-eslint/restrict-template-expressions
+      console.log(`Subscription data provider fetch had error.\n ${err}`);
+    }
     subscriptions = this.kSubs.addSubscriptions(loadItems(result).map((value) => Subscription.JSONToSubscription(value)));
     // If there are no Subscriptions found then stop looking and we can post 'No Subscriptions Found`
     if (subscriptions.length === 0) {

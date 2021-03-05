@@ -57,6 +57,17 @@ suite('BrokerDataProvider', () => {
       expect(result[0].label.label).to.equal('No Broker Found');
       expect(result[0].getName()).to.equal('No Broker Found');
     });
+    test('should return a node of "No Broker Found" when there is an error for Brokers', async () => {
+      sandbox.restore();
+      sandbox.stub(vscode.window, 'showErrorMessage').resolves();
+      sandbox.stub(brokerDataProvider.knExecutor, 'execute').rejects();
+      const result = await brokerDataProvider.getBrokers(eventingFolderNodes[0]);
+      expect(result).to.have.lengthOf(1);
+      expect(result[0].description).to.equal('');
+      expect(result[0].description).to.equal('');
+      expect(result[0].label.label).to.equal('No Broker Found');
+      expect(result[0].getName()).to.equal('No Broker Found');
+    });
     test('should return broker nodes', async () => {
       sandbox.restore();
       sandbox.stub(vscode.window, 'showErrorMessage').resolves();

@@ -84,6 +84,17 @@ suite('ChannelDataProvider', () => {
       expect(result[0].label.label).to.equal('No Channel Found');
       expect(result[0].getName()).to.equal('No Channel Found');
     });
+    test('should return a node of "No Channel Found" when there is an error for Channels', async () => {
+      sandbox.restore();
+      sandbox.stub(vscode.window, 'showErrorMessage').resolves();
+      sandbox.stub(channelDataProvider.knExecutor, 'execute').rejects();
+      const result = await channelDataProvider.getChannels(eventingFolderNodes[1]);
+      expect(result).to.have.lengthOf(1);
+      expect(result[0].description).to.equal('');
+      expect(result[0].description).to.equal('');
+      expect(result[0].label.label).to.equal('No Channel Found');
+      expect(result[0].getName()).to.equal('No Channel Found');
+    });
     test('should return channel nodes', async () => {
       sandbox.restore();
       sandbox.stub(vscode.window, 'showErrorMessage').resolves();

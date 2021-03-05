@@ -256,7 +256,13 @@ export class ServingDataProvider implements TreeDataProvider<ServingTreeItem | E
   private async getServicesList(): Promise<Service[]> {
     let services: Service[] = [];
     // Get the raw data from the cli call.
-    const result: CliExitData = await this.knExecutor.execute(KnAPI.listServices());
+    let result: CliExitData;
+    try {
+      result = await this.knExecutor.execute(KnAPI.listServices());
+    } catch (err) {
+      // eslint-disable-next-line no-console, @typescript-eslint/restrict-template-expressions
+      console.log(`Service data provider fetch had error.\n ${err}`);
+    }
     services = this.ksvc.addServices(loadItems(result).map((value) => Service.toService(value)));
 
     // If there are no Services found then stop looking and we can post 'No Services Found`
@@ -475,19 +481,41 @@ export class ServingDataProvider implements TreeDataProvider<ServingTreeItem | E
         // We couldn't make or find the location to write the temp file.
         return null;
       }
+
+      let addResult: CliExitData;
       // Create the Service with kn apply
       try {
-        await this.knExecutor.execute(KnAPI.applyYAML(filePath, { override: true }));
+        addResult = await this.knExecutor.execute(KnAPI.applyYAML(filePath, { override: true }));
       } catch (error) {
         // eslint-disable-next-line no-console, @typescript-eslint/restrict-template-expressions
         console.log(`Error while using kn apply to create.\n ${error}`);
-        if (typeof error === 'string' && error.search('Unable to fetch image') > 0) {
-          const indexOfErrorMessage = error.indexOf('Unable to fetch image');
-          const indexOfColon = error.indexOf(': ', indexOfErrorMessage);
-          const errorMessage = error.substring(indexOfErrorMessage, indexOfColon);
+        await this.knvfs.delete(Uri.file(filePath), { recursive: false });
+        return undefined;
+      }
+      if (typeof addResult.error === 'string' && addResult.error.search('RevisionFailed') > 0) {
+        if (addResult.error.search('Unable to fetch image') > 0) {
+          // undefinedError: RevisionFailed: Revision "foo-00001" failed with message: Unable to fetch image "foo/bar": failed to resolve image to digest: HEAD https://index.docker.io/v2/foo/bar/manifests/latest: unsupported status code 401.
+          const indexOfErrorMessage = addResult.error.indexOf('Unable to fetch image');
+          const indexOfColon = addResult.error.indexOf(': ', indexOfErrorMessage);
+          const errorMessage = addResult.error.substring(indexOfErrorMessage, indexOfColon);
           await vscode.window.showErrorMessage(
             // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
             `The Revision failed to be created.\n${errorMessage}`,
+            { modal: true },
+            'OK',
+          );
+        } else if (addResult.error.search('Initial scale was never achieved') > 0) {
+          // undefinedError: RevisionFailed: Revision "ddd-00001" failed with message: Initial scale was never achieved.
+          await vscode.window.showErrorMessage(
+            // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+            `The Revision failed to be created.\nInitial scale was never achieved.\nPlease confirm the image reference is valid.`,
+            { modal: true },
+            'OK',
+          );
+        } else {
+          await vscode.window.showErrorMessage(
+            // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+            `The Revision failed to be created.\n${addResult.error}`,
             { modal: true },
             'OK',
           );

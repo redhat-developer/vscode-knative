@@ -30,7 +30,13 @@ export class BrokerDataProvider {
   private async getBrokersList(): Promise<Broker[]> {
     let brokers: Broker[] = [];
     // Get the raw data from the cli call.
-    const result: CliExitData = await this.knExecutor.execute(KnAPI.listBrokers());
+    let result: CliExitData;
+    try {
+      result = await this.knExecutor.execute(KnAPI.listBrokers());
+    } catch (err) {
+      // eslint-disable-next-line no-console, @typescript-eslint/restrict-template-expressions
+      console.log(`broker data provider fetch had error.\n ${err}`);
+    }
     brokers = this.kBrokers.addBrokers(loadItems(result).map((value) => Broker.JSONToBroker(value)));
     // If there are no Brokers found then stop looking and we can post 'No Brokers Found`
     if (brokers.length === 0) {

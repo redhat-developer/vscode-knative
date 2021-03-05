@@ -39,7 +39,13 @@ export class SourceDataProvider {
   private async getSourcesList(): Promise<Array<SourceTypes>> {
     let sources: Array<SourceTypes> = [];
     // Get the raw data from the cli call.
-    const result: CliExitData = await this.knExecutor.execute(KnAPI.listSources());
+    let result: CliExitData;
+    try {
+      result = await this.knExecutor.execute(KnAPI.listSources());
+    } catch (err) {
+      // eslint-disable-next-line no-console, @typescript-eslint/restrict-template-expressions
+      console.log(`Source data provider fetch had error.\n ${err}`);
+    }
 
     // Figure out the source type, create that object type, and store it.
     sources = this.kSources.addSources(

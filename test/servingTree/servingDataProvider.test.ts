@@ -15,6 +15,7 @@ import * as singleServiceFailedRevisionRevisionList from './singleServiceFailedR
 import * as singleServiceFailedRevisionServiceList from './singleServiceFailedRevisionServiceList.json';
 import * as singleServiceRevisionData from './singleServiceRevisionList.json';
 import * as singleServiceData from './singleServiceServiceList.json';
+import { CliExitData } from '../../src/cli/cmdCli';
 import { ServingContextType } from '../../src/cli/config';
 import * as vfs from '../../src/cli/virtualfs';
 import { EventingTreeItem } from '../../src/eventingTree/eventingTreeItem';
@@ -791,6 +792,16 @@ status:
       expect(result[0].label.label).to.equal('No Service Found');
       expect(result[0].getName()).to.equal('No Service Found');
     });
+    test('should return the No Services node when there is an error', async () => {
+      sandbox.restore();
+      sandbox.stub(vscode.window, 'showErrorMessage').resolves();
+      sandbox.stub(servingDataProvider.knExecutor, 'execute').rejects();
+      const result = await servingDataProvider.getChildren();
+      expect(result).to.have.lengthOf(1);
+      expect(result[0].description).to.equal('');
+      expect(result[0].label.label).to.equal('No Service Found');
+      expect(result[0].getName()).to.equal('No Service Found');
+    });
     test('should return a single Service tree node when called from root with one Service', async () => {
       sandbox.restore();
       sandbox.stub(vscode.window, 'showErrorMessage').resolves();
@@ -1143,41 +1154,110 @@ status:
       expect(result).to.be.undefined;
     });
 
-    // TODO: Figure out a way to get .rejects() to send a String instead of an Object.
-    //       This makes it impossible to test without altering the code it is meant to test.
-    // test('should take user input, add Service to cluster, display an error message when the image is not found, and return it as a tree item', async () => {
-    //   const serviceToCreate: CreateService = {
-    //     name: `knative-tutorial-greeter`,
-    //     image: `quay.io/test-group`,
-    //     force: false,
-    //   };
-    //   const _uriExternalFile = vscode.Uri.parse(
-    //     'knmsx://loadknativecore/service-knative-tutorial-greeter.yaml?contextValue%3Dservice%26name%3Dknative-tutorial-greeter%26_%3D1594328823824',
-    //   );
-    //   const files: [string, vscode.FileType][] = [
-    //     [
-    //       `knmsx://loadknativecore/service-knative-tutorial-greeter.yaml?contextValue%3Dservice%26name%3Dknative-tutorial-greeter%26_%3D1594328823824`,
-    //       1,
-    //     ],
-    //   ];
-    //   sandbox.restore();
-    //   const spyErrorMessage = sandbox.stub(vscode.window, 'showErrorMessage').resolves();
-    //   sandbox.stub(sdp, 'getUrl').resolves(`quay.io/test-group`);
-    //   sandbox.stub(sdp, 'getName').resolves(serviceToCreate);
-    //   sandbox.stub(sdp.ksvc, 'addService').returns(undefined);
-    //   sandbox.stub(sdp.knvfs, 'readDirectoryAsync').resolves(files);
-    //   sandbox.stub(vfs, 'vfsUri').returns(_uriExternalFile);
-    //   sandbox.stub(sdp.knvfs, 'writeFile').returns(undefined);
-    //   sandbox.stub(vfs, 'getFilePathAsync').resolves('true');
-    //   const errorMessage = `undefinedError: RevisionFailed: Revision "knative-tutorial-greeter-00001" failed with message: Unable to fetch image "quay.io/test-group": failed to resolve image to digest: HEAD https://quay.io/v2/test-group/manifests/latest: unsupported status code 404.`;
-    //   sandbox.stub(sdp.knExecutor, 'execute').rejects(errorMessage);
-    //   const stubDelete = sandbox.stub(sdp.knvfs, 'delete').resolves();
-    //   const result: ServingTreeItem[] = await sdp.addService();
-    //   sinon.assert.calledOnce(stubDelete);
-    //   sinon.assert.calledOnce(spyErrorMessage);
-    //   // eslint-disable-next-line no-unused-expressions
-    //   expect(result).to.be.undefined;
-    // });
+    test('should take user input, add Service to cluster, display an error message when the image is not found, and return it as a tree item', async () => {
+      const serviceToCreate: CreateService = {
+        name: `knative-tutorial-greeter`,
+        image: `http://quay.io/test-group/knative-tutorial-greeter:quarkus`,
+        force: false,
+      };
+      const _uriExternalFile = vscode.Uri.parse(
+        'knmsx://loadknativecore/service-knative-tutorial-greeter.yaml?contextValue%3Dservice%26name%3Dknative-tutorial-greeter%26_%3D1594328823824',
+      );
+      const files: [string, vscode.FileType][] = [
+        [
+          `knmsx://loadknativecore/service-knative-tutorial-greeter.yaml?contextValue%3Dservice%26name%3Dknative-tutorial-greeter%26_%3D1594328823824`,
+          1,
+        ],
+      ];
+      sandbox.restore();
+      const spyErrorMessage = sandbox.stub(vscode.window, 'showErrorMessage').resolves();
+      sandbox.stub(sdp, 'getUrl').resolves(`http://quay.io/test-group/knative-tutorial-greeter:quarkus`);
+      sandbox.stub(sdp, 'getName').resolves(serviceToCreate);
+      sandbox.stub(sdp.ksvc, 'addService').returns(undefined);
+      sandbox.stub(sdp.knvfs, 'readDirectoryAsync').resolves(files);
+      sandbox.stub(vfs, 'vfsUri').returns(_uriExternalFile);
+      sandbox.stub(sdp.knvfs, 'writeFile').returns(undefined);
+      sandbox.stub(vfs, 'getFilePathAsync').resolves('true');
+      const errorMessage = `undefinedError: RevisionFailed: Revision "knative-tutorial-greeter-00001" failed with message: Unable to fetch image "http://quay.io/test-group/knative-tutorial-greeter:quarkus": failed to resolve image to digest: HEAD https://quay.io/v2/test-group/manifests/latest: unsupported status code 404.`;
+      const ced: CliExitData = { error: errorMessage, stdout: 'foo' };
+      sandbox.stub(sdp.knExecutor, 'execute').resolves(ced);
+      const stubDelete = sandbox.stub(sdp.knvfs, 'delete').resolves();
+      const result: ServingTreeItem[] = await sdp.addService();
+      sinon.assert.calledOnce(stubDelete);
+      sinon.assert.calledOnce(spyErrorMessage);
+      // eslint-disable-next-line no-unused-expressions
+      expect(result).to.be.undefined;
+    });
+
+    test('should take user input, add Service to cluster, display an error message when an "http" image is not found, and return it as a tree item', async () => {
+      const serviceToCreate: CreateService = {
+        name: `knative-tutorial-greeter`,
+        image: `quay.io/test-group`,
+        force: false,
+      };
+      const _uriExternalFile = vscode.Uri.parse(
+        'knmsx://loadknativecore/service-knative-tutorial-greeter.yaml?contextValue%3Dservice%26name%3Dknative-tutorial-greeter%26_%3D1594328823824',
+      );
+      const files: [string, vscode.FileType][] = [
+        [
+          `knmsx://loadknativecore/service-knative-tutorial-greeter.yaml?contextValue%3Dservice%26name%3Dknative-tutorial-greeter%26_%3D1594328823824`,
+          1,
+        ],
+      ];
+      sandbox.restore();
+      const spyErrorMessage = sandbox.stub(vscode.window, 'showErrorMessage').resolves();
+      sandbox.stub(sdp, 'getUrl').resolves(`brushnet/node-web-app:0.1:`);
+      sandbox.stub(sdp, 'getName').resolves(serviceToCreate);
+      sandbox.stub(sdp.ksvc, 'addService').returns(undefined);
+      sandbox.stub(sdp.knvfs, 'readDirectoryAsync').resolves(files);
+      sandbox.stub(vfs, 'vfsUri').returns(_uriExternalFile);
+      sandbox.stub(sdp.knvfs, 'writeFile').returns(undefined);
+      sandbox.stub(vfs, 'getFilePathAsync').resolves('true');
+      const errorMessage = `undefinedError: RevisionFailed: Revision "knative-tutorial-greeter-00001" failed with message: Initial scale was never achieved.`;
+      const ced: CliExitData = { error: errorMessage, stdout: 'foo' };
+      sandbox.stub(sdp.knExecutor, 'execute').resolves(ced);
+      const stubDelete = sandbox.stub(sdp.knvfs, 'delete').resolves();
+      const result: ServingTreeItem[] = await sdp.addService();
+      sinon.assert.calledOnce(stubDelete);
+      sinon.assert.calledOnce(spyErrorMessage);
+      // eslint-disable-next-line no-unused-expressions
+      expect(result).to.be.undefined;
+    });
+
+    test('should take user input, add Service to cluster, display an error message when the Revision failed, and return it as a tree item', async () => {
+      const serviceToCreate: CreateService = {
+        name: `knative-tutorial-greeter`,
+        image: `quay.io/test-group`,
+        force: false,
+      };
+      const _uriExternalFile = vscode.Uri.parse(
+        'knmsx://loadknativecore/service-knative-tutorial-greeter.yaml?contextValue%3Dservice%26name%3Dknative-tutorial-greeter%26_%3D1594328823824',
+      );
+      const files: [string, vscode.FileType][] = [
+        [
+          `knmsx://loadknativecore/service-knative-tutorial-greeter.yaml?contextValue%3Dservice%26name%3Dknative-tutorial-greeter%26_%3D1594328823824`,
+          1,
+        ],
+      ];
+      sandbox.restore();
+      const spyErrorMessage = sandbox.stub(vscode.window, 'showErrorMessage').resolves();
+      sandbox.stub(sdp, 'getUrl').resolves(`brushnet/node-web-app:0.1:`);
+      sandbox.stub(sdp, 'getName').resolves(serviceToCreate);
+      sandbox.stub(sdp.ksvc, 'addService').returns(undefined);
+      sandbox.stub(sdp.knvfs, 'readDirectoryAsync').resolves(files);
+      sandbox.stub(vfs, 'vfsUri').returns(_uriExternalFile);
+      sandbox.stub(sdp.knvfs, 'writeFile').returns(undefined);
+      sandbox.stub(vfs, 'getFilePathAsync').resolves('true');
+      const errorMessage = `undefinedError: RevisionFailed: Revision "knative-tutorial-greeter-00001" failed with message: Something unknown happened.`;
+      const ced: CliExitData = { error: errorMessage, stdout: 'foo' };
+      sandbox.stub(sdp.knExecutor, 'execute').resolves(ced);
+      const stubDelete = sandbox.stub(sdp.knvfs, 'delete').resolves();
+      const result: ServingTreeItem[] = await sdp.addService();
+      sinon.assert.calledOnce(stubDelete);
+      sinon.assert.calledOnce(spyErrorMessage);
+      // eslint-disable-next-line no-unused-expressions
+      expect(result).to.be.undefined;
+    });
 
     test('should return undefined if there is a failure to create the service', async () => {
       const serviceToCreate: CreateService = {
