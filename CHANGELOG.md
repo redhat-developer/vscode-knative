@@ -5,7 +5,13 @@ All notable changes to the "vscode-knative" extension will be documented in this
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## 0.9.3 (2021/03/1)
+## 0.9.4 (2021/03/04)
+
+-  Update `kn` cli to 0.21.0
+-  Fix Wrong error alert message #136
+-  Fix Extension stuck as it keeps looping inside the getServicesList method #137
+
+## 0.9.3 (2021/03/01)
 
 -  Update to a new set of icons
 -  Validate image #30
