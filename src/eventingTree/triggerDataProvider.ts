@@ -35,7 +35,13 @@ export class TriggerDataProvider {
   private async getTriggersList(): Promise<Trigger[]> {
     let triggers: Trigger[] = [];
     // Get the raw data from the cli call.
-    const result: CliExitData = await this.knExecutor.execute(KnAPI.listTriggers());
+    let result: CliExitData;
+    try {
+      result = await this.knExecutor.execute(KnAPI.listTriggers());
+    } catch (err) {
+      // eslint-disable-next-line no-console, @typescript-eslint/restrict-template-expressions
+      console.log(`Trigger data provider fetch had error.\n ${err}`);
+    }
     triggers = this.kTriggers.addTriggers(loadItems(result).map((value) => Trigger.JSONToTrigger(value)));
     // If there are no Triggers found then stop looking and we can post 'No Triggers Found`
     if (triggers.length === 0) {

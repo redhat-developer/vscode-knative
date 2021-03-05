@@ -270,6 +270,14 @@ suite('TriggerDataProvider', () => {
       expect(result[0].label.label).to.equal('No Trigger Found');
       expect(result[0].getName()).to.equal('No Trigger Found');
     });
+    test('should return a node of "No Trigger Found" when there is an error for Triggers', async () => {
+      sandbox.stub(triggerDataProvider.knExecutor, 'execute').rejects();
+      const result = await triggerDataProvider.getTriggers(eventingFolderNodes[4]);
+      expect(result).to.have.lengthOf(1);
+      expect(result[0].description).to.equal('');
+      expect(result[0].label.label).to.equal('No Trigger Found');
+      expect(result[0].getName()).to.equal('No Trigger Found');
+    });
     test('should return trigger nodes', async () => {
       sandbox.stub(triggerDataProvider.knExecutor, 'execute').resolves({ error: undefined, stdout: JSON.stringify(triggerData) });
       const result = await triggerDataProvider.getTriggers(eventingFolderNodes[4]);

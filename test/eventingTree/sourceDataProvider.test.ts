@@ -533,6 +533,15 @@ suite('SourceDataProvider', () => {
       expect(result[0].label.label).to.equal('No Source Found');
       expect(result[0].getName()).to.equal('No Source Found');
     });
+    test('should return a node of "No Source Found" when there is an error for Sources', async () => {
+      sandbox.stub(sourceDataProvider.knExecutor, 'execute').rejects();
+      const result = await sourceDataProvider.getSources(eventingFolderNodes[2]);
+      expect(result).to.have.lengthOf(1);
+      expect(result[0].description).to.equal('');
+      expect(result[0].description).to.equal('');
+      expect(result[0].label.label).to.equal('No Source Found');
+      expect(result[0].getName()).to.equal('No Source Found');
+    });
     test('should refetch source info when it is incomplete, then return source nodes', async () => {
       const exeStub = sandbox.stub(sourceDataProvider.knExecutor, 'execute');
       exeStub.onFirstCall().resolves({ error: undefined, stdout: JSON.stringify(sourceIncompleteData) });

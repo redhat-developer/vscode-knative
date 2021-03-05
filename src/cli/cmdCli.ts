@@ -105,42 +105,51 @@ export class CmdCli implements Cli {
         console.error(`error: ${err.message}`);
         error = err;
       });
-      command.on('exit', () => {
+      // eslint-disable-next-line @typescript-eslint/no-misused-promises
+      command.on('exit', async () => {
         if (error && stdout === '') {
-          // let message: string | undefined;
-          if (typeof error === 'string' && error.search('no such host') > 0 && error.search('failed to resolve image') === 0) {
+          // "undefinedError: Get \"https://api.devcluster.openshift.com:6443/apis/serving.knative.dev/v1/namespaces/default/services\": dial tcp: lookup api.devcluster.openshift.com on 127.0.0.1:53: no such host\nRun 'kn --help' for usage\n"
+          if (typeof error === 'string' && error.search('no such host') > 0 && error.search('failed to resolve image') === -1) {
             if (CmdCli.clusterErrorNotReported) {
               CmdCli.clusterErrorNotReported = false;
-              window.showErrorMessage(`The cluster is not up. Please log into a running cluster.`, { modal: true }, 'OK').then(
-                () => 'OK',
-                () => undefined,
-              );
+              await window.showErrorMessage(`The cluster is not up. Please log into a running cluster.`, { modal: true }, 'OK');
             }
+            reject(error);
           } else if (typeof error === 'string' && error.search('Config not found') > 0) {
             if (CmdCli.kubeconfigErrorNotReported) {
               CmdCli.kubeconfigErrorNotReported = false;
-              window.showErrorMessage(`The kubeconfig file can't be found.`, { modal: true }, 'OK').then(
-                () => 'OK',
-                () => undefined,
-              );
+              await window.showErrorMessage(`The kubeconfig file can't be found.`, { modal: true }, 'OK');
             }
+            reject(error);
           } else if (
             typeof error === 'string' &&
-            (error.search('no Knative') > 0 || error.search('knative.dev is forbidden: User') > 0)
+            // "undefinedError: no Knative serving API found on the backend, please verify the installation\nRun 'kn --help' for usage\n"
+            (error.search('no Knative serving API') > 0 || error.search('knative.dev is forbidden: User') > 0)
           ) {
             if (CmdCli.servingErrorNotReported) {
               CmdCli.servingErrorNotReported = false;
-              window
-                .showErrorMessage(
-                  `The Knative / Serving Operator is not installed. Please install it to use this extension.`,
-                  { modal: true },
-                  'OK',
-                )
-                .then(
-                  () => 'OK',
-                  () => undefined,
-                );
+              await window.showErrorMessage(
+                `The Knative / Serving Operator is not installed. Please install it to use this extension.`,
+                { modal: true },
+                'OK',
+              );
             }
+            reject(error);
+          } else if (
+            typeof error === 'string' &&
+            // "undefinedError: no Knative eventing API found on the backend, please verify the installation\nRun 'kn --help' for usage\n"
+            // "undefinedError: no Knative messaging API found on the backend, please verify the installation\nRun 'kn --help' for usage\n"
+            (error.search('no Knative eventing API') > 0 || error.search('no Knative messaging API') > 0)
+          ) {
+            if (CmdCli.servingErrorNotReported) {
+              CmdCli.servingErrorNotReported = false;
+              await window.showErrorMessage(
+                `The Knative / Eventing Operator is not installed. Please install it to use this extension.`,
+                { modal: true },
+                'OK',
+              );
+            }
+            reject(error);
           } else {
             reject(error);
           }

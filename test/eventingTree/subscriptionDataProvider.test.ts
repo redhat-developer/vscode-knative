@@ -313,6 +313,15 @@ suite('SubscriptionDataProvider', () => {
       expect(result[0].label.label).to.equal('No Subscription Found');
       expect(result[0].getName()).to.equal('No Subscription Found');
     });
+    test('should return a node of "No Subscription Found" when there is an error for Subscriptions', async () => {
+      sandbox.stub(subscriptionDataProvider.knExecutor, 'execute').rejects();
+      const result = await subscriptionDataProvider.getSubscriptions(eventingFolderNodes[3]);
+      expect(result).to.have.lengthOf(1);
+      expect(result[0].description).to.equal('');
+      expect(result[0].description).to.equal('');
+      expect(result[0].label.label).to.equal('No Subscription Found');
+      expect(result[0].getName()).to.equal('No Subscription Found');
+    });
     test('should return subscription nodes', async () => {
       sandbox
         .stub(subscriptionDataProvider.knExecutor, 'execute')
