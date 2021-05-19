@@ -46,7 +46,7 @@
       "name": "Launch Program",
       "runtimeArgs": ["--version"],
       "outputCapture": "std",
-      "runtimeVersion": "12.13.1"
+      "runtimeVersion": "12.22.1"
     }
   ]
 }

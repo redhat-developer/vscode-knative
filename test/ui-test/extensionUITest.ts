@@ -1,20 +1,12 @@
 import { expect } from 'chai';
-import {
-  ActivityBar,
-  ExtensionsViewSection,
-  ExtensionsViewItem,
-  ViewControl,
-  SideBarView,
-  WebDriver,
-  VSBrowser,
-} from 'vscode-extension-tester';
+import { ActivityBar, ViewControl, SideBarView, WebDriver, VSBrowser } from 'vscode-extension-tester';
 import { DialogHandler } from 'vscode-extension-tester-native';
 import { KNativeConstants } from './common/constants';
-import { cleanUpNotifications, findNotification, safeNotificationExists } from './common/testUtils';
+import { cleanUpNotifications, findNotification, modalDialogExists, safeNotificationExists } from './common/testUtils';
 /**
  * @author Ondrej Dockal <odockal@redhat.com>
  */
-export function extensionsUITest(): void {
+export function extensionsUITest(clusterIsAvailable: boolean): void {
   let driver: WebDriver;
 
   before(() => {
@@ -22,48 +14,16 @@ export function extensionsUITest(): void {
   });
 
   describe('Knative extension', () => {
-    it('should be installed among extensions', async function context() {
-      this.timeout(10000);
-      const view = new ActivityBar().getViewControl('Extensions');
-      const sideBar = await view.openView();
-      const section = (await sideBar.getContent().getSection('Installed')) as ExtensionsViewSection;
-      const item = await driver.wait(async () => section.findItem(`@installed ${KNativeConstants.KNATIVE_EXTENSION_NAME}`), 3000);
-      expect(item).to.be.an.instanceOf(ExtensionsViewItem);
-      expect(await item.getTitle()).to.equal(KNativeConstants.KNATIVE_EXTENSION_NAME);
-    });
-    describe('dependencies', () => {
-      it('Yaml, should be installed among extensions', async function context() {
-        this.timeout(10000);
-        const view = new ActivityBar().getViewControl('Extensions');
-        const sideBar = await view.openView();
-        const section = (await sideBar.getContent().getSection('Installed')) as ExtensionsViewSection;
-        const item = await driver.wait(async () => section.findItem(`@installed ${KNativeConstants.YAML_EXTENSION_NAME}`), 3000);
-        expect(item).to.be.an.instanceOf(ExtensionsViewItem);
-        expect(await item.getTitle()).to.equal(KNativeConstants.YAML_EXTENSION_NAME);
-      });
-    });
-
-    afterEach(async function afterContext() {
-      this.timeout(8000);
-      const sideBar = await new ActivityBar().getViewControl('Extensions').openView();
-      const titlePart = sideBar.getTitlePart();
-      const actionButton = await titlePart.getAction('Clear Extensions Search Results');
-      if (await actionButton.isEnabled()) {
-        await actionButton.click();
-      }
-    });
-  });
-
-  describe('Knative extension', () => {
     let view: ViewControl;
     let sideBar: SideBarView;
 
     before(async () => {
-      view = new ActivityBar().getViewControl(KNativeConstants.KNATIVE_EXTENSION_NAME);
+      // eslint-disable-next-line @typescript-eslint/await-thenable
+      view = await new ActivityBar().getViewControl(KNativeConstants.KNATIVE_EXTENSION_NAME);
       sideBar = await view.openView();
     });
 
-    it('Activity Bar should be available', async function context() {
+    it('Activity Bar title matches', async function context() {
       this.timeout(10000);
       expect(await sideBar.isDisplayed()).to.equal(true);
       const titlePart = sideBar.getTitlePart();
@@ -129,6 +89,20 @@ export function extensionsUITest(): void {
         expect(actions[0].getLabel()).to.include(KNativeConstants.ACTION_ITEM_REFRESH);
       });
     });
+
+    if (!clusterIsAvailable) {
+      it('should notify user that he must log into a cluster', async function context() {
+        this.timeout(10000);
+        const dialog = await driver.wait(
+          // eslint-disable-next-line no-return-await
+          async () => await modalDialogExists('The cluster is not up. Please log into a running cluster.'),
+          5000,
+        );
+        if (dialog) {
+          await dialog.pushButton('OK');
+        }
+      });
+    }
 
     after(async function afterContext() {
       this.timeout(10000);

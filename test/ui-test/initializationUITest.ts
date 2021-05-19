@@ -18,7 +18,8 @@ export function knativeInitializationUITest(): void {
   describe('Knative view', () => {
     it('should be ready for usage, requires access to the cluster', async function context() {
       this.timeout(90000);
-      const view = new ActivityBar().getViewControl(KNativeConstants.KNATIVE_EXTENSION_NAME);
+      // eslint-disable-next-line @typescript-eslint/await-thenable
+      const view = await new ActivityBar().getViewControl(KNativeConstants.KNATIVE_EXTENSION_NAME);
       const sideBar = await view.openView();
       // check that no notification error appeared
       try {

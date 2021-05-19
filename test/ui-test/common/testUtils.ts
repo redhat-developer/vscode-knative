@@ -1,4 +1,5 @@
-import { Notification, VSBrowser, NotificationType, Workbench, SideBarView } from 'vscode-extension-tester';
+/* eslint-disable no-console */
+import { Notification, VSBrowser, NotificationType, Workbench, SideBarView, ModalDialog } from 'vscode-extension-tester';
 
 /**
  * @author Ondrej Dockal <odockal@redhat.com>
@@ -90,4 +91,16 @@ export async function sectionHasItems(sideBar: SideBarView): Promise<boolean> {
 export async function sectionHasItem(sideBar: SideBarView, name: string): Promise<boolean> {
   const section = await sideBar.getContent().getSection(name);
   return !!section;
+}
+
+export async function modalDialogExists(name: string): Promise<ModalDialog | undefined> {
+  try {
+    const dialog = new ModalDialog();
+    if ((await dialog.getDetails()).indexOf(name) >= 0) {
+      return dialog;
+    }
+  } catch (error) {
+    // omit error
+  }
+  return undefined;
 }
