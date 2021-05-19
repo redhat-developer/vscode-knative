@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import { ActivityBar, ViewControl, SideBarView, WebDriver, VSBrowser } from 'vscode-extension-tester';
+import { ActivityBar, ViewControl, SideBarView, WebDriver, VSBrowser, ModalDialog } from 'vscode-extension-tester';
 import { DialogHandler } from 'vscode-extension-tester-native';
 import { KNativeConstants } from './common/constants';
 import { cleanUpNotifications, findNotification, modalDialogExists, safeNotificationExists } from './common/testUtils';
@@ -24,7 +24,7 @@ export function extensionsUITest(clusterIsAvailable: boolean): void {
     });
 
     it('Activity Bar title matches', async function context() {
-      this.timeout(10000);
+      this.timeout(5000);
       expect(await sideBar.isDisplayed()).to.equal(true);
       const titlePart = sideBar.getTitlePart();
       expect(await titlePart.getTitle()).to.equal(KNativeConstants.KNATIVE_EXTENSION_BAR_NAME);
@@ -98,6 +98,7 @@ export function extensionsUITest(clusterIsAvailable: boolean): void {
           async () => await modalDialogExists('The cluster is not up. Please log into a running cluster.'),
           5000,
         );
+        expect(dialog).to.be.instanceOf(ModalDialog);
         if (dialog) {
           await dialog.pushButton('OK');
         }

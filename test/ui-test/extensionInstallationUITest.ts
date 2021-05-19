@@ -6,7 +6,7 @@ import { KNativeConstants } from './common/constants';
 /**
  * @author Ondrej Dockal <odockal@redhat.com>
  */
-export function extensionsUITest(): void {
+export function extensionInstallationUITest(): void {
   let driver: WebDriver;
 
   before(() => {
