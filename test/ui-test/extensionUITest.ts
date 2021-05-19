@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/await-thenable */
 import { expect } from 'chai';
 import { ActivityBar, ViewControl, SideBarView, WebDriver, VSBrowser, ModalDialog } from 'vscode-extension-tester';
 import { DialogHandler } from 'vscode-extension-tester-native';
@@ -13,13 +14,17 @@ export function extensionsUITest(clusterIsAvailable: boolean): void {
     driver = VSBrowser.instance.driver;
   });
 
-  describe('Knative extension', () => {
+  describe('Knative extension UI', () => {
     let view: ViewControl;
     let sideBar: SideBarView;
 
     before(async () => {
       // eslint-disable-next-line @typescript-eslint/await-thenable
-      view = await new ActivityBar().getViewControl(KNativeConstants.KNATIVE_EXTENSION_NAME);
+      const activityBar = new ActivityBar();
+      const items = await Promise.all(await (await activityBar.getViewControls()).map((item) => item.getTitle()));
+      // eslint-disable-next-line no-console
+      console.log(items);
+      view = await (await activityBar.getViewControl(KNativeConstants.KNATIVE_EXTENSION_NAME)).wait(2000);
       sideBar = await view.openView();
     });
 
