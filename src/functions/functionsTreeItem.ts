@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See LICENSE file in the project root for license information.
  *-----------------------------------------------------------------------------------------------*/
 
-import { ProviderResult, QuickPickItem, TreeItemCollapsibleState, Uri } from 'vscode';
+import { ProviderResult, QuickPickItem, TreeItemCollapsibleState } from 'vscode';
 
 export interface FunctionNode extends QuickPickItem {
   getChildren(): ProviderResult<FunctionNode[]>;

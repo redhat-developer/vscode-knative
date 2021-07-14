@@ -29,6 +29,36 @@
       }
     }
   },
+  "func": {
+    "description": "Function CLI tool",
+    "vendor": "Red Hat, Inc.",
+    "name": "func",
+    "version": "0.16.0",
+    "versionRange": "0.16.0",
+    "versionRangeLabel": "v0.16.0",
+    "versionLocalBuildRange": "",
+    "dlFileName": "func",
+    "cmdFileName": "func",
+    "filePrefix": "",
+    "platform": {
+      "win32": {
+        "url": "https://github.com/boson-project/func/releases/download/v0.16.0/func_windows_amd64.exe.gz",
+        "sha256sum": "f272b40f9d541acdc226ab6d2978da07b82f77153850127ad9da77e45905ea3c",
+        "dlFileName": "func_windows_amd64.exe.gz",
+        "cmdFileName": "func.exe"
+      },
+      "darwin": {
+        "url": "https://github.com/boson-project/func/releases/download/v0.16.0/func_darwin_amd64.gz",
+        "sha256sum": "09e92f9de1d1930b10a5f90c86db1a17cf3ed058f4d278b6166d1e16ff7889e7",
+        "dlFileName": "func_darwin_amd64.gz"
+      },
+      "linux": {
+        "url": "https://github.com/boson-project/func/releases/download/v0.16.0/func_linux_amd64.gz",
+        "sha256sum": "f858b43d7cf12a3674adaac72d096f5ea404b1d79e53b6f732910fd4514e40f2",
+        "dlFileName": "func_linux_amd64.gz"
+      }
+    }
+  },
   "kubectl": {
     "description": "Kubernetes CLI tool",
     "vendor": "Google",

@@ -5,6 +5,7 @@
 
 
 import { TreeDataProvider, TreeView, Event, EventEmitter, TreeItem, ProviderResult, Disposable, window, commands } from 'vscode';
+import { createFunction } from './create-function';
 import { FunctionNode } from './functionsTreeItem';
 
 export class FunctionExplorer implements TreeDataProvider<FunctionNode>, Disposable {
@@ -18,7 +19,7 @@ export class FunctionExplorer implements TreeDataProvider<FunctionNode>, Disposa
     this.treeView = window.createTreeView('knativeFunctionProjectExplorer', { treeDataProvider: this, canSelectMany: true });
     this.registeredCommands = [
       commands.registerCommand('function.explorer.refresh', () => this.refresh()),
-      commands.registerCommand('function.explorer.create', () => this.refresh()),
+      commands.registerCommand('function.explorer.create', () => createFunction()),
     ];
   }
 
@@ -47,6 +48,9 @@ export class FunctionExplorer implements TreeDataProvider<FunctionNode>, Disposa
   }
 
   dispose(): void {
+    this.registeredCommands.forEach((command) => {
+      command.dispose();
+    });
     this.treeView.dispose();
   }
 

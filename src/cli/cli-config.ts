@@ -10,16 +10,13 @@ import * as fsExtra from 'fs-extra';
 import { fromFileSync } from 'hasha';
 import { satisfies } from 'semver';
 import * as shell from 'shelljs';
-// import { KnCli, createCliCommand } from './cmdCli';
 import * as configData from './cli-config.json';
 import { KnAPI } from './kn-api';
 import { KubectlAPI } from './kubectl-api';
 import { DownloadUtil } from '../util/download';
 import { Platform } from '../util/platform';
-
-// import loadJSON from '../util/parse';
-// import configData = require('./cli-config.json');
-// const configData = './cli-config.json';
+import { funcApi } from './func-api';
+import { Archive } from '../util/archive';
 
 export interface PlatformData {
   url: string;
@@ -67,41 +64,10 @@ async function getVersion(location: string): Promise<string> {
   if (cmd === 'kubectl') {
     version = KubectlAPI.getKubectlVersion(location);
   }
+  if (cmd === 'func') {
+    version = funcApi.getFuncVersion(location);
+  }
   return version;
-  // const version = new RegExp(
-  //   `Version:\\s+v(((([0-9]+)\\.([0-9]+)\\.([0-9]+)|(([0-9]+)-([0-9a-zA-Z]+)-([0-9a-zA-Z]+)))(?:-([0-9a-zA-Z-]+(?:\\.[0-9a-zA-Z-]+)*))?)(?:\\+([0-9a-zA-Z-]+(?:\\.[0-9a-zA-Z-]+)*))?).*`,
-  // );
-  // let detectedVersion: string;
-
-  // try {
-  //   const data = await KnCli.getInstance().execute(createCliCommand(`${location}`, `version`));
-
-  //   if (data.stdout) {
-  //     const toolVersion: string[] = data.stdout
-  //       .trim()
-  //       .split('\n')
-  //       // Find the line of text that has the version.
-  //       .filter((value1) => version.exec(value1))
-  //       // Pull out just the version from the line from above.
-  //       .map((value2) => {
-  //         const regexResult = version.exec(value2);
-  //         if (regexResult[8]) {
-  //           // if the version is a local build then we will find more regex value and we need to pull the 8th in the array
-  //           return regexResult[8];
-  //         }
-  //         // if it is a released version then just get it
-  //         return regexResult[1];
-  //       });
-  //     if (toolVersion.length) {
-  //       [detectedVersion] = toolVersion;
-  //     }
-  //   }
-  //   return detectedVersion;
-  // } catch (error) {
-  //   // eslint-disable-next-line no-console
-  //   console.log(`GetVersion had an error: ${error}`);
-  //   return undefined;
-  // }
 }
 
 /**
@@ -264,11 +230,21 @@ export class CmdCliConfig {
                   // If the download failed and we need to start it over, recursively call it.
                   await CmdCliConfig.detectOrDownload(cmd);
                 } else if (action !== 'Cancel') {
-                  // The downloaded file is an executable and we need to rename it to [CMD]
-                  fs.renameSync(toolDlLocation, toolCacheLocation);
+                  if (toolDlLocation.endsWith('.zip') || toolDlLocation.endsWith('.tar.gz')) {
+                    await Archive.unzip(toolDlLocation, path.resolve(Platform.getUserHomePath(), cliFile), (CmdCliConfig.tools[cmd] as CliConfig).filePrefix);
+                    await fsExtra.remove(toolDlLocation);
+                  } else if (toolDlLocation.endsWith('.gz')) {
+                    await Archive.unzip(toolDlLocation, toolCacheLocation, (CmdCliConfig.tools[cmd] as CliConfig).filePrefix);
+                    await fsExtra.remove(toolDlLocation);
+                  } else {
+                    // The downloaded file is an executable and we need to rename it to [CMD]
+                    fs.renameSync(toolDlLocation, toolCacheLocation);
+                  }
                   // Change the file permissions if on Linux or Mac
                   if (Platform.OS !== 'win32') {
                     fs.chmodSync(toolCacheLocation, 0o755);
+                  } else {
+                    fs.chmodSync(toolCacheLocation, '+x');
                   }
                   foundToolLocation = toolCacheLocation;
                 }
