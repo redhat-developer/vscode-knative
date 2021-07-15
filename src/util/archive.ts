@@ -42,7 +42,7 @@ export class Archive {
     });
   }
 
-  static gunzip(source, destination): Promise<void> {
+  static gunzip(source: fs.PathLike, destination: fs.PathLike): Promise<void> {
     return new Promise((res, rej) => {
       const src = fs.createReadStream(source);
       const dest = fs.createWriteStream(destination);

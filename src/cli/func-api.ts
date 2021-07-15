@@ -3,6 +3,7 @@
  *  Licensed under the MIT License. See LICENSE file in the project root for license information.
  *-----------------------------------------------------------------------------------------------*/
 
+import * as path from 'path';
 import { CliCommand, CmdCli, createCliCommand } from "./cmdCli";
 
 function funcCliCommand(cmdArguments: string[]): CliCommand {
@@ -11,8 +12,8 @@ function funcCliCommand(cmdArguments: string[]): CliCommand {
 
 export class FuncAPI {
 
-  createFunc(name: string, language: string, template: string): CliCommand {
-    const createCommand = ['create', name, '-l', language, '-t', template];
+  createFunc(name: string, language: string, template: string, location: string): CliCommand {
+    const createCommand = ['create', path.join(location, name), '-l', language, '-t', template];
     return funcCliCommand(createCommand);
   }
 
