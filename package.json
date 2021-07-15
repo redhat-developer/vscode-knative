@@ -148,12 +148,6 @@
         "icon": "$(refresh)"
       },
       {
-        "command": "function.explorer.create",
-        "title": "Create Function",
-        "category": "Knative",
-        "icon": "$(plus)"
-      },
-      {
         "command": "eventing.explorer.refresh",
         "title": "Refresh View",
         "category": "Knative",
@@ -221,6 +215,11 @@
       {
         "command": "service.output",
         "title": "Show Output Channel",
+        "category": "Knative"
+      },
+      {
+        "command": "function.explorer.create",
+        "title": "Create Function",
         "category": "Knative"
       }
     ],
@@ -303,11 +302,6 @@
           "command": "function.explorer.refresh",
           "when": "view == knativeFunctionProjectExplorer",
           "group": "navigation@1"
-        },
-        {
-          "command": "function.explorer.create",
-          "when": "view == knativeFunctionProjectExplorer",
-          "group": "navigation@0"
         },
         {
           "command": "eventing.explorer.refresh",
