@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
@@ -974,7 +975,7 @@ status:
     test('should delete a Service if deletion modal is confirmed on Service node', async () => {
       sandbox.restore();
       sandbox.stub(vscode.window, 'showErrorMessage').resolves();
-      const stubShowInformationMessage = sandbox.stub(vscode.window, 'showInformationMessage') as unknown as sinon.SinonStub<
+      const stubShowInformationMessage = (sandbox.stub(vscode.window, 'showInformationMessage') as unknown) as sinon.SinonStub<
         [string, vscode.MessageOptions, ...string[]],
         Thenable<string>
       >;
@@ -991,7 +992,7 @@ status:
     test('should delete a Revision if deletion modal is confirmed on Revision node', async () => {
       sandbox.restore();
       sandbox.stub(vscode.window, 'showErrorMessage').resolves();
-      const stubShowInformationMessage = sandbox.stub(vscode.window, 'showInformationMessage') as unknown as sinon.SinonStub<
+      const stubShowInformationMessage = (sandbox.stub(vscode.window, 'showInformationMessage') as unknown) as sinon.SinonStub<
         [string, vscode.MessageOptions, ...string[]],
         Thenable<string>
       >;
@@ -1008,7 +1009,7 @@ status:
     test('should delete a Revision if deletion modal is confirmed on a Tagged Revision node', async () => {
       sandbox.restore();
       sandbox.stub(vscode.window, 'showErrorMessage').resolves();
-      const stubShowInformationMessage = sandbox.stub(vscode.window, 'showInformationMessage') as unknown as sinon.SinonStub<
+      const stubShowInformationMessage = (sandbox.stub(vscode.window, 'showInformationMessage') as unknown) as sinon.SinonStub<
         [string, vscode.MessageOptions, ...string[]],
         Thenable<string>
       >;
@@ -1538,7 +1539,7 @@ status:
       //   inspect(section: string)
       // });
       sandbox.stub(workspaceConfigurationMock, 'get').returns(true);
-      const stubShowInformationMessage = sandbox.stub(vscode.window, 'showInformationMessage') as unknown as sinon.SinonStub<
+      const stubShowInformationMessage = (sandbox.stub(vscode.window, 'showInformationMessage') as unknown) as sinon.SinonStub<
         [string, vscode.MessageOptions, ...string[]],
         Thenable<string>
       >;
@@ -1554,7 +1555,7 @@ status:
       sandbox.stub(vscode.window, 'showErrorMessage').resolves();
       sandbox.stub(sdp, 'getLocalYamlPathForNode').resolves(file);
       sandbox.stub(sdp.knExecutor, 'execute').resolves({ error: undefined, stdout: 'The Service is unchanged' });
-      const stubShowInformationMessage = sandbox.stub(vscode.window, 'showInformationMessage') as unknown as sinon.SinonStub<
+      const stubShowInformationMessage = (sandbox.stub(vscode.window, 'showInformationMessage') as unknown) as sinon.SinonStub<
         [string, vscode.MessageOptions, ...string[]],
         Thenable<string>
       >;
@@ -1570,7 +1571,7 @@ status:
       sandbox.stub(vscode.window, 'showErrorMessage').resolves();
       sandbox.stub(sdp, 'getLocalYamlPathForNode').resolves(file);
       sandbox.stub(sdp.knExecutor, 'execute').resolves({ error: undefined, stdout: 'The Service is unchanged' });
-      const stubShowInformationMessage = sandbox.stub(vscode.window, 'showInformationMessage') as unknown as sinon.SinonStub<
+      const stubShowInformationMessage = (sandbox.stub(vscode.window, 'showInformationMessage') as unknown) as sinon.SinonStub<
         [string, vscode.MessageOptions, ...string[]],
         Thenable<string>
       >;
@@ -1643,7 +1644,7 @@ status:
       sandbox.restore();
       sandbox.stub(vscode.window, 'showErrorMessage').resolves();
       sandbox.stub(sdp, 'getLocalYamlPathForNode').resolves(file);
-      const stubShowInformationMessage = sandbox.stub(vscode.window, 'showInformationMessage') as unknown as sinon.SinonStub<
+      const stubShowInformationMessage = (sandbox.stub(vscode.window, 'showInformationMessage') as unknown) as sinon.SinonStub<
         [string, vscode.MessageOptions, ...string[]],
         Thenable<string>
       >;
@@ -1658,7 +1659,7 @@ status:
       sandbox.restore();
       sandbox.stub(vscode.window, 'showErrorMessage').resolves();
       sandbox.stub(sdp, 'getLocalYamlPathForNode').resolves(file);
-      const stubShowInformationMessage = sandbox.stub(vscode.window, 'showInformationMessage') as unknown as sinon.SinonStub<
+      const stubShowInformationMessage = (sandbox.stub(vscode.window, 'showInformationMessage') as unknown) as sinon.SinonStub<
         [string, vscode.MessageOptions, ...string[]],
         Thenable<string>
       >;

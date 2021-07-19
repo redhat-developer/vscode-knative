@@ -1,3 +1,6 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable no-unused-expressions */
 /*-----------------------------------------------------------------------------------------------
  *  Copyright (c) Red Hat, Inc. All rights reserved.
@@ -18,7 +21,7 @@ export class Archive {
             src: zipFile,
             dest: extractTo,
             tar: {
-              map: (header) => {
+              map: (header: { name: string }) => {
                 // eslint-disable-next-line no-param-reassign
                 prefix && header.name.startsWith(prefix) ? (header.name = header.name.substring(prefix.length)) : header;
                 return header;

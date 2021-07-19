@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 /* eslint-disable no-unused-expressions */
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
@@ -236,7 +237,7 @@ suite('Command CLI Config', () => {
         },
       };
       rewiredCLI.CmdCliConfig.tools = testData;
-      const stubShowInformationMessage = sandbox.stub(vscode.window, 'showInformationMessage') as unknown as sinon.SinonStub<
+      const stubShowInformationMessage = (sandbox.stub(vscode.window, 'showInformationMessage') as unknown) as sinon.SinonStub<
         [string, vscode.MessageOptions, ...string[]],
         Thenable<string>
       >;
@@ -268,7 +269,7 @@ suite('Command CLI Config', () => {
         },
       };
       rewiredCLI.CmdCliConfig.tools = testData;
-      const stubShowInformationMessage = sandbox.stub(vscode.window, 'showInformationMessage') as unknown as sinon.SinonStub<
+      const stubShowInformationMessage = (sandbox.stub(vscode.window, 'showInformationMessage') as unknown) as sinon.SinonStub<
         [string, vscode.MessageOptions, ...string[]],
         Thenable<string>
       >;
@@ -300,7 +301,7 @@ suite('Command CLI Config', () => {
         },
       };
       rewiredCLI.CmdCliConfig.tools = testData;
-      const stubShowInformationMessage = sandbox.stub(vscode.window, 'showInformationMessage') as unknown as sinon.SinonStub<
+      const stubShowInformationMessage = (sandbox.stub(vscode.window, 'showInformationMessage') as unknown) as sinon.SinonStub<
         [string, vscode.MessageOptions, ...string[]],
         Thenable<string>
       >;
@@ -332,7 +333,7 @@ suite('Command CLI Config', () => {
         },
       };
       rewiredCLI.CmdCliConfig.tools = testData;
-      const stubShowInformationMessage = sandbox.stub(vscode.window, 'showInformationMessage') as unknown as sinon.SinonStub<
+      const stubShowInformationMessage = (sandbox.stub(vscode.window, 'showInformationMessage') as unknown) as sinon.SinonStub<
         [string, vscode.MessageOptions, ...string[]],
         Thenable<string>
       >;

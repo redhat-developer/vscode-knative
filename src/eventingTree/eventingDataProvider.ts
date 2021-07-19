@@ -44,8 +44,8 @@ export class EventingDataProvider implements TreeDataProvider<EventingTreeItem |
     EventingTreeItem | ServingTreeItem | undefined | null
   >();
 
-  readonly onDidChangeTreeData: Event<EventingTreeItem | ServingTreeItem | undefined | null> =
-    this.onDidChangeTreeDataEmitter.event;
+  // eslint-disable-next-line prettier/prettier
+  readonly onDidChangeTreeData: Event<EventingTreeItem | ServingTreeItem | undefined | null> = this.onDidChangeTreeDataEmitter.event;
 
   refresh(target?: EventingTreeItem | ServingTreeItem): void {
     this.onDidChangeTreeDataEmitter.fire(target);
