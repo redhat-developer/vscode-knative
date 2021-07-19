@@ -13,6 +13,7 @@ export const enum Kind {
 
 export enum FunctionContextType {
   NONE = 'none',
+  FUNCTION = 'functions',
 }
 
 export enum ServingContextType {

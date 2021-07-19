@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-return */
 /*-----------------------------------------------------------------------------------------------
@@ -6,6 +7,7 @@
  *-----------------------------------------------------------------------------------------------*/
 
 import { ProviderResult, QuickPickItem, TreeItemCollapsibleState } from 'vscode';
+import format = require('string-format');
 
 export interface FunctionNode extends QuickPickItem {
   getChildren(): ProviderResult<FunctionNode[]>;
@@ -22,10 +24,16 @@ export interface FunctionNode extends QuickPickItem {
 
 export class FunctionNodeImpl implements FunctionNode {
   protected readonly CONTEXT_DATA = {
+    none: {
+      icon: '',
+      tooltip: 'Not Found',
+      description: '',
+      getChildren: () => [],
+    },
     functions: {
-      icon: 'PL.svg',
+      icon: '',
       tooltip: 'Function: {label}',
-      // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+      description: '',
       getChildren: () => [],
     },
   };
@@ -44,9 +52,9 @@ export class FunctionNodeImpl implements FunctionNode {
   // get iconPath(): Uri {
   // }
 
-  // get tooltip(): string {
-  //   return format(this.CONTEXT_DATA[this.contextValue].tooltip, this);
-  // }
+  get tooltip(): string {
+    return format(this.CONTEXT_DATA[this.contextValue].tooltip, this);
+  }
 
   get label(): string {
     return this.name;
