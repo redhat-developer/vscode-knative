@@ -4,22 +4,7 @@
  *-----------------------------------------------------------------------------------------------*/
 
 import * as vscode from 'vscode';
-import { WorkspaceFolder } from 'vscode';
 
-export interface FunctionList {
-  name: string;
-  namespace?: string;
-  runtime?: string;
-  url?: string;
-  ready?: string;
-}
-
-export interface FolderPick extends vscode.QuickPickItem {
-  test?: string;
-  workspaceFolder?: WorkspaceFolder;
-}
-
-export interface ImageAndBuild {
-  image?: string;
-  builder?: string;
+export abstract class WorkspaceFolderPick implements vscode.QuickPickItem {
+  abstract get label(): string;
 }

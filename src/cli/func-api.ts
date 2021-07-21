@@ -16,6 +16,16 @@ export class FuncAPI {
     return funcCliCommand(createCommand);
   }
 
+  static buildFunc(location: string, image: string, builder?: string): CliCommand {
+    let deleteCommand: string[];
+    if (builder) {
+      deleteCommand = ['build', '-p', location, '-i', image, '-b', builder];
+    } else {
+      deleteCommand = ['build', '-p', location, '-i', image];
+    }
+    return funcCliCommand(deleteCommand);
+  }
+
   static deleteFunc(name: string): CliCommand {
     const deleteCommand = ['delete', name];
     return funcCliCommand(deleteCommand);

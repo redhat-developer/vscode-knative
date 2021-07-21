@@ -138,7 +138,8 @@
     "onCommand:service.explorer.deleteLocal",
     "onCommand:service.output",
     "onCommand:function.explorer.refresh",
-    "onCommand:function.explorer.create"
+    "onCommand:function.explorer.create",
+    "onCommand:function.build"
   ],
   "contributes": {
     "commands": [
@@ -226,6 +227,11 @@
       {
         "command": "function.explorer.create",
         "title": "Create Function",
+        "category": "Knative"
+      },
+      {
+        "command": "function.build",
+        "title": "Build Function",
         "category": "Knative"
       }
     ],

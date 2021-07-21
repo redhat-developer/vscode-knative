@@ -4,22 +4,16 @@
  *-----------------------------------------------------------------------------------------------*/
 
 import * as vscode from 'vscode';
-import { WorkspaceFolder } from 'vscode';
 
-export interface FunctionList {
-  name: string;
-  namespace?: string;
-  runtime?: string;
-  url?: string;
-  ready?: string;
-}
+export class ExistingWorkspaceFolderPick {
+  // eslint-disable-next-line no-useless-constructor
+  constructor(public readonly workspaceFolder: vscode.WorkspaceFolder) {}
 
-export interface FolderPick extends vscode.QuickPickItem {
-  test?: string;
-  workspaceFolder?: WorkspaceFolder;
-}
+  get label(): string {
+    return this.workspaceFolder.name;
+  }
 
-export interface ImageAndBuild {
-  image?: string;
-  builder?: string;
+  get description(): string {
+    return this.workspaceFolder.uri.fsPath;
+  }
 }

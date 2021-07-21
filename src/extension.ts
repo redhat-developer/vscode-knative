@@ -10,6 +10,7 @@ import { openTreeItemInEditor } from './editor/knativeOpenTextDocument';
 import { KnativeReadonlyProvider, KN_READONLY_SCHEME } from './editor/knativeReadonlyProvider';
 import { EventingExplorer } from './eventingTree/eventingExplorer';
 import { EventingTreeItem } from './eventingTree/eventingTreeItem';
+import { buildFunction } from './functions/build-function';
 import { createFunction } from './functions/create-function';
 import { deleteFunction } from './functions/delete-function';
 import { functionExplorer } from './functions/functionsExplorer';
@@ -42,6 +43,7 @@ export async function activate(extensionContext: vscode.ExtensionContext): Promi
     vscode.commands.registerCommand('function.explorer.refresh', () => functionExplorer.refresh()),
     vscode.commands.registerCommand('function.explorer.create', () => createFunction()),
     vscode.commands.registerCommand('function.delete', (context) => deleteFunction(context)),
+    vscode.commands.registerCommand('function.build', () => buildFunction()),
     vscode.commands.registerCommand('knative.service.open-in-browser', async (treeItem: ServingTreeItem) => {
       const item = treeItem.getKnativeItem();
       if (item instanceof Service) {
