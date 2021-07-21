@@ -16,6 +16,11 @@ export class FuncAPI {
     return funcCliCommand(createCommand);
   }
 
+  static deleteFunc(name: string): CliCommand {
+    const deleteCommand = ['delete', name];
+    return funcCliCommand(deleteCommand);
+  }
+
   static funcList(): CliCommand {
     const createCommand = ['list', '-o', 'json'];
     return funcCliCommand(createCommand);
@@ -45,7 +50,6 @@ export class FuncAPI {
       }
       return detectedVersion;
     } catch (error) {
-      // eslint-disable-next-line no-console
       // console.log(`GetVersion had an error: ${error}`);
       return undefined;
     }

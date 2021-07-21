@@ -24,8 +24,11 @@ export async function functionTreeView(): Promise<FunctionNodeImpl[]> {
   try {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     functionList = JSON.parse(result.stdout);
-    // eslint-disable-next-line no-empty
   } catch (error) {
+    const functionCheck = RegExp('^No functions found in');
+    if (functionCheck.test(result.stdout)) {
+      return [new FunctionNodeImpl(null, 'No Function Found', FunctionContextType.NONE, TreeItemCollapsibleState.None, null)];
+    }
     window.showErrorMessage(`Fail to parse Json Error: ${getStderrString(error)}`);
     return null;
   }

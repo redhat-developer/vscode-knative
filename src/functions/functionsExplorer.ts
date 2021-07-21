@@ -3,8 +3,7 @@
  *  Licensed under the MIT License. See LICENSE file in the project root for license information.
  *-----------------------------------------------------------------------------------------------*/
 
-import { TreeDataProvider, TreeView, Event, EventEmitter, TreeItem, ProviderResult, Disposable, window, commands } from 'vscode';
-import { createFunction } from './create-function';
+import { TreeDataProvider, TreeView, Event, EventEmitter, TreeItem, ProviderResult, Disposable, window } from 'vscode';
 import { functionTreeView } from './function-tree-view';
 import { FunctionNode } from './functionsTreeItem';
 
@@ -19,10 +18,6 @@ export class FunctionExplorer implements TreeDataProvider<FunctionNode>, Disposa
 
   constructor() {
     this.treeView = window.createTreeView('knativeFunctionProjectExplorer', { treeDataProvider: this, canSelectMany: true });
-    this.registeredCommands = [
-      commands.registerCommand('function.explorer.refresh', () => this.refresh()),
-      commands.registerCommand('function.explorer.create', () => createFunction()),
-    ];
   }
 
   // eslint-disable-next-line class-methods-use-this
@@ -58,13 +53,9 @@ export class FunctionExplorer implements TreeDataProvider<FunctionNode>, Disposa
   }
 
   async reveal(item: FunctionNode): Promise<void> {
-    // eslint-disable-next-line @typescript-eslint/no-floating-promises
-    this.refresh(item.getParent());
-    // double call of reveal is workaround for possible upstream issue
-    // https://github.com/redhat-developer/vscode-openshift-tools/issues/762
+    await this.refresh(item.getParent());
     await this.treeView.reveal(item);
-    // eslint-disable-next-line @typescript-eslint/no-floating-promises
-    this.treeView.reveal(item);
+    await this.treeView.reveal(item);
   }
 
   getSelection(): FunctionNode[] | undefined {

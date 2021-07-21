@@ -1,6 +1,3 @@
-/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-return */
 /*-----------------------------------------------------------------------------------------------
  *  Copyright (c) Red Hat, Inc. All rights reserved.
  *  Licensed under the MIT License. See LICENSE file in the project root for license information.
@@ -8,6 +5,7 @@
 
 import { ProviderResult, QuickPickItem, TreeItemCollapsibleState } from 'vscode';
 import format = require('string-format');
+import { FunctionContextType } from '../cli/config';
 
 export interface FunctionNode extends QuickPickItem {
   getChildren(): ProviderResult<FunctionNode[]>;
@@ -28,13 +26,13 @@ export class FunctionNodeImpl implements FunctionNode {
       icon: '',
       tooltip: 'Not Found',
       description: '',
-      getChildren: () => [],
+      getChildren: (): undefined[] => [],
     },
     functions: {
       icon: '',
       tooltip: 'Function: {label}',
       description: '',
-      getChildren: () => [],
+      getChildren: (): undefined[] => [],
     },
   };
 
@@ -42,7 +40,7 @@ export class FunctionNodeImpl implements FunctionNode {
   constructor(
     private parent: FunctionNode,
     public readonly name: string,
-    public readonly contextValue: string,
+    public readonly contextValue: FunctionContextType,
     public readonly collapsibleState: TreeItemCollapsibleState = TreeItemCollapsibleState.Collapsed,
     public readonly uid?: string,
     public readonly creationTime?: string,
@@ -65,7 +63,6 @@ export class FunctionNodeImpl implements FunctionNode {
   }
 
   getChildren(): ProviderResult<FunctionNode[]> {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
     return this.CONTEXT_DATA[this.contextValue].getChildren();
   }
 

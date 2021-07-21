@@ -129,6 +129,7 @@
     "onCommand:eventing.explorer.openFile",
     "onCommand:knative.service.list",
     "onCommand:service.explorer.delete",
+    "onCommand:function.delete",
     "onCommand:service.explorer.edit",
     "onCommand:service.explorer.openFile",
     "onCommand:service.explorer.refresh",
@@ -171,6 +172,11 @@
       },
       {
         "command": "service.explorer.delete",
+        "title": "Delete",
+        "category": "Knative"
+      },
+      {
+        "command": "function.delete",
         "title": "Delete",
         "category": "Knative"
       },
@@ -241,6 +247,10 @@
           "when": "false"
         },
         {
+          "command": "function.delete",
+          "when": "false"
+        },
+        {
           "command": "service.explorer.tag",
           "when": "false"
         },
@@ -289,6 +299,11 @@
         {
           "command": "service.explorer.delete",
           "when": "view == knativeServingProjectExplorer && viewItem == service || viewItem =~ /revision.*/g",
+          "group": "c2"
+        },
+        {
+          "command": "function.delete",
+          "when": "view == knativeFunctionProjectExplorer && viewItem == functions",
           "group": "c2"
         },
         {
