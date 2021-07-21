@@ -139,7 +139,8 @@
     "onCommand:service.output",
     "onCommand:function.explorer.refresh",
     "onCommand:function.explorer.create",
-    "onCommand:function.build"
+    "onCommand:function.build",
+    "onCommand:function.deploy"
   ],
   "contributes": {
     "commands": [
@@ -232,6 +233,11 @@
       {
         "command": "function.build",
         "title": "Build Function",
+        "category": "Knative"
+      },
+      {
+        "command": "function.deploy",
+        "title": "Deploy Function",
         "category": "Knative"
       }
     ],

@@ -4,7 +4,6 @@
  *-----------------------------------------------------------------------------------------------*/
 
 import * as vscode from 'vscode';
-import { WorkspaceFolder } from 'vscode';
 
 export interface FunctionList {
   name: string;
@@ -16,7 +15,7 @@ export interface FunctionList {
 
 export interface FolderPick extends vscode.QuickPickItem {
   test?: string;
-  workspaceFolder?: WorkspaceFolder;
+  workspaceFolder?: vscode.WorkspaceFolder;
 }
 
 export interface ImageAndBuild {

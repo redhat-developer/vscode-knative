@@ -8,6 +8,7 @@ import * as vscode from 'vscode';
 import * as fs from 'fs-extra';
 import * as yaml from 'js-yaml';
 import { FolderPick, ImageAndBuild } from './function-type';
+import { functionExplorer } from './functionsExplorer';
 import { CliExitData } from '../cli/cmdCli';
 import { knExecutor } from '../cli/execute';
 import { FuncAPI } from '../cli/func-api';
@@ -25,6 +26,17 @@ async function executeBuildCommand(location: string, image: string, builder?: st
   vscode.window.showInformationMessage('Function successfully build.');
 }
 
+async function executeDeployCommand(location: string, image: string): Promise<void> {
+  const result: CliExitData = await knExecutor.execute(FuncAPI.deployFunc(location, image));
+  if (result.error) {
+    // eslint-disable-next-line @typescript-eslint/no-floating-promises
+    vscode.window.showErrorMessage(`Fail to deploy Project Error: ${getStderrString(result.error)}`);
+    return null;
+  }
+  // eslint-disable-next-line @typescript-eslint/no-floating-promises
+  vscode.window.showInformationMessage(result.stdout);
+}
+
 async function functionBuilder(image: string): Promise<ImageAndBuild> {
   const builder = await vscode.window.showInputBox({
     ignoreFocusOut: true,
@@ -36,7 +48,7 @@ async function functionBuilder(image: string): Promise<ImageAndBuild> {
   return { image, builder };
 }
 
-async function functionImage(selectedFolderPick: vscode.Uri): Promise<ImageAndBuild> {
+async function functionImage(selectedFolderPick: vscode.Uri, skipBuilder?: boolean): Promise<ImageAndBuild> {
   const imageList = [`$(plus) Provide new image`];
   let funcData;
   try {
@@ -69,7 +81,7 @@ async function functionImage(selectedFolderPick: vscode.Uri): Promise<ImageAndBu
       return null;
     }
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-    if (!funcData?.[0]?.builder) {
+    if (!funcData?.[0]?.builder && !skipBuilder) {
       const builder = await functionBuilder(image);
       if (!builder) {
         return { image };
@@ -81,7 +93,7 @@ async function functionImage(selectedFolderPick: vscode.Uri): Promise<ImageAndBu
   return { image: imagePick };
 }
 
-export async function buildFunction(): Promise<void> {
+async function pathFunction(): Promise<FolderPick> {
   const folderPicks: FolderPick[] = [
     {
       label: '$(plus) Select local folder',
@@ -102,6 +114,14 @@ export async function buildFunction(): Promise<void> {
           ignoreFocusOut: true,
           placeHolder: 'Select folder',
         });
+  if (!selectedFolderPick) {
+    return null;
+  }
+  return selectedFolderPick;
+}
+
+export async function buildFunction(): Promise<void> {
+  const selectedFolderPick = await pathFunction();
   if (!selectedFolderPick) {
     return null;
   }
@@ -130,4 +150,40 @@ export async function buildFunction(): Promise<void> {
     return null;
   }
   await executeBuildCommand(selectedFolderPick.workspaceFolder.uri.fsPath, funcData.image, funcData.builder);
+}
+
+export async function deployFunction(): Promise<void> {
+  const selectedFolderPick = await pathFunction();
+  if (!selectedFolderPick) {
+    return null;
+  }
+  if (selectedFolderPick && selectedFolderPick.label === '$(plus) Select local folder') {
+    const folder = await vscode.window.showOpenDialog({
+      canSelectFolders: true,
+      canSelectFiles: false,
+      canSelectMany: false,
+      openLabel: 'Select folder',
+    });
+    if (!folder) {
+      return null;
+    }
+    const funcData = await functionImage(folder[0], true);
+    if (!funcData) {
+      return null;
+    }
+    await executeDeployCommand(folder[0].fsPath, funcData.image);
+    // eslint-disable-next-line @typescript-eslint/no-floating-promises
+    functionExplorer.refresh();
+    return null;
+  }
+  if (!selectedFolderPick && selectedFolderPick.workspaceFolder.uri) {
+    return null;
+  }
+  const funcData = await functionImage(selectedFolderPick.workspaceFolder.uri, true);
+  if (!funcData) {
+    return null;
+  }
+  await executeDeployCommand(selectedFolderPick.workspaceFolder.uri.fsPath, funcData.image);
+  // eslint-disable-next-line @typescript-eslint/no-floating-promises
+  functionExplorer.refresh();
 }

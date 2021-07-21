@@ -17,13 +17,18 @@ export class FuncAPI {
   }
 
   static buildFunc(location: string, image: string, builder?: string): CliCommand {
-    let deleteCommand: string[];
+    let buildCommand: string[];
     if (builder) {
-      deleteCommand = ['build', '-p', location, '-i', image, '-b', builder];
+      buildCommand = ['build', '-p', location, '-i', image, '-b', builder];
     } else {
-      deleteCommand = ['build', '-p', location, '-i', image];
+      buildCommand = ['build', '-p', location, '-i', image];
     }
-    return funcCliCommand(deleteCommand);
+    return funcCliCommand(buildCommand);
+  }
+
+  static deployFunc(location: string, image: string): CliCommand {
+    const deployCommand = ['deploy', '-p', location, '-i', image];
+    return funcCliCommand(deployCommand);
   }
 
   static deleteFunc(name: string): CliCommand {
