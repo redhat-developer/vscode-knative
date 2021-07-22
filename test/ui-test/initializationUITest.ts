@@ -1,5 +1,5 @@
 import { expect, assert } from 'chai';
-import { ActivityBar, VSBrowser, NotificationType, WebDriver } from 'vscode-extension-tester';
+import { ActivityBar, VSBrowser, NotificationType, WebDriver, SideBarView, ViewControl } from 'vscode-extension-tester';
 import { KNativeConstants } from './common/constants';
 import { getNotifications, cleanUpNotifications } from './common/testUtils';
 
@@ -16,6 +16,14 @@ export function knativeInitializationUITest(): void {
   });
 
   describe('Knative view', () => {
+    let view: Promise<ViewControl>;
+    let sideBar: SideBarView;
+
+    before(async () => {
+      view = new ActivityBar().getViewControl(KNativeConstants.KNATIVE_EXTENSION_NAME);
+      sideBar = await (await view).openView();
+    });
+
     it('should be ready for usage, requires access to the cluster', async function context() {
       this.timeout(90000);
       // eslint-disable-next-line @typescript-eslint/await-thenable
