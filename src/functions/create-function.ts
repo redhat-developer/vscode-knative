@@ -5,10 +5,17 @@
 
 import * as path from 'path';
 import * as vscode from 'vscode';
+import * as fs from 'fs-extra';
 import { CliExitData } from '../cli/cmdCli';
 import { knExecutor } from '../cli/execute';
 import { FuncAPI } from '../cli/func-api';
 import { getStderrString } from '../util/stderrstring';
+
+function validateInputField(message: string, value: string): string | null {
+  if (fs.existsSync(value) && value) {
+    return message;
+  }
+}
 
 export async function createFunction(): Promise<string> {
   const location = await vscode.window.showOpenDialog({
@@ -20,7 +27,18 @@ export async function createFunction(): Promise<string> {
   if (!location) {
     return null;
   }
-  const name = await vscode.window.showInputBox({ ignoreFocusOut: true, prompt: 'Provide Function Name' });
+  const name = await vscode.window.showInputBox({
+    value: '',
+    ignoreFocusOut: true,
+    prompt: 'Provide Function Name',
+    validateInput: (value: string) => {
+      let filePath = null;
+      if (value) {
+        filePath = path.join(location[0].fsPath, value);
+      }
+      return validateInputField('Chose other name it is already exit as folder.', filePath);
+    },
+  });
   if (!name) {
     return null;
   }

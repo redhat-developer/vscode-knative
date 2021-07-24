@@ -15,6 +15,8 @@ import { FuncAPI } from '../cli/func-api';
 import { ExistingWorkspaceFolderPick } from '../util/existing-workspace-folder-pick';
 import { getStderrString } from '../util/stderrstring';
 
+const imageRegex = RegExp('[^/]+\\.[^/.]+\\/([^/.]+)(?:\\/[\\w\\s._-]*([\\w\\s._-]))*(?::[a-z0-9\\.-]+)?$');
+
 async function executeBuildCommand(location: string, image: string, builder?: string): Promise<void> {
   const result: CliExitData = await knExecutor.execute(FuncAPI.buildFunc(location, image, builder));
   if (result.error) {
@@ -55,7 +57,7 @@ async function functionImage(selectedFolderPick: vscode.Uri, skipBuilder?: boole
     const funcYaml = await fs.readFile(path.join(selectedFolderPick.fsPath, 'func.yaml'), 'utf-8');
     funcData = yaml.safeLoadAll(funcYaml);
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-    if (funcData?.[0].image) {
+    if (funcData?.[0]?.image && imageRegex.test(funcData?.[0].image)) {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       imageList.push(funcData[0].image);
     }
@@ -75,7 +77,13 @@ async function functionImage(selectedFolderPick: vscode.Uri, skipBuilder?: boole
   if (imagePick === `$(plus) Provide new image`) {
     const image = await vscode.window.showInputBox({
       ignoreFocusOut: true,
-      prompt: 'Provide full image name in the orm [registry]/[namespace]/[name]:[tag]',
+      prompt: 'Provide full image name in the form [registry]/[namespace]/[name]:[tag]',
+      validateInput: (value: string) => {
+        if (!imageRegex.test(value)) {
+          return 'Provide full image name in the form [registry]/[namespace]/[name]:[tag]';
+        }
+        return null;
+      },
     });
     if (!image) {
       return null;
