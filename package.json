@@ -48,6 +48,7 @@
   },
   "dependencies": {
     "@kubernetes/client-node": "^0.14.0",
+    "@redhat-developer/vscode-wizard": "^0.2.18",
     "binary-search": "^1.3.6",
     "byline": "^5.0.0",
     "fs-extra": "^9.1.0",

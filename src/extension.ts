@@ -41,7 +41,7 @@ export async function activate(extensionContext: vscode.ExtensionContext): Promi
   // The commandId parameter must match the command field in package.json.
   disposable = [
     vscode.commands.registerCommand('function.explorer.refresh', () => functionExplorer.refresh()),
-    vscode.commands.registerCommand('function.explorer.create', () => createFunction()),
+    vscode.commands.registerCommand('function.explorer.create', () => createFunction(extensionContext)),
     vscode.commands.registerCommand('function.delete', (context) => deleteFunction(context)),
     vscode.commands.registerCommand('function.build', () => buildFunction()),
     vscode.commands.registerCommand('function.deploy', () => deployFunction()),
