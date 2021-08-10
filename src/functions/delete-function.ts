@@ -23,13 +23,31 @@ export async function deleteFunction(context: FunctionNode): Promise<string> {
   if (response === 'No') {
     return null;
   }
-  const result: CliExitData = await knExecutor.execute(FuncAPI.deleteFunc(context.getName()));
-  if (result.error) {
-    // eslint-disable-next-line @typescript-eslint/no-floating-promises
-    vscode.window.showErrorMessage(`Fail create Function: ${getStderrString(result.error)}`);
-    return null;
-  }
-  // eslint-disable-next-line @typescript-eslint/no-floating-promises
-  functionExplorer.refresh();
-  return vscode.window.showInformationMessage(`Function successfully deleted Name: ${context.getName()}`);
+  await vscode.window.withProgress(
+    {
+      cancellable: false,
+      location: vscode.ProgressLocation.Notification,
+      title: `Deploying Function...`,
+    },
+    async () => {
+      let result: CliExitData;
+      try {
+        result = await knExecutor.execute(FuncAPI.deleteFunc(context.getName()));
+      } catch (err) {
+        // eslint-disable-next-line @typescript-eslint/no-floating-promises
+        vscode.window.showErrorMessage(`Fail deleted Function: ${getStderrString(err)}`);
+        return null;
+      }
+      if (result.error) {
+        // eslint-disable-next-line @typescript-eslint/no-floating-promises
+        vscode.window.showErrorMessage(`Fail deleted Function: ${getStderrString(result.error)}`);
+        return null;
+      }
+      // eslint-disable-next-line @typescript-eslint/no-floating-promises
+      functionExplorer.refresh();
+      // eslint-disable-next-line @typescript-eslint/no-floating-promises
+      vscode.window.showInformationMessage(`Function successfully deleted Name: ${context.getName()}`);
+      return null;
+    },
+  );
 }
