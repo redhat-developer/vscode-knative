@@ -13,6 +13,15 @@ export interface FunctionList {
   ready?: string;
 }
 
+export interface FuncContent {
+  name?: string;
+  namespace?: string;
+  runtime?: string;
+  image?: string;
+  imageDigest?: string;
+  builder?: string;
+}
+
 export interface FolderPick extends vscode.QuickPickItem {
   test?: string;
   workspaceFolder?: vscode.WorkspaceFolder;

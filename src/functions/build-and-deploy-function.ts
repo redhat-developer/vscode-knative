@@ -7,7 +7,7 @@ import * as path from 'path';
 import * as vscode from 'vscode';
 import * as fs from 'fs-extra';
 import * as yaml from 'js-yaml';
-import { FolderPick, ImageAndBuild } from './function-type';
+import { FolderPick, FuncContent, ImageAndBuild } from './function-type';
 import { functionExplorer } from './functionsExplorer';
 import { CliExitData } from '../cli/cmdCli';
 import { knExecutor } from '../cli/execute';
@@ -18,31 +18,72 @@ import { getStderrString } from '../util/stderrstring';
 const imageRegex = RegExp('[^/]+\\.[^/.]+\\/([^/.]+)(?:\\/[\\w\\s._-]*([\\w\\s._-]))*(?::[a-z0-9\\.-]+)?$');
 
 async function executeBuildCommand(location: string, image: string, builder?: string): Promise<void> {
-  const result: CliExitData = await knExecutor.execute(FuncAPI.buildFunc(location, image, builder));
-  if (result.error) {
-    // eslint-disable-next-line @typescript-eslint/no-floating-promises
-    vscode.window.showErrorMessage(`Fail to build Project Error: ${getStderrString(result.error)}`);
-    return null;
-  }
-  // eslint-disable-next-line @typescript-eslint/no-floating-promises
-  vscode.window.showInformationMessage('Function successfully build.');
+  await vscode.window.withProgress(
+    {
+      cancellable: false,
+      location: vscode.ProgressLocation.Notification,
+      title: `Building Function...`,
+    },
+    async () => {
+      let result: CliExitData;
+      try {
+        result = await knExecutor.execute(FuncAPI.buildFunc(location, image, builder));
+      } catch (err) {
+        // eslint-disable-next-line @typescript-eslint/no-floating-promises
+        vscode.window.showErrorMessage(`Fail to build Project Error: ${getStderrString(err)}`);
+        return null;
+      }
+      if (result.error) {
+        // eslint-disable-next-line @typescript-eslint/no-floating-promises
+        vscode.window.showErrorMessage(`Fail to build Project Error: ${getStderrString(result.error)}`);
+        return null;
+      }
+      // eslint-disable-next-line @typescript-eslint/no-floating-promises
+      vscode.window.showInformationMessage('Function successfully build.');
+    },
+  );
 }
 
 async function executeDeployCommand(location: string, image: string): Promise<void> {
-  const result: CliExitData = await knExecutor.execute(FuncAPI.deployFunc(location, image));
-  if (result.error) {
-    // eslint-disable-next-line @typescript-eslint/no-floating-promises
-    vscode.window.showErrorMessage(`Fail to deploy Project Error: ${getStderrString(result.error)}`);
-    return null;
-  }
-  // eslint-disable-next-line @typescript-eslint/no-floating-promises
-  vscode.window.showInformationMessage(result.stdout);
+  await vscode.window.withProgress(
+    {
+      cancellable: false,
+      location: vscode.ProgressLocation.Notification,
+      title: `Deploying Function...`,
+    },
+    async () => {
+      let result: CliExitData;
+      try {
+        result = await knExecutor.execute(FuncAPI.deployFunc(location, image));
+      } catch (err) {
+        // eslint-disable-next-line @typescript-eslint/no-floating-promises
+        vscode.window.showErrorMessage(`Fail to deploy Project Error: ${getStderrString(err)}`);
+        return null;
+      }
+      if (result.error) {
+        // eslint-disable-next-line @typescript-eslint/no-floating-promises
+        vscode.window.showErrorMessage(`Fail to deploy Project Error: ${getStderrString(result.error)}`);
+        return null;
+      }
+      // eslint-disable-next-line @typescript-eslint/no-floating-promises
+      functionExplorer.refresh();
+      // eslint-disable-next-line @typescript-eslint/no-floating-promises
+      vscode.window.showInformationMessage(result.stdout);
+      return null;
+    },
+  );
 }
 
 async function functionBuilder(image: string): Promise<ImageAndBuild> {
   const builder = await vscode.window.showInputBox({
     ignoreFocusOut: true,
     prompt: 'Provide Buildpack builder, either an as a an image name or a mapping name.',
+    validateInput: (value: string) => {
+      if (!imageRegex.test(value)) {
+        return 'Provide full image name in the form [registry]/[namespace]/[name]:[tag]';
+      }
+      return null;
+    },
   });
   if (!builder) {
     return null;
@@ -51,14 +92,13 @@ async function functionBuilder(image: string): Promise<ImageAndBuild> {
 }
 
 async function functionImage(selectedFolderPick: vscode.Uri, skipBuilder?: boolean): Promise<ImageAndBuild> {
-  const imageList = [`$(plus) Provide new image`];
-  let funcData;
+  const imageList: string[] = [];
+  let funcData: FuncContent[];
   try {
-    const funcYaml = await fs.readFile(path.join(selectedFolderPick.fsPath, 'func.yaml'), 'utf-8');
+    const funcYaml: string = await fs.readFile(path.join(selectedFolderPick.fsPath, 'func.yaml'), 'utf-8');
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     funcData = yaml.safeLoadAll(funcYaml);
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     if (funcData?.[0]?.image && imageRegex.test(funcData?.[0].image)) {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       imageList.push(funcData[0].image);
     }
   } catch (error) {
@@ -67,60 +107,51 @@ async function functionImage(selectedFolderPick: vscode.Uri, skipBuilder?: boole
   const imagePick =
     imageList.length === 1
       ? imageList[0]
-      : await vscode.window.showQuickPick(imageList, {
-          canPickMany: false,
+      : await vscode.window.showInputBox({
           ignoreFocusOut: true,
+          prompt: 'Provide full image name in the form [registry]/[namespace]/[name]:[tag]',
+          validateInput: (value: string) => {
+            if (!imageRegex.test(value)) {
+              return 'Provide full image name in the form [registry]/[namespace]/[name]:[tag]';
+            }
+            return null;
+          },
         });
   if (!imagePick) {
     return null;
   }
-  if (imagePick === `$(plus) Provide new image`) {
-    const image = await vscode.window.showInputBox({
-      ignoreFocusOut: true,
-      prompt: 'Provide full image name in the form [registry]/[namespace]/[name]:[tag]',
-      validateInput: (value: string) => {
-        if (!imageRegex.test(value)) {
-          return 'Provide full image name in the form [registry]/[namespace]/[name]:[tag]';
-        }
-        return null;
-      },
-    });
-    if (!image) {
+  if (!funcData?.[0]?.builder.trim() && !skipBuilder) {
+    const builder = await functionBuilder(imagePick);
+    if (!builder) {
       return null;
     }
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-    if (!funcData?.[0]?.builder && !skipBuilder) {
-      const builder = await functionBuilder(image);
-      if (!builder) {
-        return { image };
-      }
-      return builder;
-    }
-    return { image };
+    return builder;
   }
   return { image: imagePick };
 }
 
 async function pathFunction(): Promise<FolderPick> {
-  const folderPicks: FolderPick[] = [
-    {
-      label: '$(plus) Select local folder',
-    },
-  ];
+  const folderPicks: FolderPick[] = [];
   if (vscode.workspace.workspaceFolders && vscode.workspace.workspaceFolders.length > 0) {
     // eslint-disable-next-line no-restricted-syntax
     for (const wf of vscode.workspace.workspaceFolders) {
-      folderPicks.push(new ExistingWorkspaceFolderPick(wf));
+      if (fs.existsSync(path.join(wf.uri.fsPath, 'func.yaml'))) {
+        folderPicks.push(new ExistingWorkspaceFolderPick(wf));
+      }
     }
   }
-
+  if (folderPicks.length === 0) {
+    // eslint-disable-next-line @typescript-eslint/no-floating-promises
+    vscode.window.showInformationMessage('No project exit which contain func.yaml in it.');
+    return null;
+  }
   const selectedFolderPick =
     folderPicks.length === 1
       ? folderPicks[0]
       : await vscode.window.showQuickPick(folderPicks, {
           canPickMany: false,
           ignoreFocusOut: true,
-          placeHolder: 'Select folder',
+          placeHolder: 'Select function',
         });
   if (!selectedFolderPick) {
     return null;
@@ -131,23 +162,6 @@ async function pathFunction(): Promise<FolderPick> {
 export async function buildFunction(): Promise<void> {
   const selectedFolderPick = await pathFunction();
   if (!selectedFolderPick) {
-    return null;
-  }
-  if (selectedFolderPick && selectedFolderPick.label === '$(plus) Select local folder') {
-    const folder = await vscode.window.showOpenDialog({
-      canSelectFolders: true,
-      canSelectFiles: false,
-      canSelectMany: false,
-      openLabel: 'Select folder',
-    });
-    if (!folder) {
-      return null;
-    }
-    const funcData = await functionImage(folder[0]);
-    if (!funcData) {
-      return null;
-    }
-    await executeBuildCommand(folder[0].fsPath, funcData.image, funcData.builder);
     return null;
   }
   if (!selectedFolderPick && selectedFolderPick.workspaceFolder.uri) {
@@ -165,25 +179,6 @@ export async function deployFunction(): Promise<void> {
   if (!selectedFolderPick) {
     return null;
   }
-  if (selectedFolderPick && selectedFolderPick.label === '$(plus) Select local folder') {
-    const folder = await vscode.window.showOpenDialog({
-      canSelectFolders: true,
-      canSelectFiles: false,
-      canSelectMany: false,
-      openLabel: 'Select folder',
-    });
-    if (!folder) {
-      return null;
-    }
-    const funcData = await functionImage(folder[0], true);
-    if (!funcData) {
-      return null;
-    }
-    await executeDeployCommand(folder[0].fsPath, funcData.image);
-    // eslint-disable-next-line @typescript-eslint/no-floating-promises
-    functionExplorer.refresh();
-    return null;
-  }
   if (!selectedFolderPick && selectedFolderPick.workspaceFolder.uri) {
     return null;
   }
@@ -192,6 +187,4 @@ export async function deployFunction(): Promise<void> {
     return null;
   }
   await executeDeployCommand(selectedFolderPick.workspaceFolder.uri.fsPath, funcData.image);
-  // eslint-disable-next-line @typescript-eslint/no-floating-promises
-  functionExplorer.refresh();
 }

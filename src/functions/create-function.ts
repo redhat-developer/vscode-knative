@@ -198,7 +198,7 @@ function createFunctionForm(context: vscode.ExtensionContext): WebviewWizard {
       async performFinish(wizard: WebviewWizard, data: ParametersType): Promise<PerformFinishResponse | null> {
         const status: boolean = await vscode.window.withProgress(
           {
-            cancellable: true,
+            cancellable: false,
             location: vscode.ProgressLocation.Notification,
             title: `Function Successfully created`,
           },

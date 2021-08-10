@@ -33,28 +33,28 @@
     "description": "Function CLI tool",
     "vendor": "Red Hat, Inc.",
     "name": "func",
-    "version": "0.16.0",
-    "versionRange": "0.16.0",
-    "versionRangeLabel": "v0.16.0",
+    "version": "0.17.1",
+    "versionRange": "0.17.1",
+    "versionRangeLabel": "v0.17.1",
     "versionLocalBuildRange": "",
     "dlFileName": "func",
     "cmdFileName": "func",
     "filePrefix": "",
     "platform": {
       "win32": {
-        "url": "https://github.com/boson-project/func/releases/download/v0.16.0/func_windows_amd64.exe.gz",
-        "sha256sum": "f272b40f9d541acdc226ab6d2978da07b82f77153850127ad9da77e45905ea3c",
+        "url": "https://github.com/knative-sandbox/kn-plugin-func/releases/download/v0.17.1/func_windows_amd64.exe.gz",
+        "sha256sum": "2050f9ee877b691a06be6867b0d51d72848edaa9ce9ca328b1f724c833387b97`",
         "dlFileName": "func_windows_amd64.exe.gz",
         "cmdFileName": "func.exe"
       },
       "darwin": {
-        "url": "https://github.com/boson-project/func/releases/download/v0.16.0/func_darwin_amd64.gz",
-        "sha256sum": "09e92f9de1d1930b10a5f90c86db1a17cf3ed058f4d278b6166d1e16ff7889e7",
+        "url": "https://github.com/knative-sandbox/kn-plugin-func/releases/download/v0.17.1/func_darwin_amd64.gz",
+        "sha256sum": "f83d1ff15045cd882fedda4944581d5e3084a82d68a309b4c5c900af91968e11",
         "dlFileName": "func_darwin_amd64.gz"
       },
       "linux": {
-        "url": "https://github.com/boson-project/func/releases/download/v0.16.0/func_linux_amd64.gz",
-        "sha256sum": "f858b43d7cf12a3674adaac72d096f5ea404b1d79e53b6f732910fd4514e40f2",
+        "url": "https://github.com/knative-sandbox/kn-plugin-func/releases/download/v0.17.1/func_linux_amd64.gz",
+        "sha256sum": "2d324d0303605814f37deada0fe1317f1812875ba6bba901808b2ad69381723a",
         "dlFileName": "func_linux_amd64.gz"
       }
     }
