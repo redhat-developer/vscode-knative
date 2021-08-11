@@ -8,71 +8,11 @@ import * as vscode from 'vscode';
 import * as fs from 'fs-extra';
 import * as yaml from 'js-yaml';
 import { FolderPick, FuncContent, ImageAndBuild } from './function-type';
-import { functionExplorer } from './functionsExplorer';
-import { CliExitData } from '../cli/cmdCli';
 import { knExecutor } from '../cli/execute';
 import { FuncAPI } from '../cli/func-api';
 import { ExistingWorkspaceFolderPick } from '../util/existing-workspace-folder-pick';
-import { getStderrString } from '../util/stderrstring';
 
 const imageRegex = RegExp('[^/]+\\.[^/.]+\\/([^/.]+)(?:\\/[\\w\\s._-]*([\\w\\s._-]))*(?::[a-z0-9\\.-]+)?$');
-
-async function executeBuildCommand(location: string, image: string, builder?: string): Promise<void> {
-  await vscode.window.withProgress(
-    {
-      cancellable: false,
-      location: vscode.ProgressLocation.Notification,
-      title: `Building Function...`,
-    },
-    async () => {
-      let result: CliExitData;
-      try {
-        result = await knExecutor.execute(FuncAPI.buildFunc(location, image, builder));
-      } catch (err) {
-        // eslint-disable-next-line @typescript-eslint/no-floating-promises
-        vscode.window.showErrorMessage(`Fail to build Project Error: ${getStderrString(err)}`);
-        return null;
-      }
-      if (result.error) {
-        // eslint-disable-next-line @typescript-eslint/no-floating-promises
-        vscode.window.showErrorMessage(`Fail to build Project Error: ${getStderrString(result.error)}`);
-        return null;
-      }
-      // eslint-disable-next-line @typescript-eslint/no-floating-promises
-      vscode.window.showInformationMessage('Function successfully build.');
-    },
-  );
-}
-
-async function executeDeployCommand(location: string, image: string): Promise<void> {
-  await vscode.window.withProgress(
-    {
-      cancellable: false,
-      location: vscode.ProgressLocation.Notification,
-      title: `Deploying Function...`,
-    },
-    async () => {
-      let result: CliExitData;
-      try {
-        result = await knExecutor.execute(FuncAPI.deployFunc(location, image));
-      } catch (err) {
-        // eslint-disable-next-line @typescript-eslint/no-floating-promises
-        vscode.window.showErrorMessage(`Fail to deploy Project Error: ${getStderrString(err)}`);
-        return null;
-      }
-      if (result.error) {
-        // eslint-disable-next-line @typescript-eslint/no-floating-promises
-        vscode.window.showErrorMessage(`Fail to deploy Project Error: ${getStderrString(result.error)}`);
-        return null;
-      }
-      // eslint-disable-next-line @typescript-eslint/no-floating-promises
-      functionExplorer.refresh();
-      // eslint-disable-next-line @typescript-eslint/no-floating-promises
-      vscode.window.showInformationMessage(result.stdout);
-      return null;
-    },
-  );
-}
 
 async function functionBuilder(image: string): Promise<ImageAndBuild> {
   const builder = await vscode.window.showInputBox({
@@ -171,7 +111,9 @@ export async function buildFunction(): Promise<void> {
   if (!funcData) {
     return null;
   }
-  await executeBuildCommand(selectedFolderPick.workspaceFolder.uri.fsPath, funcData.image, funcData.builder);
+  await knExecutor.executeInTerminal(
+    FuncAPI.buildFunc(selectedFolderPick.workspaceFolder.uri.fsPath, funcData.image, funcData.builder),
+  );
 }
 
 export async function deployFunction(): Promise<void> {
@@ -186,5 +128,5 @@ export async function deployFunction(): Promise<void> {
   if (!funcData) {
     return null;
   }
-  await executeDeployCommand(selectedFolderPick.workspaceFolder.uri.fsPath, funcData.image);
+  await knExecutor.executeInTerminal(FuncAPI.deployFunc(selectedFolderPick.workspaceFolder.uri.fsPath, funcData.image));
 }
