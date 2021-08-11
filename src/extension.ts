@@ -18,6 +18,7 @@ import { Revision } from './knative/revision';
 import { Service } from './knative/service';
 import { ServingExplorer } from './servingTree/servingExplorer';
 import { ServingTreeItem } from './servingTree/servingTreeItem';
+import { startTelemetry } from './telemetry';
 
 let disposable: vscode.Disposable[];
 
@@ -28,6 +29,8 @@ let disposable: vscode.Disposable[];
  * @param extensionContext
  */
 export async function activate(extensionContext: vscode.ExtensionContext): Promise<void> {
+  // eslint-disable-next-line @typescript-eslint/no-floating-promises
+  startTelemetry(extensionContext);
   // Call the detect early here so that we avoid race conditions when the information is needed later.
   await CmdCliConfig.detectOrDownload('kn');
   const servingExplorer = new ServingExplorer();

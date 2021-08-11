@@ -12,10 +12,18 @@ import { FunctionContextType } from '../cli/config';
 import { knExecutor } from '../cli/execute';
 import { FuncAPI } from '../cli/func-api';
 import { compareNodes } from '../knative/knativeItem';
+import { telemetryLog, telemetryLogError } from '../telemetry';
 import { getStderrString } from '../util/stderrstring';
 
 export async function functionTreeView(): Promise<FunctionNodeImpl[]> {
-  const result: CliExitData = await knExecutor.execute(FuncAPI.funcList());
+  let result: CliExitData;
+  try {
+    result = await knExecutor.execute(FuncAPI.funcList());
+  } catch (err) {
+    window.showErrorMessage(`Unable to fetch Function list Error: ${getStderrString(err)}`);
+    telemetryLogError('Function_List_Error', err);
+    return [new FunctionNodeImpl(null, 'No Functions Found', FunctionContextType.NONE, TreeItemCollapsibleState.None, null)];
+  }
   let functionList: FunctionList[];
   if (result.error) {
     window.showErrorMessage(`Unable to fetch Function list Error: ${getStderrString(result.error)}`);
@@ -27,12 +35,15 @@ export async function functionTreeView(): Promise<FunctionNodeImpl[]> {
   } catch (error) {
     const functionCheck = RegExp('^No functions found');
     if (functionCheck.test(result.stdout)) {
+      telemetryLog('No_Function_Found', result.stdout);
       return [new FunctionNodeImpl(null, 'No Functions Found', FunctionContextType.NONE, TreeItemCollapsibleState.None, null)];
     }
+    telemetryLogError('parse_error', error);
     window.showErrorMessage(`Fail to parse Json Error: ${getStderrString(error)}`);
     return null;
   }
   if (functionList && functionList.length === 0) {
+    telemetryLog('No_Function_deploy', 'No Function Found');
     return [new FunctionNodeImpl(null, 'No Function Found', FunctionContextType.NONE, TreeItemCollapsibleState.None, null)];
   }
 

@@ -21,6 +21,7 @@ import { createFunctionID } from './webview-id';
 import { CliExitData } from '../cli/cmdCli';
 import { knExecutor } from '../cli/execute';
 import { FuncAPI } from '../cli/func-api';
+import { telemetryLog, telemetryLogError } from '../telemetry';
 import { getStderrString } from '../util/stderrstring';
 
 const folderStatus = new Map<string, boolean>();
@@ -207,6 +208,7 @@ function createFunctionForm(context: vscode.ExtensionContext): WebviewWizard {
               FuncAPI.createFunc(data.functionName, data.selectLanguage, data.selectTemplate, data.selectLocation),
             );
             if (result.error) {
+              telemetryLogError('Fail_to_create_function', result.error);
               // eslint-disable-next-line @typescript-eslint/no-floating-promises
               vscode.window.showErrorMessage(`Fail create Function: ${getStderrString(result.error)}`);
               return false;
@@ -239,6 +241,7 @@ function createFunctionForm(context: vscode.ExtensionContext): WebviewWizard {
         } else if (response === 'Add to this workspace') {
           vscode.workspace.updateWorkspaceFolders(0, 0, { uri });
         }
+        telemetryLog('Function_successfully_created', data.functionName);
         return null;
       },
       getNextPage(): IWizardPage | null {

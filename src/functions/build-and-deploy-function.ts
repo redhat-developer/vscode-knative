@@ -10,6 +10,7 @@ import * as yaml from 'js-yaml';
 import { FolderPick, FuncContent, ImageAndBuild } from './function-type';
 import { knExecutor } from '../cli/execute';
 import { FuncAPI } from '../cli/func-api';
+import { telemetryLog } from '../telemetry';
 import { ExistingWorkspaceFolderPick } from '../util/existing-workspace-folder-pick';
 
 const imageRegex = RegExp('[^/]+\\.[^/.]+\\/([^/.]+)(?:\\/[\\w\\s._-]*([\\w\\s._-]))*(?::[a-z0-9\\.-]+)?$');
@@ -81,8 +82,10 @@ async function pathFunction(): Promise<FolderPick> {
     }
   }
   if (folderPicks.length === 0) {
+    const message = 'No project exit which contain func.yaml in it.';
+    telemetryLog('func_yaml_not_found', message);
     // eslint-disable-next-line @typescript-eslint/no-floating-promises
-    vscode.window.showInformationMessage('No project exit which contain func.yaml in it.');
+    vscode.window.showInformationMessage(message);
     return null;
   }
   const selectedFolderPick =
@@ -111,6 +114,7 @@ export async function buildFunction(): Promise<void> {
   if (!funcData) {
     return null;
   }
+  telemetryLog('function_build_command', 'Build command execute');
   await knExecutor.executeInTerminal(
     FuncAPI.buildFunc(selectedFolderPick.workspaceFolder.uri.fsPath, funcData.image, funcData.builder),
   );
@@ -128,5 +132,6 @@ export async function deployFunction(): Promise<void> {
   if (!funcData) {
     return null;
   }
+  telemetryLog('function_deploy_command', 'Deploy command execute');
   await knExecutor.executeInTerminal(FuncAPI.deployFunc(selectedFolderPick.workspaceFolder.uri.fsPath, funcData.image));
 }
