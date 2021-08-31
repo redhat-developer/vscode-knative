@@ -1,9 +1,8 @@
 /* eslint-disable @typescript-eslint/await-thenable */
 import { expect } from 'chai';
 import { ActivityBar, ViewControl, SideBarView, WebDriver, VSBrowser, ModalDialog } from 'vscode-extension-tester';
-import { DialogHandler } from 'vscode-extension-tester-native';
 import { KNativeConstants } from './common/constants';
-import { cleanUpNotifications, findNotification, modalDialogExists, safeNotificationExists } from './common/testUtils';
+import { cleanUpNotifications, findNotification, safeNotificationExists } from './common/testUtils';
 /**
  * @author Ondrej Dockal <odockal@redhat.com>
  */
@@ -71,9 +70,10 @@ export function extensionsUITest(clusterIsAvailable: boolean): void {
         const sectionServing = await sideBar.getContent().getSection(KNativeConstants.SECTION_SERVING);
         const actions = await sectionServing.getActions();
         expect(actions.length).to.equal(3);
-        actions.forEach((action) => {
+        // eslint-disable-next-line @typescript-eslint/no-misused-promises
+        actions.forEach(async (action) => {
           // eslint-disable-next-line max-nested-callbacks
-          expect(action.getLabel()).to.satisfy((title) =>
+          expect(await action.getLabel()).to.satisfy((title: string) =>
             [
               KNativeConstants.ACTION_ITEM_ADD_SERVICE,
               KNativeConstants.ACTION_ITEM_REFRESH,
@@ -91,31 +91,47 @@ export function extensionsUITest(clusterIsAvailable: boolean): void {
         const sectionServing = await sideBar.getContent().getSection(KNativeConstants.SECTION_EVENTING);
         const actions = await sectionServing.getActions();
         expect(actions.length).to.equal(1);
-        expect(actions[0].getLabel()).to.include(KNativeConstants.ACTION_ITEM_REFRESH);
+        expect(await actions[0].getLabel()).to.include(KNativeConstants.ACTION_ITEM_REFRESH);
       });
     });
 
     if (!clusterIsAvailable) {
-      it('should notify user that he must log into a cluster', async function context() {
-        this.timeout(10000);
-        const dialog = await driver.wait(
-          // eslint-disable-next-line no-return-await
-          async () => await modalDialogExists('The cluster is not up. Please log into a running cluster.'),
-          5000,
-        );
-        expect(dialog).to.be.instanceOf(ModalDialog);
-        if (dialog) {
-          await dialog.pushButton('OK');
-        }
-      });
+      //   it('should notify user that Serving and Eventing operators needs to be installed', async function context() {
+      //     this.timeout(10000);
+      //     const dialog = await driver.wait(
+      //       // eslint-disable-next-line no-return-await
+      //       async () =>
+      //         // eslint-disable-next-line no-return-await
+      //         await modalDialogExists('The Knative / Serving Operator is not installed. Please install it to use this extension.'),
+      //       5000,
+      //     );
+      //     expect(dialog).to.be.instanceOf(ModalDialog);
+      //     if (dialog) {
+      //       await dialog.pushButton('OK');
+      //     }
+      //   });
+      //   it('should notify user that he must log into a cluster', async function context() {
+      //     this.timeout(10000);
+      //     const dialog = await driver.wait(
+      //       // eslint-disable-next-line no-return-await
+      //       async () => await modalDialogExists('The cluster is not up. Please log into a running cluster.'),
+      //       5000,
+      //     );
+      //     expect(dialog).to.be.instanceOf(ModalDialog);
+      //     if (dialog) {
+      //       await dialog.pushButton('OK');
+      //     }
+      //   });
     }
 
     after(async function afterContext() {
       this.timeout(10000);
       // handle possible native dialog about user not logged into cluster
       try {
-        const dialog = await DialogHandler.getOpenDialog();
-        await dialog.confirm();
+        const dialog = new ModalDialog();
+        // eslint-disable-next-line no-console
+        console.log(await dialog.getMessage());
+        await dialog.pushButton('Yes');
       } catch (error) {
         // no dialog appeared, no action
       }
