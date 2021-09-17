@@ -33,7 +33,7 @@
         "program": "${workspaceFolder}/node_modules/.bin/extest",
         "args": [
             "setup-and-run",
-            "${workspaceFolder}/out/test/ui-test/allTestsSuite.js",
+            "${workspaceFolder}/out/test/ui-test/baseTestsSuite.js",
             "--mocha_config",
             "${workspaceFolder}/test/ui-test/.mocharc-debug.js"
         ],
@@ -46,7 +46,7 @@
       "name": "Launch Program",
       "runtimeArgs": ["--version"],
       "outputCapture": "std",
-      "runtimeVersion": "12.13.1"
+      "runtimeVersion": "14.16.1"
     }
   ]
 }

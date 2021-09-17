@@ -19,6 +19,11 @@ else
   chmod +x crc*
 fi
 
+# workaround for https://github.com/code-ready/crc/issues/2653
+./crc config set skip-check-daemon-systemd-unit true
+./crc config set skip-check-daemon-systemd-sockets true
+# Switch off telemetry
+./crc config set consent-telemetry no
 ./crc setup
 
 ./${BASEFILE_NAME} status || true
