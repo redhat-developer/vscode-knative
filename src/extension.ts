@@ -10,6 +10,7 @@ import { openTreeItemInEditor } from './editor/knativeOpenTextDocument';
 import { KnativeReadonlyProvider, KN_READONLY_SCHEME } from './editor/knativeReadonlyProvider';
 import { EventingExplorer } from './eventingTree/eventingExplorer';
 import { EventingTreeItem } from './eventingTree/eventingTreeItem';
+import { functionExplorer } from './functions/functionsExplorer';
 import { Revision } from './knative/revision';
 import { Service } from './knative/service';
 import { ServingExplorer } from './servingTree/servingExplorer';
@@ -72,6 +73,7 @@ export async function activate(extensionContext: vscode.ExtensionContext): Promi
 
     servingExplorer,
     eventingExplorer,
+    functionExplorer,
   ];
 
   // extensionContext.subscriptions.push(disposable);

@@ -124,6 +124,7 @@
   "activationEvents": [
     "onView:knativeServingProjectExplorer",
     "onView:knativeEventingProjectExplorer",
+    "onView:knativeFunctionProjectExplorer",
     "onCommand:eventing.explorer.refresh",
     "onCommand:eventing.explorer.openFile",
     "onCommand:knative.service.list",
@@ -134,10 +135,24 @@
     "onCommand:service.explorer.reportIssue",
     "onCommand:service.explorer.apply",
     "onCommand:service.explorer.deleteLocal",
-    "onCommand:service.output"
+    "onCommand:service.output",
+    "onCommand:function.explorer.refresh",
+    "onCommand:function.explorer.create"
   ],
   "contributes": {
     "commands": [
+      {
+        "command": "function.explorer.refresh",
+        "title": "Refresh View",
+        "category": "Knative",
+        "icon": "$(refresh)"
+      },
+      {
+        "command": "function.explorer.create",
+        "title": "Create Function",
+        "category": "Knative",
+        "icon": "$(plus)"
+      },
       {
         "command": "eventing.explorer.refresh",
         "title": "Refresh View",
@@ -285,6 +300,16 @@
       ],
       "view/title": [
         {
+          "command": "function.explorer.refresh",
+          "when": "view == knativeFunctionProjectExplorer",
+          "group": "navigation@1"
+        },
+        {
+          "command": "function.explorer.create",
+          "when": "view == knativeFunctionProjectExplorer",
+          "group": "navigation@0"
+        },
+        {
           "command": "eventing.explorer.refresh",
           "when": "view == knativeEventingProjectExplorer",
           "group": "navigation@1"
@@ -324,6 +349,10 @@
         {
           "id": "knativeEventingProjectExplorer",
           "name": "Eventing"
+        },
+        {
+          "id": "knativeFunctionProjectExplorer",
+          "name": "Function"
         }
       ]
     },
