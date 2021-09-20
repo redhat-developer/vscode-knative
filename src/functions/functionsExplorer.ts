@@ -3,14 +3,16 @@
  *  Licensed under the MIT License. See LICENSE file in the project root for license information.
  *-----------------------------------------------------------------------------------------------*/
 
-
 import { TreeDataProvider, TreeView, Event, EventEmitter, TreeItem, ProviderResult, Disposable, window, commands } from 'vscode';
 import { createFunction } from './create-function';
+import { functionTreeView } from './function-tree-view';
 import { FunctionNode } from './functionsTreeItem';
 
 export class FunctionExplorer implements TreeDataProvider<FunctionNode>, Disposable {
   private treeView: TreeView<FunctionNode>;
+
   private onDidChangeTreeDataEmitter: EventEmitter<FunctionNode | undefined> = new EventEmitter<FunctionNode | undefined>();
+
   readonly onDidChangeTreeData: Event<FunctionNode | undefined> = this.onDidChangeTreeDataEmitter.event;
 
   public registeredCommands: Disposable[] = [];
@@ -23,19 +25,20 @@ export class FunctionExplorer implements TreeDataProvider<FunctionNode>, Disposa
     ];
   }
 
+  // eslint-disable-next-line class-methods-use-this
   getTreeItem(element: FunctionNode): TreeItem | Thenable<TreeItem> {
     return element;
   }
 
+  // eslint-disable-next-line class-methods-use-this
   getChildren(element?: FunctionNode): ProviderResult<FunctionNode[]> {
     if (element) {
       return element.getChildren();
-    } else {
-      // return
     }
-
+    return functionTreeView();
   }
 
+  // eslint-disable-next-line class-methods-use-this
   getParent?(element: FunctionNode): FunctionNode {
     return element.getParent();
   }
@@ -55,10 +58,12 @@ export class FunctionExplorer implements TreeDataProvider<FunctionNode>, Disposa
   }
 
   async reveal(item: FunctionNode): Promise<void> {
+    // eslint-disable-next-line @typescript-eslint/no-floating-promises
     this.refresh(item.getParent());
     // double call of reveal is workaround for possible upstream issue
     // https://github.com/redhat-developer/vscode-openshift-tools/issues/762
     await this.treeView.reveal(item);
+    // eslint-disable-next-line @typescript-eslint/no-floating-promises
     this.treeView.reveal(item);
   }
 

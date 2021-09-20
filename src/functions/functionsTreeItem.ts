@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-return */
 /*-----------------------------------------------------------------------------------------------
  *  Copyright (c) Red Hat, Inc. All rights reserved.
  *  Licensed under the MIT License. See LICENSE file in the project root for license information.
@@ -23,19 +25,21 @@ export class FunctionNodeImpl implements FunctionNode {
     functions: {
       icon: 'PL.svg',
       tooltip: 'Function: {label}',
-      getChildren: () => []
-    }
-  }
+      // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+      getChildren: () => [],
+    },
+  };
 
-  constructor(private parent: FunctionNode,
+  // eslint-disable-next-line no-useless-constructor
+  constructor(
+    private parent: FunctionNode,
     public readonly name: string,
     public readonly contextValue: string,
     public readonly collapsibleState: TreeItemCollapsibleState = TreeItemCollapsibleState.Collapsed,
     public readonly uid?: string,
     public readonly creationTime?: string,
-    public readonly state?: string) {
-
-  }
+    public readonly state?: string,
+  ) {}
 
   // get iconPath(): Uri {
   // }
@@ -53,6 +57,7 @@ export class FunctionNodeImpl implements FunctionNode {
   }
 
   getChildren(): ProviderResult<FunctionNode[]> {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
     return this.CONTEXT_DATA[this.contextValue].getChildren();
   }
 
@@ -60,6 +65,7 @@ export class FunctionNodeImpl implements FunctionNode {
     return this.parent;
   }
 
+  // eslint-disable-next-line class-methods-use-this
   refresh(): Promise<void> {
     return Promise.resolve();
   }

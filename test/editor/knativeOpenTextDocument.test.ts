@@ -134,10 +134,10 @@ status:
     url: http://current-example-a-serverless-example.apps.devcluster.openshift.com
   url: http://example-a-serverless-example.apps.devcluster.openshift.com
 `;
-  const uriObject = ('uri' as unknown) as vscode.Uri;
+  const uriObject = 'uri' as unknown as vscode.Uri;
   const jsonServiceContentUnfiltered = yaml.parse(yamlServiceContentUnfiltered) as service.Items;
   const showTextDocOptions = { preserveFocus: true, preview: true };
-  const textDocumentObject = ('textDoc' as unknown) as vscode.TextDocument;
+  const textDocumentObject = 'textDoc' as unknown as vscode.TextDocument;
   const testService: Service = new Service(
     'example',
     'http://example-a-serverless-example.apps.devcluster.openshift.com',

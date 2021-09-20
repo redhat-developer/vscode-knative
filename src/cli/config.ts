@@ -11,6 +11,10 @@ export const enum Kind {
   LocalConfig,
 }
 
+export enum FunctionContextType {
+  NONE = 'none',
+}
+
 export enum ServingContextType {
   NONE = 'none',
   REVISION = 'revision',

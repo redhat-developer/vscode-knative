@@ -4,28 +4,25 @@
  *-----------------------------------------------------------------------------------------------*/
 
 import * as path from 'path';
-import { CliCommand, CmdCli, createCliCommand } from "./cmdCli";
+import { CliCommand, CmdCli, createCliCommand } from './cmdCli';
 
 function funcCliCommand(cmdArguments: string[]): CliCommand {
   return createCliCommand('func', ...cmdArguments);
 }
 
 export class FuncAPI {
-
-  createFunc(name: string, language: string, template: string, location: string): CliCommand {
+  static createFunc(name: string, language: string, template: string, location: string): CliCommand {
     const createCommand = ['create', path.join(location, name), '-l', language, '-t', template];
     return funcCliCommand(createCommand);
   }
 
-  funcList(): CliCommand {
+  static funcList(): CliCommand {
     const createCommand = ['list', '-o', 'json'];
     return funcCliCommand(createCommand);
   }
 
-  async getFuncVersion(location: string): Promise<string> {
-    const version = new RegExp(
-      `[v]?([0-9]+\.[0-9]+\.[0-9]+)$`,
-    );
+  static async getFuncVersion(location: string): Promise<string> {
+    const version = new RegExp(`[v]?([0-9]+\\.[0-9]+\\.[0-9]+)$`);
     let detectedVersion: string;
 
     try {
@@ -54,5 +51,3 @@ export class FuncAPI {
     }
   }
 }
-
-export const funcApi = new FuncAPI();

@@ -11,12 +11,12 @@ import { fromFileSync } from 'hasha';
 import { satisfies } from 'semver';
 import * as shell from 'shelljs';
 import * as configData from './cli-config.json';
+import { FuncAPI } from './func-api';
 import { KnAPI } from './kn-api';
 import { KubectlAPI } from './kubectl-api';
+import { Archive } from '../util/archive';
 import { DownloadUtil } from '../util/download';
 import { Platform } from '../util/platform';
-import { funcApi } from './func-api';
-import { Archive } from '../util/archive';
 
 export interface PlatformData {
   url: string;
@@ -65,7 +65,7 @@ async function getVersion(location: string): Promise<string> {
     version = KubectlAPI.getKubectlVersion(location);
   }
   if (cmd === 'func') {
-    version = funcApi.getFuncVersion(location);
+    version = FuncAPI.getFuncVersion(location);
   }
   return version;
 }
@@ -231,7 +231,11 @@ export class CmdCliConfig {
                   await CmdCliConfig.detectOrDownload(cmd);
                 } else if (action !== 'Cancel') {
                   if (toolDlLocation.endsWith('.zip') || toolDlLocation.endsWith('.tar.gz')) {
-                    await Archive.unzip(toolDlLocation, path.resolve(Platform.getUserHomePath(), cliFile), (CmdCliConfig.tools[cmd] as CliConfig).filePrefix);
+                    await Archive.unzip(
+                      toolDlLocation,
+                      path.resolve(Platform.getUserHomePath(), cliFile),
+                      (CmdCliConfig.tools[cmd] as CliConfig).filePrefix,
+                    );
                     await fsExtra.remove(toolDlLocation);
                   } else if (toolDlLocation.endsWith('.gz')) {
                     await Archive.unzip(toolDlLocation, toolCacheLocation, (CmdCliConfig.tools[cmd] as CliConfig).filePrefix);
