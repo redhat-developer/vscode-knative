@@ -50,7 +50,10 @@
         "${workspaceFolder}/test/ui-test/.mocharc-debug.js"
       ],
       "console": "integratedTerminal",
-      "internalConsoleOptions": "neverOpen"
+      "internalConsoleOptions": "neverOpen",
+      "env": {
+        "VSCODE_REDHAT_TELEMETRY_DEBUG": "true"
+      }
     },
     {
       "type": "node",
@@ -60,7 +63,10 @@
         "--version"
       ],
       "outputCapture": "std",
-      "runtimeVersion": "14.16.1"
+      "runtimeVersion": "14.16.1",
+      "env": {
+        "VSCODE_REDHAT_TELEMETRY_DEBUG": "true"
+      }
     }
   ]
 }

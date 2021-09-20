@@ -27,7 +27,7 @@ export async function deleteFunction(context: FunctionNode): Promise<string> {
     {
       cancellable: false,
       location: vscode.ProgressLocation.Notification,
-      title: `Deploying Function...`,
+      title: `Deleting Function: ${context.getName()}`,
     },
     async () => {
       let result: CliExitData;
