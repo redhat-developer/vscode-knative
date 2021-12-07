@@ -4,8 +4,8 @@
  *-----------------------------------------------------------------------------------------------*/
 
 import { TreeDataProvider, TreeView, Event, EventEmitter, TreeItem, ProviderResult, Disposable, window } from 'vscode';
-import { functionTreeView } from './function-tree-view';
-import { FunctionNode } from './functionsTreeItem';
+import { func } from './func';
+import { FunctionNode } from './function-tree-view/functionsTreeItem';
 
 export class FunctionExplorer implements TreeDataProvider<FunctionNode>, Disposable {
   private treeView: TreeView<FunctionNode>;
@@ -30,7 +30,7 @@ export class FunctionExplorer implements TreeDataProvider<FunctionNode>, Disposa
     if (element) {
       return element.getChildren();
     }
-    return functionTreeView();
+    return func.getFunctionNodes();
   }
 
   // eslint-disable-next-line class-methods-use-this

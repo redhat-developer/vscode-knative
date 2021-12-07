@@ -5,7 +5,9 @@
 
 import { ProviderResult, QuickPickItem, TreeItemCollapsibleState } from 'vscode';
 import format = require('string-format');
-import { FunctionContextType } from '../cli/config';
+import { FunctionContextType } from '../../cli/config';
+// eslint-disable-next-line import/no-cycle
+import { Func } from '../func';
 
 export interface FunctionNode extends QuickPickItem {
   getChildren(): ProviderResult<FunctionNode[]>;
@@ -28,6 +30,19 @@ export class FunctionNodeImpl implements FunctionNode {
       description: '',
       getChildren: (): undefined[] => [],
     },
+    functionsNode: {
+      icon: '',
+      tooltip: '{label}',
+      description: '',
+      // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+      getChildren: () => this.func.getDeployedFunction(this),
+    },
+    localFunctionsNode: {
+      icon: '',
+      tooltip: '{label}',
+      description: '',
+      getChildren: (): undefined[] => [],
+    },
     functions: {
       icon: '',
       tooltip: 'Function: {label}',
@@ -41,6 +56,7 @@ export class FunctionNodeImpl implements FunctionNode {
     private parent: FunctionNode,
     public readonly name: string,
     public readonly contextValue: FunctionContextType,
+    protected readonly func: Func,
     public readonly collapsibleState: TreeItemCollapsibleState = TreeItemCollapsibleState.Collapsed,
     public readonly uid?: string,
     public readonly creationTime?: string,

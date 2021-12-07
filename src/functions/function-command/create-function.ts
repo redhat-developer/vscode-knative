@@ -16,13 +16,13 @@ import {
   WizardDefinition,
 } from '@redhat-developer/vscode-wizard';
 import * as fs from 'fs-extra';
-import { createValidationItem, inputFieldValidation, pathValidation, selectLocationValidation } from './validate-item';
-import { createFunctionID } from './webview-id';
-import { CliExitData } from '../cli/cmdCli';
-import { knExecutor } from '../cli/execute';
-import { FuncAPI } from '../cli/func-api';
-import { telemetryLog, telemetryLogError } from '../telemetry';
-import { getStderrString } from '../util/stderrstring';
+import { CliExitData } from '../../cli/cmdCli';
+import { knExecutor } from '../../cli/execute';
+import { FuncAPI } from '../../cli/func-api';
+import { telemetryLog, telemetryLogError } from '../../telemetry';
+import { getStderrString } from '../../util/stderrstring';
+import { createValidationItem, inputFieldValidation, pathValidation, selectLocationValidation } from '../validate-item';
+import { createFunctionID } from '../webview-id';
 
 const folderStatus = new Map<string, boolean>();
 

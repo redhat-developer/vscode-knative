@@ -7,11 +7,11 @@ import * as path from 'path';
 import * as vscode from 'vscode';
 import * as fs from 'fs-extra';
 import * as yaml from 'js-yaml';
-import { FolderPick, FuncContent, ImageAndBuild } from './function-type';
-import { knExecutor } from '../cli/execute';
-import { FuncAPI } from '../cli/func-api';
-import { telemetryLog } from '../telemetry';
-import { ExistingWorkspaceFolderPick } from '../util/existing-workspace-folder-pick';
+import { knExecutor } from '../../cli/execute';
+import { FuncAPI } from '../../cli/func-api';
+import { telemetryLog } from '../../telemetry';
+import { ExistingWorkspaceFolderPick } from '../../util/existing-workspace-folder-pick';
+import { FolderPick, FuncContent, ImageAndBuild } from '../function-type';
 
 const imageRegex = RegExp('[^/]+\\.[^/.]+\\/([^/.]+)(?:\\/[\\w\\s._-]*([\\w\\s._-]))*(?::[a-z0-9\\.-]+)?$');
 

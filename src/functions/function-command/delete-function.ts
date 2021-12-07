@@ -4,12 +4,12 @@
  *-----------------------------------------------------------------------------------------------*/
 
 import * as vscode from 'vscode';
-import { functionExplorer } from './functionsExplorer';
-import { FunctionNode } from './functionsTreeItem';
-import { CliExitData } from '../cli/cmdCli';
-import { knExecutor } from '../cli/execute';
-import { FuncAPI } from '../cli/func-api';
-import { getStderrString } from '../util/stderrstring';
+import { CliExitData } from '../../cli/cmdCli';
+import { knExecutor } from '../../cli/execute';
+import { FuncAPI } from '../../cli/func-api';
+import { getStderrString } from '../../util/stderrstring';
+import { FunctionNode } from '../function-tree-view/functionsTreeItem';
+import { functionExplorer } from '../functionsExplorer';
 
 export async function deleteFunction(context: FunctionNode): Promise<string> {
   if (!context) {
