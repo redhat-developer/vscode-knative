@@ -53,15 +53,14 @@ export function extensionsUITest(clusterIsAvailable: boolean): void {
       }, 80000);
     });
 
-    it('should contain Serving, Eventing and Function sections', async function context() {
+    it('should contain Serving and Eventing sections', async function context() {
       this.timeout(5000);
       const content = sideBar.getContent();
       const sections = await content.getSections();
-      expect(sections.length).to.eq(3);
+      expect(sections.length).to.eq(2);
       expect(await Promise.all(sections.map(async (section) => section.getTitle()))).to.has.members([
         KNativeConstants.SECTION_EVENTING,
         KNativeConstants.SECTION_SERVING,
-        KNativeConstants.SECTION_FUNCTION,
       ]);
     });
 

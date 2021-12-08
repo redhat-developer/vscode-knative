@@ -3,10 +3,13 @@
  *  Licensed under the MIT License. See LICENSE file in the project root for license information.
  *-----------------------------------------------------------------------------------------------*/
 
-import { TreeItemCollapsibleState, window } from 'vscode';
+import * as path from 'path';
+import { TreeItemCollapsibleState, Uri, window, workspace } from 'vscode';
+import * as fs from 'fs-extra';
+import * as yaml from 'js-yaml';
 // eslint-disable-next-line import/no-cycle
 import { FunctionNode, FunctionNodeImpl } from './function-tree-view/functionsTreeItem';
-import { FunctionList } from './function-type';
+import { FuncContent, FunctionList } from './function-type';
 import { CliExitData } from '../cli/cmdCli';
 import { FunctionContextType } from '../cli/config';
 import { knExecutor } from '../cli/execute';
@@ -18,6 +21,7 @@ import { getStderrString } from '../util/stderrstring';
 export interface Func {
   getFunctionNodes(): FunctionNode[];
   getDeployedFunction(func: FunctionNode): Promise<FunctionNode[]>;
+  getLocalFunction(func: FunctionNode): Promise<FunctionNode[]>;
 }
 
 export class FuncImpl implements Func {
@@ -51,13 +55,13 @@ export class FuncImpl implements Func {
   async getDeployedFunction(func: FunctionNode): Promise<FunctionNode[]> {
     let result: CliExitData;
     try {
-      result = await knExecutor.execute(FuncAPI.funcList());
+      result = await knExecutor.execute(FuncAPI.funcList(), process.cwd(), false);
     } catch (err) {
       // eslint-disable-next-line @typescript-eslint/no-floating-promises
       window.showErrorMessage(`Unable to fetch Function list Error: ${getStderrString(err)}`);
       telemetryLogError('Function_List_Error', err);
       return [
-        new FunctionNodeImpl(null, 'No Functions Found', FunctionContextType.NONE, this, TreeItemCollapsibleState.None, null),
+        new FunctionNodeImpl(func, 'No Functions Found', FunctionContextType.NONE, this, TreeItemCollapsibleState.None, null),
       ];
     }
     let functionList: FunctionList[];
@@ -73,7 +77,9 @@ export class FuncImpl implements Func {
       const functionCheck = RegExp('^No functions found');
       if (functionCheck.test(result.stdout)) {
         telemetryLog('No_Function_Found', result.stdout);
-        // return [new FunctionNodeImpl(null, 'No Functions Found', FunctionContextType.NONE, TreeItemCollapsibleState.None, null)];
+        return [
+          new FunctionNodeImpl(func, 'No Functions Found', FunctionContextType.NONE, this, TreeItemCollapsibleState.None, null),
+        ];
       }
       telemetryLogError('parse_error', error);
       // eslint-disable-next-line @typescript-eslint/no-floating-promises
@@ -101,6 +107,43 @@ export class FuncImpl implements Func {
       .sort(compareNodes);
 
     return children;
+  }
+
+  async getLocalFunction(func: FunctionNode): Promise<FunctionNode[]> {
+    const folders: Uri[] = [];
+    const functionList: FunctionNode[] = [];
+    if (workspace.workspaceFolders && workspace.workspaceFolders.length > 0) {
+      // eslint-disable-next-line no-restricted-syntax
+      for (const wf of workspace.workspaceFolders) {
+        if (fs.existsSync(path.join(wf.uri.fsPath, 'func.yaml'))) {
+          folders.push(wf.uri);
+        }
+      }
+    }
+    if (folders.length === 0) {
+      return [
+        new FunctionNodeImpl(
+          func,
+          'No Functions Found in workspace',
+          FunctionContextType.NONEWORKSPACE,
+          this,
+          TreeItemCollapsibleState.None,
+        ),
+      ];
+    }
+    // eslint-disable-next-line no-restricted-syntax
+    for (const folderUri of folders) {
+      // eslint-disable-next-line no-await-in-loop
+      const funcYaml: string = await fs.readFile(path.join(folderUri.fsPath, 'func.yaml'), 'utf-8');
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+      const funcData: FuncContent[] = yaml.safeLoadAll(funcYaml);
+      if (funcData && funcData?.[0]?.name) {
+        functionList.push(
+          new FunctionNodeImpl(func, funcData[0].name, FunctionContextType.FUNCTION, this, TreeItemCollapsibleState.None),
+        );
+      }
+    }
+    return functionList;
   }
 }
 

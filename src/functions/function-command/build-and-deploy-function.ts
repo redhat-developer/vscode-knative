@@ -126,6 +126,7 @@ export async function deployFunction(): Promise<void> {
     return null;
   }
   if (!selectedFolderPick && selectedFolderPick.workspaceFolder.uri) {
+    // to do
     return null;
   }
   const funcData = await functionImage(selectedFolderPick.workspaceFolder.uri, true);

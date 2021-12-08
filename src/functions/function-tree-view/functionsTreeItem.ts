@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See LICENSE file in the project root for license information.
  *-----------------------------------------------------------------------------------------------*/
 
-import { ProviderResult, QuickPickItem, TreeItemCollapsibleState } from 'vscode';
+import { ProviderResult, QuickPickItem, TreeItemCollapsibleState, Uri } from 'vscode';
 import format = require('string-format');
 import { FunctionContextType } from '../../cli/config';
 // eslint-disable-next-line import/no-cycle
@@ -16,8 +16,7 @@ export interface FunctionNode extends QuickPickItem {
   refresh(): Promise<void>;
   contextValue?: string;
   creationTime?: string;
-  state?: string;
-  visibleChildren?: number;
+  contextPath?: Uri;
   collapsibleState?: TreeItemCollapsibleState;
   uid?: string;
 }
@@ -26,7 +25,13 @@ export class FunctionNodeImpl implements FunctionNode {
   protected readonly CONTEXT_DATA = {
     none: {
       icon: '',
-      tooltip: 'Not Found',
+      tooltip: '{label}',
+      description: '',
+      getChildren: (): undefined[] => [],
+    },
+    noneWorkspace: {
+      icon: '',
+      tooltip: '{label}',
       description: '',
       getChildren: (): undefined[] => [],
     },
@@ -40,6 +45,13 @@ export class FunctionNodeImpl implements FunctionNode {
     localFunctionsNode: {
       icon: '',
       tooltip: '{label}',
+      description: '',
+      // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+      getChildren: () => this.func.getLocalFunction(this),
+    },
+    localFunctions: {
+      icon: '',
+      tooltip: 'Function: {label}',
       description: '',
       getChildren: (): undefined[] => [],
     },
@@ -58,9 +70,8 @@ export class FunctionNodeImpl implements FunctionNode {
     public readonly contextValue: FunctionContextType,
     protected readonly func: Func,
     public readonly collapsibleState: TreeItemCollapsibleState = TreeItemCollapsibleState.Collapsed,
+    public readonly contextPath?: Uri,
     public readonly uid?: string,
-    public readonly creationTime?: string,
-    public readonly state?: string,
   ) {}
 
   // get iconPath(): Uri {

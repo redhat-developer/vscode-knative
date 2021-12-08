@@ -13,9 +13,11 @@ export const enum Kind {
 
 export enum FunctionContextType {
   NONE = 'none',
+  NONEWORKSPACE = 'noneWorkspace',
   FUNCTION = 'functions',
   FUNCTIONSNODE = 'functionsNode',
   LOCAlFUNCTIONSNODE = 'localFunctionsNode',
+  LOCAlFUNCTIONS = 'localFunctions',
 }
 
 export enum ServingContextType {
