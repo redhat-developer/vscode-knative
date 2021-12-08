@@ -55,7 +55,7 @@ const languageSelect: Array<Select> = [
 
 const templateSelect: Array<Select> = [
   { key: 'http', label: 'http' },
-  { key: 'events', label: 'events' },
+  { key: 'cloudevents', label: 'cloudevents' },
 ];
 
 function validateInputField(pathValue: string, message: string, id: string, items: ValidatorResponseItem[]): ValidatorResponse {
@@ -206,6 +206,8 @@ function createFunctionForm(context: vscode.ExtensionContext): WebviewWizard {
           async () => {
             const result: CliExitData = await knExecutor.execute(
               FuncAPI.createFunc(data.functionName, data.selectLanguage, data.selectTemplate, data.selectLocation),
+              process.cwd(),
+              false,
             );
             if (result.error) {
               telemetryLogError('Fail_to_create_function', result.error);

@@ -32,7 +32,7 @@ export async function deleteFunction(context: FunctionNode): Promise<string> {
     async () => {
       let result: CliExitData;
       try {
-        result = await knExecutor.execute(FuncAPI.deleteFunc(context.getName()));
+        result = await knExecutor.execute(FuncAPI.deleteFunc(context.getName()), process.cwd(), false);
       } catch (err) {
         // eslint-disable-next-line @typescript-eslint/no-floating-promises
         vscode.window.showErrorMessage(`Fail deleted Function: ${getStderrString(err)}`);
