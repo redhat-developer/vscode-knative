@@ -55,6 +55,12 @@ export class FunctionNodeImpl implements FunctionNode {
       description: '',
       getChildren: (): undefined[] => [],
     },
+    localFunctionsEnablement: {
+      icon: '',
+      tooltip: '{label}',
+      description: '',
+      getChildren: (): undefined[] => [],
+    },
     functions: {
       icon: '',
       tooltip: 'Function: {label}',
@@ -79,7 +85,10 @@ export class FunctionNodeImpl implements FunctionNode {
   // }
 
   get tooltip(): string {
-    if (this.contextValue === FunctionContextType.LOCAlFUNCTIONS) {
+    if (
+      this.contextValue === FunctionContextType.LOCAlFUNCTIONS ||
+      this.contextValue === FunctionContextType.LOCAlFUNCTIONSENABLEMENT
+    ) {
       return format(
         `Name: ${this.CONTEXT_DATA[this.contextValue].tooltip} RunTime: ${this.runtime} Context: ${this.contextPath.fsPath}`,
         this,

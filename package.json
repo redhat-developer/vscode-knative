@@ -147,7 +147,8 @@
     "onCommand:function.build",
     "onCommand:function.deploy.Palette",
     "onCommand:function.deploy",
-    "onCommand:function.run"
+    "onCommand:function.run",
+    "onCommand:function.run.enablement"
   ],
   "contributes": {
     "commands": [
@@ -262,6 +263,12 @@
         "command": "function.run",
         "title": "Run",
         "category": "Knative"
+      },
+      {
+        "command": "function.run.enablement",
+        "title": "Run",
+        "category": "Knative",
+        "enablement": "function:run"
       }
     ],
     "keybindings": [
@@ -295,6 +302,10 @@
         },
         {
           "command": "function.run",
+          "when": "false"
+        },
+        {
+          "command": "function.run.enablement",
           "when": "false"
         },
         {
@@ -355,7 +366,7 @@
         },
         {
           "command": "function.build",
-          "when": "view == knativeFunctionProjectExplorer && viewItem == localFunctions",
+          "when": "view == knativeFunctionProjectExplorer && viewItem =~ /^(localFunctions|localFunctionsEnablement)$/",
           "group": "c1@1"
         },
         {
@@ -364,8 +375,13 @@
           "group": "c1@2"
         },
         {
+          "command": "function.run.enablement",
+          "when": "view == knativeFunctionProjectExplorer && viewItem == localFunctionsEnablement",
+          "group": "c1@2"
+        },
+        {
           "command": "function.deploy",
-          "when": "view == knativeFunctionProjectExplorer && viewItem == localFunctions",
+          "when": "view == knativeFunctionProjectExplorer && viewItem =~ /^(localFunctions|localFunctionsEnablement)$/",
           "group": "c1@3"
         },
         {

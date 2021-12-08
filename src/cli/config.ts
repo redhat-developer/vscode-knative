@@ -18,6 +18,7 @@ export enum FunctionContextType {
   FUNCTIONSNODE = 'functionsNode',
   LOCAlFUNCTIONSNODE = 'localFunctionsNode',
   LOCAlFUNCTIONS = 'localFunctions',
+  LOCAlFUNCTIONSENABLEMENT = 'localFunctionsEnablement',
 }
 
 export enum ServingContextType {

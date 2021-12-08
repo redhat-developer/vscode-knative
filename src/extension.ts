@@ -6,6 +6,7 @@
 import * as vscode from 'vscode';
 import { CmdCliConfig } from './cli/cli-config';
 import { KN_RESOURCE_SCHEME } from './cli/virtualfs';
+import { CommandContext, setCommandContext } from './commands';
 import { openTreeItemInEditor } from './editor/knativeOpenTextDocument';
 import { KnativeReadonlyProvider, KN_READONLY_SCHEME } from './editor/knativeReadonlyProvider';
 import { EventingExplorer } from './eventingTree/eventingExplorer';
@@ -31,6 +32,8 @@ let disposable: vscode.Disposable[];
 export async function activate(extensionContext: vscode.ExtensionContext): Promise<void> {
   // eslint-disable-next-line @typescript-eslint/no-floating-promises
   startTelemetry(extensionContext);
+  // eslint-disable-next-line @typescript-eslint/no-floating-promises
+  setCommandContext(CommandContext.funcDisableRun, false);
   // Call the detect early here so that we avoid race conditions when the information is needed later.
   await CmdCliConfig.detectOrDownload('kn');
   const servingExplorer = new ServingExplorer();

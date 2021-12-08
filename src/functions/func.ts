@@ -137,12 +137,24 @@ export class FuncImpl implements Func {
       const funcYaml: string = await fs.readFile(path.join(folderUri.fsPath, 'func.yaml'), 'utf-8');
       // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       const funcData: FuncContent[] = yaml.safeLoadAll(funcYaml);
-      if (funcData && funcData?.[0]?.name) {
+      if (funcData && funcData?.[0]?.name && funcData?.[0]?.image.trim()) {
         functionList.push(
           new FunctionNodeImpl(
             func,
             funcData[0].name,
             FunctionContextType.LOCAlFUNCTIONS,
+            this,
+            TreeItemCollapsibleState.None,
+            folderUri,
+            funcData[0].runtime,
+          ),
+        );
+      } else if (funcData && funcData?.[0]?.name && !funcData?.[0]?.image.trim()) {
+        functionList.push(
+          new FunctionNodeImpl(
+            func,
+            funcData[0].name,
+            FunctionContextType.LOCAlFUNCTIONSENABLEMENT,
             this,
             TreeItemCollapsibleState.None,
             folderUri,
