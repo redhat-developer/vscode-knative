@@ -46,8 +46,10 @@ export async function activate(extensionContext: vscode.ExtensionContext): Promi
     vscode.commands.registerCommand('function.explorer.refresh', () => functionExplorer.refresh()),
     vscode.commands.registerCommand('function.explorer.create', () => createFunction(extensionContext)),
     vscode.commands.registerCommand('function.delete', (context) => deleteFunction(context)),
-    vscode.commands.registerCommand('function.build', () => buildFunction()),
-    vscode.commands.registerCommand('function.deploy', () => deployFunction()),
+    vscode.commands.registerCommand('function.build', (context) => buildFunction(context)),
+    vscode.commands.registerCommand('function.deploy', (context) => deployFunction(context)),
+    vscode.commands.registerCommand('function.build.Palette', () => buildFunction()),
+    vscode.commands.registerCommand('function.deploy.Palette', () => deployFunction()),
     vscode.commands.registerCommand('knative.service.open-in-browser', async (treeItem: ServingTreeItem) => {
       const item = treeItem.getKnativeItem();
       if (item instanceof Service) {

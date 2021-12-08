@@ -11,6 +11,7 @@ import { knExecutor } from '../../cli/execute';
 import { FuncAPI } from '../../cli/func-api';
 import { telemetryLog } from '../../telemetry';
 import { ExistingWorkspaceFolderPick } from '../../util/existing-workspace-folder-pick';
+import { FunctionNode } from '../function-tree-view/functionsTreeItem';
 import { FolderPick, FuncContent, ImageAndBuild } from '../function-type';
 
 const imageRegex = RegExp('[^/]+\\.[^/.]+\\/([^/.]+)(?:\\/[\\w\\s._-]*([\\w\\s._-]))*(?::[a-z0-9\\.-]+)?$');
@@ -102,37 +103,48 @@ async function pathFunction(): Promise<FolderPick> {
   return selectedFolderPick;
 }
 
-export async function buildFunction(): Promise<void> {
-  const selectedFolderPick = await pathFunction();
-  if (!selectedFolderPick) {
-    return null;
+export async function buildFunction(context?: FunctionNode): Promise<void> {
+  let selectedFolderPick: FolderPick;
+  if (!context) {
+    selectedFolderPick = await pathFunction();
+    if (!selectedFolderPick) {
+      return null;
+    }
+    if (!selectedFolderPick && selectedFolderPick.workspaceFolder.uri) {
+      return null;
+    }
   }
-  if (!selectedFolderPick && selectedFolderPick.workspaceFolder.uri) {
-    return null;
-  }
-  const funcData = await functionImage(selectedFolderPick.workspaceFolder.uri);
+  const funcData = await functionImage(context ? context.contextPath : selectedFolderPick.workspaceFolder.uri);
   if (!funcData) {
     return null;
   }
   telemetryLog('function_build_command', 'Build command execute');
   await knExecutor.executeInTerminal(
-    FuncAPI.buildFunc(selectedFolderPick.workspaceFolder.uri.fsPath, funcData.image, funcData.builder),
+    FuncAPI.buildFunc(
+      context ? context.contextPath.fsPath : selectedFolderPick.workspaceFolder.uri.fsPath,
+      funcData.image,
+      funcData.builder,
+    ),
   );
 }
 
-export async function deployFunction(): Promise<void> {
-  const selectedFolderPick = await pathFunction();
-  if (!selectedFolderPick) {
-    return null;
+export async function deployFunction(context?: FunctionNode): Promise<void> {
+  let selectedFolderPick: FolderPick;
+  if (!context) {
+    selectedFolderPick = await pathFunction();
+    if (!selectedFolderPick) {
+      return null;
+    }
+    if (!selectedFolderPick && selectedFolderPick.workspaceFolder.uri) {
+      return null;
+    }
   }
-  if (!selectedFolderPick && selectedFolderPick.workspaceFolder.uri) {
-    // to do
-    return null;
-  }
-  const funcData = await functionImage(selectedFolderPick.workspaceFolder.uri, true);
+  const funcData = await functionImage(context ? context.contextPath : selectedFolderPick.workspaceFolder.uri, true);
   if (!funcData) {
     return null;
   }
   telemetryLog('function_deploy_command', 'Deploy command execute');
-  await knExecutor.executeInTerminal(FuncAPI.deployFunc(selectedFolderPick.workspaceFolder.uri.fsPath, funcData.image));
+  await knExecutor.executeInTerminal(
+    FuncAPI.deployFunc(context ? context.contextPath.fsPath : selectedFolderPick.workspaceFolder.uri.fsPath, funcData.image),
+  );
 }
