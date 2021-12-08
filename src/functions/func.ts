@@ -139,7 +139,15 @@ export class FuncImpl implements Func {
       const funcData: FuncContent[] = yaml.safeLoadAll(funcYaml);
       if (funcData && funcData?.[0]?.name) {
         functionList.push(
-          new FunctionNodeImpl(func, funcData[0].name, FunctionContextType.FUNCTION, this, TreeItemCollapsibleState.None),
+          new FunctionNodeImpl(
+            func,
+            funcData[0].name,
+            FunctionContextType.LOCAlFUNCTIONS,
+            this,
+            TreeItemCollapsibleState.None,
+            folderUri,
+            funcData[0].runtime,
+          ),
         );
       }
     }

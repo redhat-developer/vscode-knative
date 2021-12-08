@@ -51,7 +51,7 @@ export class FunctionNodeImpl implements FunctionNode {
     },
     localFunctions: {
       icon: '',
-      tooltip: 'Function: {label}',
+      tooltip: '{label}',
       description: '',
       getChildren: (): undefined[] => [],
     },
@@ -71,6 +71,7 @@ export class FunctionNodeImpl implements FunctionNode {
     protected readonly func: Func,
     public readonly collapsibleState: TreeItemCollapsibleState = TreeItemCollapsibleState.Collapsed,
     public readonly contextPath?: Uri,
+    public readonly runtime?: string,
     public readonly uid?: string,
   ) {}
 
@@ -78,6 +79,12 @@ export class FunctionNodeImpl implements FunctionNode {
   // }
 
   get tooltip(): string {
+    if (this.contextValue === FunctionContextType.LOCAlFUNCTIONS) {
+      return format(
+        `Name: ${this.CONTEXT_DATA[this.contextValue].tooltip} RunTime: ${this.runtime} Context: ${this.contextPath.fsPath}`,
+        this,
+      );
+    }
     return format(this.CONTEXT_DATA[this.contextValue].tooltip, this);
   }
 

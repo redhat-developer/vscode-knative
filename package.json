@@ -143,8 +143,11 @@
     "onCommand:service.output",
     "onCommand:function.explorer.refresh",
     "onCommand:function.explorer.create",
+    "onCommand:function.build.Palette",
     "onCommand:function.build",
-    "onCommand:function.deploy"
+    "onCommand:function.deploy.Palette",
+    "onCommand:function.deploy",
+    "onCommand:function.run"
   ],
   "contributes": {
     "commands": [
@@ -232,16 +235,32 @@
       {
         "command": "function.explorer.create",
         "title": "Create Function",
-        "category": "Knative"
+        "category": "Knative",
+        "icon": "$(plus)"
       },
       {
-        "command": "function.build",
+        "command": "function.build.Palette",
         "title": "Build Function",
         "category": "Knative"
       },
       {
-        "command": "function.deploy",
+        "command": "function.build",
+        "title": "Build",
+        "category": "Knative"
+      },
+      {
+        "command": "function.deploy.Palette",
         "title": "Deploy Function",
+        "category": "Knative"
+      },
+      {
+        "command": "function.deploy",
+        "title": "Deploy",
+        "category": "Knative"
+      },
+      {
+        "command": "function.run",
+        "title": "Run",
         "category": "Knative"
       }
     ],
@@ -264,6 +283,18 @@
         },
         {
           "command": "function.delete",
+          "when": "false"
+        },
+        {
+          "command": "function.build",
+          "when": "false"
+        },
+        {
+          "command": "function.deploy",
+          "when": "false"
+        },
+        {
+          "command": "function.run",
           "when": "false"
         },
         {
@@ -323,6 +354,21 @@
           "group": "c2"
         },
         {
+          "command": "function.build",
+          "when": "view == knativeFunctionProjectExplorer && viewItem == localFunctions",
+          "group": "c1@1"
+        },
+        {
+          "command": "function.run",
+          "when": "view == knativeFunctionProjectExplorer && viewItem == localFunctions",
+          "group": "c1@2"
+        },
+        {
+          "command": "function.deploy",
+          "when": "view == knativeFunctionProjectExplorer && viewItem == localFunctions",
+          "group": "c1@3"
+        },
+        {
           "command": "service.explorer.tag",
           "when": "view == knativeServingProjectExplorer && viewItem =~ /revision.*/g",
           "group": "c2"
@@ -330,9 +376,14 @@
       ],
       "view/title": [
         {
-          "command": "function.explorer.refresh",
+          "command": "function.explorer.create",
           "when": "view == knativeFunctionProjectExplorer",
           "group": "navigation@1"
+        },
+        {
+          "command": "function.explorer.refresh",
+          "when": "view == knativeFunctionProjectExplorer",
+          "group": "navigation@2"
         },
         {
           "command": "eventing.explorer.refresh",
