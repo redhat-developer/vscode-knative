@@ -16,6 +16,11 @@ export class FuncAPI {
     return funcCliCommand(createCommand);
   }
 
+  static functionInfo(location: string): CliCommand {
+    const createCommand = ['info', '-p', location, '-o', 'json'];
+    return funcCliCommand(createCommand);
+  }
+
   static buildFunc(location: string, image: string, builder?: string): CliCommand {
     let buildCommand: string[];
     if (builder) {

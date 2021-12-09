@@ -31,6 +31,10 @@ export class KubectlAPI {
     return kubectlCliCommand(['version', '--short', '--client']);
   }
 
+  static currentNamesapce(): CliCommand {
+    return kubectlCliCommand(['config', 'view', '--minify', '-o', 'json']);
+  }
+
   /**
    * Returns just the version number without the rest of the printed text.
    *

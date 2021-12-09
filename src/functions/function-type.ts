@@ -31,3 +31,19 @@ export interface ImageAndBuild {
   image?: string;
   builder?: string;
 }
+
+export interface ContextList {
+  name?: string;
+  context?: { namespace: string };
+}
+
+export interface Namespace {
+  Kind?: string;
+  contexts?: [ContextList];
+}
+
+export interface FunctionInfo {
+  name?: string;
+  image?: string;
+  namespace?: string;
+}

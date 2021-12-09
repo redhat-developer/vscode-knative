@@ -13,6 +13,7 @@ import { telemetryLog } from '../../telemetry';
 import { ExistingWorkspaceFolderPick } from '../../util/existing-workspace-folder-pick';
 import { FunctionNode } from '../function-tree-view/functionsTreeItem';
 import { FolderPick, FuncContent, ImageAndBuild } from '../function-type';
+import { functionExplorer } from '../functionsExplorer';
 
 const imageRegex = RegExp('[^/]+\\.[^/.]+\\/([^/.]+)(?:\\/[\\w\\s._-]*([\\w\\s._-]))*(?::[a-z0-9\\.-]+)?$');
 
@@ -119,6 +120,8 @@ export async function buildFunction(context?: FunctionNode): Promise<void> {
     return null;
   }
   telemetryLog('function_build_command', 'Build command execute');
+  // eslint-disable-next-line @typescript-eslint/no-floating-promises
+  functionExplorer.refresh();
   await knExecutor.executeInTerminal(
     FuncAPI.buildFunc(
       context ? context.contextPath.fsPath : selectedFolderPick.workspaceFolder.uri.fsPath,
@@ -144,6 +147,8 @@ export async function deployFunction(context?: FunctionNode): Promise<void> {
     return null;
   }
   telemetryLog('function_deploy_command', 'Deploy command execute');
+  // eslint-disable-next-line @typescript-eslint/no-floating-promises
+  functionExplorer.refresh();
   await knExecutor.executeInTerminal(
     FuncAPI.deployFunc(context ? context.contextPath.fsPath : selectedFolderPick.workspaceFolder.uri.fsPath, funcData.image),
   );

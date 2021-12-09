@@ -1,3 +1,4 @@
+/* eslint-disable import/no-cycle */
 /*-----------------------------------------------------------------------------------------------
  *  Copyright (c) Red Hat, Inc. All rights reserved.
  *  Licensed under the MIT License. See LICENSE file in the project root for license information.
@@ -7,13 +8,14 @@ import * as path from 'path';
 import { TreeItemCollapsibleState, Uri, window, workspace } from 'vscode';
 import * as fs from 'fs-extra';
 import * as yaml from 'js-yaml';
-// eslint-disable-next-line import/no-cycle
 import { FunctionNode, FunctionNodeImpl } from './function-tree-view/functionsTreeItem';
-import { FuncContent, FunctionList } from './function-type';
+import { FuncContent, FunctionInfo, FunctionList, Namespace } from './function-type';
+import { functionExplorer } from './functionsExplorer';
 import { CliExitData } from '../cli/cmdCli';
 import { FunctionContextType } from '../cli/config';
 import { knExecutor } from '../cli/execute';
 import { FuncAPI } from '../cli/func-api';
+import { KubectlAPI } from '../cli/kubectl-api';
 import { compareNodes } from '../knative/knativeItem';
 import { telemetryLog, telemetryLogError } from '../telemetry';
 import { getStderrString } from '../util/stderrstring';
@@ -133,10 +135,34 @@ export class FuncImpl implements Func {
     }
     // eslint-disable-next-line no-restricted-syntax
     for (const folderUri of folders) {
+      let funcStatus = false;
       // eslint-disable-next-line no-await-in-loop
       const funcYaml: string = await fs.readFile(path.join(folderUri.fsPath, 'func.yaml'), 'utf-8');
+      // eslint-disable-next-line no-await-in-loop
+      const result = await knExecutor.execute(KubectlAPI.currentNamesapce(), process.cwd(), false);
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+      const currentNamespace: Namespace = JSON.parse(result.stdout);
+      const getCurrentNamespace = currentNamespace.contexts[0].context.namespace;
+      // eslint-disable-next-line no-await-in-loop
+      const funcInfoResult = await knExecutor.execute(FuncAPI.functionInfo(folderUri.fsPath), process.cwd(), false);
+      let functionNamespace: FunctionInfo;
+      try {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+        functionNamespace = JSON.parse(funcInfoResult.stdout);
+      } catch (e) {
+        functionNamespace = undefined;
+      }
+      const getFunctionNamespace = functionNamespace?.namespace;
       // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       const funcData: FuncContent[] = yaml.safeLoadAll(funcYaml);
+      if (getCurrentNamespace === getFunctionNamespace) {
+        funcStatus = true;
+      }
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      fs.watch(folderUri.fsPath, (eventName, filename) => {
+        // eslint-disable-next-line @typescript-eslint/no-floating-promises
+        functionExplorer.refresh();
+      });
       if (funcData && funcData?.[0]?.name && funcData?.[0]?.image.trim()) {
         functionList.push(
           new FunctionNodeImpl(
@@ -147,6 +173,7 @@ export class FuncImpl implements Func {
             TreeItemCollapsibleState.None,
             folderUri,
             funcData[0].runtime,
+            funcStatus,
           ),
         );
       } else if (funcData && funcData?.[0]?.name && !funcData?.[0]?.image.trim()) {
@@ -159,6 +186,7 @@ export class FuncImpl implements Func {
             TreeItemCollapsibleState.None,
             folderUri,
             funcData[0].runtime,
+            funcStatus,
           ),
         );
       }

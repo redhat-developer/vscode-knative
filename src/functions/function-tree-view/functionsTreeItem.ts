@@ -6,6 +6,7 @@
 import { ProviderResult, QuickPickItem, TreeItemCollapsibleState, Uri } from 'vscode';
 import format = require('string-format');
 import { FunctionContextType } from '../../cli/config';
+import { GlyphChars } from '../../util/constants';
 // eslint-disable-next-line import/no-cycle
 import { Func } from '../func';
 
@@ -78,11 +79,24 @@ export class FunctionNodeImpl implements FunctionNode {
     public readonly collapsibleState: TreeItemCollapsibleState = TreeItemCollapsibleState.Collapsed,
     public readonly contextPath?: Uri,
     public readonly runtime?: string,
+    public readonly status?: boolean,
     public readonly uid?: string,
   ) {}
 
   // get iconPath(): Uri {
   // }
+
+  get description(): string {
+    if (this.contextValue === FunctionContextType.LOCAlFUNCTIONS && this.status) {
+      return `${GlyphChars.Space}${GlyphChars.Push} pushed`;
+    }
+    if (this.contextValue === FunctionContextType.LOCAlFUNCTIONS && !this.status) {
+      return `${GlyphChars.Space}${GlyphChars.NotPushed} not pushed`;
+    }
+    if (this.contextValue === FunctionContextType.LOCAlFUNCTIONSENABLEMENT && !this.status) {
+      return `${GlyphChars.Space}${GlyphChars.NotPushed} not pushed`;
+    }
+  }
 
   get tooltip(): string {
     if (
