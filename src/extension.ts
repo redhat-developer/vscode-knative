@@ -14,6 +14,7 @@ import { EventingTreeItem } from './eventingTree/eventingTreeItem';
 import { buildFunction, deployFunction } from './functions/function-command/build-and-deploy-function';
 import { createFunction } from './functions/function-command/create-function';
 import { deleteFunction } from './functions/function-command/delete-function';
+import { runFunction } from './functions/function-command/run-function';
 import { functionExplorer } from './functions/functionsExplorer';
 import { Revision } from './knative/revision';
 import { Service } from './knative/service';
@@ -51,6 +52,7 @@ export async function activate(extensionContext: vscode.ExtensionContext): Promi
     vscode.commands.registerCommand('function.delete', (context) => deleteFunction(context)),
     vscode.commands.registerCommand('function.build', (context) => buildFunction(context)),
     vscode.commands.registerCommand('function.deploy', (context) => deployFunction(context)),
+    vscode.commands.registerCommand('function.run', (context) => runFunction(context)),
     vscode.commands.registerCommand('function.build.Palette', () => buildFunction()),
     vscode.commands.registerCommand('function.deploy.Palette', () => deployFunction()),
     vscode.commands.registerCommand('knative.service.open-in-browser', async (treeItem: ServingTreeItem) => {

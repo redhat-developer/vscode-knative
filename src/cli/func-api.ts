@@ -31,6 +31,11 @@ export class FuncAPI {
     return funcCliCommand(deployCommand);
   }
 
+  static runFunc(location: string): CliCommand {
+    const deployCommand = ['run', '-p', location];
+    return funcCliCommand(deployCommand);
+  }
+
   static deleteFunc(name: string): CliCommand {
     const deleteCommand = ['delete', name];
     return funcCliCommand(deleteCommand);
