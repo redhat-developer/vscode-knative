@@ -2,9 +2,9 @@ name: CI
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
   pull_request:
-    branches: [ main ]
+    branches: [main]
 
 jobs:
   build:
@@ -15,22 +15,24 @@ jobs:
         node: [10]
 
     steps:
-    - uses: actions/checkout@v2
-    - name: Setup node
-      uses: actions/setup-node@v1
-      with:
-        node-version: ${{ matrix.node }}
-    - run: npm install
-    - run: npm run build
-    - name: Run headless test
-      uses: GabrielBB/xvfb-action@v1.0
-      with:
-        run: npm test
-    - name: Run UI tests
-      uses: GabrielBB/xvfb-action@v1.0
-      with:
-        run: npm run base-ui-test
-    - uses: codecov/codecov-action@v1
-      name: codecov-upload
-      with:
-        file: ./coverage/coverage-final.json
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: Setup node
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node }}
+      - run: npm install
+      - run: npm run build
+      - name: Run headless test
+        uses: GabrielBB/xvfb-action@v1.0
+        with:
+          run: npm test
+      - name: Run UI tests
+        uses: GabrielBB/xvfb-action@v1.0
+        with:
+          run: npm run base-ui-test
+      - uses: codecov/codecov-action@v1
+        name: codecov-upload
+        with:
+          file: ./coverage/coverage-final.json
