@@ -86,7 +86,7 @@ suite('Tekton/Task', () => {
       value: 'c:\\',
     };
     const result = selectLocationValidation(selectLocation, []);
-    if (Platform.OS === 'win32') {
+    if (process.platform === 'win32') {
       expect(result).deep.equal({
         items: [
           {
@@ -109,7 +109,7 @@ suite('Tekton/Task', () => {
       value: 'c:',
     };
     const result = selectLocationValidation(selectLocation, []);
-    if (Platform.OS === 'win32') {
+    if (process.platform === 'win32') {
       expect(result).deep.equal({
         items: [
           {
