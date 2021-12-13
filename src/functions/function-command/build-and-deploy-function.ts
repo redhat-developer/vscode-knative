@@ -111,9 +111,6 @@ export async function buildFunction(context?: FunctionNode): Promise<void> {
     if (!selectedFolderPick) {
       return null;
     }
-    if (!selectedFolderPick && selectedFolderPick.workspaceFolder.uri) {
-      return null;
-    }
   }
   const funcData = await functionImage(context ? context.contextPath : selectedFolderPick.workspaceFolder.uri);
   if (!funcData) {
@@ -136,9 +133,6 @@ export async function deployFunction(context?: FunctionNode): Promise<void> {
   if (!context) {
     selectedFolderPick = await pathFunction();
     if (!selectedFolderPick) {
-      return null;
-    }
-    if (!selectedFolderPick && selectedFolderPick.workspaceFolder.uri) {
       return null;
     }
   }

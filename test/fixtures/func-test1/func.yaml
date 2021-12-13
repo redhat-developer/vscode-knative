@@ -1,0 +1,22 @@
+name: node-test
+namespace: ""
+runtime: go
+image: ""
+imageDigest: sha256:6a064d4134d53baebcf11caea45585cd288839646d7ce7a42c8f8d582c6b954a
+builder: ""
+builders:
+  base: gcr.io/paketo-buildpacks/builder:base
+  default: gcr.io/paketo-buildpacks/builder:base
+  full: gcr.io/paketo-buildpacks/builder:full
+buildpacks:
+  - paketo-buildpacks/go-dist
+  - ghcr.io/boson-project/go-function-buildpack:tip
+healthEndpoints:
+  liveness: /health/liveness
+  readiness: /health/readiness
+volumes: []
+buildEnvs: []
+envs: []
+annotations: {}
+options: {}
+labels: []
