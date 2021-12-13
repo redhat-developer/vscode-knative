@@ -86,31 +86,19 @@ suite('Tekton/Task', () => {
       value: 'c:\\',
     };
     const result = selectLocationValidation(selectLocation, []);
-    expect(result).deep.equal({
-      items: [
-        {
-          severity: 4,
-          template: {
-            content: 'Selected path has invalid format.',
-            id: 'selectLocation',
+    if (Platform.OS === 'win32') {
+      expect(result).deep.equal({
+        items: [
+          {
+            severity: 4,
+            template: {
+              content: 'Selected path has invalid format.',
+              id: 'selectLocation',
+            },
           },
-        },
-        {
-          severity: 4,
-          template: {
-            content: 'The selection is not a valid absolute path.',
-            id: 'selectLocation',
-          },
-        },
-        {
-          severity: 4,
-          template: {
-            content: 'Selected disk does not exist.',
-            id: 'selectLocation',
-          },
-        },
-      ],
-    });
+        ],
+      });
+    }
   });
 
   test("don't show error message when path is valid ", () => {
@@ -121,24 +109,19 @@ suite('Tekton/Task', () => {
       value: 'c:',
     };
     const result = selectLocationValidation(selectLocation, []);
-    expect(result).deep.equal({
-      items: [
-        {
-          severity: 4,
-          template: {
-            content: 'The selection is not a valid absolute path.',
-            id: 'selectLocation',
+    if (Platform.OS === 'win32') {
+      expect(result).deep.equal({
+        items: [
+          {
+            severity: 4,
+            template: {
+              content: 'The selection is not a valid absolute path.',
+              id: 'selectLocation',
+            },
           },
-        },
-        {
-          severity: 4,
-          template: {
-            content: 'Selected disk does not exist.',
-            id: 'selectLocation',
-          },
-        },
-      ],
-    });
+        ],
+      });
+    }
   });
 
   test("don't show error message when path is valid ", () => {
