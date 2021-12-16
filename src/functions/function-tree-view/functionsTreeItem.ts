@@ -5,8 +5,7 @@
 
 import { ProviderResult, QuickPickItem, TreeItemCollapsibleState, Uri } from 'vscode';
 import format = require('string-format');
-import { FunctionContextType } from '../../cli/config';
-import { GlyphChars } from '../../util/constants';
+import { FunctionContextType, FunctionStatus } from '../../cli/config';
 // eslint-disable-next-line import/no-cycle
 import { Func } from '../func';
 
@@ -20,6 +19,7 @@ export interface FunctionNode extends QuickPickItem {
   contextPath?: Uri;
   collapsibleState?: TreeItemCollapsibleState;
   uid?: string;
+  functionStatus?: string;
 }
 
 export class FunctionNodeImpl implements FunctionNode {
@@ -30,25 +30,12 @@ export class FunctionNodeImpl implements FunctionNode {
       description: '',
       getChildren: (): undefined[] => [],
     },
-    noneWorkspace: {
+    namespaceNode: {
       icon: '',
-      tooltip: '{label}',
-      description: '',
-      getChildren: (): undefined[] => [],
-    },
-    functionsNode: {
-      icon: '',
-      tooltip: '{label}',
+      tooltip: 'NameSpace: {label}',
       description: '',
       // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
       getChildren: () => this.func.getDeployedFunction(this),
-    },
-    localFunctionsNode: {
-      icon: '',
-      tooltip: '{label}',
-      description: '',
-      // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-      getChildren: () => this.func.getLocalFunction(this),
     },
     localFunctions: {
       icon: '',
@@ -79,7 +66,7 @@ export class FunctionNodeImpl implements FunctionNode {
     public readonly collapsibleState: TreeItemCollapsibleState = TreeItemCollapsibleState.Collapsed,
     public readonly contextPath?: Uri,
     public readonly runtime?: string,
-    public readonly status?: boolean,
+    public readonly functionStatus?: string,
     public readonly uid?: string,
   ) {}
 
@@ -87,14 +74,14 @@ export class FunctionNodeImpl implements FunctionNode {
   // }
 
   get description(): string {
-    if (this.contextValue === FunctionContextType.LOCAlFUNCTIONS && this.status) {
-      return `${GlyphChars.Space}${GlyphChars.Push} pushed`;
+    if (this.functionStatus === FunctionStatus.CLUSTERLOCALBOTH) {
+      return 'Local/Cluster';
     }
-    if (this.contextValue === FunctionContextType.LOCAlFUNCTIONS && !this.status) {
-      return `${GlyphChars.Space}${GlyphChars.NotPushed} not pushed`;
+    if (this.functionStatus === FunctionStatus.LOCALONLY) {
+      return 'Local Only';
     }
-    if (this.contextValue === FunctionContextType.LOCAlFUNCTIONSENABLEMENT && !this.status) {
-      return `${GlyphChars.Space}${GlyphChars.NotPushed} not pushed`;
+    if (this.functionStatus === FunctionStatus.CLUSTERONLY) {
+      return 'Cluster Only';
     }
   }
 

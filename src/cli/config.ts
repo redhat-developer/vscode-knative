@@ -13,12 +13,16 @@ export const enum Kind {
 
 export enum FunctionContextType {
   NONE = 'none',
-  NONEWORKSPACE = 'noneWorkspace',
   FUNCTION = 'functions',
-  FUNCTIONSNODE = 'functionsNode',
-  LOCAlFUNCTIONSNODE = 'localFunctionsNode',
+  NAMESPACENODE = 'namespaceNode',
   LOCAlFUNCTIONS = 'localFunctions',
   LOCAlFUNCTIONSENABLEMENT = 'localFunctionsEnablement',
+}
+
+export enum FunctionStatus {
+  CLUSTERONLY = 'clusterOnly',
+  LOCALONLY = 'localOnly',
+  CLUSTERLOCALBOTH = 'clusterLocalBoth',
 }
 
 export enum ServingContextType {

@@ -16,7 +16,7 @@ export class TestItem implements FunctionNode {
     private children = [],
     public contextPath?: Uri,
     public runtime?: string,
-    public status?: boolean,
+    public functionStatus?: string,
   ) {}
 
   getName(): string {

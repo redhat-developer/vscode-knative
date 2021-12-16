@@ -3,11 +3,12 @@
  *  Licensed under the MIT License. See LICENSE file in the project root for license information.
  *-----------------------------------------------------------------------------------------------*/
 
-import { window } from 'vscode';
+import { Uri, window } from 'vscode';
 import * as chai from 'chai';
+import * as fsExtra from 'fs-extra';
 import * as sinon from 'sinon';
 import * as sinonChai from 'sinon-chai';
-import { FunctionContextType } from '../../../src/cli/config';
+import { FunctionContextType, FunctionStatus } from '../../../src/cli/config';
 import { knExecutor } from '../../../src/cli/execute';
 import { FuncImpl } from '../../../src/functions/func';
 import { deleteFunction } from '../../../src/functions/function-command/delete-function';
@@ -21,10 +22,34 @@ suite('Tekton/Task', () => {
   let executeStub: sinon.SinonStub;
   let showWarningMessageStub: sinon.SinonStub;
   let showErrorMessageStub: sinon.SinonStub;
-  const taskRunNode = new TestItem(FuncImpl.ROOT, 'func1', FunctionContextType.FUNCTION, null);
+  const data: Uri = {
+    authority: '',
+    fragment: '',
+    path: 'test',
+    query: '',
+    scheme: 'file',
+    fsPath: 'test',
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    with: (change: { scheme?: string; authority?: string; path?: string; query?: string; fragment?: string }): Uri => {
+      throw new Error('Function not implemented.');
+    },
+    toJSON: () => {
+      throw new Error('Function not implemented.');
+    },
+  };
+  const taskRunNode = new TestItem(
+    FuncImpl.ROOT,
+    'func1',
+    FunctionContextType.FUNCTION,
+    null,
+    data,
+    null,
+    FunctionStatus.CLUSTERLOCALBOTH,
+  );
 
   setup(() => {
     executeStub = sandbox.stub(knExecutor, 'execute');
+    sandbox.stub(fsExtra, 'remove').resolves();
     showWarningMessageStub = sandbox.stub(window, 'showWarningMessage');
     showErrorMessageStub = sandbox.stub(window, 'showErrorMessage');
   });

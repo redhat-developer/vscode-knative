@@ -133,7 +133,6 @@
     "onCommand:eventing.explorer.openFile",
     "onCommand:knative.service.list",
     "onCommand:service.explorer.delete",
-    "onCommand:function.delete",
     "onCommand:service.explorer.edit",
     "onCommand:service.explorer.openFile",
     "onCommand:service.explorer.refresh",
@@ -141,6 +140,7 @@
     "onCommand:service.explorer.apply",
     "onCommand:service.explorer.deleteLocal",
     "onCommand:service.output",
+    "onCommand:function.delete",
     "onCommand:function.explorer.refresh",
     "onCommand:function.explorer.create",
     "onCommand:function.build.Palette",
@@ -148,7 +148,10 @@
     "onCommand:function.deploy.Palette",
     "onCommand:function.deploy",
     "onCommand:function.run",
-    "onCommand:function.run.enablement"
+    "onCommand:function.run.enablement",
+    "onCommand:function.deploy.functionEnablement",
+    "onCommand:function.build.FunctionEnablement",
+    "onCommand:function.run.FunctionEnablement"
   ],
   "contributes": {
     "commands": [
@@ -269,6 +272,24 @@
         "title": "Run",
         "category": "Knative",
         "enablement": "function:run"
+      },
+      {
+        "command": "function.deploy.functionEnablement",
+        "title": "Deploy",
+        "category": "Knative",
+        "enablement": "function:run"
+      },
+      {
+        "command": "function.build.FunctionEnablement",
+        "title": "Build",
+        "category": "Knative",
+        "enablement": "function:run"
+      },
+      {
+        "command": "function.run.FunctionEnablement",
+        "title": "Run",
+        "category": "Knative",
+        "enablement": "function:run"
       }
     ],
     "keybindings": [
@@ -306,6 +327,18 @@
         },
         {
           "command": "function.run.enablement",
+          "when": "false"
+        },
+        {
+          "command": "function.deploy.functionEnablement",
+          "when": "false"
+        },
+        {
+          "command": "function.build.FunctionEnablement",
+          "when": "false"
+        },
+        {
+          "command": "function.run.FunctionEnablement",
           "when": "false"
         },
         {
@@ -361,7 +394,7 @@
         },
         {
           "command": "function.delete",
-          "when": "view == knativeFunctionProjectExplorer && viewItem == functions",
+          "when": "view == knativeFunctionProjectExplorer && viewItem =~ /^(localFunctions|localFunctionsEnablement|functions)$/",
           "group": "c2"
         },
         {
@@ -388,6 +421,21 @@
           "command": "service.explorer.tag",
           "when": "view == knativeServingProjectExplorer && viewItem =~ /revision.*/g",
           "group": "c2"
+        },
+        {
+          "command": "function.build.FunctionEnablement",
+          "when": "view == knativeFunctionProjectExplorer && viewItem == functions",
+          "group": "c1@1"
+        },
+        {
+          "command": "function.run.FunctionEnablement",
+          "when": "view == knativeFunctionProjectExplorer && viewItem == functions",
+          "group": "c1@2"
+        },
+        {
+          "command": "function.deploy.functionEnablement",
+          "when": "view == knativeFunctionProjectExplorer && viewItem == functions",
+          "group": "c1@3"
         }
       ],
       "view/title": [
