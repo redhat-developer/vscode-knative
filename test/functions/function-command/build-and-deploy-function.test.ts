@@ -15,7 +15,7 @@ import { buildFunction, deployFunction } from '../../../src/functions/function-c
 const { expect } = chai;
 chai.use(sinonChai);
 
-suite('Tekton/Task', () => {
+suite('Build-And-Deploy', () => {
   const sandbox = sinon.createSandbox();
   let workspaceFoldersStub: sinon.SinonStub;
   let executeInTerminalStub: sinon.SinonStub;

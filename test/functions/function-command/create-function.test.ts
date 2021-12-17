@@ -15,7 +15,7 @@ import { pathValidation } from '../../../src/functions/validate-item';
 const { expect } = chai;
 chai.use(sinonChai);
 
-suite('Tekton/Task', () => {
+suite('Function/Create', () => {
   const sandbox = sinon.createSandbox();
   let executeStub: sinon.SinonStub;
   let showWarningMessageStub: sinon.SinonStub;

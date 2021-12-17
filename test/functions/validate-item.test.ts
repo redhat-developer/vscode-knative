@@ -12,7 +12,7 @@ import { Platform } from '../../src/util/platform';
 const { expect } = chai;
 chai.use(sinonChai);
 
-suite('Tekton/Task', () => {
+suite('Function/Validate', () => {
   const sandbox = sinon.createSandbox();
   const inputField: content = {
     id: 'functionName',

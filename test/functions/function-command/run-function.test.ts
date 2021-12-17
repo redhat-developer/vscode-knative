@@ -17,7 +17,7 @@ import { TestItem } from '../testFunctionitem';
 const { expect } = chai;
 chai.use(sinonChai);
 
-suite('Tekton/Task', () => {
+suite('Function/Run', () => {
   const sandbox = sinon.createSandbox();
   let executeInTerminalStub: sinon.SinonStub;
   const data: Uri = {

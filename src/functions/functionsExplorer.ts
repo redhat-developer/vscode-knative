@@ -9,7 +9,7 @@ import { func } from './func';
 import { FunctionNode } from './function-tree-view/functionsTreeItem';
 
 export class FunctionExplorer implements TreeDataProvider<FunctionNode>, Disposable {
-  private treeView: TreeView<FunctionNode>;
+  public treeView: TreeView<FunctionNode>;
 
   private onDidChangeTreeDataEmitter: EventEmitter<FunctionNode | undefined> = new EventEmitter<FunctionNode | undefined>();
 

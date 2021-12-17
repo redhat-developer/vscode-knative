@@ -17,7 +17,7 @@ import { TestItem } from '../testFunctionitem';
 const { expect } = chai;
 chai.use(sinonChai);
 
-suite('Tekton/Task', () => {
+suite('Function/Delete', () => {
   const sandbox = sinon.createSandbox();
   let executeStub: sinon.SinonStub;
   let showWarningMessageStub: sinon.SinonStub;
