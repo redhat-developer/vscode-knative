@@ -4,7 +4,7 @@
  *  Licensed under the MIT License. See LICENSE file in the project root for license information.
  *-----------------------------------------------------------------------------------------------*/
 
-import { TreeDataProvider, TreeView, Event, EventEmitter, TreeItem, ProviderResult, Disposable, window } from 'vscode';
+import { TreeDataProvider, TreeView, Event, EventEmitter, TreeItem, ProviderResult, Disposable, window, workspace } from 'vscode';
 import { func } from './func';
 import { FunctionNode } from './function-tree-view/functionsTreeItem';
 
@@ -19,6 +19,10 @@ export class FunctionExplorer implements TreeDataProvider<FunctionNode>, Disposa
 
   constructor() {
     this.treeView = window.createTreeView('knativeFunctionProjectExplorer', { treeDataProvider: this, canSelectMany: true });
+    workspace.onDidChangeWorkspaceFolders(() => {
+      // eslint-disable-next-line @typescript-eslint/no-floating-promises
+      this.refresh();
+    });
   }
 
   // eslint-disable-next-line class-methods-use-this
