@@ -10,13 +10,17 @@ import { KubectlAPI } from '../cli/kubectl-api';
 import { getStderrString } from '../util/stderrstring';
 
 export async function activeNamespace(): Promise<string> {
-  const result = await knExecutor.execute(KubectlAPI.currentNamesapce(), process.cwd(), false);
+  const result = await knExecutor.execute(KubectlAPI.currentNamespace(), process.cwd(), false);
   if (result.error) {
     // eslint-disable-next-line @typescript-eslint/no-floating-promises
     window.showErrorMessage(`Fail to fetch the Namespace Error: ${getStderrString(result.error)}`);
     return null;
   }
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-  const currentNamespace: Namespace = JSON.parse(result.stdout);
-  return currentNamespace.contexts[0].context.namespace;
+  try {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+    const currentNamespace: Namespace = JSON.parse(result.stdout);
+    return currentNamespace.contexts[0].context.namespace;
+  } catch (err) {
+    return null;
+  }
 }

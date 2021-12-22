@@ -19,7 +19,8 @@ import { FuncAPI } from '../cli/func-api';
 
 export interface Func {
   getFunctionNodes(): Promise<FunctionNode[]>;
-  getDeployedFunction(func: FunctionNode): Promise<FunctionNode[]>;
+  getTreeFunction(func: FunctionNode): Promise<FunctionNode[]>;
+  getDeployedFunction(func: FunctionNode): Promise<Map<string, FunctionNode>>;
   getLocalFunction(func: FunctionNode, functionTreeView: Map<string, FunctionNode>): Promise<FunctionNode[]>;
 }
 
@@ -34,35 +35,50 @@ export class FuncImpl implements Func {
   public async _getFunctionsNodes(): Promise<FunctionNode[]> {
     const functionsTree: FunctionNode[] = [];
     const currentNamespace: string = await activeNamespace();
-    const functionsNode = new FunctionNodeImpl(
-      FuncImpl.ROOT,
-      currentNamespace,
-      FunctionContextType.NAMESPACENODE,
-      this,
-      TreeItemCollapsibleState.Collapsed,
-    );
+    let functionsNode: FunctionNode;
+    if (!currentNamespace) {
+      functionsNode = new FunctionNodeImpl(
+        FuncImpl.ROOT,
+        'default',
+        FunctionContextType.FAILNAMESPACENODE,
+        this,
+        TreeItemCollapsibleState.Collapsed,
+      );
+    } else {
+      functionsNode = new FunctionNodeImpl(
+        FuncImpl.ROOT,
+        currentNamespace,
+        FunctionContextType.NAMESPACENODE,
+        this,
+        TreeItemCollapsibleState.Collapsed,
+      );
+    }
     functionsTree.push(functionsNode);
     FuncImpl.ROOT.getChildren = () => functionsTree;
     return functionsTree;
   }
 
-  async getDeployedFunction(func: FunctionNode): Promise<FunctionNode[]> {
+  async getTreeFunction(func: FunctionNode): Promise<FunctionNode[]> {
+    const deployedFunction: Map<string, FunctionNode> = await this.getDeployedFunction(func);
+    const deployedLocalFunction: FunctionNode[] = await this.getLocalFunction(func, deployedFunction);
+    if (deployedLocalFunction.length === 0) {
+      return [
+        new FunctionNodeImpl(func, 'No Functions Found', FunctionContextType.NONE, this, TreeItemCollapsibleState.None, null),
+      ];
+    }
+    return deployedLocalFunction;
+  }
+
+  async getDeployedFunction(func: FunctionNode): Promise<Map<string, FunctionNode>> {
     const functionTreeView = new Map<string, FunctionNode>();
     let result: CliExitData;
+    let functionList: FunctionList[];
     try {
       result = await knExecutor.execute(FuncAPI.funcList(), process.cwd(), false);
-    } catch (err) {
-      // ignores
-    }
-    let functionList: FunctionList[];
-    if (result.error) {
-      // ignores
-    }
-    try {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       functionList = JSON.parse(result.stdout);
-    } catch (error) {
-      // ignore
+    } catch (err) {
+      // ignores
     }
     if (functionList && functionList.length !== 0) {
       functionList.forEach((value) => {
@@ -79,8 +95,7 @@ export class FuncImpl implements Func {
         functionTreeView.set(value.name, obj);
       });
     }
-    // eslint-disable-next-line no-return-await
-    return await this.getLocalFunction(func, functionTreeView);
+    return functionTreeView;
   }
 
   async getLocalFunction(func: FunctionNode, functionTreeView: Map<string, FunctionNode>): Promise<FunctionNode[]> {
@@ -158,9 +173,6 @@ export class FuncImpl implements Func {
       }
     }
     if (functionTreeView.size === 0) {
-      functionList.push(
-        new FunctionNodeImpl(func, 'No Functions Found', FunctionContextType.NONE, this, TreeItemCollapsibleState.None, null),
-      );
       return functionList;
     }
     functionTreeView.forEach((value) => {

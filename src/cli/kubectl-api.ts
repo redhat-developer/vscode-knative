@@ -31,7 +31,7 @@ export class KubectlAPI {
     return kubectlCliCommand(['version', '--short', '--client']);
   }
 
-  static currentNamesapce(): CliCommand {
+  static currentNamespace(): CliCommand {
     return kubectlCliCommand(['config', 'view', '--minify', '-o', 'json']);
   }
 

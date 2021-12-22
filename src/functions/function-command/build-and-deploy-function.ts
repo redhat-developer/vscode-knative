@@ -17,17 +17,25 @@ import { functionExplorer } from '../functionsExplorer';
 
 const imageRegex = RegExp('[^/]+\\.[^/.]+\\/([^/.]+)(?:\\/[\\w\\s._-]*([\\w\\s._-]))*(?::[a-z0-9\\.-]+)?$');
 
-async function functionBuilder(image: string): Promise<ImageAndBuild> {
-  const builder = await vscode.window.showInputBox({
+async function showInputBox(promptMessage: string, inputValidMessage: string): Promise<string> {
+  // eslint-disable-next-line no-return-await
+  return await vscode.window.showInputBox({
     ignoreFocusOut: true,
-    prompt: 'Provide Buildpack builder, either an as a an image name or a mapping name.',
+    prompt: promptMessage,
     validateInput: (value: string) => {
       if (!imageRegex.test(value)) {
-        return 'Provide full image name in the form [registry]/[namespace]/[name]:[tag]';
+        return inputValidMessage;
       }
       return null;
     },
   });
+}
+
+async function functionBuilder(image: string): Promise<ImageAndBuild> {
+  const builder = await showInputBox(
+    'Provide Buildpack builder, either an as a an image name or a mapping name.',
+    'Provide full image name in the form [registry]/[namespace]/[name]:[tag]',
+  );
   if (!builder) {
     return null;
   }
@@ -50,24 +58,15 @@ async function functionImage(selectedFolderPick: vscode.Uri, skipBuilder?: boole
   const imagePick =
     imageList.length === 1
       ? imageList[0]
-      : await vscode.window.showInputBox({
-          ignoreFocusOut: true,
-          prompt: 'Provide full image name in the form [registry]/[namespace]/[name]:[tag]',
-          validateInput: (value: string) => {
-            if (!imageRegex.test(value)) {
-              return 'Provide full image name in the form [registry]/[namespace]/[name]:[tag]';
-            }
-            return null;
-          },
-        });
+      : await showInputBox(
+          'Provide full image name in the form [registry]/[namespace]/[name]:[tag]',
+          'Provide full image name in the form [registry]/[namespace]/[name]:[tag]',
+        );
   if (!imagePick) {
     return null;
   }
   if (!funcData?.[0]?.builder.trim() && !skipBuilder) {
     const builder = await functionBuilder(imagePick);
-    if (!builder) {
-      return null;
-    }
     return builder;
   }
   return { image: imagePick };
@@ -84,7 +83,7 @@ async function pathFunction(): Promise<FolderPick> {
     }
   }
   if (folderPicks.length === 0) {
-    const message = 'No project exit which contain func.yaml in it.';
+    const message = 'No project exist which contain func.yaml in it.';
     telemetryLog('func_yaml_not_found', message);
     // eslint-disable-next-line @typescript-eslint/no-floating-promises
     vscode.window.showInformationMessage(message);
@@ -98,19 +97,24 @@ async function pathFunction(): Promise<FolderPick> {
           ignoreFocusOut: true,
           placeHolder: 'Select function',
         });
-  if (!selectedFolderPick) {
-    return null;
-  }
   return selectedFolderPick;
 }
 
-export async function buildFunction(context?: FunctionNode): Promise<void> {
+async function selectedFolder(context?: FunctionNode): Promise<FolderPick> {
   let selectedFolderPick: FolderPick;
   if (!context) {
     selectedFolderPick = await pathFunction();
     if (!selectedFolderPick) {
       return null;
     }
+  }
+  return selectedFolderPick;
+}
+
+export async function buildFunction(context?: FunctionNode): Promise<void> {
+  const selectedFolderPick: FolderPick = await selectedFolder(context);
+  if (!selectedFolderPick) {
+    return null;
   }
   const funcData = await functionImage(context ? context.contextPath : selectedFolderPick.workspaceFolder.uri);
   if (!funcData) {
@@ -129,12 +133,9 @@ export async function buildFunction(context?: FunctionNode): Promise<void> {
 }
 
 export async function deployFunction(context?: FunctionNode): Promise<void> {
-  let selectedFolderPick: FolderPick;
-  if (!context) {
-    selectedFolderPick = await pathFunction();
-    if (!selectedFolderPick) {
-      return null;
-    }
+  const selectedFolderPick: FolderPick = await selectedFolder(context);
+  if (!selectedFolderPick) {
+    return null;
   }
   const funcData = await functionImage(context ? context.contextPath : selectedFolderPick.workspaceFolder.uri, true);
   if (!funcData) {

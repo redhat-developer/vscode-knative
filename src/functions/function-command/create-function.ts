@@ -64,7 +64,7 @@ export function validateInputField(
   id: string,
   items: ValidatorResponseItem[],
 ): ValidatorResponse {
-  if (fs.existsSync(pathValue) && pathValue) {
+  if (fs.existsSync(pathValue)) {
     items.push(createValidationItem(SEVERITY.ERROR, id, message));
     folderStatus.set('folder_present', true);
     return { items };

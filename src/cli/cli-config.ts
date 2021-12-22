@@ -46,7 +46,7 @@ export interface CliConfig {
   location?: string;
 }
 export interface Config {
-  cmd?: CliConfig;
+  func?: CliConfig;
   kn?: CliConfig;
   kubectl?: CliConfig;
 }
@@ -149,11 +149,8 @@ export class CmdCliConfig {
       if (toolLocation === undefined) {
         const cliFile = `.vs-${cmd}`;
         // Look in [HOME]/.vs-[CMD]/ for the [CMD] cli executable
-        const toolCacheLocation = path.resolve(
-          Platform.getUserHomePath(),
-          cliFile,
-          (CmdCliConfig.tools[cmd] as CliConfig).cmdFileName,
-        );
+        const cliFilePath = path.resolve(Platform.getUserHomePath(), cliFile);
+        const toolCacheLocation = path.resolve(cliFilePath, (CmdCliConfig.tools[cmd] as CliConfig).cmdFileName);
         // If [CMD] cli is installed, get it's install location/path
         const whichLocation = shell.which(cmd);
         // Get a list of locations.
@@ -168,11 +165,7 @@ export class CmdCliConfig {
         // If the cli tool is still not found then we will need to install it.
         if (foundToolLocation === undefined || foundToolLocation === null) {
           // Set the download location for the cli executable.
-          const toolDlLocation = path.resolve(
-            Platform.getUserHomePath(),
-            cliFile,
-            (CmdCliConfig.tools[cmd] as CliConfig).dlFileName,
-          );
+          const toolDlLocation = path.resolve(cliFilePath, (CmdCliConfig.tools[cmd] as CliConfig).dlFileName);
           // Message for expected version number
           const installRequest = `Download and install v${(CmdCliConfig.tools[cmd] as CliConfig).version}`;
           // Create a pop-up that asks to download and install.
@@ -186,7 +179,7 @@ export class CmdCliConfig {
             'Cancel',
           );
           // Ensure that the directory exists. If the directory structure does not exist, then create it.
-          fsExtra.ensureDirSync(path.resolve(Platform.getUserHomePath(), cliFile));
+          fsExtra.ensureDirSync(cliFilePath);
           // If the user selected to download and install then do this.
           if (response === installRequest) {
             // Display a Progress notification while downloading
@@ -231,11 +224,7 @@ export class CmdCliConfig {
                   await CmdCliConfig.detectOrDownload(cmd);
                 } else if (action !== 'Cancel') {
                   if (toolDlLocation.endsWith('.zip') || toolDlLocation.endsWith('.tar.gz')) {
-                    await Archive.unzip(
-                      toolDlLocation,
-                      path.resolve(Platform.getUserHomePath(), cliFile),
-                      (CmdCliConfig.tools[cmd] as CliConfig).filePrefix,
-                    );
+                    await Archive.unzip(toolDlLocation, cliFilePath, (CmdCliConfig.tools[cmd] as CliConfig).filePrefix);
                     await fsExtra.remove(toolDlLocation);
                   } else if (toolDlLocation.endsWith('.gz')) {
                     await Archive.unzip(toolDlLocation, toolCacheLocation, (CmdCliConfig.tools[cmd] as CliConfig).filePrefix);

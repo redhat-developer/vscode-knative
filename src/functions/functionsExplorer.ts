@@ -60,7 +60,6 @@ export class FunctionExplorer implements TreeDataProvider<FunctionNode>, Disposa
   async reveal(item: FunctionNode): Promise<void> {
     await this.refresh(item.getParent());
     await this.treeView.reveal(item);
-    await this.treeView.reveal(item);
   }
 
   getSelection(): FunctionNode[] | undefined {

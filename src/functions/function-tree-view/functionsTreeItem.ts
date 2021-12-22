@@ -35,7 +35,14 @@ export class FunctionNodeImpl implements FunctionNode {
       tooltip: 'NameSpace: {label}',
       description: '',
       // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-      getChildren: () => this.func.getDeployedFunction(this),
+      getChildren: () => this.func.getTreeFunction(this),
+    },
+    failNamespaceNode: {
+      icon: '',
+      tooltip: '{label}',
+      description: '',
+      // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+      getChildren: () => this.func.getTreeFunction(this),
     },
     localFunctions: {
       icon: '',
@@ -94,6 +101,9 @@ export class FunctionNodeImpl implements FunctionNode {
         `Name: ${this.CONTEXT_DATA[this.contextValue].tooltip} RunTime: ${this.runtime} Context: ${this.contextPath.fsPath}`,
         this,
       );
+    }
+    if (this.contextValue === FunctionContextType.FAILNAMESPACENODE) {
+      return format(`Cluster is active?`, this);
     }
     return format(this.CONTEXT_DATA[this.contextValue].tooltip, this);
   }

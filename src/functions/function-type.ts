@@ -38,7 +38,6 @@ export interface ContextList {
 }
 
 export interface Namespace {
-  Kind?: string;
   contexts?: [ContextList];
 }
 

@@ -11,5 +11,6 @@ export async function runFunction(context?: FunctionNode): Promise<void> {
   if (!context) {
     return null;
   }
+  // TO DO
   await knExecutor.executeInTerminal(FuncAPI.runFunc(context.contextPath.fsPath));
 }

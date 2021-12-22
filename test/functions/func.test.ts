@@ -100,7 +100,7 @@ suite('Function/Func', () => {
       }),
       error: null,
     });
-    const result = await func.getDeployedFunction(element);
+    const result = await func.getTreeFunction(element);
     expect(result.length).equal(1);
   });
 
@@ -147,7 +147,7 @@ suite('Function/Func', () => {
       stdout: '',
       error: null,
     });
-    const result = await func.getDeployedFunction(element);
+    const result = await func.getTreeFunction(element);
     expect(result.length).equal(1);
   });
 
@@ -173,7 +173,7 @@ suite('Function/Func', () => {
       stdout: '',
       error: null,
     });
-    const result = await func.getDeployedFunction(element);
+    const result = await func.getTreeFunction(element);
     expect(result.length).equal(1);
   });
 });
