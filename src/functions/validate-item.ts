@@ -38,7 +38,7 @@ export function selectLocationValidation(selectLocation: content, items: Validat
     items.push(createValidationItem(SEVERITY.ERROR, selectLocation.id, selectLocation.message));
   }
   if (selectLocation.value.trim() && Platform.OS === 'win32') {
-    if (pathWindowsRegex.test(selectLocation.value)) {
+    if (!pathWindowsRegex.test(selectLocation.value)) {
       items.push(createValidationItem(SEVERITY.ERROR, selectLocation.id, 'Selected path has invalid format.'));
       pathValidation.set('path_validation', false);
     } else {

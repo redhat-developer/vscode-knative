@@ -113,7 +113,7 @@ async function selectedFolder(context?: FunctionNode): Promise<FolderPick> {
 
 export async function buildFunction(context?: FunctionNode): Promise<void> {
   const selectedFolderPick: FolderPick = await selectedFolder(context);
-  if (!selectedFolderPick) {
+  if (!selectedFolderPick && !context) {
     return null;
   }
   const funcData = await functionImage(context ? context.contextPath : selectedFolderPick.workspaceFolder.uri);
@@ -134,7 +134,7 @@ export async function buildFunction(context?: FunctionNode): Promise<void> {
 
 export async function deployFunction(context?: FunctionNode): Promise<void> {
   const selectedFolderPick: FolderPick = await selectedFolder(context);
-  if (!selectedFolderPick) {
+  if (!selectedFolderPick && !context) {
     return null;
   }
   const funcData = await functionImage(context ? context.contextPath : selectedFolderPick.workspaceFolder.uri, true);

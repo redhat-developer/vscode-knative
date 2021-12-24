@@ -5,6 +5,7 @@
 
 import * as path from 'path';
 import { CliCommand, CmdCli, createCliCommand } from './cmdCli';
+import { quote } from '../util/quote';
 
 function funcCliCommand(cmdArguments: string[]): CliCommand {
   return createCliCommand('func', ...cmdArguments);
@@ -24,20 +25,20 @@ export class FuncAPI {
   static buildFunc(location: string, image: string, builder?: string): CliCommand {
     let buildCommand: string[];
     if (builder) {
-      buildCommand = ['build', '-p', location, '-i', image, '-b', builder];
+      buildCommand = ['build', '-p', `${quote}${location}${quote}`, '-i', image, '-b', builder];
     } else {
-      buildCommand = ['build', '-p', location, '-i', image];
+      buildCommand = ['build', '-p', `${quote}${location}${quote}`, '-i', image];
     }
     return funcCliCommand(buildCommand);
   }
 
   static deployFunc(location: string, image: string): CliCommand {
-    const deployCommand = ['deploy', '-p', location, '-i', image];
+    const deployCommand = ['deploy', '-p', `${quote}${location}${quote}`, '-i', image];
     return funcCliCommand(deployCommand);
   }
 
   static runFunc(location: string): CliCommand {
-    const deployCommand = ['run', '-p', location];
+    const deployCommand = ['run', '-p', `${quote}${location}${quote}`];
     return funcCliCommand(deployCommand);
   }
 

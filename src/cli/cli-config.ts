@@ -58,13 +58,13 @@ export interface Config {
 async function getVersion(location: string): Promise<string> {
   let version: Promise<string>;
   const [cmd] = location.split(path.sep).slice(-1);
-  if (cmd === 'kn') {
+  if (cmd.toLowerCase().startsWith('kn')) {
     version = KnAPI.getKnVersion(location);
   }
-  if (cmd === 'kubectl') {
+  if (cmd.toLowerCase().startsWith('kubectl')) {
     version = KubectlAPI.getKubectlVersion(location);
   }
-  if (cmd === 'func') {
+  if (cmd.toLowerCase().startsWith('func')) {
     version = FuncAPI.getFuncVersion(location);
   }
   return version;
@@ -233,12 +233,7 @@ export class CmdCliConfig {
                     // The downloaded file is an executable and we need to rename it to [CMD]
                     fs.renameSync(toolDlLocation, toolCacheLocation);
                   }
-                  // Change the file permissions if on Linux or Mac
-                  if (Platform.OS !== 'win32') {
-                    fs.chmodSync(toolCacheLocation, 0o755);
-                  } else {
-                    fs.chmodSync(toolCacheLocation, '+x');
-                  }
+                  fs.chmodSync(toolCacheLocation, 0o765);
                   foundToolLocation = toolCacheLocation;
                 }
               },

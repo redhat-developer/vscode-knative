@@ -15,7 +15,7 @@
         "url": "https://github.com/knative/client/releases/download/v0.21.0/kn-windows-amd64.exe",
         "sha256sum": "e49e41e30fe13b9cefd51a0fbda14526cb36a82c5f880dcc75ea0fe8e6599aa3",
         "dlFileName": "kn-windows-amd64.exe",
-        "cmdFileName": "kn-windows-amd64.exe"
+        "cmdFileName": "kn.exe"
       },
       "darwin": {
         "url": "https://github.com/knative/client/releases/download/v0.21.0/kn-darwin-amd64",
