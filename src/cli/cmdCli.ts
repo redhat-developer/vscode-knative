@@ -111,7 +111,7 @@ export class CmdCli implements Cli {
           // "undefinedError: Get \"https://api.devcluster.openshift.com:6443/apis/serving.knative.dev/v1/namespaces/default/services\": dial tcp: lookup api.devcluster.openshift.com on 127.0.0.1:53: no such host\nRun 'kn --help' for usage\n"
           if (
             typeof error === 'string' &&
-            (error.search('no such host') > 0 || error.search('error connecting to the cluster')) &&
+            (error.search('no such host') > 0 || error.search('error connecting to the cluster') > 0) &&
             error.search('failed to resolve image') === -1
           ) {
             if (CmdCli.clusterErrorNotReported) {
