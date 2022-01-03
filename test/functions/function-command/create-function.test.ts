@@ -11,6 +11,7 @@ import * as sinonChai from 'sinon-chai';
 import { knExecutor } from '../../../src/cli/execute';
 import { def, folderStatus, validateInputField } from '../../../src/functions/function-command/create-function';
 import { pathValidation } from '../../../src/functions/validate-item';
+import { Platform } from '../../../src/util/platform';
 
 const { expect } = chai;
 chai.use(sinonChai);
@@ -46,12 +47,22 @@ suite('Function/Create', () => {
       selectLocation: 'apple',
       selectTemplate: 'http',
     });
-    expect(result).deep.equal({
-      items: [
-        { severity: 4, template: { content: 'Provide name for function', id: 'functionName' } },
-        { severity: 4, template: { content: 'The selection is not a valid absolute path.', id: 'selectLocation' } },
-      ],
-    });
+    if (Platform.OS === 'win32') {
+      expect(result).deep.equal({
+        items: [
+          { severity: 4, template: { content: 'Provide name for function', id: 'functionName' } },
+          { severity: 4, template: { content: 'Selected path has invalid format.', id: 'selectLocation' } },
+          { severity: 4, template: { content: 'The selection is not a valid absolute path.', id: 'selectLocation' } },
+        ],
+      });
+    } else {
+      expect(result).deep.equal({
+        items: [
+          { severity: 4, template: { content: 'Provide name for function', id: 'functionName' } },
+          { severity: 4, template: { content: 'The selection is not a valid absolute path.', id: 'selectLocation' } },
+        ],
+      });
+    }
   });
 
   test('validator for function name if there is any duplicate', () => {
@@ -154,7 +165,7 @@ suite('Function/Create', () => {
     expect(result).equal(null);
   });
 
-  test('return null if there is no previous page', () => {
+  test('return null if there is no previous page ', () => {
     const result = def.workflowManager.getPreviousPage(null, null);
     expect(result).equal(null);
   });

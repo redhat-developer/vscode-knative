@@ -42,24 +42,52 @@ suite('Function/Validate', () => {
   test('show error if Selected disk does not exit', () => {
     const selectLocation = { id: 'selectLocation', message: 'Provide path to create function', value: 's' };
     const result = selectLocationValidation(selectLocation, []);
-    expect(result).deep.equal({
-      items: [
-        {
-          severity: 4,
-          template: {
-            content: 'The selection is not a valid absolute path.',
-            id: 'selectLocation',
+    if (Platform.OS === 'win32') {
+      expect(result).deep.equal({
+        items: [
+          {
+            severity: 4,
+            template: {
+              content: 'Selected path has invalid format.',
+              id: 'selectLocation',
+            },
           },
-        },
-        {
-          severity: 4,
-          template: {
-            content: 'Selected disk does not exist.',
-            id: 'selectLocation',
+          {
+            severity: 4,
+            template: {
+              content: 'The selection is not a valid absolute path.',
+              id: 'selectLocation',
+            },
           },
-        },
-      ],
-    });
+          {
+            severity: 4,
+            template: {
+              content: 'Selected disk does not exist.',
+              id: 'selectLocation',
+            },
+          },
+        ],
+      });
+    } else {
+      expect(result).deep.equal({
+        items: [
+          {
+            severity: 4,
+            template: {
+              content: 'The selection is not a valid absolute path.',
+              id: 'selectLocation',
+            },
+          },
+          {
+            severity: 4,
+            template: {
+              content: 'Selected disk does not exist.',
+              id: 'selectLocation',
+            },
+          },
+        ],
+      });
+    }
   });
 
   test('show error message if path is not provided', () => {
@@ -88,20 +116,12 @@ suite('Function/Validate', () => {
     const result = selectLocationValidation(selectLocation, []);
     if (process.platform === 'win32') {
       expect(result).deep.equal({
-        items: [
-          {
-            severity: 4,
-            template: {
-              content: 'Selected path has invalid format.',
-              id: 'selectLocation',
-            },
-          },
-        ],
+        items: [],
       });
     }
   });
 
-  test("don't show error message when path is valid ", () => {
+  test("don't show error message when path is valid", () => {
     sandbox.stub(Platform, 'getOS').returns('win32');
     const selectLocation = {
       id: 'selectLocation',
@@ -115,6 +135,13 @@ suite('Function/Validate', () => {
           {
             severity: 4,
             template: {
+              content: 'Selected path has invalid format.',
+              id: 'selectLocation',
+            },
+          },
+          {
+            severity: 4,
+            template: {
               content: 'The selection is not a valid absolute path.',
               id: 'selectLocation',
             },
@@ -124,15 +151,29 @@ suite('Function/Validate', () => {
     }
   });
 
-  test("don't show error message when path is valid ", () => {
+  test("don't show error message when path is valid", () => {
     const selectLocation = {
       id: 'selectLocation',
       message: 'Provide path to create function',
       value: '/',
     };
     const result = selectLocationValidation(selectLocation, []);
-    expect(result).deep.equal({
-      items: [],
-    });
+    if (process.platform === 'win32') {
+      expect(result).deep.equal({
+        items: [
+          {
+            severity: 4,
+            template: {
+              content: 'Selected path has invalid format.',
+              id: 'selectLocation',
+            },
+          },
+        ],
+      });
+    } else {
+      expect(result).deep.equal({
+        items: [],
+      });
+    }
   });
 });
