@@ -9,8 +9,9 @@ import { TreeItemCollapsibleState, Uri, workspace } from 'vscode';
 import * as fs from 'fs-extra';
 import * as yaml from 'js-yaml';
 import { activeNamespace } from './active-namespace';
+import { getFunctionInfo } from './func-info';
 import { FunctionNode, FunctionNodeImpl } from './function-tree-view/functionsTreeItem';
-import { FuncContent, FunctionInfo, FunctionList } from './function-type';
+import { FuncContent, FunctionList } from './function-type';
 import { functionExplorer } from './functionsExplorer';
 import { CliExitData } from '../cli/cmdCli';
 import { FunctionContextType, FunctionStatus } from '../cli/config';
@@ -85,7 +86,7 @@ export class FuncImpl implements Func {
         const obj: FunctionNodeImpl = new FunctionNodeImpl(
           func,
           value.name,
-          FunctionContextType.FUNCTION,
+          FunctionContextType.DEPLOYFUNCTION,
           this,
           TreeItemCollapsibleState.None,
           null,
@@ -119,14 +120,7 @@ export class FuncImpl implements Func {
           // eslint-disable-next-line no-await-in-loop
           const getCurrentNamespace: string = await activeNamespace();
           // eslint-disable-next-line no-await-in-loop
-          const funcInfoResult = await knExecutor.execute(FuncAPI.functionInfo(folderUri.fsPath), process.cwd(), false);
-          let functionNamespace: FunctionInfo;
-          try {
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-            functionNamespace = JSON.parse(funcInfoResult.stdout);
-          } catch (e) {
-            functionNamespace = undefined;
-          }
+          const functionNamespace = await getFunctionInfo(folderUri);
           const getFunctionNamespace = functionNamespace?.namespace;
           // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
           const funcData: FuncContent[] = yaml.safeLoadAll(funcYaml);
@@ -138,13 +132,17 @@ export class FuncImpl implements Func {
             // eslint-disable-next-line @typescript-eslint/no-floating-promises
             functionExplorer.refresh();
           });
+          const contextValue =
+            funcStatus === FunctionStatus.CLUSTERLOCALBOTH
+              ? FunctionContextType.LOCALDEPLOYFUNCTION
+              : FunctionContextType.LOCAlFUNCTIONS;
           if (funcData && funcData?.[0]?.name && funcData?.[0]?.image.trim()) {
             functionTreeView.set(
               funcData?.[0]?.name,
               new FunctionNodeImpl(
                 func,
                 funcData[0].name,
-                FunctionContextType.LOCAlFUNCTIONS,
+                contextValue,
                 this,
                 TreeItemCollapsibleState.None,
                 folderUri,

@@ -14,6 +14,8 @@ export const enum Kind {
 export enum FunctionContextType {
   NONE = 'none',
   FUNCTION = 'functions',
+  LOCALDEPLOYFUNCTION = 'localDeployFunctions',
+  DEPLOYFUNCTION = 'deployFunctions',
   FAILNAMESPACENODE = 'failNamespaceNode',
   NAMESPACENODE = 'namespaceNode',
   LOCAlFUNCTIONS = 'localFunctions',

@@ -62,6 +62,18 @@ export class FunctionNodeImpl implements FunctionNode {
       description: '',
       getChildren: (): undefined[] => [],
     },
+    deployFunctions: {
+      icon: '',
+      tooltip: 'Function: {label}',
+      description: '',
+      getChildren: (): undefined[] => [],
+    },
+    localDeployFunctions: {
+      icon: '',
+      tooltip: 'Function: {label}',
+      description: '',
+      getChildren: (): undefined[] => [],
+    },
   };
 
   // eslint-disable-next-line no-useless-constructor

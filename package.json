@@ -140,7 +140,7 @@
     "onCommand:service.explorer.apply",
     "onCommand:service.explorer.deleteLocal",
     "onCommand:service.output",
-    "onCommand:function.delete",
+    "onCommand:function.undeploy",
     "onCommand:function.explorer.refresh",
     "onCommand:function.explorer.create",
     "onCommand:function.build.Palette",
@@ -189,8 +189,8 @@
         "category": "Knative"
       },
       {
-        "command": "function.delete",
-        "title": "Delete",
+        "command": "function.undeploy",
+        "title": "Undeploy",
         "category": "Knative"
       },
       {
@@ -310,7 +310,7 @@
           "when": "false"
         },
         {
-          "command": "function.delete",
+          "command": "function.undeploy",
           "when": "false"
         },
         {
@@ -393,18 +393,18 @@
           "group": "c2"
         },
         {
-          "command": "function.delete",
-          "when": "view == knativeFunctionProjectExplorer && viewItem =~ /^(localFunctions|localFunctionsEnablement|functions)$/",
+          "command": "function.undeploy",
+          "when": "view == knativeFunctionProjectExplorer && viewItem =~ /^(localDeployFunctions|deployFunctions)$/",
           "group": "c2"
         },
         {
           "command": "function.build",
-          "when": "view == knativeFunctionProjectExplorer && viewItem =~ /^(localFunctions|localFunctionsEnablement)$/",
+          "when": "view == knativeFunctionProjectExplorer && viewItem =~ /^(localFunctions|localDeployFunctions|localFunctionsEnablement)$/",
           "group": "c1@1"
         },
         {
           "command": "function.run",
-          "when": "view == knativeFunctionProjectExplorer && viewItem == localFunctions",
+          "when": "view == knativeFunctionProjectExplorer && viewItem =~ /^(localFunctions|localDeployFunctions)$/",
           "group": "c1@2"
         },
         {
@@ -414,7 +414,7 @@
         },
         {
           "command": "function.deploy",
-          "when": "view == knativeFunctionProjectExplorer && viewItem =~ /^(localFunctions|localFunctionsEnablement)$/",
+          "when": "view == knativeFunctionProjectExplorer && viewItem =~ /^(localFunctions|localDeployFunctions|localFunctionsEnablement)$/",
           "group": "c1@3"
         },
         {

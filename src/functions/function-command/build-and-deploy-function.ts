@@ -11,17 +11,21 @@ import { knExecutor } from '../../cli/execute';
 import { FuncAPI } from '../../cli/func-api';
 import { telemetryLog } from '../../telemetry';
 import { ExistingWorkspaceFolderPick } from '../../util/existing-workspace-folder-pick';
+import { Platform } from '../../util/platform';
 import { FunctionNode } from '../function-tree-view/functionsTreeItem';
 import { FolderPick, FuncContent, ImageAndBuild } from '../function-type';
 import { functionExplorer } from '../functionsExplorer';
 
 const imageRegex = RegExp('[^/]+\\.[^/.]+\\/([^/.]+)(?:\\/[\\w\\s._-]*([\\w\\s._-]))*(?::[a-z0-9\\.-]+)?$');
 
-async function showInputBox(promptMessage: string, inputValidMessage: string): Promise<string> {
+async function showInputBox(promptMessage: string, inputValidMessage: string, name?: string): Promise<string> {
+  const defaultUsername = Platform.ENV;
+  const defaultImage = `quay.io/${defaultUsername.USER}/${name}:latest`;
   // eslint-disable-next-line no-return-await
   return await vscode.window.showInputBox({
     ignoreFocusOut: true,
     prompt: promptMessage,
+    value: defaultImage,
     validateInput: (value: string) => {
       if (!imageRegex.test(value)) {
         return inputValidMessage;
@@ -31,10 +35,11 @@ async function showInputBox(promptMessage: string, inputValidMessage: string): P
   });
 }
 
-async function functionBuilder(image: string): Promise<ImageAndBuild> {
+async function functionBuilder(image: string, name: string): Promise<ImageAndBuild> {
   const builder = await showInputBox(
     'Provide Buildpack builder, either an as a an image name or a mapping name.',
-    'Provide full image name in the form [registry]/[namespace]/[name]:[tag]',
+    'Provide full image name in the form [registry]/[namespace]/[name]:[tag] (e.g quay.io/boson/image:latest)',
+    name,
   );
   if (!builder) {
     return null;
@@ -59,14 +64,15 @@ async function functionImage(selectedFolderPick: vscode.Uri, skipBuilder?: boole
     imageList.length === 1
       ? imageList[0]
       : await showInputBox(
-          'Provide full image name in the form [registry]/[namespace]/[name]:[tag]',
-          'Provide full image name in the form [registry]/[namespace]/[name]:[tag]',
+          'Provide full image name in the form [registry]/[namespace]/[name]:[tag] (e.g quay.io/boson/image:latest)',
+          'Provide full image name in the form [registry]/[namespace]/[name]:[tag] (e.g quay.io/boson/image:latest)',
+          funcData?.[0].name,
         );
   if (!imagePick) {
     return null;
   }
   if (!funcData?.[0]?.builder.trim() && !skipBuilder) {
-    const builder = await functionBuilder(imagePick);
+    const builder = await functionBuilder(imagePick, funcData?.[0].name);
     return builder;
   }
   return { image: imagePick };

@@ -11,13 +11,13 @@ import * as sinonChai from 'sinon-chai';
 import { FunctionContextType, FunctionStatus } from '../../../src/cli/config';
 import { knExecutor } from '../../../src/cli/execute';
 import { FuncImpl } from '../../../src/functions/func';
-import { deleteFunction } from '../../../src/functions/function-command/delete-function';
+import { undeployFunction } from '../../../src/functions/function-command/undeploy-function';
 import { TestItem } from '../testFunctionitem';
 
 const { expect } = chai;
 chai.use(sinonChai);
 
-suite('Function/Delete', () => {
+suite('Function/undeploy', () => {
   const sandbox = sinon.createSandbox();
   let executeStub: sinon.SinonStub;
   let showWarningMessageStub: sinon.SinonStub;
@@ -59,30 +59,30 @@ suite('Function/Delete', () => {
   });
 
   test('return null if empty context', async () => {
-    const result = await deleteFunction(undefined);
+    const result = await undeployFunction(undefined);
     expect(result).equal(null);
   });
 
   test('return null if use select no', async () => {
     showWarningMessageStub.onFirstCall().resolves('No');
-    const result = await deleteFunction(taskRunNode);
+    const result = await undeployFunction(taskRunNode);
     expect(result).equal(null);
   });
 
-  test('delete function from tree view', async () => {
+  test('undeploy function from tree view', async () => {
     showWarningMessageStub.onFirstCall().resolves('Yes');
     executeStub.onFirstCall().resolves({ error: null, stdout: 'successful' });
-    await deleteFunction(taskRunNode);
+    await undeployFunction(taskRunNode);
     // eslint-disable-next-line no-unused-expressions
     expect(executeStub).calledOnce;
     // eslint-disable-next-line no-unused-expressions
     expect(showWarningMessageStub).calledOnce;
   });
 
-  test('show error if it fails to delete function', async () => {
+  test('show error if it fails to undeploy function', async () => {
     showWarningMessageStub.onFirstCall().resolves('Yes');
     executeStub.onFirstCall().resolves({ error: 'error', stdout: null });
-    await deleteFunction(taskRunNode);
+    await undeployFunction(taskRunNode);
     // eslint-disable-next-line no-unused-expressions
     expect(showErrorMessageStub).calledOnce;
     // eslint-disable-next-line no-unused-expressions
