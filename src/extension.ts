@@ -13,6 +13,7 @@ import { EventingExplorer } from './eventingTree/eventingExplorer';
 import { EventingTreeItem } from './eventingTree/eventingTreeItem';
 import { buildFunction, deployFunction } from './functions/function-command/build-and-deploy-function';
 import { createFunction } from './functions/function-command/create-function';
+import { urlFunction } from './functions/function-command/get-url-function';
 import { runFunction } from './functions/function-command/run-function';
 import { undeployFunction } from './functions/function-command/undeploy-function';
 import { functionExplorer } from './functions/functionsExplorer';
@@ -52,6 +53,7 @@ export async function activate(extensionContext: vscode.ExtensionContext): Promi
     vscode.commands.registerCommand('function.undeploy', (context) => undeployFunction(context)),
     vscode.commands.registerCommand('function.build', (context) => buildFunction(context)),
     vscode.commands.registerCommand('function.deploy', (context) => deployFunction(context)),
+    vscode.commands.registerCommand('function.OpenInBrowserAction', (context) => urlFunction(context)),
     vscode.commands.registerCommand('function.run', (context) => runFunction(context)),
     vscode.commands.registerCommand('function.build.Palette', () => buildFunction()),
     vscode.commands.registerCommand('function.deploy.Palette', () => deployFunction()),

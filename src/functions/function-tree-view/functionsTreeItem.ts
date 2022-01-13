@@ -70,7 +70,7 @@ export class FunctionNodeImpl implements FunctionNode {
     },
     localDeployFunctions: {
       icon: '',
-      tooltip: 'Function: {label}',
+      tooltip: '{label}',
       description: '',
       getChildren: (): undefined[] => [],
     },
@@ -107,7 +107,8 @@ export class FunctionNodeImpl implements FunctionNode {
   get tooltip(): string {
     if (
       this.contextValue === FunctionContextType.LOCAlFUNCTIONS ||
-      this.contextValue === FunctionContextType.LOCAlFUNCTIONSENABLEMENT
+      this.contextValue === FunctionContextType.LOCAlFUNCTIONSENABLEMENT ||
+      this.contextValue === FunctionContextType.LOCALDEPLOYFUNCTION
     ) {
       return format(
         `Name: ${this.CONTEXT_DATA[this.contextValue].tooltip} RunTime: ${this.runtime} Context: ${this.contextPath.fsPath}`,

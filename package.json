@@ -141,6 +141,7 @@
     "onCommand:service.explorer.deleteLocal",
     "onCommand:service.output",
     "onCommand:function.undeploy",
+    "onCommand:function.OpenInBrowserAction",
     "onCommand:function.explorer.refresh",
     "onCommand:function.explorer.create",
     "onCommand:function.build.Palette",
@@ -191,6 +192,11 @@
       {
         "command": "function.undeploy",
         "title": "Undeploy",
+        "category": "Knative"
+      },
+      {
+        "command": "function.OpenInBrowserAction",
+        "title": "Open In Browser",
         "category": "Knative"
       },
       {
@@ -314,6 +320,10 @@
           "when": "false"
         },
         {
+          "command": "function.OpenInBrowserAction",
+          "when": "false"
+        },
+        {
           "command": "function.build",
           "when": "false"
         },
@@ -416,6 +426,11 @@
           "command": "function.deploy",
           "when": "view == knativeFunctionProjectExplorer && viewItem =~ /^(localFunctions|localDeployFunctions|localFunctionsEnablement)$/",
           "group": "c1@3"
+        },
+        {
+          "command": "function.OpenInBrowserAction",
+          "when": "view == knativeFunctionProjectExplorer && viewItem =~ /^(localDeployFunctions)$/",
+          "group": "c1@4"
         },
         {
           "command": "service.explorer.tag",
