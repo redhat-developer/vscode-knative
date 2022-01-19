@@ -11,6 +11,23 @@ export const enum Kind {
   LocalConfig,
 }
 
+export enum FunctionContextType {
+  NONE = 'none',
+  FUNCTION = 'functions',
+  LOCALDEPLOYFUNCTION = 'localDeployFunctions',
+  DEPLOYFUNCTION = 'deployFunctions',
+  FAILNAMESPACENODE = 'failNamespaceNode',
+  NAMESPACENODE = 'namespaceNode',
+  LOCAlFUNCTIONS = 'localFunctions',
+  LOCAlFUNCTIONSENABLEMENT = 'localFunctionsEnablement',
+}
+
+export enum FunctionStatus {
+  CLUSTERONLY = 'clusterOnly',
+  LOCALONLY = 'localOnly',
+  CLUSTERLOCALBOTH = 'clusterLocalBoth',
+}
+
 export enum ServingContextType {
   NONE = 'none',
   REVISION = 'revision',

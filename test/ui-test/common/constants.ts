@@ -23,4 +23,6 @@ export class KNativeConstants {
   public static readonly SECTION_SERVING = 'Serving';
 
   public static readonly SECTION_EVENTING = 'Eventing';
+
+  public static readonly SECTION_FUNCTION = 'Function';
 }
