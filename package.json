@@ -1,16 +1,16 @@
 {
   "name": "vscode-knative",
   "displayName": "Knative",
-  "description": "Knative extension for vscode",
+  "description": "Knative extension for VSCode",
   "version": "0.9.4",
   "license": "MIT",
   "publisher": "redhat",
   "preview": true,
   "repository": {
     "type": "git",
-    "url": "https://github.com/talamer/vscode-knative.git"
+    "url": "https://github.com/redhat-developer/vscode-knative.git"
   },
-  "bugs": "https://github.com/talamer/vscode-knative/issues",
+  "bugs": "https://github.com/redhat-developer/vscode-knative/issues",
   "keywords": [
     "knative",
     "serverless",
