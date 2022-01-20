@@ -1,4 +1,7 @@
+[![Visual Studio Marketplace](https://vsmarketplacebadge.apphb.com/version/redhat.vscode-knative.svg)](https://marketplace.visualstudio.com/items?itemName=redhat.vscode-knative)
 ![CI](https://github.com/talamer/vscode-knative/workflows/CI/badge.svg)
+[![Unit Tests Code Coverage](https://codecov.io/gh/redhat-developer/vscode-knative/branch/main/graph/badge.svg)](https://codecov.io/gh/redhat-developer/vscode-knative/branch/main/graph/badge.svg)
+[![License](https://img.shields.io/badge/license-MIT-brightgreen.svg)](https://github.com/redhat-developer/vscode-knative/blob/master/LICENSE)
 
 # Knative Serving & Eventing for Visual Studio Code
 
