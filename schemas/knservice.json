@@ -1,5 +1,5 @@
 {
-  "$id": "https://github.com/talamer/vscode-knative/schemas/knschema.json",
+  "$id": "https://github.com/redhat-developer/vscode-knative/schemas/knschema.json",
   "$schema": "http://json-schema.org/draft-07/schema#",
   "title": "JSON schema for Knative Service YAML files",
   "description": "A knative Service schema",
