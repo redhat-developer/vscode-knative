@@ -25,11 +25,11 @@ For example if there is an image subfolder under your extension project workspac
 
 * YAML is validated using the [VSCode-YAML](https://marketplace.visualstudio.com/items?itemName=redhat.vscode-yaml)
   
-* Logging in to a Kubernetes cluster is done via the [Kubernetes extension](https://marketplace.visualstudio.com/items?itemName=ms-kubernetes-tools.vscode-kubernetes-tools) (ms-kubernetes-tools.vscode-kubernetes-tools). 
+* Login in to a Kubernetes cluster is done via the [Kubernetes extension](https://marketplace.visualstudio.com/items?itemName=ms-kubernetes-tools.vscode-kubernetes-tools) (ms-kubernetes-tools.vscode-kubernetes-tools). 
 
   > NOTE: You will need to have the [kubeconfig](https://kubernetes.io/docs/concepts/configuration/organize-cluster-access-kubeconfig/#the-kubeconfig-environment-variable) for the cluster that you are accessing stored locally.
 
-*  Knative is run on the [kn cli](https://github.com/knative/client). The extension will offer to download and install it if it can't find it.
+*  Knative uses [kn cli](https://github.com/knative/client). The extension will offer to download and install the dependencies if needed.
 
 ## Extension Settings
 
@@ -42,12 +42,12 @@ This extension contributes the following settings:
 
 ## Known Issues
 
-> BUGS: Please check the [issues](https://github.com/talamer/vscode-knative/issues?q=is%3Aissue+is%3Aopen+label%3Akind%2Fbug) and report any you find.
+> BUGS: Please check the [issues](https://github.com/redhat-developer/vscode-knative/issues) and report any you find.
 * Limited features due to Alpha level of development.
 
 ## Contributing
 
-> To learn how to contribute, please see this [guide](https://github.com/talamer/vscode-knative/blob/main/CONTRIBUTING.md).
+> To learn how to contribute, please see this [guide](https://github.com/redhat-developer/vscode-knative/blob/main/CONTRIBUTING.md).
 
 ## Release Notes
 
