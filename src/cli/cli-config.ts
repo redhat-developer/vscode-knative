@@ -241,7 +241,7 @@ export class CmdCliConfig {
           } else if (response === `Help`) {
             await commands.executeCommand(
               'vscode.open',
-              Uri.parse(`https://github.com/talamer/vscode-knative/blob/master/README.md#requirements`),
+              Uri.parse(`https://github.com/redhat-developer/vscode-knative/blob/main/README.md#requirements`),
             );
           }
         }
