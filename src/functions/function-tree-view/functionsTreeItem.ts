@@ -70,7 +70,7 @@ export class FunctionNodeImpl implements FunctionNode {
       getChildren: (): undefined[] => [],
     },
     localDeployFunctions: {
-      icon: '',
+      icon: 'service.svg',
       tooltip: '{label}',
       description: '',
       getChildren: (): undefined[] => [],
