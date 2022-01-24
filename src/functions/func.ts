@@ -92,6 +92,7 @@ export class FuncImpl implements Func {
           null,
           value.runtime,
           FunctionStatus.CLUSTERONLY,
+          value.url,
         );
         functionTreeView.set(value.name, obj);
       });
@@ -137,6 +138,7 @@ export class FuncImpl implements Func {
               ? FunctionContextType.LOCALDEPLOYFUNCTION
               : FunctionContextType.LOCAlFUNCTIONS;
           if (funcData && funcData?.[0]?.name && funcData?.[0]?.image.trim()) {
+            const url = functionTreeView.get(funcData?.[0]?.name)?.url;
             functionTreeView.set(
               funcData?.[0]?.name,
               new FunctionNodeImpl(
@@ -148,6 +150,7 @@ export class FuncImpl implements Func {
                 folderUri,
                 funcData[0].runtime,
                 funcStatus,
+                url,
               ),
             );
           } else if (funcData && funcData?.[0]?.name && !funcData?.[0]?.image.trim()) {

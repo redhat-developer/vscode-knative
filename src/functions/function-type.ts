@@ -45,4 +45,5 @@ export interface FunctionInfo {
   name?: string;
   image?: string;
   namespace?: string;
+  routes?: [string];
 }
