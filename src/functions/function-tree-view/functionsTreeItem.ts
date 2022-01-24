@@ -3,6 +3,7 @@
  *  Licensed under the MIT License. See LICENSE file in the project root for license information.
  *-----------------------------------------------------------------------------------------------*/
 
+import * as path from 'path';
 import { ProviderResult, QuickPickItem, TreeItemCollapsibleState, Uri } from 'vscode';
 import format = require('string-format');
 import { FunctionContextType, FunctionStatus } from '../../cli/config';
@@ -31,39 +32,39 @@ export class FunctionNodeImpl implements FunctionNode {
       getChildren: (): undefined[] => [],
     },
     namespaceNode: {
-      icon: '',
+      icon: 'knative-logo.svg',
       tooltip: 'NameSpace: {label}',
       description: '',
       // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
       getChildren: () => this.func.getTreeFunction(this),
     },
     failNamespaceNode: {
-      icon: '',
+      icon: 'knative-logo.svg',
       tooltip: '{label}',
       description: '',
       // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
       getChildren: () => this.func.getTreeFunction(this),
     },
     localFunctions: {
-      icon: '',
+      icon: 'service.svg',
       tooltip: '{label}',
       description: '',
       getChildren: (): undefined[] => [],
     },
     localFunctionsEnablement: {
-      icon: '',
+      icon: 'service.svg',
       tooltip: '{label}',
       description: '',
       getChildren: (): undefined[] => [],
     },
     functions: {
-      icon: '',
+      icon: 'service.svg',
       tooltip: 'Function: {label}',
       description: '',
       getChildren: (): undefined[] => [],
     },
     deployFunctions: {
-      icon: '',
+      icon: 'service.svg',
       tooltip: 'Function: {label}',
       description: '',
       getChildren: (): undefined[] => [],
@@ -89,8 +90,9 @@ export class FunctionNodeImpl implements FunctionNode {
     public readonly url?: string,
   ) {}
 
-  // get iconPath(): Uri {
-  // }
+  get iconPath(): Uri {
+    return Uri.file(path.join(__dirname, `../../../../images/context`, this.CONTEXT_DATA[this.contextValue].icon));
+  }
 
   get description(): string {
     if (this.functionStatus === FunctionStatus.CLUSTERLOCALBOTH) {
