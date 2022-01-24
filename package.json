@@ -429,7 +429,7 @@
         },
         {
           "command": "function.OpenInBrowserAction",
-          "when": "view == knativeFunctionProjectExplorer && viewItem =~ /^(localDeployFunctions)$/",
+          "when": "view == knativeFunctionProjectExplorer && viewItem =~ /^(localDeployFunctions|deployFunctions)$/",
           "group": "c1@4"
         },
         {

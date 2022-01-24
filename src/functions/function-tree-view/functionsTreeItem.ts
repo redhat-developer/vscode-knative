@@ -18,7 +18,7 @@ export interface FunctionNode extends QuickPickItem {
   creationTime?: string;
   contextPath?: Uri;
   collapsibleState?: TreeItemCollapsibleState;
-  uid?: string;
+  url?: string;
   functionStatus?: string;
 }
 
@@ -86,7 +86,7 @@ export class FunctionNodeImpl implements FunctionNode {
     public readonly contextPath?: Uri,
     public readonly runtime?: string,
     public readonly functionStatus?: string,
-    public readonly uid?: string,
+    public readonly url?: string,
   ) {}
 
   // get iconPath(): Uri {
