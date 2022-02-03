@@ -11,9 +11,11 @@ import { openTreeItemInEditor } from './editor/knativeOpenTextDocument';
 import { KnativeReadonlyProvider, KN_READONLY_SCHEME } from './editor/knativeReadonlyProvider';
 import { EventingExplorer } from './eventingTree/eventingExplorer';
 import { EventingTreeItem } from './eventingTree/eventingTreeItem';
+import { addEnvironmentVariables } from './functions/function-command/add-env-function';
 import { buildFunction, deployFunction } from './functions/function-command/build-and-deploy-function';
 import { createFunction } from './functions/function-command/create-function';
 import { urlFunction } from './functions/function-command/get-url-function';
+import { removeEnvironmentVariable } from './functions/function-command/remove-env-function';
 import { runFunction } from './functions/function-command/run-function';
 import { undeployFunction } from './functions/function-command/undeploy-function';
 import { functionExplorer } from './functions/functionsExplorer';
@@ -57,6 +59,8 @@ export async function activate(extensionContext: vscode.ExtensionContext): Promi
     vscode.commands.registerCommand('function.run', (context) => runFunction(context)),
     vscode.commands.registerCommand('function.build.Palette', () => buildFunction()),
     vscode.commands.registerCommand('function.deploy.Palette', () => deployFunction()),
+    vscode.commands.registerCommand('function.addEnvs', (context) => addEnvironmentVariables(context)),
+    vscode.commands.registerCommand('function.removeEnv', (context) => removeEnvironmentVariable(context)),
     vscode.commands.registerCommand('knative.service.open-in-browser', async (treeItem: ServingTreeItem) => {
       const item = treeItem.getKnativeItem();
       if (item instanceof Service) {

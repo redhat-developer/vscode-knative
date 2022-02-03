@@ -150,6 +150,8 @@
     "onCommand:function.deploy",
     "onCommand:function.run",
     "onCommand:function.run.enablement",
+    "onCommand:function.addEnvs",
+    "onCommand:function.removeEnv",
     "onCommand:function.deploy.functionEnablement",
     "onCommand:function.build.FunctionEnablement",
     "onCommand:function.run.FunctionEnablement"
@@ -296,6 +298,16 @@
         "title": "Run",
         "category": "Knative",
         "enablement": "function:run"
+      },
+      {
+        "command": "function.addEnvs",
+        "title": "Add Environment Variables",
+        "category": "Knative"
+      },
+      {
+        "command": "function.removeEnv",
+        "title": "Remove Environment Variable",
+        "category": "Knative"
       }
     ],
     "keybindings": [
@@ -374,6 +386,14 @@
         {
           "command": "service.explorer.apply",
           "when": "false"
+        },
+        {
+          "command": "function.addEnvs",
+          "when": "false"
+        },
+        {
+          "command": "function.removeEnv",
+          "when": "false"
         }
       ],
       "view/item/context": [
@@ -451,6 +471,16 @@
           "command": "function.deploy.functionEnablement",
           "when": "view == knativeFunctionProjectExplorer && viewItem == functions",
           "group": "c1@3"
+        },
+        {
+          "command": "function.addEnvs",
+          "when": "view == knativeFunctionProjectExplorer && viewItem =~ /^(localFunctions|localDeployFunctions)$/",
+          "group": "c1@5"
+        },
+        {
+          "command": "function.removeEnv",
+          "when": "view == knativeFunctionProjectExplorer && viewItem =~ /^(localFunctions|localDeployFunctions)$/",
+          "group": "c1@6"
         }
       ],
       "view/title": [
