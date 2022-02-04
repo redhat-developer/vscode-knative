@@ -150,8 +150,10 @@
     "onCommand:function.deploy",
     "onCommand:function.run",
     "onCommand:function.run.enablement",
-    "onCommand:function.addEnvs",
-    "onCommand:function.removeEnv",
+    "onCommand:function.addConfig",
+    "onCommand:function.addConfig.Palette",
+    "onCommand:function.removeConfig",
+    "onCommand:function.removeConfig.Palette",
     "onCommand:function.deploy.functionEnablement",
     "onCommand:function.build.FunctionEnablement",
     "onCommand:function.run.FunctionEnablement"
@@ -300,13 +302,23 @@
         "enablement": "function:run"
       },
       {
-        "command": "function.addEnvs",
-        "title": "Add Environment Variables",
+        "command": "function.addConfig",
+        "title": "Add Config",
         "category": "Knative"
       },
       {
-        "command": "function.removeEnv",
-        "title": "Remove Environment Variable",
+        "command": "function.addConfig.Palette",
+        "title": "Add Config to Function",
+        "category": "Knative"
+      },
+      {
+        "command": "function.removeConfig",
+        "title": "Remove Config",
+        "category": "Knative"
+      },
+      {
+        "command": "function.removeConfig.Palette",
+        "title": "Remove Config from Function",
         "category": "Knative"
       }
     ],
@@ -388,11 +400,11 @@
           "when": "false"
         },
         {
-          "command": "function.addEnvs",
+          "command": "function.addConfig",
           "when": "false"
         },
         {
-          "command": "function.removeEnv",
+          "command": "function.removeConfig",
           "when": "false"
         }
       ],
@@ -473,12 +485,12 @@
           "group": "c1@3"
         },
         {
-          "command": "function.addEnvs",
+          "command": "function.addConfig",
           "when": "view == knativeFunctionProjectExplorer && viewItem =~ /^(localFunctions|localDeployFunctions)$/",
           "group": "c1@5"
         },
         {
-          "command": "function.removeEnv",
+          "command": "function.removeConfig",
           "when": "view == knativeFunctionProjectExplorer && viewItem =~ /^(localFunctions|localDeployFunctions)$/",
           "group": "c1@6"
         }

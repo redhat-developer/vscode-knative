@@ -62,6 +62,16 @@ export class FuncAPI {
     return funcCliCommand(removeEnvCommand);
   }
 
+  static addVolumes(location: string): CliCommand {
+    const addEnvCommand = ['config', 'volumes', 'add', '-p', `${quote}${location}${quote}`];
+    return funcCliCommand(addEnvCommand);
+  }
+
+  static removeVolumes(location: string): CliCommand {
+    const removeEnvCommand = ['config', 'volumes', 'remove', '-p', `${quote}${location}${quote}`];
+    return funcCliCommand(removeEnvCommand);
+  }
+
   static async getFuncVersion(location: string): Promise<string> {
     const version = new RegExp(`[v]?([0-9]+\\.[0-9]+\\.[0-9]+)$`);
     let detectedVersion: string;

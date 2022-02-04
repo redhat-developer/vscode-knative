@@ -78,7 +78,7 @@ async function functionImage(selectedFolderPick: vscode.Uri, skipBuilder?: boole
   return { image: imagePick };
 }
 
-async function pathFunction(): Promise<FolderPick> {
+export async function selectFunctionFolder(): Promise<FolderPick> {
   const folderPicks: FolderPick[] = [];
   if (vscode.workspace.workspaceFolders && vscode.workspace.workspaceFolders.length > 0) {
     // eslint-disable-next-line no-restricted-syntax
@@ -109,7 +109,7 @@ async function pathFunction(): Promise<FolderPick> {
 async function selectedFolder(context?: FunctionNode): Promise<FolderPick> {
   let selectedFolderPick: FolderPick;
   if (!context) {
-    selectedFolderPick = await pathFunction();
+    selectedFolderPick = await selectFunctionFolder();
     if (!selectedFolderPick) {
       return null;
     }
