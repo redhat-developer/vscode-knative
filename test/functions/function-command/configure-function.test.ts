@@ -12,12 +12,16 @@ import { FunctionContextType } from '../../../src/cli/config';
 import { knExecutor } from '../../../src/cli/execute';
 import { FuncAPI } from '../../../src/cli/func-api';
 import { FuncImpl } from '../../../src/functions/func';
+import * as buildDeploy from '../../../src/functions/function-command/build-and-deploy-function';
 import {
   ConfigAction,
+  configureEnvs,
   configureFunction,
+  configureVolumes,
   ENV_VARIABLES,
   VOLUMES,
 } from '../../../src/functions/function-command/configure-function';
+import { FolderPick } from '../../../src/functions/function-type';
 import { TestItem } from '../testFunctionitem';
 
 const { expect } = chai;
@@ -52,59 +56,117 @@ suite('Function/Configure Function', () => {
     sandbox.restore();
   });
 
-  test('return null if add action and empty context', async () => {
-    const result = await configureFunction(ConfigAction.Add, undefined);
+  test('return null if add action and no workspace is selected', async () => {
+    sandbox.stub(buildDeploy, 'selectFunctionFolder').resolves(undefined);
+    const result = await configureFunction(ConfigAction.Add);
     expect(result).equal(null);
   });
 
-  test('return null if remove action and empty context', async () => {
-    const result = await configureFunction(ConfigAction.Remove, undefined);
+  test('return null if remove action and no workspace is selected', async () => {
+    sandbox.stub(buildDeploy, 'selectFunctionFolder').resolves(undefined);
+    const result = await configureFunction(ConfigAction.Remove);
     expect(result).equal(null);
   });
 
-  test('return null if add action and context has empty context path', async () => {
-    const result = await configureFunction(ConfigAction.Add, funcNodeWithoutContextPath);
+  test('return null if add action and context has empty context path and no workspace is selected', async () => {
+    sandbox.stub(buildDeploy, 'selectFunctionFolder').resolves(undefined);
+    const result = await configureFunction(ConfigAction.Add, undefined, funcNodeWithoutContextPath);
     expect(result).equal(null);
   });
 
-  test('return null if remove action and context has empty context path', async () => {
-    const result = await configureFunction(ConfigAction.Remove, funcNodeWithoutContextPath);
+  test('return null if remove action and context has empty context path and no workspace is selected', async () => {
+    sandbox.stub(buildDeploy, 'selectFunctionFolder').resolves(undefined);
+    const result = await configureFunction(ConfigAction.Remove, undefined, funcNodeWithoutContextPath);
     expect(result).equal(null);
   });
+
+  function getTestFolderPick(): FolderPick {
+    const workspace: vscode.WorkspaceFolder = {
+      index: 0,
+      name: 'test',
+      uri: {
+        authority: 'auth',
+        fragment: 'frag',
+        fsPath: 'path',
+        path: 'path',
+        query: 'query',
+        scheme: 'scheme',
+        toJSON: () => '',
+        toString: () => '',
+        with: undefined,
+      },
+    };
+    return {
+      label: 'test',
+      workspaceFolder: workspace,
+    };
+  }
 
   test('return null if add action and no section is picked up', async () => {
+    const folder = getTestFolderPick();
+    sandbox.stub(buildDeploy, 'selectFunctionFolder').resolves(folder);
     sandbox.stub(vscode.window, 'showQuickPick').resolves(undefined);
-    const result = await configureFunction(ConfigAction.Add, funcNode);
+    const result = await configureFunction(ConfigAction.Add);
     expect(result).equal(null);
   });
 
   test('return null if remove action and no section is picked up', async () => {
+    const folder = getTestFolderPick();
+    sandbox.stub(buildDeploy, 'selectFunctionFolder').resolves(folder);
     sandbox.stub(vscode.window, 'showQuickPick').resolves(undefined);
-    const result = await configureFunction(ConfigAction.Remove, funcNode);
+    const result = await configureFunction(ConfigAction.Remove);
     expect(result).equal(null);
   });
 
-  test('add environment variable', async () => {
+  test('add environment variable with no initial context', async () => {
+    const folder = getTestFolderPick();
+    sandbox.stub(buildDeploy, 'selectFunctionFolder').resolves(folder);
     ((sandbox.stub(vscode.window, 'showQuickPick') as unknown) as sinon.SinonStub).resolves(ENV_VARIABLES);
-    await configureFunction(ConfigAction.Add, funcNode);
+    await configureFunction(ConfigAction.Add);
+    expect(executeInTerminalStub).calledOnceWith(FuncAPI.addEnvironmentVariable(folder.workspaceFolder.uri.fsPath));
+  });
+
+  test('add environment variable', async () => {
+    await configureEnvs(ConfigAction.Add, funcNode);
     expect(executeInTerminalStub).calledOnceWith(FuncAPI.addEnvironmentVariable(funcNode.contextPath.fsPath));
   });
 
-  test('remove environment variable', async () => {
+  test('remove environment variable with no initial context', async () => {
+    const folder = getTestFolderPick();
+    sandbox.stub(buildDeploy, 'selectFunctionFolder').resolves(folder);
     ((sandbox.stub(vscode.window, 'showQuickPick') as unknown) as sinon.SinonStub).resolves(ENV_VARIABLES);
-    await configureFunction(ConfigAction.Remove, funcNode);
+    await configureFunction(ConfigAction.Remove);
+    expect(executeInTerminalStub).calledOnceWith(FuncAPI.removeEnvironmentVariable(folder.workspaceFolder.uri.fsPath));
+  });
+
+  test('remove environment variable', async () => {
+    await configureEnvs(ConfigAction.Remove, funcNode);
     expect(executeInTerminalStub).calledOnceWith(FuncAPI.removeEnvironmentVariable(funcNode.contextPath.fsPath));
   });
 
-  test('add volume', async () => {
+  test('add volumes with no initial context', async () => {
+    const folder = getTestFolderPick();
+    sandbox.stub(buildDeploy, 'selectFunctionFolder').resolves(folder);
     ((sandbox.stub(vscode.window, 'showQuickPick') as unknown) as sinon.SinonStub).resolves(VOLUMES);
-    await configureFunction(ConfigAction.Add, funcNode);
-    expect(executeInTerminalStub).calledOnceWith(FuncAPI.addVolumes(funcNode.contextPath.fsPath));
+    await configureFunction(ConfigAction.Add);
+    expect(executeInTerminalStub).calledOnceWith(FuncAPI.addVolumes(folder.workspaceFolder.uri.fsPath));
   });
 
   test('add volume', async () => {
+    await configureVolumes(ConfigAction.Add, funcNode);
+    expect(executeInTerminalStub).calledOnceWith(FuncAPI.addVolumes(funcNode.contextPath.fsPath));
+  });
+
+  test('remove volume with no initial context', async () => {
+    const folder = getTestFolderPick();
+    sandbox.stub(buildDeploy, 'selectFunctionFolder').resolves(folder);
     ((sandbox.stub(vscode.window, 'showQuickPick') as unknown) as sinon.SinonStub).resolves(VOLUMES);
-    await configureFunction(ConfigAction.Remove, funcNode);
+    await configureFunction(ConfigAction.Remove);
+    expect(executeInTerminalStub).calledOnceWith(FuncAPI.removeVolumes(folder.workspaceFolder.uri.fsPath));
+  });
+
+  test('remove volume', async () => {
+    await configureVolumes(ConfigAction.Remove, funcNode);
     expect(executeInTerminalStub).calledOnceWith(FuncAPI.removeVolumes(funcNode.contextPath.fsPath));
   });
 });

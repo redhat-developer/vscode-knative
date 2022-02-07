@@ -46,25 +46,39 @@ function getCliCommand(action: ConfigAction, objectToConfigure: string, funcPath
   }
 }
 
-export async function configureFunction(action: ConfigAction, context?: FunctionNode): Promise<void> {
-  let funcPath = '';
+async function getFuncPath(context?: FunctionNode) {
   if (!context || !context.contextPath) {
     const selectedFolderPick = await selectFunctionFolder();
     if (!selectedFolderPick) {
       return null;
     }
-    funcPath = selectedFolderPick.workspaceFolder.uri.fsPath;
-  } else {
-    funcPath = context.contextPath.fsPath;
+    return selectedFolderPick.workspaceFolder.uri.fsPath;
   }
+  return context.contextPath.fsPath;
+}
 
-  const objectToConfigure = await vscode.window.showQuickPick([ENV_VARIABLES, VOLUMES], {
-    placeHolder: 'Select what you want to configure',
-  });
-
-  if (!objectToConfigure) {
+export async function configureFunction(action: ConfigAction, objectToConfigure?: string, context?: FunctionNode): Promise<void> {
+  const funcPath = await getFuncPath(context);
+  if (!funcPath) {
     return null;
+  }
+  if (!objectToConfigure) {
+    // eslint-disable-next-line no-param-reassign
+    objectToConfigure = await vscode.window.showQuickPick([ENV_VARIABLES, VOLUMES], {
+      placeHolder: 'Select what you want to configure',
+    });
+    if (!objectToConfigure) {
+      return null;
+    }
   }
 
   await knExecutor.executeInTerminal(getCliCommand(action, objectToConfigure, funcPath));
+}
+
+export async function configureEnvs(action: ConfigAction, context?: FunctionNode): Promise<void> {
+  await configureFunction(action, ENV_VARIABLES, context);
+}
+
+export async function configureVolumes(action: ConfigAction, context?: FunctionNode): Promise<void> {
+  await configureFunction(action, VOLUMES, context);
 }
