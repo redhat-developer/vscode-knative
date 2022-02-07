@@ -12,6 +12,12 @@ import { KnativeReadonlyProvider, KN_READONLY_SCHEME } from './editor/knativeRea
 import { EventingExplorer } from './eventingTree/eventingExplorer';
 import { EventingTreeItem } from './eventingTree/eventingTreeItem';
 import { buildFunction, deployFunction } from './functions/function-command/build-and-deploy-function';
+import {
+  ConfigAction,
+  configureEnvs,
+  configureFunction,
+  configureVolumes,
+} from './functions/function-command/configure-function';
 import { createFunction } from './functions/function-command/create-function';
 import { urlFunction } from './functions/function-command/get-url-function';
 import { runFunction } from './functions/function-command/run-function';
@@ -57,6 +63,12 @@ export async function activate(extensionContext: vscode.ExtensionContext): Promi
     vscode.commands.registerCommand('function.run', (context) => runFunction(context)),
     vscode.commands.registerCommand('function.build.Palette', () => buildFunction()),
     vscode.commands.registerCommand('function.deploy.Palette', () => deployFunction()),
+    vscode.commands.registerCommand('function.addEnv', (context) => configureEnvs(ConfigAction.Add, context)),
+    vscode.commands.registerCommand('function.addVolume', (context) => configureVolumes(ConfigAction.Add, context)),
+    vscode.commands.registerCommand('function.addConfig.Palette', () => configureFunction(ConfigAction.Add)),
+    vscode.commands.registerCommand('function.removeEnv', (context) => configureEnvs(ConfigAction.Remove, context)),
+    vscode.commands.registerCommand('function.removeVolume', (context) => configureVolumes(ConfigAction.Remove, context)),
+    vscode.commands.registerCommand('function.removeConfig.Palette', () => configureFunction(ConfigAction.Remove)),
     vscode.commands.registerCommand('knative.service.open-in-browser', async (treeItem: ServingTreeItem) => {
       const item = treeItem.getKnativeItem();
       if (item instanceof Service) {

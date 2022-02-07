@@ -150,6 +150,8 @@
     "onCommand:function.deploy",
     "onCommand:function.run",
     "onCommand:function.run.enablement",
+    "onCommand:function.addConfig.Palette",
+    "onCommand:function.removeConfig.Palette",
     "onCommand:function.deploy.functionEnablement",
     "onCommand:function.build.FunctionEnablement",
     "onCommand:function.run.FunctionEnablement"
@@ -296,6 +298,36 @@
         "title": "Run",
         "category": "Knative",
         "enablement": "function:run"
+      },
+      {
+        "command": "function.addEnv",
+        "title": "Add Environment Variables",
+        "category": "Knative"
+      },
+      {
+        "command": "function.addVolume",
+        "title": "Add Volumes",
+        "category": "Knative"
+      },
+      {
+        "command": "function.addConfig.Palette",
+        "title": "Add Config to Function",
+        "category": "Knative"
+      },
+      {
+        "command": "function.removeEnv",
+        "title": "Remove Environment Variables",
+        "category": "Knative"
+      },
+      {
+        "command": "function.removeVolume",
+        "title": "Remove Volumes",
+        "category": "Knative"
+      },
+      {
+        "command": "function.removeConfig.Palette",
+        "title": "Remove Config from Function",
+        "category": "Knative"
       }
     ],
     "keybindings": [
@@ -374,6 +406,22 @@
         {
           "command": "service.explorer.apply",
           "when": "false"
+        },
+        {
+          "command": "function.addEnv",
+          "when": "false"
+        },
+        {
+          "command": "function.addVolume",
+          "when": "false"
+        },
+        {
+          "command": "function.removeEnv",
+          "when": "false"
+        },
+        {
+          "command": "function.removeVolume",
+          "when": "false"
         }
       ],
       "view/item/context": [
@@ -451,6 +499,16 @@
           "command": "function.deploy.functionEnablement",
           "when": "view == knativeFunctionProjectExplorer && viewItem == functions",
           "group": "c1@3"
+        },
+        {
+          "submenu": "function/addConfig",
+          "when": "view == knativeFunctionProjectExplorer && viewItem =~ /^(localFunctions|localDeployFunctions)$/",
+          "group": "c1@5"
+        },
+        {
+          "submenu": "function/removeConfig",
+          "when": "view == knativeFunctionProjectExplorer && viewItem =~ /^(localFunctions|localDeployFunctions)$/",
+          "group": "c1@6"
         }
       ],
       "view/title": [
@@ -484,8 +542,38 @@
           "when": "view == knativeServingProjectExplorer",
           "group": "navigation@2"
         }
+      ],
+      "function/addConfig": [
+        {
+          "command": "function.addEnv",
+          "when": "view == knativeFunctionProjectExplorer && viewItem =~ /^(localFunctions|localDeployFunctions)$/"
+        },
+        {
+          "command": "function.addVolume",
+          "when": "view == knativeFunctionProjectExplorer && viewItem =~ /^(localFunctions|localDeployFunctions)$/"
+        }
+      ],
+      "function/removeConfig": [
+        {
+          "command": "function.removeEnv",
+          "when": "view == knativeFunctionProjectExplorer && viewItem =~ /^(localFunctions|localDeployFunctions)$/"
+        },
+        {
+          "command": "function.removeVolume",
+          "when": "view == knativeFunctionProjectExplorer && viewItem =~ /^(localFunctions|localDeployFunctions)$/"
+        }
       ]
     },
+    "submenus": [
+      {
+        "id": "function/addConfig",
+        "label": "Add Config"
+      },
+      {
+        "id": "function/removeConfig",
+        "label": "Remove Config"
+      }
+    ],
     "viewsContainers": {
       "activitybar": [
         {
