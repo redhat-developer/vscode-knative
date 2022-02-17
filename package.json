@@ -2,7 +2,7 @@
   "name": "vscode-knative",
   "displayName": "Knative",
   "description": "Knative extension for VSCode",
-  "version": "0.9.4",
+  "version": "1.0.0",
   "license": "MIT",
   "publisher": "redhat",
   "preview": true,

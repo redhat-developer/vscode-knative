@@ -32,16 +32,23 @@ For example if there is an image subfolder under your extension project workspac
 
   > NOTE: You will need to have the [kubeconfig](https://kubernetes.io/docs/concepts/configuration/organize-cluster-access-kubeconfig/#the-kubeconfig-environment-variable) for the cluster that you are accessing stored locally.
 
-*  Knative uses [kn cli](https://github.com/knative/client). The extension will offer to download and install the dependencies if needed.
+*  Knative uses [kn cli](https://github.com/knative/client) and [func cli](https://github.com/knative-sandbox/kn-plugin-func). The extension will offer to download and install the dependencies if needed.
 
 ## Extension Settings
 
-This extension contributes the following settings:
+This extension contributes two views (Knative and Functions) and the following settings:
+
+### Knative
 
 * `service.explorer.create`: Create a new Knative service in the current namespace
 * `service.explorer.openFile`: Display yaml for selected item
 * `service.explorer.refresh`: Refresh the Explorer tree view
 * `service.explorer.reportIssue`: Report Extension Issue on GitHub
+
+### Functions
+
+* `function.explorer.create`: Create a new Knative Function in the current namespace
+* `function.explorer.refresh`: Refresh the Functions tree view
 
 ## Known Issues
 
