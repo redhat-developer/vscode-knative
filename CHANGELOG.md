@@ -10,7 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add support for Knative Functions
   - Add dependency to func cli
   - New Functions view
-  - Add actions to work with them (build, deploy, run, undeploy, open in browser, configure)
+  - Add actions to work with them (create, build, deploy, run, undeploy, open in browser, configure)
 
 ## 0.9.4 (2021/03/04)
 
