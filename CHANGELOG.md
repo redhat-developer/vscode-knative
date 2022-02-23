@@ -5,6 +5,13 @@ All notable changes to the "vscode-knative" extension will be documented in this
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 1.0.0 (2022/02/21)
+
+- Add support for Knative Functions
+  - Add dependency to func cli
+  - New Functions view
+  - Add actions to work with them (create, build, deploy, run, undeploy, open in browser, configure)
+
 ## 0.9.4 (2021/03/04)
 
 -  Update `kn` cli to 0.21.0
