@@ -12,6 +12,10 @@ function funcCliCommand(cmdArguments: string[]): CliCommand {
 }
 
 export class FuncAPI {
+  static printFunctionVersion(): CliCommand {
+    return funcCliCommand(['version']);
+  }
+
   static createFunc(name: string, language: string, template: string, location: string): CliCommand {
     const createCommand = ['create', path.join(location, name), '-l', language, '-t', template];
     return funcCliCommand(createCommand);
