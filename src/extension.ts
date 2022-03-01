@@ -28,6 +28,7 @@ import { Service } from './knative/service';
 import { ServingExplorer } from './servingTree/servingExplorer';
 import { ServingTreeItem } from './servingTree/servingTreeItem';
 import { startTelemetry } from './telemetry';
+import { functionVersion, knativeVersion } from './version';
 
 let disposable: vscode.Disposable[];
 
@@ -54,6 +55,8 @@ export async function activate(extensionContext: vscode.ExtensionContext): Promi
   // Now provide the implementation of the command with registerCommand.
   // The commandId parameter must match the command field in package.json.
   disposable = [
+    vscode.commands.registerCommand('knative.version', () => knativeVersion()),
+    vscode.commands.registerCommand('function.version', () => functionVersion()),
     vscode.commands.registerCommand('function.explorer.refresh', () => functionExplorer.refresh()),
     vscode.commands.registerCommand('function.explorer.create', () => createFunction(extensionContext)),
     vscode.commands.registerCommand('function.undeploy', (context) => undeployFunction(context)),

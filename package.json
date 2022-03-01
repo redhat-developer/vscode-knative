@@ -149,6 +149,8 @@
     "onCommand:function.deploy.Palette",
     "onCommand:function.deploy",
     "onCommand:function.run",
+    "onCommand:function.version",
+    "onCommand:knative.version",
     "onCommand:function.run.enablement",
     "onCommand:function.addConfig.Palette",
     "onCommand:function.removeConfig.Palette",
@@ -169,6 +171,24 @@
         "title": "Refresh View",
         "category": "Knative",
         "icon": "$(refresh)"
+      },
+      {
+        "command": "function.version",
+        "title": "Function version",
+        "category": "Knative",
+        "icon": {
+          "dark": "images/context/versions-dark.svg",
+          "light": "images/context/versions-light.svg"
+        }
+      },
+      {
+        "command": "knative.version",
+        "title": "Knative version",
+        "category": "Knative",
+        "icon": {
+          "dark": "images/context/versions-dark.svg",
+          "light": "images/context/versions-light.svg"
+        }
       },
       {
         "command": "eventing.explorer.openFile",
@@ -523,6 +543,11 @@
           "group": "navigation@2"
         },
         {
+          "command": "function.version",
+          "when": "view == knativeFunctionProjectExplorer",
+          "group": "navigation@3"
+        },
+        {
           "command": "eventing.explorer.refresh",
           "when": "view == knativeEventingProjectExplorer",
           "group": "navigation@1"
@@ -541,6 +566,11 @@
           "command": "service.explorer.reportIssue",
           "when": "view == knativeServingProjectExplorer",
           "group": "navigation@2"
+        },
+        {
+          "command": "knative.version",
+          "when": "view == knativeServingProjectExplorer",
+          "group": "navigation@3"
         }
       ],
       "function/addConfig": [
