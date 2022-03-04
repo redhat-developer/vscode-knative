@@ -91,6 +91,26 @@ export class FuncAPI {
     return funcCliCommand(runCommand);
   }
 
+  static addRepository(name: string, URL: string): CliCommand {
+    const addRepositoryCommand = ['repository', 'add', name, URL];
+    return funcCliCommand(addRepositoryCommand);
+  }
+
+  static listRepository(): CliCommand {
+    const listRepositoryCommand = ['repository', 'list'];
+    return funcCliCommand(listRepositoryCommand);
+  }
+
+  static renameRepository(name: string, rename: string): CliCommand {
+    const renameRepositoryCommand = ['repository', 'rename', name, rename];
+    return funcCliCommand(renameRepositoryCommand);
+  }
+
+  static removeRepository(name: string): CliCommand {
+    const removeRepositoryCommand = ['repository', 'remove', name];
+    return funcCliCommand(removeRepositoryCommand);
+  }
+
   static deleteFunc(name: string): CliCommand {
     const deleteCommand = ['delete', name];
     return funcCliCommand(deleteCommand);

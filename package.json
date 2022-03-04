@@ -155,6 +155,10 @@
     "onCommand:activeCommand.focus",
     "onCommand:function.deploy",
     "onCommand:function.run",
+    "onCommand:function.repository.add",
+    "onCommand:function.repository.list",
+    "onCommand:function.repository.rename",
+    "onCommand:function.repository.remove",
     "onCommand:function.version",
     "onCommand:knative.version",
     "onCommand:function.run.enablement",
@@ -315,6 +319,26 @@
         "category": "Knative"
       },
       {
+        "command": "function.repository.add",
+        "title": "Add Repository",
+        "category": "Knative"
+      },
+      {
+        "command": "function.repository.list",
+        "title": "List Repository",
+        "category": "Knative"
+      },
+      {
+        "command": "function.repository.rename",
+        "title": "Rename Repository",
+        "category": "Knative"
+      },
+      {
+        "command": "function.repository.remove",
+        "title": "Remove Repository",
+        "category": "Knative"
+      },
+      {
         "command": "function.run.enablement",
         "title": "Run",
         "category": "Knative",
@@ -408,6 +432,22 @@
         },
         {
           "command": "function.run",
+          "when": "false"
+        },
+        {
+          "command": "function.repository.add",
+          "when": "false"
+        },
+        {
+          "command": "function.repository.list",
+          "when": "false"
+        },
+        {
+          "command": "function.repository.rename",
+          "when": "false"
+        },
+        {
+          "command": "function.repository.remove",
           "when": "false"
         },
         {
@@ -568,8 +608,8 @@
         },
         {
           "submenu": "function/removeConfig",
-          "when": "view == knativeFunctionProjectExplorer && viewItem =~ /^(localFunctions|localDeployFunctions|localFunctionsEnablement)$/",
-          "group": "c1@7"
+          "when": "view == knativeFunctionProjectExplorer && viewItem =~ /^(localFunctions|localDeployFunctions)$/",
+          "group": "c1@6"
         }
       ],
       "view/title": [

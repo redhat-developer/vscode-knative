@@ -1,4 +1,3 @@
-/* eslint-disable import/no-cycle */
 /*-----------------------------------------------------------------------------------------------
  *  Copyright (c) Red Hat, Inc. All rights reserved.
  *  Licensed under the MIT License. See LICENSE file in the project root for license information.
@@ -15,11 +14,14 @@ import {
   ValidatorResponse,
   WebviewWizard,
   WizardDefinition,
+  WizardPageFieldDefinition,
 } from '@redhat-developer/vscode-wizard';
 import * as fs from 'fs-extra';
 import { CliExitData } from '../../cli/cmdCli';
 import { knExecutor } from '../../cli/execute';
 import { FuncAPI } from '../../cli/func-api';
+// eslint-disable-next-line import/no-cycle
+import { contextGlobalState } from '../../extension';
 import { telemetryLog, telemetryLogError } from '../../telemetry';
 import { getStderrString } from '../../util/stderrstring';
 import { createValidationItem, inputFieldValidation, pathValidation, selectLocationValidation } from '../validate-item';
@@ -27,12 +29,12 @@ import { createFunctionID } from '../webview-id';
 
 export const folderStatus = new Map<string, boolean>();
 
-interface Select {
+export interface Select {
   key: string;
   label: string;
 }
 
-interface ParametersType {
+export interface ParametersType {
   functionName: string;
   selectLanguage: string;
   selectLocation: string;
@@ -44,7 +46,10 @@ export interface ValidatorResponseItem {
   severity: SEVERITY;
 }
 
-const languageSelect: Array<Select> = [
+const provideLanguage = { key: 'Provide language', label: 'Provide Language' };
+
+export const languageSelect: Array<Select> = [
+  provideLanguage,
   { key: 'node', label: 'node' },
   { key: 'go', label: 'go' },
   { key: 'python', label: 'python' },
@@ -54,7 +59,10 @@ const languageSelect: Array<Select> = [
   { key: 'typescript', label: 'typescript' },
 ];
 
-const templateSelect: Array<Select> = [
+const provideTemplate = { key: 'Provide template and repository', label: 'Provide template and repository' };
+
+export const templateSelect: Array<Select> = [
+  provideTemplate,
   { key: 'http', label: 'http' },
   { key: 'cloudevents', label: 'cloudevents' },
 ];
@@ -128,7 +136,7 @@ export const def: WizardDefinition = {
         },
         {
           id: createFunctionID.select_location,
-          label: 'Select Location',
+          label: 'Select location',
           type: 'file-picker',
           placeholder: 'Select location to create Function.',
           dialogOptions: {
@@ -189,6 +197,52 @@ export const def: WizardDefinition = {
   ],
   workflowManager: {
     canFinish(wizard: WebviewWizard, data: ParametersType): boolean {
+      if (
+        data.selectTemplate === provideTemplate.key &&
+        data.selectLanguage === provideLanguage.key &&
+        (!wizard
+          .getCurrentPage()
+          .getPageDefinition()
+          .fields.find((element) => element.id === createFunctionID.template_inputText) ||
+          !wizard
+            .getCurrentPage()
+            .getPageDefinition()
+            .fields.find((element) => element.id === createFunctionID.language_name))
+      ) {
+        selectLanguage.initialValue = provideLanguage.key;
+        selectTemplate.initialValue = provideTemplate.key;
+        const newDef = def;
+        newDef.pages[0].fields = languageTemplateField;
+        // eslint-disable-next-line @typescript-eslint/no-use-before-define
+        createFunction(contextGlobalState);
+      } else if (
+        data.selectTemplate === provideTemplate.key &&
+        !wizard
+          .getCurrentPage()
+          .getPageDefinition()
+          .fields.find((element) => element.id === createFunctionID.template_inputText)
+      ) {
+        selectTemplate.initialValue = provideTemplate.key;
+        const newDef = def;
+        newDef.pages[0].fields = templateField;
+        // eslint-disable-next-line @typescript-eslint/no-use-before-define
+        createFunction(contextGlobalState);
+      } else if (
+        data.selectLanguage === provideLanguage.key &&
+        !wizard
+          .getCurrentPage()
+          .getPageDefinition()
+          // eslint-disable-next-line arrow-body-style
+          .fields.find((element) => {
+            return element.id === createFunctionID.language_name;
+          })
+      ) {
+        selectLanguage.initialValue = provideLanguage.key;
+        const newDef = def;
+        newDef.pages[0].fields = languageField;
+        // eslint-disable-next-line @typescript-eslint/no-use-before-define
+        createFunction(contextGlobalState);
+      }
       return (
         data.functionName !== undefined &&
         data.selectLocation !== undefined &&
@@ -263,7 +317,14 @@ function createFunctionForm(context: vscode.ExtensionContext): WebviewWizard {
   return wiz;
 }
 
-export function createFunction(context: vscode.ExtensionContext): void {
+function createFunction(context: vscode.ExtensionContext): void {
   const wiz: WebviewWizard = createFunctionForm(context);
   wiz.open();
+}
+
+export function createFunctionPage(context: vscode.ExtensionContext): void {
+  selectLanguage.initialValue = languageSelect[1].key;
+  selectTemplate.initialValue = templateSelect[1].key;
+  def.pages[0].fields = defaultField;
+  createFunction(context);
 }

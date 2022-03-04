@@ -5,6 +5,9 @@
 
 export const createFunctionID = {
   function_name: 'functionName',
+  language_name: 'languageName',
+  template_inputText: 'templateInputText',
+  repository_inputText: 'repositoryInputText',
   select_template: 'selectTemplate',
   select_language: 'selectLanguage',
   select_location: 'selectLocation',
