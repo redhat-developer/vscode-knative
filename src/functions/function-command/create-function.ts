@@ -209,8 +209,8 @@ export const def: WizardDefinition = {
             .getPageDefinition()
             .fields.find((element) => element.id === createFunctionID.language_name))
       ) {
-        selectLanguage.initialValue = provideLanguage.key;
-        selectTemplate.initialValue = provideTemplate.key;
+        selectLanguage.initialValue = data.selectLanguage;
+        selectTemplate.initialValue = data.selectTemplate;
         const newDef = def;
         newDef.pages[0].fields = languageTemplateField;
         // eslint-disable-next-line @typescript-eslint/no-use-before-define
@@ -222,7 +222,8 @@ export const def: WizardDefinition = {
           .getPageDefinition()
           .fields.find((element) => element.id === createFunctionID.template_inputText)
       ) {
-        selectTemplate.initialValue = provideTemplate.key;
+        selectLanguage.initialValue = data.selectLanguage;
+        selectTemplate.initialValue = data.selectTemplate;
         const newDef = def;
         newDef.pages[0].fields = templateField;
         // eslint-disable-next-line @typescript-eslint/no-use-before-define
@@ -232,14 +233,55 @@ export const def: WizardDefinition = {
         !wizard
           .getCurrentPage()
           .getPageDefinition()
-          // eslint-disable-next-line arrow-body-style
-          .fields.find((element) => {
-            return element.id === createFunctionID.language_name;
-          })
+          .fields.find((element) => element.id === createFunctionID.language_name)
       ) {
-        selectLanguage.initialValue = provideLanguage.key;
+        selectLanguage.initialValue = data.selectLanguage;
+        selectTemplate.initialValue = data.selectTemplate;
         const newDef = def;
         newDef.pages[0].fields = languageField;
+        // eslint-disable-next-line @typescript-eslint/no-use-before-define
+        createFunction(contextGlobalState);
+      }
+      if (
+        data.selectTemplate !== provideTemplate.key &&
+        data.selectLanguage !== provideLanguage.key &&
+        (wizard
+          .getCurrentPage()
+          .getPageDefinition()
+          .fields.find((element) => element.id === createFunctionID.template_inputText) ||
+          wizard
+            .getCurrentPage()
+            .getPageDefinition()
+            .fields.find((element) => element.id === createFunctionID.language_name))
+      ) {
+        selectLanguage.initialValue = data.selectLanguage;
+        selectTemplate.initialValue = data.selectTemplate;
+        const newDef = def;
+        newDef.pages[0].fields = defaultField;
+        // eslint-disable-next-line @typescript-eslint/no-use-before-define
+        createFunction(contextGlobalState);
+      } else if (
+        data.selectTemplate !== provideTemplate.key &&
+        wizard
+          .getCurrentPage()
+          .getPageDefinition()
+          .fields.find((element) => element.id === createFunctionID.template_inputText)
+      ) {
+        selectTemplate.initialValue = data.selectTemplate;
+        const newDef = def;
+        newDef.pages[0].fields = languageField;
+        // eslint-disable-next-line @typescript-eslint/no-use-before-define
+        createFunction(contextGlobalState);
+      } else if (
+        data.selectLanguage !== provideLanguage.key &&
+        wizard
+          .getCurrentPage()
+          .getPageDefinition()
+          .fields.find((element) => element.id === createFunctionID.language_name)
+      ) {
+        selectLanguage.initialValue = data.selectLanguage;
+        const newDef = def;
+        newDef.pages[0].fields = templateField;
         // eslint-disable-next-line @typescript-eslint/no-use-before-define
         createFunction(contextGlobalState);
       }
