@@ -65,6 +65,17 @@ export class FuncAPI {
     return funcCliCommand(createCommand);
   }
 
+  static createFuncWithRepository(
+    name: string,
+    language: string,
+    template: string,
+    location: string,
+    repository: string,
+  ): CliCommand {
+    const createCommand = ['create', path.join(location, name), '-l', language, '-t', template, '-r', repository];
+    return funcCliCommand(createCommand);
+  }
+
   static functionInfo(location: string): CliCommand {
     const createCommand = ['info', '-p', location, '-o', 'json'];
     return funcCliCommand(createCommand);

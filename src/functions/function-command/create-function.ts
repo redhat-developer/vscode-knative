@@ -34,7 +34,7 @@ export interface Select {
   label: string;
 }
 
-const gitRegex = RegExp('((git@|https://)([\\w\\.@]+)(/|:))([\\w,\\-,\\_]+)/([\\w,\\-,\\_]+)(.git){0,1}((/){0,1})');
+export const gitRegex = RegExp('((git@|https://)([\\w\\.@]+)(/|:))([\\w,\\-,\\_]+)/([\\w,\\-,\\_]+)(.git){0,1}((/){0,1})');
 
 export interface ParametersType {
   functionName: string;
@@ -378,11 +378,26 @@ export const def: WizardDefinition = {
           title: `Function Successfully created`,
         },
         async () => {
-          const result: CliExitData = await knExecutor.execute(
-            FuncAPI.createFunc(data.functionName, data.selectLanguage, data.selectTemplate, data.selectLocation),
-            process.cwd(),
-            false,
-          );
+          let result: CliExitData;
+          if (data.templateInputText) {
+            result = await knExecutor.execute(
+              FuncAPI.createFuncWithRepository(
+                data.functionName,
+                data.languageName ?? data.selectLanguage,
+                data.templateInputText,
+                data.selectLocation,
+                data.repositoryInputText,
+              ),
+              process.cwd(),
+              false,
+            );
+          } else {
+            result = await knExecutor.execute(
+              FuncAPI.createFunc(data.functionName, data.selectLanguage, data.selectTemplate, data.selectLocation),
+              process.cwd(),
+              false,
+            );
+          }
           if (result.error) {
             telemetryLogError('Fail_to_create_function', result.error);
             // eslint-disable-next-line @typescript-eslint/no-floating-promises
