@@ -4,23 +4,43 @@
  *-----------------------------------------------------------------------------------------------*/
 
 import * as vscode from 'vscode';
+// eslint-disable-next-line import/no-cycle
+import { gitRegex } from './create-function';
 import { knExecutor } from '../../cli/execute';
 import { FuncAPI } from '../../cli/func-api';
 
-async function showInputBox(promptMessage: string): Promise<string> {
+async function showInputBox(promptMessage: string, inputValidMessage?: string): Promise<string> {
   // eslint-disable-next-line no-return-await
   return await vscode.window.showInputBox({
     ignoreFocusOut: true,
     prompt: promptMessage,
+    validateInput: (value: string) => {
+      if (!value?.trim()) {
+        return inputValidMessage;
+      }
+      return null;
+    },
   });
 }
 
 export async function addRepository(): Promise<void> {
-  const name: string = await showInputBox('Provide Name');
+  const name: string = await showInputBox('Provide Name', 'name cannot be empty');
   if (!name) {
     return null;
   }
-  const repositoryURL: string = await showInputBox('Provide repository URL');
+  const repositoryURL: string = await vscode.window.showInputBox({
+    ignoreFocusOut: true,
+    prompt: 'Provide repository URL',
+    validateInput: (value: string) => {
+      if (!value.trim()) {
+        return 'Empty Git repository URL';
+      }
+      if (!gitRegex.test(value)) {
+        return 'Invalid URL provided';
+      }
+      return null;
+    },
+  });
   if (!repositoryURL) {
     return null;
   }
@@ -56,7 +76,7 @@ export async function renameRepository(): Promise<void> {
   if (!selectedRepository) {
     return null;
   }
-  const name: string = await showInputBox('Rename repository name.');
+  const name: string = await showInputBox('Rename repository name.', 'name cannot be empty');
   if (!name) {
     return null;
   }
