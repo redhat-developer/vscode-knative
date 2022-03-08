@@ -378,7 +378,7 @@ export const def: WizardDefinition = {
         (findLanguageNameField?.id ? Boolean(data.languageName?.trim()) : true) &&
         (findTemplateInputText?.id ? Boolean(data.templateInputText?.trim()) : true) &&
         (findRepositoryInputText?.id ? Boolean(data.repositoryInputText?.trim()) : true) &&
-        getGitRegexStatus
+        (data.selectTemplate === 'Provide template and repository' ? getGitRegexStatus : true)
       );
     },
     async performFinish(wizard: WebviewWizard, data: ParametersType): Promise<PerformFinishResponse | null> {
