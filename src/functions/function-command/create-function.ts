@@ -298,15 +298,15 @@ export const def: WizardDefinition = {
       languageName.initialValue = data.languageName;
       selectLocation.initialValue = data.selectLocation;
       const findTemplateInputText = wizard
-        .getCurrentPage()
+        ?.getCurrentPage()
         .getPageDefinition()
         .fields.find((element) => element.id === createFunctionID.template_inputText);
       const findRepositoryInputText = wizard
-        .getCurrentPage()
+        ?.getCurrentPage()
         .getPageDefinition()
         .fields.find((element) => element.id === createFunctionID.repository_inputText);
       const findLanguageNameField = wizard
-        .getCurrentPage()
+        ?.getCurrentPage()
         .getPageDefinition()
         .fields.find((element) => element.id === createFunctionID.language_name);
       if (

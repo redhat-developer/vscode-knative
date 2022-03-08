@@ -33,6 +33,12 @@ import {
 // eslint-disable-next-line import/no-cycle
 import { createFunctionPage } from './functions/function-command/create-function';
 import { urlFunction } from './functions/function-command/get-url-function';
+import {
+  addRepository,
+  listRepository,
+  removeRepository,
+  renameRepository,
+} from './functions/function-command/repository-command';
 import { runFunction } from './functions/function-command/run-function';
 import { undeployFunction } from './functions/function-command/undeploy-function';
 import { functionExplorer } from './functions/functionsExplorer';
