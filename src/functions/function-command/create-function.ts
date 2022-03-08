@@ -28,6 +28,7 @@ import { createValidationItem, inputFieldValidation, pathValidation, selectLocat
 import { createFunctionID } from '../webview-id';
 
 export const folderStatus = new Map<string, boolean>();
+export const gitRegexStatus = new Map<string, boolean>();
 
 export interface Select {
   key: string;
@@ -246,6 +247,7 @@ export const def: WizardDefinition = {
           parameters.repositoryInputText?.trim() &&
           !gitRegex.test(parameters.repositoryInputText)
         ) {
+          gitRegexStatus.set('invalid_git_url', false);
           inputFieldValidation(
             {
               value: parameters.repositoryInputText,
@@ -254,6 +256,13 @@ export const def: WizardDefinition = {
             },
             items,
           );
+        }
+        if (
+          parameters.repositoryInputText !== undefined &&
+          parameters.repositoryInputText?.trim() &&
+          gitRegex.test(parameters.repositoryInputText)
+        ) {
+          gitRegexStatus.set('invalid_git_url', true);
         }
         if (parameters.selectLocation !== undefined && !Number.isNaN(parameters.selectLanguage)) {
           selectLocationValidation(
@@ -358,6 +367,7 @@ export const def: WizardDefinition = {
       }
       const validatePath = pathValidation?.get('path_validation');
       const getFolderStatus = folderStatus?.get('folder_present');
+      const getGitRegexStatus = gitRegexStatus?.get('invalid_git_url');
       return (
         data.functionName !== undefined &&
         data.selectLocation !== undefined &&
@@ -367,7 +377,8 @@ export const def: WizardDefinition = {
         !getFolderStatus &&
         (findLanguageNameField?.id ? Boolean(data.languageName?.trim()) : true) &&
         (findTemplateInputText?.id ? Boolean(data.templateInputText?.trim()) : true) &&
-        (findRepositoryInputText?.id ? Boolean(data.repositoryInputText?.trim()) : true)
+        (findRepositoryInputText?.id ? Boolean(data.repositoryInputText?.trim()) : true) &&
+        getGitRegexStatus
       );
     },
     async performFinish(wizard: WebviewWizard, data: ParametersType): Promise<PerformFinishResponse | null> {
