@@ -32,45 +32,45 @@ export class FunctionNodeImpl implements FunctionNode {
       getChildren: (): undefined[] => [],
     },
     namespaceNode: {
-      icon: 'knative-logo.svg',
+      icon: 'ns.svg',
       tooltip: 'NameSpace: {label}',
       description: '',
       // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
       getChildren: () => this.func.getTreeFunction(this),
     },
     failNamespaceNode: {
-      icon: 'knative-logo.svg',
+      icon: 'ns.svg',
       tooltip: '{label}',
       description: '',
       // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
       getChildren: () => this.func.getTreeFunction(this),
     },
     localFunctions: {
-      icon: 'service.svg',
+      icon: 'knative-logo.svg',
       tooltip: '{label}',
       description: '',
       getChildren: (): undefined[] => [],
     },
     localFunctionsEnablement: {
-      icon: 'service.svg',
+      icon: 'knative-logo.svg',
       tooltip: '{label}',
       description: '',
       getChildren: (): undefined[] => [],
     },
     functions: {
-      icon: 'service.svg',
+      icon: 'knative-logo.svg',
       tooltip: 'Function: {label}',
       description: '',
       getChildren: (): undefined[] => [],
     },
     deployFunctions: {
-      icon: 'service.svg',
+      icon: 'knative-logo.svg',
       tooltip: 'Function: {label}',
       description: '',
       getChildren: (): undefined[] => [],
     },
     localDeployFunctions: {
-      icon: 'service.svg',
+      icon: 'knative-logo.svg',
       tooltip: '{label}',
       description: '',
       getChildren: (): undefined[] => [],
