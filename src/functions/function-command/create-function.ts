@@ -171,7 +171,7 @@ export const def: WizardDefinition = {
         ) {
           validateInputField(
             path.join(parameters.selectLocation, parameters.functionName),
-            'Chose other name it is already exit as folder.',
+            'Chose other name folder already exists.',
             createFunctionID.function_name,
             items,
           );
