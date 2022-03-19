@@ -53,14 +53,14 @@ const CONTEXT_DATA: contextDataType = {
     getChildren: () => [],
   },
   service: {
-    icon: 'service.svg',
+    icon: 'knative-logo.svg',
     // icon: 'SVC.svg',
     tooltip: 'Service: {name}',
     description: '',
     getChildren: () => [],
   },
   service_modified: {
-    icon: 'service.svg',
+    icon: 'knative-logo.svg',
     // icon: 'SVC.svg',
     tooltip: 'Service: {name} modified',
     description: 'modified',
