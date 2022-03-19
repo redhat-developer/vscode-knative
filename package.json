@@ -141,6 +141,7 @@
     "onCommand:service.explorer.deleteLocal",
     "onCommand:service.output",
     "onCommand:function.undeploy",
+    "onCommand:function.invoke",
     "onCommand:function.OpenInBrowserAction",
     "onCommand:function.explorer.refresh",
     "onCommand:function.explorer.create",
@@ -271,6 +272,11 @@
         "icon": "$(plus)"
       },
       {
+        "command": "function.invoke",
+        "title": "Invoke",
+        "category": "Knative"
+      },
+      {
         "command": "function.build.Palette",
         "title": "Build Function",
         "category": "Knative"
@@ -369,6 +375,10 @@
         },
         {
           "command": "function.undeploy",
+          "when": "false"
+        },
+        {
+          "command": "function.invoke",
           "when": "false"
         },
         {
@@ -498,7 +508,7 @@
         {
           "command": "function.OpenInBrowserAction",
           "when": "view == knativeFunctionProjectExplorer && viewItem =~ /^(localDeployFunctions|deployFunctions)$/",
-          "group": "c1@4"
+          "group": "c1@5"
         },
         {
           "command": "service.explorer.tag",
@@ -519,6 +529,11 @@
           "command": "function.deploy.functionEnablement",
           "when": "view == knativeFunctionProjectExplorer && viewItem == functions",
           "group": "c1@3"
+        },
+        {
+          "command": "function.invoke",
+          "when": "view == knativeFunctionProjectExplorer && viewItem =~ /^(failNamespaceNode|namespaceNode)$/",
+          "group": "c1@4"
         },
         {
           "submenu": "function/addConfig",
