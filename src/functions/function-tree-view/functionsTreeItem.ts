@@ -32,14 +32,14 @@ export class FunctionNodeImpl implements FunctionNode {
       getChildren: (): undefined[] => [],
     },
     namespaceNode: {
-      icon: 'knative-logo.svg',
+      icon: 'ns.svg',
       tooltip: 'NameSpace: {label}',
       description: '',
       // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
       getChildren: () => this.func.getTreeFunction(this),
     },
     failNamespaceNode: {
-      icon: 'knative-logo.svg',
+      icon: 'ns.svg',
       tooltip: '{label}',
       description: '',
       // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
