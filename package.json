@@ -610,16 +610,15 @@
           "id": "knative-explorer",
           "title": "Knative",
           "icon": "images/vscode-knative.svg"
-        },
-        {
-          "id": "function-explorer",
-          "title": "Function",
-          "icon": "images/vscode-knative.svg"
         }
       ]
     },
     "views": {
       "knative-explorer": [
+        {
+          "id": "knativeFunctionProjectExplorer",
+          "name": "Function"
+        },
         {
           "id": "knativeServingProjectExplorer",
           "name": "Serving"
@@ -627,12 +626,6 @@
         {
           "id": "knativeEventingProjectExplorer",
           "name": "Eventing"
-        }
-      ],
-      "function-explorer": [
-        {
-          "id": "knativeFunctionProjectExplorer",
-          "name": "Function"
         }
       ]
     },
