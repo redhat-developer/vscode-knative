@@ -532,7 +532,7 @@
         },
         {
           "command": "function.invoke",
-          "when": "view == knativeFunctionProjectExplorer && viewItem =~ /^(failNamespaceNode|namespaceNode)$/",
+          "when": "view == knativeFunctionProjectExplorer && viewItem =~ /^(localDeployFunctions)$/",
           "group": "c1@4"
         },
         {
