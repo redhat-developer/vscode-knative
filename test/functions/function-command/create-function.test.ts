@@ -34,9 +34,9 @@ suite('Function/Create', () => {
   });
 
   test('return null if empty context', () => {
-    const result = validateInputField('test', 'Chose other name it is already exit as folder.', 'functionName', []);
+    const result = validateInputField('test', 'Chose other name folder already exists.', 'functionName', []);
     expect(result).deep.equal({
-      items: [{ severity: 4, template: { content: 'Chose other name it is already exit as folder.', id: 'functionName' } }],
+      items: [{ severity: 4, template: { content: 'Chose other name folder already exists.', id: 'functionName' } }],
     });
   });
 
@@ -75,7 +75,7 @@ suite('Function/Create', () => {
     expect(result).deep.equal({
       items: [
         { severity: 4, template: { content: 'Provide path to create function', id: 'selectLocation' } },
-        { severity: 4, template: { content: 'Chose other name it is already exit as folder.', id: 'functionName' } },
+        { severity: 4, template: { content: 'Chose other name folder already exists.', id: 'functionName' } },
       ],
     });
   });
