@@ -168,7 +168,7 @@ suite('VirtualFileSystem', () => {
   // TODO: figure out how to test an event that is fired.
   suite('Watch', () => {
     test('should return a Disposable object', () => {
-      const watcher = knvfs.watch(_uriLocalFile, null);
+      const watcher = knvfs.watch();
       // eslint-disable-next-line @typescript-eslint/no-empty-function
       expect(watcher).to.deep.equal(new Disposable(() => {}));
     });

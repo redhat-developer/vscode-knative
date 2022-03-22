@@ -103,7 +103,11 @@ export async function activate(extensionContext: vscode.ExtensionContext): Promi
 
     // Temporarily loaded resource providers
     vscode.workspace.registerFileSystemProvider(KN_RESOURCE_SCHEME, servingExplorer.treeDataProvider.knvfs, {
-      /* TODO: case sensitive? */
+      isCaseSensitive: true,
+    }),
+    vscode.workspace.registerFileSystemProvider(KN_READONLY_SCHEME, servingExplorer.treeDataProvider.knvfs, {
+      isCaseSensitive: true,
+      isReadonly: true,
     }),
 
     servingExplorer,

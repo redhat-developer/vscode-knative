@@ -78,9 +78,6 @@ export class ServingExplorer implements Disposable {
       vscode.commands.registerCommand('service.explorer.apply', (treeItem: ServingTreeItem) =>
         this.treeDataProvider.updateServiceFromYaml(treeItem),
       ),
-      vscode.commands.registerCommand('service.explorer.deleteLocal', (treeItem: ServingTreeItem) =>
-        this.treeDataProvider.deleteLocalYaml(treeItem),
-      ),
       vscode.commands.registerCommand('service.explorer.refresh', () => this.treeDataProvider.refresh()),
       vscode.commands.registerCommand('service.explorer.reportIssue', () => this.reportIssue()),
     ];

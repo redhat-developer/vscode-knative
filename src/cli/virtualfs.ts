@@ -28,6 +28,7 @@ import { CliExitData } from './cmdCli';
 import * as config from './config';
 import { Execute } from './execute';
 import { KnAPI } from './kn-api';
+import { VFSFileStat } from './vfs-file-stat';
 import { registerSchema } from '../editor/knativeSchemaRegister';
 import { Errorable } from '../util/errorable';
 
@@ -105,44 +106,50 @@ export class KnativeResourceVirtualFileSystemProvider implements FileSystemProvi
 
   onDidChangeFile: Event<FileChangeEvent[]> = this.onDidChangeFileEmitter.event;
 
+  private fileStats = new Map<string, VFSFileStat>();
+
   private yamlDirName = '.knative';
 
   public knExecutor = new Execute();
 
   // eslint-disable-next-line class-methods-use-this
-  watch(_uri: Uri, _options: { recursive: boolean; excludes: string[] }): Disposable {
-    // ignore, fires for all changes
-    // eslint-disable-next-line @typescript-eslint/no-empty-function
-    return new Disposable(() => {});
+  watch(): Disposable {
+    return new Disposable(() => true);
   }
 
-  async stat(_uri: Uri): Promise<FileStat> {
-    let fileType: FileType = FileType.File;
-    let createTime = 0;
-    let modifiedTime = 0;
-    let fileSize = 0;
-
-    const pathInWorkSpace: string = await getFilePathAsync(this.yamlDirName, _uri.fsPath);
-    fs.stat(pathInWorkSpace, (err, stats) => {
-      if (err) {
-        throw err;
-      }
-      fileType = FileType.File;
-      createTime = stats.ctimeMs;
-      modifiedTime = stats.mtimeMs;
-      fileSize = stats.size;
-    });
-
-    return {
-      type: fileType,
-      ctime: createTime,
-      mtime: modifiedTime,
-      size: fileSize,
-    };
+  stat(uri: Uri): FileStat | Thenable<FileStat> {
+    return this.ensureStat(uri);
   }
 
+  private ensureStat(uri: Uri): VFSFileStat {
+    if (!this.fileStats.has(uri.toString())) {
+      this.fileStats.set(uri.toString(), new VFSFileStat());
+    }
+
+    const stat = this.fileStats.get(uri.toString());
+    stat.changeStat(stat.size + 1);
+
+    return stat;
+  }
+
+  readFile(uri: Uri): Uint8Array | Thenable<Uint8Array> {
+    return this.readFileAsync(uri);
+  }
+
+  writeFile(uri: Uri, content: Uint8Array, _options: { create: boolean; overwrite: boolean }): void | Thenable<void> {
+    const s = saveAsync(uri, content, this.yamlDirName); // TODO: respect options
+    this.onDidChangeFileEmitter.fire([{ type: FileChangeType.Created, uri }]);
+    return s;
+  }
+
+  // eslint-disable-next-line class-methods-use-this
   readDirectory(_uri: Uri): [string, FileType][] | Thenable<[string, FileType][]> {
-    return this.readDirectoryAsync();
+    return []; // no-op
+  }
+
+  // eslint-disable-next-line class-methods-use-this
+  createDirectory(_uri: Uri): void | Thenable<void> {
+    // no-op
   }
 
   /**
@@ -158,10 +165,6 @@ export class KnativeResourceVirtualFileSystemProvider implements FileSystemProvi
       files.push([path.join(dir, localFile), FileType.File]);
     });
     return files;
-  }
-
-  createDirectory(_uri: Uri): void | Thenable<void> {
-    return this.createDirectoryAsync(_uri);
   }
 
   /**
@@ -183,25 +186,21 @@ export class KnativeResourceVirtualFileSystemProvider implements FileSystemProvi
     }
   }
 
-  readFile(uri: Uri): Uint8Array | Thenable<Uint8Array> {
-    return this.readFileAsync(uri);
-  }
-
   async readFileAsync(uri: Uri): Promise<Uint8Array> {
-    await this.createDirectory(uri);
+    // await this.createDirectory(uri);
     // Check if there is an edited local version.
     // TODO: Check if the version on the cluster is newer,
     // Then if it is, ask the user if they want to replace the edited version.
-    const localFile = await getFilePathAsync(this.yamlDirName, uri.fsPath);
+    // const localFile = await getFilePathAsync(this.yamlDirName, uri.fsPath);
 
     await registerSchema();
 
     // (example) localFile = "/home/josh/git/vscode-extension-samples/basic-multi-root-sample/.knative/service-example.yaml"
-    if (fs.existsSync(localFile)) {
-      // use local file
-      const localContent = fs.readFileSync(localFile, { encoding: 'utf8' });
-      return Buffer.from(localContent, 'utf8');
-    }
+    // if (fs.existsSync(localFile)) {
+    //   // use local file
+    //   const localContent = fs.readFileSync(localFile, { encoding: 'utf8' });
+    //   return Buffer.from(localContent, 'utf8');
+    // }
     const content = await this.loadResource(uri);
     return Buffer.from(content, 'utf8');
   }
@@ -291,36 +290,13 @@ export class KnativeResourceVirtualFileSystemProvider implements FileSystemProvi
     return cleanCED;
   }
 
-  writeFile(uri: Uri, content: Uint8Array, _options: { create: boolean; overwrite: boolean }): void | Thenable<void> {
-    const s = saveAsync(uri, content, this.yamlDirName); // TODO: respect options
-    this.onDidChangeFileEmitter.fire([{ type: FileChangeType.Created, uri }]);
-    return s;
-  }
-
+  // eslint-disable-next-line class-methods-use-this
   delete(uri: Uri, _options: { recursive: boolean }): void | Thenable<void> {
-    if (fs.existsSync(uri.fsPath)) {
-      fs.unlink(uri.fsPath, (err) => {
-        if (err) {
-          throw err;
-        }
-        this.onDidChangeFileEmitter.fire([{ type: FileChangeType.Deleted, uri }]);
-      });
-    }
+    // no-op
   }
 
+  // eslint-disable-next-line class-methods-use-this
   rename(_oldUri: Uri, _newUri: Uri, _options: { overwrite: boolean }): void | Thenable<void> {
-    return this.renameAsync(_oldUri, _newUri, _options);
-  }
-
-  async renameAsync(oldUri: Uri, newUri: Uri, options: { overwrite: boolean }): Promise<void> {
-    const oldLocalFile = await getFilePathAsync(this.yamlDirName, oldUri.fsPath);
-    const newLocalFile = await getFilePathAsync(this.yamlDirName, newUri.fsPath);
-    if (fs.existsSync(oldLocalFile)) {
-      fs.rename(oldLocalFile, newLocalFile, (err) => {
-        if (err) {
-          throw err;
-        }
-      });
-    }
+    // no-op
   }
 }
