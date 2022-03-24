@@ -3,7 +3,6 @@
  *  Licensed under the MIT License. See LICENSE file in the project root for license information.
  *-----------------------------------------------------------------------------------------------*/
 
-// import * as vscode from 'vscode';
 import { SpawnOptions, spawn } from 'child_process';
 import { window } from 'vscode';
 import { KnOutputChannel, OutputChannel } from '../output/knOutputChannel';
@@ -167,3 +166,5 @@ export class CmdCli implements Cli {
     });
   }
 }
+
+export const execCmdCli = new CmdCli();
