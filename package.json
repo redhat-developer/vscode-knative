@@ -617,7 +617,7 @@
       "knative-explorer": [
         {
           "id": "knativeFunctionProjectExplorer",
-          "name": "Function"
+          "name": "Functions"
         },
         {
           "id": "knativeServingProjectExplorer",
