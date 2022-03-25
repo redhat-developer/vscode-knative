@@ -92,6 +92,7 @@ export class KnativeResourceVirtualFileSystemProvider implements FileSystemProvi
     await fsx.writeFile(fsPath, content);
     await this.updateK8sResource(fsPath);
     const oldStat = await fsx.stat(fsPath);
+    await fsx.unlink(fsPath);
     // Use timeout to fire file change event in another event loop cycle, this will cause update content inside editor
     setTimeout(() => {
       this.fileStats.get(uri.toString())?.changeStat(oldStat.size + 1); // change stat to ensure content update
@@ -108,6 +109,7 @@ export class KnativeResourceVirtualFileSystemProvider implements FileSystemProvi
       if (result.error) {
         // eslint-disable-next-line no-console, @typescript-eslint/restrict-template-expressions
         console.log(`updateServiceFromYaml result.error = ${result.error}`);
+        await fsx.unlink(fsPath);
         // deal with the error that is passed on but not thrown by the Promise.
         throw result.error;
       }
@@ -128,6 +130,7 @@ export class KnativeResourceVirtualFileSystemProvider implements FileSystemProvi
         console.log(`updateServiceFromYaml error = ${error}`);
         await window.showErrorMessage(`There was an error while uploading the YAML. `, { modal: true }, 'OK');
       }
+      await fsx.unlink(fsPath);
     }
   }
 

@@ -219,7 +219,7 @@ export class ServingDataProvider implements TreeDataProvider<ServingTreeItem | E
           parentService,
           value,
           {
-            label: `${service.details.status.conditions[0].reason} ${value.details.status.conditions[0].reason} - ${value.name}`,
+            label: value.name,
           },
           context,
           TreeItemCollapsibleState.None,
