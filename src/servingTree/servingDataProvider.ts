@@ -3,8 +3,6 @@
  *  Licensed under the MIT License. See LICENSE file in the project root for license information.
  *-----------------------------------------------------------------------------------------------*/
 
-import * as os from 'os';
-import * as path from 'path';
 import * as vscode from 'vscode';
 // import * as validator from 'validator';
 import {
@@ -16,10 +14,9 @@ import {
   TreeItem,
   TreeItemCollapsibleState,
 } from 'vscode';
-import * as fsx from 'fs-extra';
 import * as yaml from 'yaml';
 import { ServingTreeItem } from './servingTreeItem';
-import { CliExitData, execCmdCli } from '../cli/cmdCli';
+import { CliExitData } from '../cli/cmdCli';
 import { ServingContextType } from '../cli/config';
 import { Execute, loadItems } from '../cli/execute';
 import { KnAPI } from '../cli/kn-api';
@@ -415,63 +412,11 @@ export class ServingDataProvider implements TreeDataProvider<ServingTreeItem | E
     // *** As a hack, make a file for the yaml, use kubectl apply to create, then delete the file
     // Check the local files for the URL for YAML file
     const serviceName = serveObj.name;
-    const tempPath = os.tmpdir();
-    const fsPath = path.join(tempPath, `${serviceName}.yaml`);
-    await fsx.ensureFile(fsPath);
     const stringContent = yaml.parse(
       `apiVersion: serving.knative.dev/v1\nkind: Service\nmetadata:\n  name: ${serveObj.name}\nspec:\n  template:\n    spec:\n      containers:\n      - image: ${serveObj.image}`,
     ) as svc.Items;
     const yamlContent = yaml.stringify(stringContent);
-
-    await fsx.writeFile(fsPath, yamlContent);
-
-    let addResult: CliExitData;
-    // Create the Service with kn apply
-    try {
-      addResult = await execCmdCli.execute(KnAPI.applyYAML(fsPath, { override: true }));
-    } catch (error) {
-      // eslint-disable-next-line no-console, @typescript-eslint/restrict-template-expressions
-      console.log(`Error while using kn apply to create.\n ${error}`);
-      await fsx.unlink(fsPath);
-      return undefined;
-    }
-    if (typeof addResult.error === 'string' && addResult.error.search('RevisionFailed') > 0) {
-      if (addResult.error.search('Unable to fetch image') > 0) {
-        // undefinedError: RevisionFailed: Revision "foo-00001" failed with message: Unable to fetch image "foo/bar": failed to resolve image to digest: HEAD https://index.docker.io/v2/foo/bar/manifests/latest: unsupported status code 401.
-        const indexOfErrorMessage = addResult.error.indexOf('Unable to fetch image');
-        const indexOfColon = addResult.error.indexOf(': ', indexOfErrorMessage);
-        const errorMessage = addResult.error.substring(indexOfErrorMessage, indexOfColon);
-        await vscode.window.showErrorMessage(
-          // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-          `The Revision failed to be created.\n${errorMessage}`,
-          { modal: true },
-          'OK',
-        );
-      } else if (addResult.error.search('Initial scale was never achieved') > 0) {
-        // undefinedError: RevisionFailed: Revision "ddd-00001" failed with message: Initial scale was never achieved.
-        await vscode.window.showErrorMessage(
-          // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-          `The Revision failed to be created.\nInitial scale was never achieved.\nPlease confirm the image reference is valid.`,
-          { modal: true },
-          'OK',
-        );
-      } else {
-        await vscode.window.showErrorMessage(
-          // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-          `The Revision failed to be created.\n${addResult.error}`,
-          { modal: true },
-          'OK',
-        );
-      }
-    }
-
-    await fsx.unlink(fsPath);
-    // *** End Hack
-
-    // if (result.error) {
-    //   // TODO: handle the error
-    //   // check the kind of errors we can get back
-    // }
+    await this.knvfs.writeFile(vscode.Uri.parse(`${serviceName}.yaml`), Buffer.from(yamlContent, 'utf8'));
     this.refresh();
     // return this.insertAndRevealService(createKnObj(serveObj.name));
   }

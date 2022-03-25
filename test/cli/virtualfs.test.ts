@@ -513,7 +513,7 @@ status:
       writeFileStub.resolves();
       execCmdCliStub.onFirstCall().resolves({ stdout: 'pass', error: null });
       statStub.resolves({ size: 1 });
-      await knvfs.writeFile(_uriLocalFile, Buffer.from(testLocalServiceContent), { create: true, overwrite: true });
+      await knvfs.writeFile(_uriLocalFile, Buffer.from(testLocalServiceContent));
       // eslint-disable-next-line no-unused-expressions
       expect(tmpdirStub).calledOnce;
       // eslint-disable-next-line no-unused-expressions

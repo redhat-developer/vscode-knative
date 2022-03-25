@@ -1079,7 +1079,6 @@ status:
       sandbox.stub(sdp, 'getName').resolves(serviceToCreate);
       sandbox.stub(sdp.ksvc, 'addService').returns(undefined);
       sandbox.stub(vfs, 'vfsUri').returns(_uriExternalFile);
-      sandbox.stub(sdp.knvfs, 'writeFile').returns(undefined);
       const errorMessage = `undefinedError: RevisionFailed: Revision "knative-tutorial-greeter-00001" failed with message: Unable to fetch image "http://quay.io/test-group/knative-tutorial-greeter:quarkus": failed to resolve image to digest: HEAD https://quay.io/v2/test-group/manifests/latest: unsupported status code 404.`;
       const ced: CliExitData = { error: errorMessage, stdout: 'foo' };
       sandbox.stub(execCmdCli, 'execute').resolves(ced);
@@ -1087,6 +1086,7 @@ status:
       sandbox.stub(fsx, 'writeFile').resolves();
       sandbox.stub(fsx, 'ensureFile').resolves();
       sandbox.stub(fsx, 'unlink').resolves();
+      sandbox.stub(fsx, 'stat').resolves();
       const result: ServingTreeItem[] = await sdp.addService();
       sinon.assert.calledOnce(spyErrorMessage);
       // eslint-disable-next-line no-unused-expressions
@@ -1108,7 +1108,6 @@ status:
       sandbox.stub(sdp, 'getName').resolves(serviceToCreate);
       sandbox.stub(sdp.ksvc, 'addService').returns(undefined);
       sandbox.stub(vfs, 'vfsUri').returns(_uriExternalFile);
-      sandbox.stub(sdp.knvfs, 'writeFile').returns(undefined);
       const errorMessage = `undefinedError: RevisionFailed: Revision "knative-tutorial-greeter-00001" failed with message: Initial scale was never achieved.`;
       const ced: CliExitData = { error: errorMessage, stdout: 'foo' };
       sandbox.stub(execCmdCli, 'execute').resolves(ced);
@@ -1116,6 +1115,7 @@ status:
       sandbox.stub(fsx, 'writeFile').resolves();
       sandbox.stub(fsx, 'ensureFile').resolves();
       sandbox.stub(fsx, 'unlink').resolves();
+      sandbox.stub(fsx, 'stat').resolves();
       const result: ServingTreeItem[] = await sdp.addService();
       sinon.assert.calledOnce(spyErrorMessage);
       // eslint-disable-next-line no-unused-expressions
@@ -1137,7 +1137,6 @@ status:
       sandbox.stub(sdp, 'getName').resolves(serviceToCreate);
       sandbox.stub(sdp.ksvc, 'addService').returns(undefined);
       sandbox.stub(vfs, 'vfsUri').returns(_uriExternalFile);
-      sandbox.stub(sdp.knvfs, 'writeFile').returns(undefined);
       const errorMessage = `undefinedError: RevisionFailed: Revision "knative-tutorial-greeter-00001" failed with message: Something unknown happened.`;
       const ced: CliExitData = { error: errorMessage, stdout: 'foo' };
       sandbox.stub(execCmdCli, 'execute').resolves(ced);
@@ -1145,6 +1144,7 @@ status:
       sandbox.stub(fsx, 'writeFile').resolves();
       sandbox.stub(fsx, 'ensureFile').resolves();
       sandbox.stub(fsx, 'unlink').resolves();
+      sandbox.stub(fsx, 'stat').resolves();
       const result: ServingTreeItem[] = await sdp.addService();
       sinon.assert.calledOnce(spyErrorMessage);
       // eslint-disable-next-line no-unused-expressions
@@ -1218,6 +1218,7 @@ status:
       sandbox.stub(fsx, 'writeFile').resolves();
       sandbox.stub(fsx, 'ensureFile').resolves();
       sandbox.stub(fsx, 'unlink').resolves();
+      sandbox.stub(fsx, 'stat').resolves();
       const stubDelete = sandbox.stub(sdp.knvfs, 'delete').resolves();
       const result: ServingTreeItem[] = await sdp.addService();
       sinon.assert.notCalled(stubDelete);
