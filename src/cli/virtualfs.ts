@@ -87,19 +87,19 @@ export class KnativeResourceVirtualFileSystemProvider implements FileSystemProvi
   async writeFile(uri: Uri, content: Uint8Array): Promise<void> {
     const tempPath = os.tmpdir();
     const fsPath = path.join(tempPath, uri.fsPath);
-
     await fsx.ensureFile(fsPath);
     await fsx.writeFile(fsPath, content);
     await this.updateK8sResource(fsPath);
-    const oldStat = await fsx.stat(fsPath);
     if (fsPath) {
+      const oldStat = await fsx.stat(fsPath);
       await fsx.unlink(fsPath);
+
+      // Use timeout to fire file change event in another event loop cycle, this will cause update content inside editor
+      setTimeout(() => {
+        this.fileStats.get(uri.toString())?.changeStat(oldStat.size + 1); // change stat to ensure content update
+        this.onDidChangeFileEmitter.fire([{ uri, type: FileChangeType.Changed }]);
+      }, 10);
     }
-    // Use timeout to fire file change event in another event loop cycle, this will cause update content inside editor
-    setTimeout(() => {
-      this.fileStats.get(uri.toString())?.changeStat(oldStat.size + 1); // change stat to ensure content update
-      this.onDidChangeFileEmitter.fire([{ uri, type: FileChangeType.Changed }]);
-    }, 10);
   }
 
   // eslint-disable-next-line class-methods-use-this
@@ -116,7 +116,23 @@ export class KnativeResourceVirtualFileSystemProvider implements FileSystemProvi
         throw result.error;
       }
     } catch (error) {
-      await window.showErrorMessage(`There was an error while uploading the YAML. `, { modal: true }, 'OK');
+      if (typeof error === 'string' && error.search('validation failed') > 0) {
+        // eslint-disable-next-line @typescript-eslint/prefer-string-starts-ends-with
+        const fileName = error.slice(error.lastIndexOf('validation failed:'));
+        // eslint-disable-next-line no-console
+        console.log(`The YAMl file failed validation with the following error.\n\n${fileName}`);
+      } else if (
+        typeof error === 'string' &&
+        (error.search(/undefinedWarning/gm) >= 0 || error.search(/undefined.+Warning/gm) >= 0)
+      ) {
+        // eslint-disable-next-line no-console
+        console.log(`updateServiceFromYaml undefinedWarning; error = ${error}`);
+        // do nothing it was a warning
+      } else {
+        // eslint-disable-next-line no-console, @typescript-eslint/restrict-template-expressions
+        console.log(`updateServiceFromYaml error = ${error}`);
+        await window.showErrorMessage(`There was an error while uploading the YAML. `, { modal: true }, 'OK');
+      }
       await fsx.unlink(fsPath);
     }
   }

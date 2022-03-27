@@ -390,7 +390,7 @@ export class ServingDataProvider implements TreeDataProvider<ServingTreeItem | E
     return service;
   }
 
-  public async addService(): Promise<ServingTreeItem[]> {
+  public async addService(): Promise<void> {
     const image: string = await this.getUrl();
 
     if (!image) {
@@ -418,7 +418,6 @@ export class ServingDataProvider implements TreeDataProvider<ServingTreeItem | E
     const yamlContent = yaml.stringify(stringContent);
     await this.knvfs.writeFile(vscode.Uri.parse(`${serviceName}.yaml`), Buffer.from(yamlContent, 'utf8'));
     this.refresh();
-    // return this.insertAndRevealService(createKnObj(serveObj.name));
   }
 
   /**
