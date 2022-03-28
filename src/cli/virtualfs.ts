@@ -23,7 +23,7 @@ import {
 } from 'vscode';
 import * as fsx from 'fs-extra';
 import * as yaml from 'yaml';
-import { CliExitData, execCmdCli } from './cmdCli';
+import { CliExitData } from './cmdCli';
 import * as config from './config';
 import { Execute } from './execute';
 import { KnAPI } from './kn-api';
@@ -90,7 +90,8 @@ export class KnativeResourceVirtualFileSystemProvider implements FileSystemProvi
     await fsx.ensureFile(fsPath);
     await fsx.writeFile(fsPath, content);
     await this.updateK8sResource(fsPath);
-    if (fsPath) {
+    const exists: boolean = await fsx.pathExists(fsPath);
+    if (exists) {
       const oldStat = await fsx.stat(fsPath);
       await fsx.unlink(fsPath);
 
@@ -106,7 +107,7 @@ export class KnativeResourceVirtualFileSystemProvider implements FileSystemProvi
   async updateK8sResource(fsPath: string): Promise<void> {
     try {
       // push the updated YAML back to the cluster
-      const result: CliExitData = await execCmdCli.execute(KnAPI.applyYAML(fsPath, { override: false }));
+      const result: CliExitData = await this.knExecutor.execute(KnAPI.applyYAML(fsPath, { override: false }));
       // Delete the yaml that was pushed if there was no error
       if (result.error) {
         // eslint-disable-next-line no-console, @typescript-eslint/restrict-template-expressions
@@ -193,7 +194,7 @@ export class KnativeResourceVirtualFileSystemProvider implements FileSystemProvi
     switch (resourceAuthority) {
       case KN_RESOURCE_AUTHORITY:
         // fetch the YAML output
-        ced = await execCmdCli.execute(KnAPI.describeFeature(command, name, outputFormat));
+        ced = await this.knExecutor.execute(KnAPI.describeFeature(command, name, outputFormat));
         if (contextValue === 'service' && scheme === KN_RESOURCE_SCHEME) {
           cleanedCed = this.removeServerSideYamlElements(ced);
         } else {
