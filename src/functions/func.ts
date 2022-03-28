@@ -137,7 +137,39 @@ export class FuncImpl implements Func {
             funcStatus === FunctionStatus.CLUSTERLOCALBOTH
               ? FunctionContextType.LOCALDEPLOYFUNCTION
               : FunctionContextType.LOCAlFUNCTIONS;
-          if (funcData && funcData?.[0]?.name && funcData?.[0]?.image.trim()) {
+          if (func.contextValue === FunctionContextType.FAILNAMESPACENODE && funcData?.[0]?.name && funcData?.[0]?.image.trim()) {
+            functionTreeView.set(
+              funcData?.[0]?.name,
+              new FunctionNodeImpl(
+                func,
+                funcData[0].name,
+                FunctionContextType.NOTCONNECTEDLOCALFUNCTIONS,
+                this,
+                TreeItemCollapsibleState.None,
+                folderUri,
+                funcData[0].runtime,
+                funcStatus,
+              ),
+            );
+          } else if (
+            func.contextValue === FunctionContextType.FAILNAMESPACENODE &&
+            funcData?.[0]?.name &&
+            !funcData?.[0]?.image.trim()
+          ) {
+            functionTreeView.set(
+              funcData?.[0]?.name,
+              new FunctionNodeImpl(
+                func,
+                funcData[0].name,
+                FunctionContextType.NOTCONNECTEDLOCALFUNCTIONSENABLEMENT,
+                this,
+                TreeItemCollapsibleState.None,
+                folderUri,
+                funcData[0].runtime,
+                funcStatus,
+              ),
+            );
+          } else if (funcData && funcData?.[0]?.name && funcData?.[0]?.image.trim()) {
             const url = functionTreeView.get(funcData?.[0]?.name)?.url;
             functionTreeView.set(
               funcData?.[0]?.name,

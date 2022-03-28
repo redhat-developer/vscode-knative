@@ -45,6 +45,18 @@ export class FunctionNodeImpl implements FunctionNode {
       // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
       getChildren: () => this.func.getTreeFunction(this),
     },
+    notConnectedLocalFunctions: {
+      icon: 'service.svg',
+      tooltip: '{label}',
+      description: '',
+      getChildren: (): undefined[] => [],
+    },
+    notConnectedLocalFunctionsEnablement: {
+      icon: 'service.svg',
+      tooltip: '{label}',
+      description: '',
+      getChildren: (): undefined[] => [],
+    },
     localFunctions: {
       icon: 'service.svg',
       tooltip: '{label}',
@@ -110,7 +122,8 @@ export class FunctionNodeImpl implements FunctionNode {
     if (
       this.contextValue === FunctionContextType.LOCAlFUNCTIONS ||
       this.contextValue === FunctionContextType.LOCAlFUNCTIONSENABLEMENT ||
-      this.contextValue === FunctionContextType.LOCALDEPLOYFUNCTION
+      this.contextValue === FunctionContextType.LOCALDEPLOYFUNCTION ||
+      this.contextValue === FunctionContextType.NOTCONNECTEDLOCALFUNCTIONS
     ) {
       return format(
         `Name: ${this.CONTEXT_DATA[this.contextValue].tooltip} RunTime: ${this.runtime} Context: ${this.contextPath.fsPath}`,

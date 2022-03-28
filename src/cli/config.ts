@@ -20,6 +20,8 @@ export enum FunctionContextType {
   NAMESPACENODE = 'namespaceNode',
   LOCAlFUNCTIONS = 'localFunctions',
   LOCAlFUNCTIONSENABLEMENT = 'localFunctionsEnablement',
+  NOTCONNECTEDLOCALFUNCTIONS = 'notConnectedLocalFunctions',
+  NOTCONNECTEDLOCALFUNCTIONSENABLEMENT = 'notConnectedLocalFunctionsEnablement',
 }
 
 export enum FunctionStatus {
