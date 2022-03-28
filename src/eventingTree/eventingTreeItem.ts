@@ -26,7 +26,7 @@ const CONTEXT_DATA = {
     getChildren: (): undefined[] => [],
   },
   broker_folder: {
-    icon: 'folder-opened.svg',
+    icon: 'broker.svg',
     tooltip: '',
     description: '',
     getChildren: (): undefined[] => [],
@@ -39,7 +39,7 @@ const CONTEXT_DATA = {
     getChildren: (): undefined[] => [],
   },
   channel_folder: {
-    icon: 'folder-opened.svg',
+    icon: 'channel.svg',
     tooltip: '',
     description: '',
     getChildren: (): undefined[] => [],
@@ -57,7 +57,7 @@ const CONTEXT_DATA = {
     getChildren: (): undefined[] => [],
   },
   source_folder: {
-    icon: 'folder-opened.svg',
+    icon: 'source.svg',
     tooltip: '',
     description: '',
     getChildren: (): undefined[] => [],
@@ -82,7 +82,7 @@ const CONTEXT_DATA = {
     getChildren: (): undefined[] => [],
   },
   subscription_folder: {
-    icon: 'folder-opened.svg',
+    icon: 'subscription.svg',
     tooltip: '',
     description: '',
     getChildren: (): undefined[] => [],
@@ -95,7 +95,7 @@ const CONTEXT_DATA = {
     getChildren: (): undefined[] => [],
   },
   trigger_folder: {
-    icon: 'folder-opened.svg',
+    icon: 'trigger.svg',
     tooltip: '',
     description: '',
     getChildren: (): undefined[] => [],
