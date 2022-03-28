@@ -11,7 +11,7 @@ import { beforeEach } from 'mocha';
 import rewire = require('rewire');
 import * as sinon from 'sinon';
 import * as sinonChai from 'sinon-chai';
-import { CliExitData, execCmdCli } from '../../src/cli/cmdCli';
+import { CliExitData } from '../../src/cli/cmdCli';
 import * as knv from '../../src/cli/virtualfs';
 
 const rewiredVFS = rewire('../../src/cli/virtualfs');
@@ -48,6 +48,7 @@ suite('VirtualFileSystem', () => {
 
   let tmpdirStub: sinon.SinonStub;
   let writeFileStub: sinon.SinonStub;
+  let pathExistsStub: sinon.SinonStub;
   let ensureFileStub: sinon.SinonStub;
   let statStub: sinon.SinonStub;
   let execCmdCliStub: sinon.SinonStub;
@@ -57,9 +58,10 @@ suite('VirtualFileSystem', () => {
     tmpdirStub = sandbox.stub(os, 'tmpdir');
     sandbox.stub(fsx, 'unlink');
     writeFileStub = sandbox.stub(fsx, 'writeFile');
+    pathExistsStub = sandbox.stub(fsx, 'pathExists');
     ensureFileStub = sandbox.stub(fsx, 'ensureFile');
     statStub = sandbox.stub(fsx, 'stat');
-    execCmdCliStub = sandbox.stub(execCmdCli, 'execute');
+    execCmdCliStub = sandbox.stub(knvfs.knExecutor, 'execute');
   });
 
   teardown(() => {
@@ -481,7 +483,7 @@ status:
     test('should throw an error if fetching the yaml has an error.', async () => {
       sandbox.restore();
       sandbox.stub(window, 'showErrorMessage').resolves();
-      sandbox.stub(execCmdCli, 'execute').onFirstCall().resolves(cedError);
+      sandbox.stub(knvfs.knExecutor, 'execute').onFirstCall().resolves(cedError);
       let error: NodeJS.ErrnoException | null = null;
       try {
         await knvfs.readFile(_uriExternalFile);
@@ -511,6 +513,7 @@ status:
       tmpdirStub.returns(pth.join('tmp', 'bar'));
       ensureFileStub.resolves();
       writeFileStub.resolves();
+      pathExistsStub.resolves();
       execCmdCliStub.onFirstCall().resolves({ stdout: 'pass', error: null });
       statStub.resolves({ size: 1 });
       await knvfs.writeFile(_uriLocalFile, Buffer.from(testLocalServiceContent));
