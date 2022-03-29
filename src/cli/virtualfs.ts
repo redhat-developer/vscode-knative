@@ -9,18 +9,7 @@
 import * as os from 'os';
 import * as path from 'path';
 import * as querystring from 'querystring';
-import {
-  Disposable,
-  Event,
-  EventEmitter,
-  FileChangeEvent,
-  FileChangeType,
-  FileStat,
-  FileSystemProvider,
-  FileType,
-  Uri,
-  window,
-} from 'vscode';
+import { Disposable, Event, EventEmitter, FileChangeEvent, FileStat, FileSystemProvider, FileType, Uri, window } from 'vscode';
 import * as fsx from 'fs-extra';
 import * as yaml from 'yaml';
 import { CliExitData } from './cmdCli';
@@ -29,7 +18,10 @@ import { Execute } from './execute';
 import { KnAPI } from './kn-api';
 import { VFSFileStat } from './vfs-file-stat';
 import { registerSchema } from '../editor/knativeSchemaRegister';
+// eslint-disable-next-line import/no-cycle
+import { servingDataProvider } from '../servingTree/servingDataProvider';
 import { Errorable } from '../util/errorable';
+import { getStderrString } from '../util/stderrstring';
 
 export const KN_RESOURCE_SCHEME = 'knmsx';
 export const KN_RESOURCE_AUTHORITY = 'loadknativecore';
@@ -90,14 +82,8 @@ export class KnativeResourceVirtualFileSystemProvider implements FileSystemProvi
     await fsx.ensureFile(fsPath);
     await fsx.writeFile(fsPath, content);
     await this.updateK8sResource(fsPath);
-    const exists: boolean = await fsx.pathExists(fsPath);
-    if (exists) {
-      await fsx.unlink(fsPath);
-    }
-    // // Use timeout to fire file change event in another event loop cycle, this will cause update content inside editor
-    setTimeout(() => {
-      this.onDidChangeFileEmitter.fire([{ uri, type: FileChangeType.Changed }]);
-    }, 10);
+    await this.unlinkFsPath(fsPath);
+    servingDataProvider.refresh();
   }
 
   // eslint-disable-next-line class-methods-use-this
@@ -108,8 +94,9 @@ export class KnativeResourceVirtualFileSystemProvider implements FileSystemProvi
       // Delete the yaml that was pushed if there was no error
       if (result.error) {
         // eslint-disable-next-line no-console, @typescript-eslint/restrict-template-expressions
-        console.log(`updateServiceFromYaml result.error = ${result.error}`);
-        await fsx.unlink(fsPath);
+        // eslint-disable-next-line @typescript-eslint/no-floating-promises
+        window.showErrorMessage(`updateServiceFromYaml result.error = ${getStderrString(result.error)}`);
+        await this.unlinkFsPath(fsPath);
         // deal with the error that is passed on but not thrown by the Promise.
         throw result.error;
       }
@@ -131,6 +118,14 @@ export class KnativeResourceVirtualFileSystemProvider implements FileSystemProvi
         console.log(`updateServiceFromYaml error = ${error}`);
         await window.showErrorMessage(`There was an error while uploading the YAML. `, { modal: true }, 'OK');
       }
+      await this.unlinkFsPath(fsPath);
+    }
+  }
+
+  // eslint-disable-next-line class-methods-use-this
+  async unlinkFsPath(fsPath: string): Promise<void> {
+    const exists: boolean = await fsx.pathExists(fsPath);
+    if (exists) {
       await fsx.unlink(fsPath);
     }
   }
@@ -247,3 +242,5 @@ export class KnativeResourceVirtualFileSystemProvider implements FileSystemProvi
     // no-op
   }
 }
+
+export const knvfs = new KnativeResourceVirtualFileSystemProvider();

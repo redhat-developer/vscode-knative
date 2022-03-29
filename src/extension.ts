@@ -5,7 +5,7 @@
 
 import * as vscode from 'vscode';
 import { CmdCliConfig } from './cli/cli-config';
-import { KN_RESOURCE_SCHEME } from './cli/virtualfs';
+import { knvfs, KN_RESOURCE_SCHEME } from './cli/virtualfs';
 import { CommandContext, setCommandContext } from './commands';
 import { openTreeItemInEditor } from './editor/knativeOpenTextDocument';
 import { KnativeReadonlyProvider, KN_READONLY_SCHEME } from './editor/knativeReadonlyProvider';
@@ -47,7 +47,7 @@ export async function activate(extensionContext: vscode.ExtensionContext): Promi
   await CmdCliConfig.detectOrDownload('kn');
   const servingExplorer = new ServingExplorer();
   // register a content provider for the knative readonly scheme
-  const knReadonlyProvider = new KnativeReadonlyProvider(servingExplorer.treeDataProvider.knvfs);
+  const knReadonlyProvider = new KnativeReadonlyProvider(knvfs);
 
   const eventingExplorer = new EventingExplorer();
 
@@ -102,10 +102,10 @@ export async function activate(extensionContext: vscode.ExtensionContext): Promi
     ),
 
     // Temporarily loaded resource providers
-    vscode.workspace.registerFileSystemProvider(KN_RESOURCE_SCHEME, servingExplorer.treeDataProvider.knvfs, {
+    vscode.workspace.registerFileSystemProvider(KN_RESOURCE_SCHEME, knvfs, {
       isCaseSensitive: true,
     }),
-    vscode.workspace.registerFileSystemProvider(KN_READONLY_SCHEME, servingExplorer.treeDataProvider.knvfs, {
+    vscode.workspace.registerFileSystemProvider(KN_READONLY_SCHEME, knvfs, {
       isCaseSensitive: true,
       isReadonly: true,
     }),

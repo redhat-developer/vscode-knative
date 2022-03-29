@@ -20,6 +20,7 @@ import * as singleServiceData from './singleServiceServiceList.json';
 import { CliExitData, execCmdCli } from '../../src/cli/cmdCli';
 import { ServingContextType } from '../../src/cli/config';
 import * as vfs from '../../src/cli/virtualfs';
+import { knvfs } from '../../src/cli/virtualfs';
 import { EventingTreeItem } from '../../src/eventingTree/eventingTreeItem';
 import { KnativeItem } from '../../src/knative/knativeItem';
 import * as revision from '../../src/knative/revision';
@@ -1053,7 +1054,7 @@ status:
       sandbox.stub(sdp, 'getName').resolves(serviceToCreate);
       sandbox.stub(sdp.ksvc, 'addService').returns(undefined);
       sandbox.stub(vfs, 'vfsUri').returns(_uriExternalFile);
-      sandbox.stub(sdp.knvfs, 'writeFile').returns(undefined);
+      sandbox.stub(knvfs, 'writeFile').returns(undefined);
       sandbox.stub(execCmdCli, 'execute').resolves({ error: undefined, stdout: JSON.stringify(singleServiceData) });
       sandbox.stub(os, 'tmpdir').returns('fake');
       sandbox.stub(fsx, 'writeFile').resolves();
@@ -1166,7 +1167,7 @@ status:
       sandbox.stub(sdp, 'getName').resolves(serviceToCreate);
       sandbox.stub(sdp.ksvc, 'addService').returns(undefined);
       sandbox.stub(vfs, 'vfsUri').returns(_uriExternalFile);
-      sandbox.stub(sdp.knvfs, 'writeFile').returns(undefined);
+      sandbox.stub(knvfs, 'writeFile').returns(undefined);
       sandbox.stub(execCmdCli, 'execute').rejects();
       sandbox.stub(os, 'tmpdir').returns('fake');
       sandbox.stub(fsx, 'writeFile').resolves();
@@ -1192,12 +1193,12 @@ status:
       sandbox.stub(sdp, 'getName').resolves(serviceToCreate);
       sandbox.stub(sdp.ksvc, 'addService').returns(undefined);
       sandbox.stub(vfs, 'vfsUri').returns(_uriExternalFile);
-      sandbox.stub(sdp.knvfs, 'writeFile').returns(undefined);
+      sandbox.stub(knvfs, 'writeFile').returns(undefined);
       sandbox.stub(os, 'tmpdir').returns('fake');
       sandbox.stub(fsx, 'writeFile').resolves();
       sandbox.stub(fsx, 'ensureFile').resolves();
       sandbox.stub(fsx, 'unlink').resolves();
-      const stubDelete = sandbox.stub(sdp.knvfs, 'delete').resolves();
+      const stubDelete = sandbox.stub(knvfs, 'delete').resolves();
       const result: ServingTreeItem[] = await sdp.addService();
       sinon.assert.notCalled(stubDelete);
       expect(result).to.equal(undefined);
@@ -1219,7 +1220,7 @@ status:
       sandbox.stub(fsx, 'ensureFile').resolves();
       sandbox.stub(fsx, 'unlink').resolves();
       sandbox.stub(fsx, 'stat').resolves();
-      const stubDelete = sandbox.stub(sdp.knvfs, 'delete').resolves();
+      const stubDelete = sandbox.stub(knvfs, 'delete').resolves();
       const result: ServingTreeItem[] = await sdp.addService();
       sinon.assert.notCalled(stubDelete);
       // eslint-disable-next-line no-unused-expressions
@@ -1233,7 +1234,7 @@ status:
       sandbox.stub(fsx, 'writeFile').resolves();
       sandbox.stub(fsx, 'ensureFile').resolves();
       sandbox.stub(fsx, 'unlink').resolves();
-      const stubDelete = sandbox.stub(sdp.knvfs, 'delete').resolves();
+      const stubDelete = sandbox.stub(knvfs, 'delete').resolves();
       const result: ServingTreeItem[] = await sdp.addService();
       sinon.assert.notCalled(stubDelete);
       expect(result).to.equal(null);
@@ -1252,7 +1253,7 @@ status:
       sandbox.stub(fsx, 'writeFile').resolves();
       sandbox.stub(fsx, 'ensureFile').resolves();
       sandbox.stub(fsx, 'unlink').resolves();
-      const stubDelete = sandbox.stub(sdp.knvfs, 'delete').resolves();
+      const stubDelete = sandbox.stub(knvfs, 'delete').resolves();
       const result: ServingTreeItem[] = await sdp.addService();
       sinon.assert.notCalled(stubDelete);
       expect(result).to.equal(null);

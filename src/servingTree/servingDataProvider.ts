@@ -20,7 +20,8 @@ import { CliExitData } from '../cli/cmdCli';
 import { ServingContextType } from '../cli/config';
 import { Execute, loadItems } from '../cli/execute';
 import { KnAPI } from '../cli/kn-api';
-import { KnativeResourceVirtualFileSystemProvider } from '../cli/virtualfs';
+// eslint-disable-next-line import/no-cycle
+import { knvfs } from '../cli/virtualfs';
 import { EventingTreeItem } from '../eventingTree/eventingTreeItem';
 import { compareNodes } from '../knative/knativeItem';
 import { KnativeServices } from '../knative/knativeServices';
@@ -31,8 +32,6 @@ import { KnOutputChannel, OutputChannel } from '../output/knOutputChannel';
 
 export class ServingDataProvider implements TreeDataProvider<ServingTreeItem | EventingTreeItem> {
   public knExecutor = new Execute();
-
-  public knvfs = new KnativeResourceVirtualFileSystemProvider();
 
   private knOutputChannel: OutputChannel = new KnOutputChannel();
 
@@ -74,8 +73,6 @@ export class ServingDataProvider implements TreeDataProvider<ServingTreeItem | E
     console.log(`ServingDataProvider.vfsListener event ${event[0].type}, ${event[0].uri.path}`);
     this.refresh();
   };
-
-  vfsListenerSubscription = this.knvfs.onDidChangeFile(this.vfsListener);
 
   /**
    * Display info in the Knative Output channel/window
@@ -416,8 +413,7 @@ export class ServingDataProvider implements TreeDataProvider<ServingTreeItem | E
       `apiVersion: serving.knative.dev/v1\nkind: Service\nmetadata:\n  name: ${serveObj.name}\nspec:\n  template:\n    spec:\n      containers:\n      - image: ${serveObj.image}`,
     ) as svc.Items;
     const yamlContent = yaml.stringify(stringContent);
-    await this.knvfs.writeFile(vscode.Uri.parse(`${serviceName}.yaml`), Buffer.from(yamlContent, 'utf8'));
-    this.refresh();
+    await knvfs.writeFile(vscode.Uri.parse(`${serviceName}.yaml`), Buffer.from(yamlContent, 'utf8'));
   }
 
   /**
@@ -458,3 +454,5 @@ export class ServingDataProvider implements TreeDataProvider<ServingTreeItem | E
     return this.knLoginMessages.some((msg) => result.stderr.includes(msg));
   }
 }
+
+export const servingDataProvider = new ServingDataProvider();
