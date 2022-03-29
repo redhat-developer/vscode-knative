@@ -92,15 +92,12 @@ export class KnativeResourceVirtualFileSystemProvider implements FileSystemProvi
     await this.updateK8sResource(fsPath);
     const exists: boolean = await fsx.pathExists(fsPath);
     if (exists) {
-      const oldStat = await fsx.stat(fsPath);
       await fsx.unlink(fsPath);
-
-      // Use timeout to fire file change event in another event loop cycle, this will cause update content inside editor
-      setTimeout(() => {
-        this.fileStats.get(uri.toString())?.changeStat(oldStat.size + 1); // change stat to ensure content update
-        this.onDidChangeFileEmitter.fire([{ uri, type: FileChangeType.Changed }]);
-      }, 10);
     }
+    // // Use timeout to fire file change event in another event loop cycle, this will cause update content inside editor
+    setTimeout(() => {
+      this.onDidChangeFileEmitter.fire([{ uri, type: FileChangeType.Changed }]);
+    }, 10);
   }
 
   // eslint-disable-next-line class-methods-use-this
