@@ -21,7 +21,7 @@ import {
 import { createFunction } from './functions/function-command/create-function';
 import { urlFunction } from './functions/function-command/get-url-function';
 // eslint-disable-next-line import/no-cycle
-import { invokeFunction } from './functions/function-command/invoke-function';
+import { createInvokeFunction } from './functions/function-command/invoke-function';
 import { runFunction } from './functions/function-command/run-function';
 import { undeployFunction } from './functions/function-command/undeploy-function';
 import { functionExplorer } from './functions/functionsExplorer';
@@ -64,7 +64,7 @@ export async function activate(extensionContext: vscode.ExtensionContext): Promi
     vscode.commands.registerCommand('function.version', () => functionVersion()),
     vscode.commands.registerCommand('function.explorer.refresh', () => functionExplorer.refresh()),
     vscode.commands.registerCommand('function.explorer.create', () => createFunction(extensionContext)),
-    vscode.commands.registerCommand('function.invoke', () => invokeFunction(extensionContext)),
+    vscode.commands.registerCommand('function.invoke', () => createInvokeFunction(extensionContext)),
     vscode.commands.registerCommand('function.undeploy', (context) => undeployFunction(context)),
     vscode.commands.registerCommand('function.build', (context) => buildFunction(context)),
     vscode.commands.registerCommand('function.deploy', (context) => deployFunction(context)),

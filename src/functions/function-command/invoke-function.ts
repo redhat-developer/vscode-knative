@@ -42,6 +42,7 @@ export interface ParametersType {
   invokeDataText?: string;
   invokeDataFile?: string;
   invokeDataDesc?: string;
+  invokeDataMode?: string;
   invokeDataModeText?: string;
   invokeDataModeFile?: string;
   invokeContextType?: string;
@@ -125,16 +126,16 @@ export const def: WizardDefinition = {
       // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
       validator: (parameters: ParametersType) => {
         const items: ValidatorResponseItem[] = [];
-        if (parameters.invokeId !== undefined && !Number.isNaN(parameters.invokeId) && !parameters.invokeId?.trim()) {
-          inputFieldValidation(
-            {
-              value: parameters.invokeId,
-              id: invokeFunctionID.invoke_ID,
-              message: 'Provide id',
-            },
-            items,
-          );
-        }
+        // if (parameters.invokeId !== undefined && !Number.isNaN(parameters.invokeId) && !parameters.invokeId?.trim()) {
+        //   inputFieldValidation(
+        //     {
+        //       value: parameters.invokeId,
+        //       id: invokeFunctionID.invoke_ID,
+        //       message: 'Provide id',
+        //     },
+        //     items,
+        //   );
+        // }
         if (
           parameters.invokeNamespace !== undefined &&
           !Number.isNaN(parameters.invokeNamespace) &&
@@ -197,7 +198,7 @@ export const def: WizardDefinition = {
           parameters.invokeDataText !== undefined &&
           !Number.isNaN(parameters.invokeDataText) &&
           !parameters.invokeDataText?.trim() &&
-          parameters.invokeDataModeText === 'Text'
+          parameters.invokeDataMode === 'Text'
         ) {
           inputFieldValidation(
             {
@@ -212,7 +213,7 @@ export const def: WizardDefinition = {
           parameters.invokeDataFile !== undefined &&
           !Number.isNaN(parameters.invokeDataFile) &&
           !parameters.invokeDataFile?.trim() &&
-          parameters.invokeDataModeFile === 'File'
+          parameters.invokeDataMode === 'File'
         ) {
           inputFieldValidation(
             {
@@ -239,80 +240,78 @@ export const def: WizardDefinition = {
       const remoteFunctionInvokeFile = invokeItemMap.get('remote_function_invoke_file');
       const localFunctionInvokeText = invokeItemMap.get('local_function_invoke_text');
       const localFunctionInvokeFile = invokeItemMap.get('local_function_invoke_file');
-      if (
-        (data?.Remote !== undefined || data.invokeInstance === 'Remote') &&
-        data?.File === undefined &&
-        (data.invokeDataModeFile !== 'File' || data.Text === 'Text') &&
-        !remoteFunctionInvokeText
-      ) {
+      invokeID.initialValue = data.invokeId;
+      invokePath.initialValue = data.invokePath;
+      invokeContextType.initialValue = data.invokeContextType;
+      invokeFormat.initialValue = data.invokeFormat;
+      invokeSource.initialValue = data.invokeSource;
+      invokeType.initialValue = data.invokeType;
+      invokeDataText.childFields[1].initialValue = data.invokeDataText;
+      invokeNamespace.initialValue = data.invokeNamespace;
+      invokeDataFile.childFields[1].initialValue = data.invokeDataFile;
+      if (data.invokeInstance === 'Remote' && data.invokeDataMode === 'Text' && !remoteFunctionInvokeText) {
         const newDef = def;
         invokeInstance.initialValue = 'Remote';
         newDef.pages[0].fields = remoteInvokeTextDef;
         invokeItemMap.set('remote_function_invoke_text', true);
         invokeItemMap.set('remote_function_invoke_file', false);
+        invokeItemMap.set('local_function_invoke_text', false);
+        invokeItemMap.set('local_function_invoke_file', false);
         // eslint-disable-next-line @typescript-eslint/no-use-before-define
         invokeFunction(contextGlobalState);
       }
-      if (
-        (data?.Remote !== undefined || data.invokeInstance === 'Remote') &&
-        data?.File !== undefined &&
-        !remoteFunctionInvokeFile
-      ) {
+      if (data.invokeInstance === 'Remote' && !remoteFunctionInvokeFile && data.invokeDataMode === 'File') {
         const newDef = def;
         invokeInstance.initialValue = 'Remote';
         newDef.pages[0].fields = remoteInvokeFileDef;
         invokeItemMap.set('remote_function_invoke_text', false);
         invokeItemMap.set('remote_function_invoke_file', true);
+        invokeItemMap.set('local_function_invoke_text', false);
+        invokeItemMap.set('local_function_invoke_file', false);
         // eslint-disable-next-line @typescript-eslint/no-use-before-define
         invokeFunction(contextGlobalState);
       }
-      if (
-        (data?.Local !== undefined || data.invokeInstance === 'Local') &&
-        data?.File === undefined &&
-        data?.invokeDataModeFile === 'File' &&
-        data?.Text === 'Text' &&
-        !localFunctionInvokeText
-      ) {
+      if (data.invokeInstance === 'Local' && data?.invokeDataMode === 'Text' && !localFunctionInvokeText) {
         const newDef = def;
         invokeInstance.initialValue = 'Local';
         newDef.pages[0].fields = localInvokeTextDef;
         invokeItemMap.set('local_function_invoke_text', true);
         invokeItemMap.set('local_function_invoke_file', false);
+        invokeItemMap.set('remote_function_invoke_text', false);
+        invokeItemMap.set('remote_function_invoke_file', false);
         // eslint-disable-next-line @typescript-eslint/no-use-before-define
         invokeFunction(contextGlobalState);
       }
-      if (
-        (data?.Local !== undefined || data.invokeInstance === 'Local') &&
-        data?.File !== undefined &&
-        !localFunctionInvokeFile
-      ) {
+      if (data.invokeInstance === 'Local' && !localFunctionInvokeFile && data.invokeDataMode === 'File') {
         const newDef = def;
         invokeInstance.initialValue = 'Local';
         newDef.pages[0].fields = localInvokeFileDef;
         invokeItemMap.set('local_function_invoke_text', false);
         invokeItemMap.set('local_function_invoke_file', true);
+        invokeItemMap.set('remote_function_invoke_text', false);
+        invokeItemMap.set('remote_function_invoke_file', false);
         // eslint-disable-next-line @typescript-eslint/no-use-before-define
         invokeFunction(contextGlobalState);
       }
       const validPath = pathValidation.get('path_validation');
       return (
-        data.invokeId !== undefined &&
-        data.invokeId?.trim()?.length !== 0 &&
+        // data.invokeId !== undefined &&
+        // data.invokeId?.trim()?.length !== 0 &&
         data.invokeContextType !== undefined &&
         data.invokeContextType?.trim()?.length !== 0 &&
         data.invokeSource !== undefined &&
         data.invokeSource?.trim()?.length !== 0 &&
         data.invokeType !== undefined &&
         data.invokeType?.trim()?.length !== 0 &&
-        (data.invokeDataModeFile === 'File'
-          ? data.invokeDataModeFile !== undefined && data.invokeDataModeFile?.trim()?.length !== 0
-          : data.invokeDataModeText !== undefined && data.invokeDataModeText?.trim()?.length !== 0) &&
+        (data.invokeDataMode === 'File'
+          ? data.invokeDataFile !== undefined && data.invokeDataFile?.trim()?.length !== 0
+          : data.invokeDataText !== undefined && data.invokeDataText?.trim()?.length !== 0) &&
         (data.invokeInstance === 'Local'
           ? data.invokePath !== undefined && data.invokePath?.trim()?.length !== 0 && validPath
           : data.invokeNamespace !== undefined && data.invokeNamespace?.trim()?.length !== 0)
       );
     },
-    performFinish(): null {
+    performFinish(wizard: WebviewWizard, data: ParametersType): null {
       return null;
     },
     getNextPage(): IWizardPage | null {
@@ -331,6 +330,23 @@ function invokeFunctionForm(context: vscode.ExtensionContext): WebviewWizard {
 }
 
 export function invokeFunction(context: vscode.ExtensionContext): void {
+  const wiz: WebviewWizard = invokeFunctionForm(context);
+  wiz.open();
+}
+
+export function createInvokeFunction(context: vscode.ExtensionContext): void {
+  const getEnvFuncId = !process.env.FUNC_ID ? 'ca8758fc-3bcc-4057-871e-5cea37fa215b' : process.env.FUNC_ID;
+  invokeInstance.initialValue = 'Local';
+  invokeID.initialValue = getEnvFuncId;
+  delete invokePath.initialValue;
+  invokeContextType.initialValue = 'text/plain';
+  invokeFormat.initialValue = 'http';
+  invokeSource.initialValue = '/boson/fn';
+  invokeType.initialValue = 'boson.fn';
+  invokeDataText.childFields[0].initialValue = 'Text';
+  invokeDataText.childFields[1].initialValue = 'Hello World';
+  delete invokeNamespace.initialValue;
+  delete invokeDataFile.childFields[1].initialValue;
   const wiz: WebviewWizard = invokeFunctionForm(context);
   wiz.open();
 }

@@ -172,7 +172,7 @@ export const invokeDataText: WizardPageSectionDefinition = {
   label: 'Data to send in the request. (Env: $FUNC_DATA) (default "Hello World")',
   childFields: [
     {
-      id: invokeFunctionID.invoke_data_mode_text,
+      id: invokeFunctionID.invoke_data_mode,
       label: 'Mode',
       type: 'radio',
       initialValue: 'Text',
@@ -195,7 +195,7 @@ export const invokeDataFile: WizardPageSectionDefinition = {
   label: 'Data to send in the request. (Env: $FUNC_DATA) (default "Hello World")',
   childFields: [
     {
-      id: invokeFunctionID.invoke_data_mode_file,
+      id: invokeFunctionID.invoke_data_mode,
       label: 'Mode',
       type: 'radio',
       initialValue: 'File',
