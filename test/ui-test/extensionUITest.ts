@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 /* eslint-disable @typescript-eslint/await-thenable */
 import { expect } from 'chai';
 import { ActivityBar, ViewControl, SideBarView, WebDriver, VSBrowser, ModalDialog } from 'vscode-extension-tester';
@@ -41,12 +42,19 @@ export function extensionsUITest(clusterIsAvailable: boolean): void {
 
     it('allows to download missing kn cli using notification', async function context() {
       this.timeout(100000);
+      console.log('findNotification');
       const notification = await driver.wait(async () => findNotification('Cannot find Knative CLI'), 10000);
+      console.log('getActions');
       const actions = await notification.getActions();
+      console.log('actions.map');
       const actionsTexts = await Promise.all(actions.map(async (item) => item.getText()));
+      console.log('find text download');
       const downloadActionText = actionsTexts.find((item) => (item.includes('Download') ? item : undefined));
+      console.log('takeAction');
       await notification.takeAction(downloadActionText);
+      console.log('findNotification Download Knative CLI');
       await driver.wait(async () => findNotification('Downloading Knative CLI'), 3000);
+      console.log('safenotificationexists');
       await driver.wait(async () => {
         const exists = await safeNotificationExists('Downloading Knative CLI');
         return !exists;
