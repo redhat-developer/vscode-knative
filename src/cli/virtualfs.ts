@@ -93,30 +93,28 @@ export class KnativeResourceVirtualFileSystemProvider implements FileSystemProvi
       const result: CliExitData = await this.knExecutor.execute(KnAPI.applyYAML(fsPath, { override: false }));
       // Delete the yaml that was pushed if there was no error
       if (result.error) {
-        // eslint-disable-next-line no-console, @typescript-eslint/restrict-template-expressions
-        // eslint-disable-next-line @typescript-eslint/no-floating-promises
-        window.showErrorMessage(`updateServiceFromYaml result.error = ${getStderrString(result.error)}`);
-        await this.unlinkFsPath(fsPath);
         // deal with the error that is passed on but not thrown by the Promise.
         throw result.error;
       }
     } catch (error) {
       if (typeof error === 'string' && error.search('validation failed') > 0) {
-        // eslint-disable-next-line @typescript-eslint/prefer-string-starts-ends-with
-        const fileName = error.slice(error.lastIndexOf('validation failed:'));
         // eslint-disable-next-line no-console
-        console.log(`The YAMl file failed validation with the following error.\n\n${fileName}`);
+        await window.showErrorMessage(`The YAMl file failed validation with the following error. ${getStderrString(error)}`);
       } else if (
         typeof error === 'string' &&
         (error.search(/undefinedWarning/gm) >= 0 || error.search(/undefined.+Warning/gm) >= 0)
       ) {
         // eslint-disable-next-line no-console
-        console.log(`updateServiceFromYaml undefinedWarning; error = ${error}`);
+        await window.showErrorMessage(`updateServiceFromYaml undefinedWarning; error = ${getStderrString(error)}`);
         // do nothing it was a warning
       } else {
         // eslint-disable-next-line no-console, @typescript-eslint/restrict-template-expressions
-        console.log(`updateServiceFromYaml error = ${error}`);
-        await window.showErrorMessage(`There was an error while uploading the YAML. `, { modal: true }, 'OK');
+        console.log(`updateServiceFromYaml error = ${getStderrString(error)}`);
+        await window.showErrorMessage(
+          `There was an error while uploading the YAML. error: ${getStderrString(error)}`,
+          { modal: true },
+          'OK',
+        );
       }
       await this.unlinkFsPath(fsPath);
     }
