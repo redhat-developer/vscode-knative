@@ -28,7 +28,11 @@ import {
   invokeType,
 } from './invoke-function-def';
 // eslint-disable-next-line import/no-cycle
+import { CliExitData, executeCmdCli } from '../../cli/cmdCli';
+import { FuncAPI } from '../../cli/func-api';
+// eslint-disable-next-line import/no-cycle
 import { contextGlobalState } from '../../extension';
+import { getStderrString } from '../../util/stderrstring';
 import { createValidationItem, inputFieldValidation, pathValidation, selectLocationValidation } from '../validate-item';
 import { invokeFunctionID } from '../webview-id';
 
@@ -311,7 +315,48 @@ export const def: WizardDefinition = {
           : data.invokeNamespace !== undefined && data.invokeNamespace?.trim()?.length !== 0)
       );
     },
-    performFinish(wizard: WebviewWizard, data: ParametersType): null {
+    async performFinish(wizard: WebviewWizard, data: ParametersType): Promise<null> {
+      await vscode.window.withProgress(
+        {
+          cancellable: false,
+          location: vscode.ProgressLocation.Notification,
+          title: `Function Successfully invoke`,
+        },
+        async () => {
+          let invokeCommand: string;
+          if (data.invokeInstance === 'Local') {
+            invokeCommand = FuncAPI.invokeFunctionLocal(
+              data.invokeId,
+              data.invokePath,
+              data.invokeContextType,
+              data.invokeFormat,
+              data.invokeSource,
+              data.invokeType,
+              data.invokeDataMode === 'File' ? data.invokeDataFile : data.invokeDataText,
+            );
+          } else {
+            invokeCommand = FuncAPI.invokeFunctionRemote(
+              data.invokeId,
+              data.invokeNamespace,
+              data.invokeContextType,
+              data.invokeFormat,
+              data.invokeSource,
+              data.invokeType,
+              data.invokeDataMode === 'File' ? data.invokeDataFile : data.invokeDataText,
+            );
+          }
+          const result: CliExitData = await executeCmdCli.executeExec(invokeCommand);
+          if (result.error) {
+            // eslint-disable-next-line @typescript-eslint/no-floating-promises
+            vscode.window.showErrorMessage(`Fail invoke Function: ${getStderrString(result.error)}`);
+            return false;
+          }
+
+          // eslint-disable-next-line @typescript-eslint/no-floating-promises
+          vscode.window.showInformationMessage('Function Successfully invoke');
+          return true;
+        },
+      );
       return null;
     },
     getNextPage(): IWizardPage | null {

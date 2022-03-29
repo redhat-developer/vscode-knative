@@ -7,13 +7,43 @@ import * as path from 'path';
 import { CliCommand, CmdCli, createCliCommand } from './cmdCli';
 import { quote } from '../util/quote';
 
-function funcCliCommand(cmdArguments: string[]): CliCommand {
+function funcCliCommand(cmdArguments?: string[]): CliCommand {
   return createCliCommand('func', ...cmdArguments);
 }
 
 export class FuncAPI {
   static printFunctionVersion(): CliCommand {
     return funcCliCommand(['version']);
+  }
+
+  static invokeFunctionLocal(
+    id: string,
+    location: string,
+    contextType: string,
+    format: string,
+    source: string,
+    type: string,
+    data: string,
+  ): string {
+    if (id) {
+      return `func invoke --id ${id} -p ${location} --content-type ${contextType} -f ${format} --source ${source} --type ${type} --data ${data}`;
+    }
+    return `func invoke -p ${location} --content-type ${contextType} -f ${format} --source ${source} --type ${type} --data ${data}`;
+  }
+
+  static invokeFunctionRemote(
+    id: string,
+    namespacs: string,
+    contextType: string,
+    format: string,
+    source: string,
+    type: string,
+    data: string,
+  ): string {
+    if (id) {
+      return `func invoke --id ${id} -n ${namespacs} --content-type ${contextType} -f ${format} --source ${source} --type ${type} --data ${data}`;
+    }
+    return `func invoke -n ${namespacs} --content-type ${contextType} -f ${format} --source ${source} --type ${type} --data ${data}`;
   }
 
   static createFunc(name: string, language: string, template: string, location: string): CliCommand {
