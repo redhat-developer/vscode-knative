@@ -36,20 +36,24 @@ export const invokeNamespace: WizardPageFieldDefinition = {
 export const invokeID: WizardPageFieldDefinition = {
   id: invokeFunctionID.invoke_ID,
   label: 'ID',
-  placeholder: 'ID for the request data.',
+  placeholder: 'Automatically generated. (optional)',
+  type: 'textbox',
+};
+
+export const invokeUrl: WizardPageFieldDefinition = {
+  id: invokeFunctionID.invoke_Url,
+  label: 'URL',
+  placeholder: 'Target custom URL when invoking the function. (optional)',
   type: 'textbox',
 };
 
 export const invokePath: WizardPageFieldDefinition = {
   id: invokeFunctionID.invoke_path,
   label: 'Path',
-  placeholder: 'Path which have its instance invoked.',
-  type: 'file-picker',
-  dialogOptions: {
-    canSelectMany: false,
-    canSelectFiles: false,
-    canSelectFolders: true,
-    openLabel: 'Select location',
+  placeholder: 'Path which have the instance invoked.',
+  type: 'textbox',
+  initialState: {
+    enabled: false,
   },
 };
 

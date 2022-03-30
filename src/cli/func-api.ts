@@ -4,6 +4,7 @@
  *-----------------------------------------------------------------------------------------------*/
 
 import * as path from 'path';
+// eslint-disable-next-line import/no-cycle
 import { CliCommand, CmdCli, createCliCommand } from './cmdCli';
 import { quote } from '../util/quote';
 
@@ -39,11 +40,19 @@ export class FuncAPI {
     source: string,
     type: string,
     data: string,
+    url: string,
+    location: string,
   ): string {
-    if (id) {
-      return `func invoke --id ${id} -n ${namespacs} --content-type ${contextType} -f ${format} --source ${source} --type ${type} --data ${data}`;
+    if (id?.trim() && url?.trim()) {
+      return `func invoke -p ${location} --id ${id} -t ${url} -n ${namespacs} --content-type ${contextType} -f ${format} --source ${source} --type ${type} --data ${data}`;
     }
-    return `func invoke -n ${namespacs} --content-type ${contextType} -f ${format} --source ${source} --type ${type} --data ${data}`;
+    if (id?.trim()) {
+      return `func invoke -p ${location} --id ${id} -n ${namespacs} --content-type ${contextType} -f ${format} --source ${source} --type ${type} --data ${data}`;
+    }
+    if (url?.trim()) {
+      return `func invoke -p ${location} -t ${url} -n ${namespacs} --content-type ${contextType} -f ${format} --source ${source} --type ${type} --data ${data}`;
+    }
+    return `func invoke -p ${location} -n ${namespacs} --content-type ${contextType} -f ${format} --source ${source} --type ${type} --data ${data}`;
   }
 
   static createFunc(name: string, language: string, template: string, location: string): CliCommand {

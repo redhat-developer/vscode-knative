@@ -14,6 +14,7 @@ export const invokeFunctionID = {
   invoke_Instance: 'invokeInstance',
   invoke_namespace: 'invokeNamespace',
   invoke_ID: 'invokeId',
+  invoke_Url: 'invokeUrl',
   invoke_path: 'invokePath',
   invoke_data_text: 'invokeDataText',
   invoke_data_file: 'invokeDataFile',

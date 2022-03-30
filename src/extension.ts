@@ -64,7 +64,7 @@ export async function activate(extensionContext: vscode.ExtensionContext): Promi
     vscode.commands.registerCommand('function.version', () => functionVersion()),
     vscode.commands.registerCommand('function.explorer.refresh', () => functionExplorer.refresh()),
     vscode.commands.registerCommand('function.explorer.create', () => createFunction(extensionContext)),
-    vscode.commands.registerCommand('function.invoke', () => createInvokeFunction(extensionContext)),
+    vscode.commands.registerCommand('function.invoke', (context) => createInvokeFunction(extensionContext, context)),
     vscode.commands.registerCommand('function.undeploy', (context) => undeployFunction(context)),
     vscode.commands.registerCommand('function.build', (context) => buildFunction(context)),
     vscode.commands.registerCommand('function.deploy', (context) => deployFunction(context)),

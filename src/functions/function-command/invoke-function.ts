@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable no-use-before-define */
 /*-----------------------------------------------------------------------------------------------
  *  Copyright (c) Red Hat, Inc. All rights reserved.
@@ -15,6 +17,7 @@ import {
   WizardDefinition,
 } from '@redhat-developer/vscode-wizard';
 import * as fs from 'fs-extra';
+import { v4 as uuidv4 } from 'uuid';
 import {
   invokeContextType,
   invokeDataFile,
@@ -26,6 +29,7 @@ import {
   invokePath,
   invokeSource,
   invokeType,
+  invokeUrl,
 } from './invoke-function-def';
 // eslint-disable-next-line import/no-cycle
 import { CliExitData, executeCmdCli } from '../../cli/cmdCli';
@@ -33,6 +37,7 @@ import { FuncAPI } from '../../cli/func-api';
 // eslint-disable-next-line import/no-cycle
 import { contextGlobalState } from '../../extension';
 import { getStderrString } from '../../util/stderrstring';
+import { FunctionNode } from '../function-tree-view/functionsTreeItem';
 import { createValidationItem, inputFieldValidation, pathValidation, selectLocationValidation } from '../validate-item';
 import { invokeFunctionID } from '../webview-id';
 
@@ -41,6 +46,7 @@ export const invokeItemMap = new Map<string, boolean>();
 export interface ParametersType {
   invokeInstance?: string;
   invokeNamespace?: string;
+  invokeUrl?: string;
   invokeId?: string;
   invokePath?: string;
   invokeDataText?: string;
@@ -101,23 +107,30 @@ const localInvokeFileDef = [
 const remoteInvokeTextDef = [
   invokeInstance,
   invokeID,
+  invokePath,
   invokeNamespace,
   invokeContextType,
   invokeFormat,
   invokeSource,
   invokeType,
+  invokeUrl,
   invokeDataText,
 ];
 const remoteInvokeFileDef = [
   invokeInstance,
   invokeID,
+  invokePath,
   invokeNamespace,
   invokeContextType,
   invokeFormat,
   invokeSource,
   invokeType,
+  invokeUrl,
   invokeDataFile,
 ];
+
+const localOnlyInvokeTextDef = [invokeID, invokePath, invokeContextType, invokeFormat, invokeSource, invokeType, invokeDataText];
+const localOnlyInvokeFileDef = [invokeID, invokePath, invokeContextType, invokeFormat, invokeSource, invokeType, invokeDataFile];
 
 export const def: WizardDefinition = {
   title: `Local Invoke Function`,
@@ -244,15 +257,34 @@ export const def: WizardDefinition = {
       const remoteFunctionInvokeFile = invokeItemMap.get('remote_function_invoke_file');
       const localFunctionInvokeText = invokeItemMap.get('local_function_invoke_text');
       const localFunctionInvokeFile = invokeItemMap.get('local_function_invoke_file');
+      const localOnlyFunctionInvokeText = invokeItemMap.get('local_only_function_invoke_text');
+      const localOnlyFunctionInvokeFile = invokeItemMap.get('local_only_function_invoke_file');
       invokeID.initialValue = data.invokeId;
-      invokePath.initialValue = data.invokePath;
+      invokePath.initialValue = data.invokePath ? data.invokePath : invokePath.initialValue;
       invokeContextType.initialValue = data.invokeContextType;
       invokeFormat.initialValue = data.invokeFormat;
       invokeSource.initialValue = data.invokeSource;
       invokeType.initialValue = data.invokeType;
-      invokeDataText.childFields[1].initialValue = data.invokeDataText;
-      invokeNamespace.initialValue = data.invokeNamespace;
+      invokeDataText.childFields[1].initialValue = data.invokeDataText ?? invokeDataText.childFields[1].initialValue;
+      invokeNamespace.initialValue = data.invokeNamespace ?? invokeNamespace.initialValue;
+      invokeUrl.initialValue = data.invokeUrl ?? invokeUrl.initialValue;
       invokeDataFile.childFields[1].initialValue = data.invokeDataFile;
+      if (!data.invokeInstance && data.invokeDataMode === 'Text' && !localOnlyFunctionInvokeText) {
+        const newDef = def;
+        newDef.pages[0].fields = localOnlyInvokeTextDef;
+        invokeItemMap.set('local_only_function_invoke_text', true);
+        invokeItemMap.set('local_only_function_invoke_file', false);
+        // eslint-disable-next-line @typescript-eslint/no-use-before-define
+        invokeFunction(contextGlobalState, null);
+      }
+      if (!data.invokeInstance && data.invokeDataMode === 'File' && !localOnlyFunctionInvokeFile) {
+        const newDef = def;
+        newDef.pages[0].fields = localOnlyInvokeFileDef;
+        invokeItemMap.set('local_only_function_invoke_text', false);
+        invokeItemMap.set('local_only_function_invoke_file', true);
+        // eslint-disable-next-line @typescript-eslint/no-use-before-define
+        invokeFunction(contextGlobalState, null);
+      }
       if (data.invokeInstance === 'Remote' && data.invokeDataMode === 'Text' && !remoteFunctionInvokeText) {
         const newDef = def;
         invokeInstance.initialValue = 'Remote';
@@ -262,7 +294,7 @@ export const def: WizardDefinition = {
         invokeItemMap.set('local_function_invoke_text', false);
         invokeItemMap.set('local_function_invoke_file', false);
         // eslint-disable-next-line @typescript-eslint/no-use-before-define
-        invokeFunction(contextGlobalState);
+        invokeFunction(contextGlobalState, null);
       }
       if (data.invokeInstance === 'Remote' && !remoteFunctionInvokeFile && data.invokeDataMode === 'File') {
         const newDef = def;
@@ -273,7 +305,7 @@ export const def: WizardDefinition = {
         invokeItemMap.set('local_function_invoke_text', false);
         invokeItemMap.set('local_function_invoke_file', false);
         // eslint-disable-next-line @typescript-eslint/no-use-before-define
-        invokeFunction(contextGlobalState);
+        invokeFunction(contextGlobalState, null);
       }
       if (data.invokeInstance === 'Local' && data?.invokeDataMode === 'Text' && !localFunctionInvokeText) {
         const newDef = def;
@@ -284,7 +316,7 @@ export const def: WizardDefinition = {
         invokeItemMap.set('remote_function_invoke_text', false);
         invokeItemMap.set('remote_function_invoke_file', false);
         // eslint-disable-next-line @typescript-eslint/no-use-before-define
-        invokeFunction(contextGlobalState);
+        invokeFunction(contextGlobalState, null);
       }
       if (data.invokeInstance === 'Local' && !localFunctionInvokeFile && data.invokeDataMode === 'File') {
         const newDef = def;
@@ -295,7 +327,7 @@ export const def: WizardDefinition = {
         invokeItemMap.set('remote_function_invoke_text', false);
         invokeItemMap.set('remote_function_invoke_file', false);
         // eslint-disable-next-line @typescript-eslint/no-use-before-define
-        invokeFunction(contextGlobalState);
+        invokeFunction(contextGlobalState, null);
       }
       const validPath = pathValidation.get('path_validation');
       return (
@@ -310,7 +342,7 @@ export const def: WizardDefinition = {
         (data.invokeDataMode === 'File'
           ? data.invokeDataFile !== undefined && data.invokeDataFile?.trim()?.length !== 0
           : data.invokeDataText !== undefined && data.invokeDataText?.trim()?.length !== 0) &&
-        (data.invokeInstance === 'Local'
+        (data.invokeInstance === 'Local' || !data.invokeInstance
           ? data.invokePath !== undefined && data.invokePath?.trim()?.length !== 0 && validPath
           : data.invokeNamespace !== undefined && data.invokeNamespace?.trim()?.length !== 0)
       );
@@ -324,7 +356,8 @@ export const def: WizardDefinition = {
         },
         async () => {
           let invokeCommand: string;
-          if (data.invokeInstance === 'Local') {
+          if (data.invokeInstance === 'Local' || !data.invokeInstance) {
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
             invokeCommand = FuncAPI.invokeFunctionLocal(
               data.invokeId,
               data.invokePath,
@@ -335,6 +368,7 @@ export const def: WizardDefinition = {
               data.invokeDataMode === 'File' ? data.invokeDataFile : data.invokeDataText,
             );
           } else {
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
             invokeCommand = FuncAPI.invokeFunctionRemote(
               data.invokeId,
               data.invokeNamespace,
@@ -343,6 +377,8 @@ export const def: WizardDefinition = {
               data.invokeSource,
               data.invokeType,
               data.invokeDataMode === 'File' ? data.invokeDataFile : data.invokeDataText,
+              data.invokeUrl,
+              data.invokePath,
             );
           }
           const result: CliExitData = await executeCmdCli.executeExec(invokeCommand);
@@ -368,30 +404,40 @@ export const def: WizardDefinition = {
   },
 };
 
-function invokeFunctionForm(context: vscode.ExtensionContext): WebviewWizard {
+function invokeFunctionForm(context: vscode.ExtensionContext, funcContext: FunctionNode): WebviewWizard {
   const data: Map<string, string> = new Map<string, string>();
+  if (funcContext?.contextValue === 'localFunctions') {
+    const newDef = def;
+    newDef.pages[0].fields = localOnlyInvokeTextDef;
+  } else if (funcContext?.contextValue === 'localDeployFunctions') {
+    const newDef = def;
+    newDef.pages[0].fields = localInvokeTextDef;
+  }
   const wiz: WebviewWizard = new WebviewWizard('invoke-function', 'invoke-function', context, def, data);
   return wiz;
 }
 
-export function invokeFunction(context: vscode.ExtensionContext): void {
-  const wiz: WebviewWizard = invokeFunctionForm(context);
+export function invokeFunction(context: vscode.ExtensionContext, funcContext: FunctionNode): void {
+  const wiz: WebviewWizard = invokeFunctionForm(context, funcContext);
   wiz.open();
 }
 
-export function createInvokeFunction(context: vscode.ExtensionContext): void {
-  const getEnvFuncId = !process.env.FUNC_ID ? 'ca8758fc-3bcc-4057-871e-5cea37fa215b' : process.env.FUNC_ID;
+export function createInvokeFunction(context: vscode.ExtensionContext, funcContext: FunctionNode): void {
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+  const getEnvFuncId = uuidv4();
   invokeInstance.initialValue = 'Local';
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
   invokeID.initialValue = getEnvFuncId;
-  delete invokePath.initialValue;
+  invokePath.initialValue = funcContext.contextPath.fsPath;
   invokeContextType.initialValue = 'text/plain';
   invokeFormat.initialValue = 'http';
   invokeSource.initialValue = '/boson/fn';
   invokeType.initialValue = 'boson.fn';
   invokeDataText.childFields[0].initialValue = 'Text';
   invokeDataText.childFields[1].initialValue = 'Hello World';
-  delete invokeNamespace.initialValue;
+  invokeUrl.initialValue = funcContext.url;
+  invokeNamespace.initialValue = funcContext.getParent().getName();
   delete invokeDataFile.childFields[1].initialValue;
-  const wiz: WebviewWizard = invokeFunctionForm(context);
+  const wiz: WebviewWizard = invokeFunctionForm(context, funcContext);
   wiz.open();
 }

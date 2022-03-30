@@ -5,6 +5,8 @@
 
 import { SpawnOptions, spawn } from 'child_process';
 import { window } from 'vscode';
+// eslint-disable-next-line import/no-cycle
+import { CmdCliConfig } from './cli-config';
 import { KnOutputChannel, OutputChannel } from '../output/knOutputChannel';
 
 export interface CliExitData {
@@ -168,6 +170,16 @@ export class CmdCli implements Cli {
   }
 
   async executeExec(cmd: string, opts: ExecOptions = {}): Promise<CliExitData> {
+    if (cmd.startsWith('func')) {
+      const toolLocation: string = CmdCliConfig.tools.func.location;
+      if (toolLocation) {
+        // eslint-disable-next-line no-unused-expressions
+        // eslint-disable-next-line no-param-reassign
+        cmd = toolLocation
+          ? cmd.replace('func', `"${toolLocation}"`).replace(new RegExp(`&& func`, 'g'), `&& "${toolLocation}"`)
+          : cmd;
+      }
+    }
     return new Promise<CliExitData>((resolve) => {
       this.knOutputChannel.print(cmd);
       if (opts.maxBuffer === undefined) {
