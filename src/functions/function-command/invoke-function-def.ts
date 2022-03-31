@@ -50,7 +50,7 @@ export const invokeUrl: WizardPageFieldDefinition = {
 export const invokePath: WizardPageFieldDefinition = {
   id: invokeFunctionID.invoke_path,
   label: 'Path',
-  placeholder: 'Path which have the instance invoked.',
+  placeholder: 'Path which has the instance invoked.',
   type: 'textbox',
   initialState: {
     enabled: false,

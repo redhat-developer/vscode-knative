@@ -34,7 +34,7 @@ export class FuncAPI {
 
   static invokeFunctionRemote(
     id: string,
-    namespacs: string,
+    namespace: string,
     contextType: string,
     format: string,
     source: string,
@@ -44,15 +44,15 @@ export class FuncAPI {
     location: string,
   ): string {
     if (id?.trim() && url?.trim()) {
-      return `func invoke -p ${location} --id ${id} -t ${url} -n ${namespacs} --content-type ${contextType} -f ${format} --source ${source} --type ${type} --data ${data}`;
+      return `func invoke -p ${location} --id ${id} -t ${url} -n ${namespace} --content-type ${contextType} -f ${format} --source ${source} --type ${type} --data ${data}`;
     }
     if (id?.trim()) {
-      return `func invoke -p ${location} --id ${id} -n ${namespacs} --content-type ${contextType} -f ${format} --source ${source} --type ${type} --data ${data}`;
+      return `func invoke -p ${location} --id ${id} -n ${namespace} --content-type ${contextType} -f ${format} --source ${source} --type ${type} --data ${data}`;
     }
     if (url?.trim()) {
-      return `func invoke -p ${location} -t ${url} -n ${namespacs} --content-type ${contextType} -f ${format} --source ${source} --type ${type} --data ${data}`;
+      return `func invoke -p ${location} -t ${url} -n ${namespace} --content-type ${contextType} -f ${format} --source ${source} --type ${type} --data ${data}`;
     }
-    return `func invoke -p ${location} -n ${namespacs} --content-type ${contextType} -f ${format} --source ${source} --type ${type} --data ${data}`;
+    return `func invoke -p ${location} -n ${namespace} --content-type ${contextType} -f ${format} --source ${source} --type ${type} --data ${data}`;
   }
 
   static createFunc(name: string, language: string, template: string, location: string): CliCommand {
