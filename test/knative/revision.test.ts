@@ -73,7 +73,7 @@ suite('Revision class', () => {
     } catch (err) {
       expect(err).to.be.instanceOf(TypeError);
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-      expect(err.message).to.include('Cannot read property');
+      expect(err.message).matches(new RegExp('Cannot read property|Cannot read properties'));
     }
     itemsObj2.metadata.ownerReferences = undefined;
     try {
@@ -81,7 +81,7 @@ suite('Revision class', () => {
     } catch (err) {
       expect(err).to.be.instanceOf(TypeError);
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-      expect(err.message).to.include('Cannot read property');
+      expect(err.message).matches(new RegExp('Cannot read property|Cannot read properties'));
     }
   });
 });
