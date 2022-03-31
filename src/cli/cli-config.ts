@@ -11,12 +11,15 @@ import { fromFileSync } from 'hasha';
 import { satisfies } from 'semver';
 import * as shell from 'shelljs';
 import * as configData from './cli-config.json';
+import { executeCmdCli } from './cmdCli';
 import { FuncAPI } from './func-api';
 import { KnAPI } from './kn-api';
 import { KubectlAPI } from './kubectl-api';
 import { Archive } from '../util/archive';
 import { DownloadUtil } from '../util/download';
 import { Platform } from '../util/platform';
+
+const macUser: Map<string, boolean> = new Map<string, boolean>();
 
 export interface PlatformData {
   url: string;
@@ -109,6 +112,10 @@ export class CmdCliConfig {
     const reqs = JSON.parse(JSON.stringify(requirements)) as Config;
     Object.keys(requirements).forEach((object) => {
       if ((reqs[object] as CliConfig).platform) {
+        if (object === 'kn' && macUser.get('m1MacUser') && platformOS === 'darwin') {
+          // eslint-disable-next-line no-param-reassign
+          platformOS = 'arm64';
+        }
         if ((reqs[object] as CliConfig).platform[platformOS]) {
           Object.assign(reqs[object], (reqs[object] as CliConfig).platform[platformOS]);
           delete (reqs[object] as CliConfig).platform;
@@ -142,6 +149,15 @@ export class CmdCliConfig {
    */
   static async detectOrDownload(cmd: string): Promise<string> {
     try {
+      if (!macUser.get('m1MacUser') && !macUser.get('notM1MacUser') && Platform.OS === 'darwin') {
+        const checkM1User = await executeCmdCli.executeExec('uname -m');
+        if (checkM1User.stdout?.trim().startsWith('arm64')) {
+          macUser.set('m1MacUser', true);
+          this.resetConfiguration();
+        } else if (checkM1User.stdout?.trim().startsWith('x86_64')) {
+          macUser.set('notM1MacUser', true);
+        }
+      }
       // If the location of the cli has been set, then read it.
       let toolLocation: string = (CmdCliConfig.tools[cmd] as CliConfig).location;
 

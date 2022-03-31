@@ -22,6 +22,11 @@
         "sha256sum": "96fc0ac7442bd5cc3b2cded41e4860508ec8862030eef1e8608f9fd422adabbe",
         "dlFileName": "kn-darwin-amd64"
       },
+      "arm64": {
+        "url": "https://github.com/knative/client/releases/download/knative-v1.3.1/kn-darwin-arm64",
+        "sha256sum": "1c265a1ccd92ff1d9767731a8431bcc0fecb7e633a5cec8b950ecb6a777f03c4",
+        "dlFileName": "kn-darwin-arm64"
+      },
       "linux": {
         "url": "https://github.com/knative/client/releases/download/knative-v1.3.1/kn-linux-amd64",
         "sha256sum": "313f45643e1b16731db405775841cbfe837c0d0be7f1faf18a31593210c5ce1b",
