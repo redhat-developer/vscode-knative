@@ -1,4 +1,5 @@
 {
     "files.simpleDialog.enable": true,
-    "window.dialogStyle": "custom"
+    "window.dialogStyle": "custom",
+    "redhat.telemetry.enabled": false
 }
