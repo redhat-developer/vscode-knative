@@ -165,24 +165,6 @@ export class CmdCli implements Cli {
       // });
     });
   }
-
-  async executeExec(cmd: string, opts: ExecOptions = {}): Promise<CliExitData> {
-    return new Promise<CliExitData>((resolve) => {
-      this.knOutputChannel.print(cmd);
-      if (opts.maxBuffer === undefined) {
-        // eslint-disable-next-line no-param-reassign
-        opts.maxBuffer = 2 * 1024 * 1024;
-      }
-      exec(cmd, opts, (error: ExecException, stdout: string, stderr: string) => {
-        this.knOutputChannel.print(stdout);
-        this.knOutputChannel.print(stderr);
-        // do not reject it here, because caller in some cases need the error and the streams
-        // to make a decision
-        // Filter update message text which starts with `---`
-        resolve({ error, stdout, stderr });
-      });
-    });
-  }
 }
 
 export const execCmdCli = new CmdCli();
