@@ -1,7 +1,16 @@
 /* eslint-disable no-console */
 /* eslint-disable @typescript-eslint/await-thenable */
 import { expect } from 'chai';
-import { ActivityBar, ViewControl, SideBarView, WebDriver, VSBrowser, ModalDialog } from 'vscode-extension-tester';
+import {
+  ActivityBar,
+  ViewControl,
+  SideBarView,
+  WebDriver,
+  VSBrowser,
+  ModalDialog,
+  ViewItem,
+  TreeItem,
+} from 'vscode-extension-tester';
 import { KNativeConstants } from './common/constants';
 import { cleanUpNotifications, findNotification, safeNotificationExists } from './common/testUtils';
 
@@ -22,9 +31,6 @@ export function extensionsUITest(clusterIsAvailable: boolean): void {
     before(async () => {
       // eslint-disable-next-line @typescript-eslint/await-thenable
       const activityBar = new ActivityBar();
-      const items = await Promise.all(await (await activityBar.getViewControls()).map((item) => item.getTitle()));
-      // eslint-disable-next-line no-console
-      console.log(items);
       view = await (await activityBar.getViewControl(KNativeConstants.KNATIVE_EXTENSION_NAME)).wait(2000);
       sideBar = await view.openView();
     });
@@ -37,20 +43,16 @@ export function extensionsUITest(clusterIsAvailable: boolean): void {
     });
 
     it('view should show kn cli download notification after being opened', async function context() {
-      this.timeout(15000);
-      await driver.wait(async () => safeNotificationExists('Cannot find Knative CLI'), 10000);
+      this.timeout(10000);
+      await driver.wait(async () => safeNotificationExists('Cannot find Knative CLI'), 5000);
     });
 
     it('allows to download missing kn cli using notification', async function context() {
       this.timeout(50000);
-      const notification = await driver.wait(async () => findNotification('Cannot find Knative CLI'), 10000);
-      console.log('getActions');
+      const notification = await driver.wait(async () => findNotification('Cannot find Knative CLI'), 5000);
       const actions = await notification.getActions();
-      console.log('actions.map');
       const actionsTexts = await Promise.all(actions.map(async (item) => item.getText()));
-      console.log('find text download');
       const downloadActionText = actionsTexts.find((item) => (item.includes('Download') ? item : undefined));
-      console.log('takeAction');
       await notification.takeAction(downloadActionText);
       await driver.wait(async () => findNotification('Downloading Knative CLI'), 10000);
       await driver.wait(async () => {
@@ -61,7 +63,7 @@ export function extensionsUITest(clusterIsAvailable: boolean): void {
 
     it('allows to download missing kubectl binary using notification', async function context() {
       this.timeout(50000);
-      const notification = await driver.wait(async () => findNotification('Cannot find Kubernetes CLI'), 10000);
+      const notification = await driver.wait(async () => findNotification('Cannot find Kubernetes CLI'), 5000);
       const actions = await notification.getActions();
       const actionsTexts = await Promise.all(actions.map(async (item) => item.getText()));
       const downloadActionText = actionsTexts.find((item) => (item.includes('Download') ? item : undefined));
@@ -113,6 +115,53 @@ export function extensionsUITest(clusterIsAvailable: boolean): void {
         const actions = await sectionServing.getActions();
         expect(actions.length).to.equal(1);
         expect(await actions[0].getLabel()).to.include(KNativeConstants.ACTION_ITEM_REFRESH);
+      });
+    });
+
+    describe('Function section', () => {
+      it('should provide Create Function, Refresh and Function version action items', async function context() {
+        this.timeout(10000);
+        const sectionFunction = await sideBar.getContent().getSection(KNativeConstants.SECTION_FUNCTION);
+        const actions = await sectionFunction.getActions();
+        expect(actions.length).to.equal(3);
+        // eslint-disable-next-line @typescript-eslint/no-misused-promises
+        actions.forEach(async (action) => {
+          // eslint-disable-next-line max-nested-callbacks
+          expect(await action.getLabel()).to.satisfy((title: string) =>
+            [
+              KNativeConstants.ACTION_ITEM_CREATE_FUNCTION,
+              KNativeConstants.ACTION_ITEM_REFRESH,
+              KNativeConstants.ACTION_ITEM_FUNCTION_VERSION,
+              // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call, max-nested-callbacks
+            ].some((expectedTitle) => title.includes(expectedTitle)),
+          );
+        });
+      });
+
+      it('Function Section contains default function tree item', async function context() {
+        this.timeout(10000);
+        const sectionFunction = await sideBar.getContent().getSection(KNativeConstants.SECTION_FUNCTION);
+        // eslint-disable-next-line @typescript-eslint/no-misused-promises
+        (await sectionFunction.getVisibleItems()).forEach(async (item) => {
+          console.log(await item.getText());
+        });
+        const defaultItem = await sectionFunction.findItem('default');
+        expect(defaultItem).is.instanceOf(ViewItem);
+        await (defaultItem as TreeItem).expand();
+      });
+
+      it('allows to download missing kn func binary using notification', async function context() {
+        this.timeout(50000);
+        const notification = await driver.wait(async () => findNotification('Cannot find Function CLI'), 5000);
+        const actions = await notification.getActions();
+        const actionsTexts = await Promise.all(actions.map(async (item) => item.getText()));
+        const downloadActionText = actionsTexts.find((item) => (item.includes('Download') ? item : undefined));
+        await notification.takeAction(downloadActionText);
+        await driver.wait(async () => findNotification('Downloading Function CLI'), 10000);
+        await driver.wait(async () => {
+          const exists = await safeNotificationExists('Downloading Function CLI');
+          return !exists;
+        }, 30000);
       });
     });
 

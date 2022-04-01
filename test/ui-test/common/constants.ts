@@ -20,6 +20,10 @@ export class KNativeConstants {
 
   public static readonly ACTION_ITEM_REPORT_ISSUE = 'Report Extension Issue on GitHub';
 
+  public static readonly ACTION_ITEM_CREATE_FUNCTION = 'Create Function';
+
+  public static readonly ACTION_ITEM_FUNCTION_VERSION = 'Function version';
+
   public static readonly SECTION_SERVING = 'Serving';
 
   public static readonly SECTION_EVENTING = 'Eventing';
