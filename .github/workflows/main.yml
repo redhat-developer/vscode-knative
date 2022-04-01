@@ -29,9 +29,19 @@ jobs:
         with:
           run: npm test
       - name: Run UI tests
+        if: runner.os == 'Linux'
         uses: GabrielBB/xvfb-action@v1.0
         with:
           run: npm run base-ui-test
+      - name: Archiving test artifacts
+        uses: actions/upload-artifact@v2
+        with: 
+          name: my-artifact
+          path: |
+            test-resources/screenshots/*.png
+            test-resources/*.log
+            test-resources/test-report.xml
+          retention-days: 5
       - uses: codecov/codecov-action@v1
         name: codecov-upload
         with:
