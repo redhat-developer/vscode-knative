@@ -1,3 +1,4 @@
+/* eslint-disable max-classes-per-file */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 // Copied from https://github.com/Azure/vscode-kubernetes-tools/blob/master/src/kuberesources.virtualfs.ts
 
@@ -16,7 +17,6 @@ import { CliExitData } from './cmdCli';
 import * as config from './config';
 import { Execute } from './execute';
 import { KnAPI } from './kn-api';
-import { VFSFileStat } from './vfs-file-stat';
 import { registerSchema } from '../editor/knativeSchemaRegister';
 // eslint-disable-next-line import/no-cycle
 import { servingDataProvider } from '../servingTree/servingDataProvider';
@@ -41,6 +41,22 @@ export function vfsUri(
   // "knmsx://loadknativecore/serviceKnative-tutorial-greeter.yaml?contextValue=service&name=knative-tutorial-greeter&_=1593030763939"
   const uri = `${schema}://${KN_RESOURCE_AUTHORITY}/${docName}?${nsQuery}contextValue=${context}&name=${name}&_=${nonce}`;
   return Uri.parse(uri);
+}
+
+export class VFSFileStat implements FileStat {
+  readonly type = FileType.File;
+
+  readonly ctime = 0;
+
+  mtime = 0;
+
+  size = 65536;
+
+  changeStat(size: number): void {
+    // eslint-disable-next-line no-plusplus
+    this.mtime++;
+    this.size = size;
+  }
 }
 
 export class KnativeResourceVirtualFileSystemProvider implements FileSystemProvider {
