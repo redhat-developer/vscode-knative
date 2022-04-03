@@ -40,12 +40,31 @@ export const invokeID: WizardPageFieldDefinition = {
   type: 'textbox',
 };
 
-export const invokeUrl: WizardPageFieldDefinition = {
-  id: invokeFunctionID.invoke_Url,
-  label: 'URL',
-  placeholder: 'Target custom URL when invoking the function. (optional)',
-  type: 'textbox',
+export const invokeUrl: WizardPageSectionDefinition = {
+  id: invokeFunctionID.invoke_Url_Def,
+  label: 'Function instance to invoke',
+  childFields: [
+    {
+      id: invokeFunctionID.invoke_Url_Check,
+      label: 'Target this custom URL when invoking the function',
+      type: 'checkbox',
+    },
+    {
+      id: invokeFunctionID.invoke_Url,
+      label: 'URL',
+      placeholder: 'Target custom URL when invoking the function. (optional)',
+      type: 'textbox',
+      properties: { disabled: true },
+    },
+  ],
 };
+
+// export const invokeUrl: WizardPageFieldDefinition = {
+//   id: invokeFunctionID.invoke_Url,
+//   label: 'URL',
+//   placeholder: 'Target custom URL when invoking the function. (optional)',
+//   type: 'textbox',
+// };
 
 export const invokePath: WizardPageFieldDefinition = {
   id: invokeFunctionID.invoke_path,
@@ -173,7 +192,7 @@ export const invokeType = {
 
 export const invokeDataText: WizardPageSectionDefinition = {
   id: invokeFunctionID.invoke_data_desc,
-  label: 'Data to send in the request. (Env: $FUNC_DATA) (default "Hello World")',
+  label: 'Data to send in the request. (default "Hello World")',
   childFields: [
     {
       id: invokeFunctionID.invoke_data_mode,

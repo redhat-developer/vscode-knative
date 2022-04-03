@@ -6,6 +6,8 @@
 import * as path from 'path';
 // eslint-disable-next-line import/no-cycle
 import { CliCommand, CmdCli, createCliCommand } from './cmdCli';
+// eslint-disable-next-line import/no-cycle
+import { ParametersType } from '../functions/function-command/invoke-function';
 import { quote } from '../util/quote';
 
 function funcCliCommand(cmdArguments?: string[]): CliCommand {
@@ -17,42 +19,39 @@ export class FuncAPI {
     return funcCliCommand(['version']);
   }
 
-  static invokeFunctionLocal(
-    id: string,
-    location: string,
-    contextType: string,
-    format: string,
-    source: string,
-    type: string,
-    data: string,
-  ): string {
-    if (id) {
-      return `func invoke --id ${id} -p ${location} --content-type ${contextType} -f ${format} --source ${source} --type ${type} --data ${data}`;
+  static invokeFunction(data: ParametersType): CliCommand {
+    const args: string[] = ['invoke'];
+    if (data.invokeId?.trim()) {
+      args.push(`--id ${data.invokeId}`);
     }
-    return `func invoke -p ${location} --content-type ${contextType} -f ${format} --source ${source} --type ${type} --data ${data}`;
-  }
-
-  static invokeFunctionRemote(
-    id: string,
-    namespace: string,
-    contextType: string,
-    format: string,
-    source: string,
-    type: string,
-    data: string,
-    url: string,
-    location: string,
-  ): string {
-    if (id?.trim() && url?.trim()) {
-      return `func invoke -p ${location} --id ${id} -t ${url} -n ${namespace} --content-type ${contextType} -f ${format} --source ${source} --type ${type} --data ${data}`;
+    if (data.invokePath?.trim()) {
+      args.push(`-p ${data.invokePath}`);
     }
-    if (id?.trim()) {
-      return `func invoke -p ${location} --id ${id} -n ${namespace} --content-type ${contextType} -f ${format} --source ${source} --type ${type} --data ${data}`;
+    if (data.invokeInstance === 'Remote') {
+      args.push(`-t ${data.invokeUrlCheck ? data.invokeUrl : 'remote'}`);
     }
-    if (url?.trim()) {
-      return `func invoke -p ${location} -t ${url} -n ${namespace} --content-type ${contextType} -f ${format} --source ${source} --type ${type} --data ${data}`;
+    if (data.invokeNamespace?.trim()) {
+      args.push(`-n ${data.invokeNamespace}`);
     }
-    return `func invoke -p ${location} -n ${namespace} --content-type ${contextType} -f ${format} --source ${source} --type ${type} --data ${data}`;
+    if (data.invokeContextType?.trim()) {
+      args.push(`--content-type ${data.invokeContextType}`);
+    }
+    if (data.invokeFormat?.trim()) {
+      args.push(`-f ${data.invokeFormat}`);
+    }
+    if (data.invokeSource?.trim()) {
+      args.push(`--source ${data.invokeSource}`);
+    }
+    if (data.invokeType?.trim()) {
+      args.push(`--type ${data.invokeType}`);
+    }
+    if (data.invokeDataMode?.trim()) {
+      args.push(`--data ${data.invokeDataMode === 'File' ? data.invokeDataFile : data.invokeDataText}`);
+    }
+    if (data.invokeSource?.trim()) {
+      args.push(`--source ${data.invokeSource}`);
+    }
+    return funcCliCommand(args);
   }
 
   static createFunc(name: string, language: string, template: string, location: string): CliCommand {

@@ -32,11 +32,13 @@ import {
   invokeUrl,
 } from './invoke-function-def';
 // eslint-disable-next-line import/no-cycle
-import { CliExitData, executeCmdCli } from '../../cli/cmdCli';
+import { CliCommand, CliExitData, executeCmdCli } from '../../cli/cmdCli';
+// eslint-disable-next-line import/no-cycle
 import { FuncAPI } from '../../cli/func-api';
 // eslint-disable-next-line import/no-cycle
 import { contextGlobalState } from '../../extension';
 import { getStderrString } from '../../util/stderrstring';
+// eslint-disable-next-line import/no-cycle
 import { FunctionNode } from '../function-tree-view/functionsTreeItem';
 import { createValidationItem, inputFieldValidation, pathValidation, selectLocationValidation } from '../validate-item';
 import { invokeFunctionID } from '../webview-id';
@@ -47,6 +49,7 @@ export interface ParametersType {
   invokeInstance?: string;
   invokeNamespace?: string;
   invokeUrl?: string;
+  invokeUrlCheck?: boolean;
   invokeId?: string;
   invokePath?: string;
   invokeDataText?: string;
@@ -267,7 +270,7 @@ export const def: WizardDefinition = {
       invokeType.initialValue = data.invokeType;
       invokeDataText.childFields[1].initialValue = data.invokeDataText ?? invokeDataText.childFields[1].initialValue;
       invokeNamespace.initialValue = data.invokeNamespace ?? invokeNamespace.initialValue;
-      invokeUrl.initialValue = data.invokeUrl ?? invokeUrl.initialValue;
+      invokeUrl.childFields[1].initialValue = data.invokeUrl ?? invokeUrl.childFields[1].initialValue;
       invokeDataFile.childFields[1].initialValue = data.invokeDataFile;
       if (!data.invokeInstance && data.invokeDataMode === 'Text' && !localOnlyFunctionInvokeText) {
         const newDef = def;
@@ -355,32 +358,7 @@ export const def: WizardDefinition = {
           title: `Function Successfully invoke`,
         },
         async () => {
-          let invokeCommand: string;
-          if (data.invokeInstance === 'Local' || !data.invokeInstance) {
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-            invokeCommand = FuncAPI.invokeFunctionLocal(
-              data.invokeId,
-              data.invokePath,
-              data.invokeContextType,
-              data.invokeFormat,
-              data.invokeSource,
-              data.invokeType,
-              data.invokeDataMode === 'File' ? data.invokeDataFile : data.invokeDataText,
-            );
-          } else {
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-            invokeCommand = FuncAPI.invokeFunctionRemote(
-              data.invokeId,
-              data.invokeNamespace,
-              data.invokeContextType,
-              data.invokeFormat,
-              data.invokeSource,
-              data.invokeType,
-              data.invokeDataMode === 'File' ? data.invokeDataFile : data.invokeDataText,
-              data.invokeUrl,
-              data.invokePath,
-            );
-          }
+          const invokeCommand: CliCommand = FuncAPI.invokeFunction(data);
           const result: CliExitData = await executeCmdCli.executeExec(invokeCommand);
           if (result.error) {
             // eslint-disable-next-line @typescript-eslint/no-floating-promises
@@ -435,7 +413,7 @@ export function createInvokeFunction(context: vscode.ExtensionContext, funcConte
   invokeType.initialValue = 'boson.fn';
   invokeDataText.childFields[0].initialValue = 'Text';
   invokeDataText.childFields[1].initialValue = 'Hello World';
-  invokeUrl.initialValue = funcContext.url;
+  invokeUrl.childFields[1].initialValue = funcContext.url;
   invokeNamespace.initialValue = funcContext.getParent().getName();
   delete invokeDataFile.childFields[1].initialValue;
   const wiz: WebviewWizard = invokeFunctionForm(context, funcContext);

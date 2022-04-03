@@ -21,7 +21,7 @@ export interface CliCommand {
 
 export interface Cli {
   execute(cmd: CliCommand, opts?: SpawnOptions): Promise<CliExitData>;
-  executeExec(cmd: string, opts?: ExecOptions): Promise<CliExitData>;
+  executeExec(cmd: CliCommand, opts?: ExecOptions): Promise<CliExitData>;
 }
 
 export function createCliCommand(cliCommand: string, ...cliArguments: string[]): CliCommand {
@@ -169,24 +169,23 @@ export class CmdCli implements Cli {
     });
   }
 
-  async executeExec(cmd: string, opts: ExecOptions = {}): Promise<CliExitData> {
-    if (cmd.startsWith('func')) {
+  async executeExec(cmd: CliCommand, opts: ExecOptions = {}): Promise<CliExitData> {
+    if (cmd.cliCommand.startsWith('func')) {
       const toolLocation: string = CmdCliConfig.tools.func.location;
       if (toolLocation) {
-        // eslint-disable-next-line no-unused-expressions
         // eslint-disable-next-line no-param-reassign
-        cmd = toolLocation
-          ? cmd.replace('func', `"${toolLocation}"`).replace(new RegExp(`&& func`, 'g'), `&& "${toolLocation}"`)
-          : cmd;
+        cmd.cliCommand = toolLocation
+          ? cmd.cliCommand.replace('func', `"${toolLocation}"`).replace(new RegExp(`&& func`, 'g'), `&& "${toolLocation}"`)
+          : cmd.cliCommand;
       }
     }
     return new Promise<CliExitData>((resolve) => {
-      this.knOutputChannel.print(cmd);
+      this.knOutputChannel.print(cliCommandToString(cmd));
       if (opts.maxBuffer === undefined) {
         // eslint-disable-next-line no-param-reassign
         opts.maxBuffer = 2 * 1024 * 1024;
       }
-      exec(cmd, opts, (error: ExecException, stdout: string, stderr: string) => {
+      exec(cliCommandToString(cmd), opts, (error: ExecException, stdout: string, stderr: string) => {
         this.knOutputChannel.print(stdout);
         this.knOutputChannel.print(stderr);
         // do not reject it here, because caller in some cases need the error and the streams
