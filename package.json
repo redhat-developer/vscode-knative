@@ -492,7 +492,7 @@
         },
         {
           "command": "function.deploy",
-          "when": "view == knativeFunctionProjectExplorer && viewItem =~ /^(localFunctions|localDeployFunctions|localFunctionsEnablement|notConnectedLocalFunctionsEnablement|notConnectedLocalFunctions)$/",
+          "when": "view == knativeFunctionProjectExplorer && viewItem =~ /^(localFunctions|localDeployFunctions|localFunctionsEnablement)$/",
           "group": "c1@3"
         },
         {
@@ -684,4 +684,3 @@
     }
   }
 }
-
