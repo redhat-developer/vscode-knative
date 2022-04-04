@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See LICENSE file in the project root for license information.
  *-----------------------------------------------------------------------------------------------*/
 
-import { SpawnOptions, spawn } from 'child_process';
+import { SpawnOptions, spawn, ExecException, exec, ExecOptions } from 'child_process';
 import { window } from 'vscode';
 // eslint-disable-next-line import/no-cycle
 import { CmdCliConfig } from './cli-config';
@@ -197,4 +197,4 @@ export class CmdCli implements Cli {
   }
 }
 
-export const execCmdCli = new CmdCli();
+export const executeCmdCli = new CmdCli();

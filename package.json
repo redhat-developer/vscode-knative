@@ -539,12 +539,12 @@
         {
           "submenu": "function/addConfig",
           "when": "view == knativeFunctionProjectExplorer && viewItem =~ /^(localFunctions|localDeployFunctions|localFunctionsEnablement)$/",
-          "group": "c1@5"
+          "group": "c1@6"
         },
         {
           "submenu": "function/removeConfig",
           "when": "view == knativeFunctionProjectExplorer && viewItem =~ /^(localFunctions|localDeployFunctions|localFunctionsEnablement)$/",
-          "group": "c1@6"
+          "group": "c1@7"
         }
       ],
       "view/title": [

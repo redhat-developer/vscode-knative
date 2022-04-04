@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable no-use-before-define */
@@ -15,6 +16,7 @@ import {
   ValidatorResponse,
   WebviewWizard,
   WizardDefinition,
+  WizardPageSectionDefinition,
 } from '@redhat-developer/vscode-wizard';
 import * as fs from 'fs-extra';
 import { v4 as uuidv4 } from 'uuid';
@@ -262,6 +264,8 @@ export const def: WizardDefinition = {
       const localFunctionInvokeFile = invokeItemMap.get('local_function_invoke_file');
       const localOnlyFunctionInvokeText = invokeItemMap.get('local_only_function_invoke_text');
       const localOnlyFunctionInvokeFile = invokeItemMap.get('local_only_function_invoke_file');
+      const remoteCheckUrlTrue = invokeItemMap.get('remote_check_url_true');
+      const remoteCheckUrlFalse = invokeItemMap.get('remote_check_url_False');
       invokeID.initialValue = data.invokeId;
       invokePath.initialValue = data.invokePath ? data.invokePath : invokePath.initialValue;
       invokeContextType.initialValue = data.invokeContextType;
@@ -329,6 +333,36 @@ export const def: WizardDefinition = {
         invokeItemMap.set('local_function_invoke_file', true);
         invokeItemMap.set('remote_function_invoke_text', false);
         invokeItemMap.set('remote_function_invoke_file', false);
+        // eslint-disable-next-line @typescript-eslint/no-use-before-define
+        invokeFunction(contextGlobalState, null);
+      }
+      if (data.invokeUrlCheck === true && !remoteCheckUrlTrue) {
+        const newDef = def;
+        newDef.pages[0].fields.forEach((value: WizardPageSectionDefinition) => {
+          if (value.id === invokeFunctionID.invoke_Url_Def) {
+            // eslint-disable-next-line no-param-reassign
+            value.childFields[0].initialValue = 'true';
+            // eslint-disable-next-line no-param-reassign
+            value.childFields[1].properties.disabled = false;
+          }
+        });
+        invokeItemMap.set('remote_check_url_true', true);
+        invokeItemMap.set('remote_check_url_False', false);
+        // eslint-disable-next-line @typescript-eslint/no-use-before-define
+        invokeFunction(contextGlobalState, null);
+      }
+      if (data.invokeUrlCheck === false && !remoteCheckUrlFalse) {
+        const newDef = def;
+        newDef.pages[0].fields.forEach((value: WizardPageSectionDefinition) => {
+          if (value.id === invokeFunctionID.invoke_Url_Def) {
+            // eslint-disable-next-line no-param-reassign
+            delete value.childFields[0].initialValue;
+            // eslint-disable-next-line no-param-reassign
+            value.childFields[1].properties.disabled = true;
+          }
+        });
+        invokeItemMap.set('remote_check_url_true', false);
+        invokeItemMap.set('remote_check_url_False', true);
         // eslint-disable-next-line @typescript-eslint/no-use-before-define
         invokeFunction(contextGlobalState, null);
       }
@@ -416,6 +450,8 @@ export function createInvokeFunction(context: vscode.ExtensionContext, funcConte
   invokeUrl.childFields[1].initialValue = funcContext.url;
   invokeNamespace.initialValue = funcContext.getParent().getName();
   delete invokeDataFile.childFields[1].initialValue;
+  delete invokeUrl.childFields[0].initialValue;
+  invokeUrl.childFields[1].properties.disabled = true;
   const wiz: WebviewWizard = invokeFunctionForm(context, funcContext);
   wiz.open();
 }

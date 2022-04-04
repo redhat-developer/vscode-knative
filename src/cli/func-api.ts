@@ -45,11 +45,11 @@ export class FuncAPI {
     if (data.invokeType?.trim()) {
       args.push(`--type ${data.invokeType}`);
     }
-    if (data.invokeDataMode?.trim()) {
-      args.push(`--data ${data.invokeDataMode === 'File' ? data.invokeDataFile : data.invokeDataText}`);
+    if (data.invokeDataText?.trim() && data.invokeDataMode === 'Text') {
+      args.push(`--data ${data.invokeDataText}`);
     }
-    if (data.invokeSource?.trim()) {
-      args.push(`--source ${data.invokeSource}`);
+    if (data.invokeDataFile?.trim() && data.invokeDataMode === 'File') {
+      args.push(`--file ${data.invokeDataFile}`);
     }
     return funcCliCommand(args);
   }

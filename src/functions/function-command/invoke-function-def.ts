@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /*-----------------------------------------------------------------------------------------------
  *  Copyright (c) Red Hat, Inc. All rights reserved.
  *  Licensed under the MIT License. See LICENSE file in the project root for license information.
@@ -105,7 +107,6 @@ export const invokeContextType: WizardPageFieldDefinition = {
       'application/epub+zip',
       'application/gzip',
       'image/gif',
-      'text/html',
       'text/html',
       'image/vnd.microsoft.icon',
       'text/calendar',
