@@ -188,7 +188,7 @@ status:
     null,
     null,
   );
-  const example75w7vYaml = `apiVersion: serving.knative.dev/v1
+  const revisionYaml = `apiVersion: serving.knative.dev/v1
 kind: Revision
 metadata:
   annotations:
@@ -288,8 +288,8 @@ status:
   observedGeneration: 1
   serviceName: example-75w7v
   `;
-  const example75w7vJson = yaml.parse(example75w7vYaml) as revision.Items;
-  const example75w7vRevision: Revision = new Revision('example-75w7v', 'example', example75w7vJson, [
+  const revisionJson = yaml.parse(revisionYaml) as revision.Items;
+  const revisionData: Revision = new Revision('example-75w7v', 'example', revisionJson, [
     {
       tag: null,
       revisionName: 'example-75w7v',
@@ -309,7 +309,7 @@ status:
   ]);
   const example75w7vTreeItem: ServingTreeItem = new ServingTreeItem(
     testServiceTreeItem,
-    example75w7vRevision,
+    revisionData,
     { label: 'example-75w7v' },
     ServingContextType.REVISION_TAGGED,
     vscode.TreeItemCollapsibleState.None,
@@ -317,7 +317,7 @@ status:
     null,
   );
 
-  const exampleG4hm8Yaml = `apiVersion: serving.knative.dev/v1
+  const revisionExampleYaml = `apiVersion: serving.knative.dev/v1
 kind: Revision
 metadata:
   annotations:
@@ -415,11 +415,11 @@ status:
   observedGeneration: 1
   serviceName: example-g4hm8
     `;
-  const exampleG4hm8Json = yaml.parse(exampleG4hm8Yaml) as revision.Items;
-  const exampleG4hm8Revision: Revision = new Revision('example-g4hm8', 'example', exampleG4hm8Json);
-  const exampleG4hm8TreeItem: ServingTreeItem = new ServingTreeItem(
+  const revisionsJson = yaml.parse(revisionExampleYaml) as revision.Items;
+  const revisionExample: Revision = new Revision('example-g4hm8', 'example', revisionsJson);
+  const serviceTreeItem: ServingTreeItem = new ServingTreeItem(
     testServiceTreeItem,
-    exampleG4hm8Revision,
+    revisionExample,
     { label: 'example-g4hm8' },
     ServingContextType.REVISION,
     vscode.TreeItemCollapsibleState.None,
@@ -427,7 +427,7 @@ status:
     null,
   );
 
-  const example2fvz4Yaml = `apiVersion: serving.knative.dev/v1
+  const tagNotFound = `apiVersion: serving.knative.dev/v1
 kind: Revision
 metadata:
   annotations:
@@ -527,8 +527,8 @@ status:
   observedGeneration: 1
   serviceName: example-2fvz4
     `;
-  const example2fvz4Json = yaml.parse(example2fvz4Yaml) as revision.Items;
-  const example2fvz4Revision: Revision = new Revision('example-2fvz4', 'example', example2fvz4Json, [
+  const tagRevisionJson = yaml.parse(tagNotFound) as revision.Items;
+  const tagNotFoundRevision: Revision = new Revision('example-2fvz4', 'example', tagRevisionJson, [
     {
       tag: null,
       revisionName: 'example-2fvz4',
@@ -538,9 +538,9 @@ status:
       url: new URL('http://old-example-a-serverless-example.apps.devcluster.openshift.com'),
     },
   ]);
-  const example2fvz4TreeItem: ServingTreeItem = new ServingTreeItem(
+  const serviceTreeViewItem: ServingTreeItem = new ServingTreeItem(
     testServiceTreeItem,
-    example2fvz4Revision,
+    tagNotFoundRevision,
     { label: 'example-2fvz4' },
     ServingContextType.REVISION_TAGGED,
     vscode.TreeItemCollapsibleState.None,
@@ -586,14 +586,14 @@ status:
   test('should NOT call the command to open a Revision when a Revision is the treeItem but does not have Traffic', async () => {
     const executeCommandStub = sandbox.stub(vscode.commands, 'executeCommand');
     executeCommandStub.callThrough();
-    await vscode.commands.executeCommand('knative.service.open-in-browser', exampleG4hm8TreeItem);
+    await vscode.commands.executeCommand('knative.service.open-in-browser', serviceTreeItem);
     sinon.assert.calledOnce(executeCommandStub);
   });
 
   test('should NOT call the command to open a Revision when a Revision is the treeItem but does not have a Tag', async () => {
     const executeCommandStub = sandbox.stub(vscode.commands, 'executeCommand');
     executeCommandStub.callThrough();
-    await vscode.commands.executeCommand('knative.service.open-in-browser', example2fvz4TreeItem);
+    await vscode.commands.executeCommand('knative.service.open-in-browser', serviceTreeViewItem);
     sinon.assert.calledOnce(executeCommandStub);
   });
 

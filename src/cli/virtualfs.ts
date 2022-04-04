@@ -115,7 +115,7 @@ export class KnativeResourceVirtualFileSystemProvider implements FileSystemProvi
     } catch (error) {
       if (typeof error === 'string' && error.search('validation failed') > 0) {
         // eslint-disable-next-line no-console
-        await window.showErrorMessage(`The YAMl file failed validation with the following error. ${getStderrString(error)}`);
+        await window.showErrorMessage(`The YAML file failed validation with the following error. ${getStderrString(error)}`);
       } else if (
         typeof error === 'string' &&
         (error.search(/undefinedWarning/gm) >= 0 || error.search(/undefined.+Warning/gm) >= 0)
