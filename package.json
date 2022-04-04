@@ -477,17 +477,17 @@
         },
         {
           "command": "function.build",
-          "when": "view == knativeFunctionProjectExplorer && viewItem =~ /^(localFunctions|localDeployFunctions|localFunctionsEnablement)$/",
+          "when": "view == knativeFunctionProjectExplorer && viewItem =~ /^(localFunctions|localDeployFunctions|localFunctionsEnablement|notConnectedLocalFunctions|notConnectedLocalFunctionsEnablement)$/",
           "group": "c1@1"
         },
         {
           "command": "function.run",
-          "when": "view == knativeFunctionProjectExplorer && viewItem =~ /^(localFunctions|localDeployFunctions)$/",
+          "when": "view == knativeFunctionProjectExplorer && viewItem =~ /^(localFunctions|localDeployFunctions|notConnectedLocalFunctions)$/",
           "group": "c1@2"
         },
         {
           "command": "function.run.enablement",
-          "when": "view == knativeFunctionProjectExplorer && viewItem == localFunctionsEnablement",
+          "when": "view == knativeFunctionProjectExplorer && viewItem =~ /^(localFunctionsEnablement|notConnectedLocalFunctionsEnablement)$/",
           "group": "c1@2"
         },
         {
@@ -522,12 +522,12 @@
         },
         {
           "submenu": "function/addConfig",
-          "when": "view == knativeFunctionProjectExplorer && viewItem =~ /^(localFunctions|localDeployFunctions)$/",
+          "when": "view == knativeFunctionProjectExplorer && viewItem =~ /^(localFunctions|localDeployFunctions|localFunctionsEnablement)$/",
           "group": "c1@5"
         },
         {
           "submenu": "function/removeConfig",
-          "when": "view == knativeFunctionProjectExplorer && viewItem =~ /^(localFunctions|localDeployFunctions)$/",
+          "when": "view == knativeFunctionProjectExplorer && viewItem =~ /^(localFunctions|localDeployFunctions|localFunctionsEnablement)$/",
           "group": "c1@6"
         }
       ],
@@ -576,21 +576,21 @@
       "function/addConfig": [
         {
           "command": "function.addEnv",
-          "when": "view == knativeFunctionProjectExplorer && viewItem =~ /^(localFunctions|localDeployFunctions)$/"
+          "when": "view == knativeFunctionProjectExplorer && viewItem =~ /^(localFunctions|localDeployFunctions|localFunctionsEnablement)$/"
         },
         {
           "command": "function.addVolume",
-          "when": "view == knativeFunctionProjectExplorer && viewItem =~ /^(localFunctions|localDeployFunctions)$/"
+          "when": "view == knativeFunctionProjectExplorer && viewItem =~ /^(localFunctions|localDeployFunctions|localFunctionsEnablement)$/"
         }
       ],
       "function/removeConfig": [
         {
           "command": "function.removeEnv",
-          "when": "view == knativeFunctionProjectExplorer && viewItem =~ /^(localFunctions|localDeployFunctions)$/"
+          "when": "view == knativeFunctionProjectExplorer && viewItem =~ /^(localFunctions|localDeployFunctions|localFunctionsEnablement)$/"
         },
         {
           "command": "function.removeVolume",
-          "when": "view == knativeFunctionProjectExplorer && viewItem =~ /^(localFunctions|localDeployFunctions)$/"
+          "when": "view == knativeFunctionProjectExplorer && viewItem =~ /^(localFunctions|localDeployFunctions|localFunctionsEnablement)$/"
         }
       ]
     },
@@ -684,4 +684,3 @@
     }
   }
 }
-
