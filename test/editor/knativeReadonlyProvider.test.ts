@@ -3,15 +3,14 @@ import { expect } from 'chai';
 import * as chai from 'chai';
 import * as sinon from 'sinon';
 import * as sinonChai from 'sinon-chai';
+import { knvfs } from '../../src/cli/virtualfs';
 import { KnativeReadonlyProvider } from '../../src/editor/knativeReadonlyProvider';
-import { ServingDataProvider } from '../../src/servingTree/servingDataProvider';
 
 chai.use(sinonChai);
 
 suite('Readonly Provider', () => {
   const sandbox = sinon.createSandbox();
-  const servingDataProvider: ServingDataProvider = new ServingDataProvider();
-  const knrp = new KnativeReadonlyProvider(servingDataProvider.knvfs);
+  const knrp = new KnativeReadonlyProvider(knvfs);
 
   const _uriExternalFileReadonly = Uri.parse(
     'knreadonly://loadknativecore/service-example.yaml?contextValue%3Dservice%26name%3Dexample%26_%3D1594328823824',

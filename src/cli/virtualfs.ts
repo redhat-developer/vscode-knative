@@ -1,3 +1,4 @@
+/* eslint-disable max-classes-per-file */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 // Copied from https://github.com/Azure/vscode-kubernetes-tools/blob/master/src/kuberesources.virtualfs.ts
 
@@ -6,30 +7,21 @@
  *  Licensed under the MIT License. See LICENSE file in the project root for license information.
  *-----------------------------------------------------------------------------------------------*/
 
-import * as fs from 'fs';
+import * as os from 'os';
 import * as path from 'path';
 import * as querystring from 'querystring';
-import {
-  Disposable,
-  Event,
-  EventEmitter,
-  FileChangeEvent,
-  FileChangeType,
-  FileStat,
-  FileSystemProvider,
-  FileType,
-  Uri,
-  window,
-  workspace,
-  WorkspaceFolder,
-} from 'vscode';
+import { Disposable, Event, EventEmitter, FileChangeEvent, FileStat, FileSystemProvider, FileType, Uri, window } from 'vscode';
+import * as fsx from 'fs-extra';
 import * as yaml from 'yaml';
 import { CliExitData } from './cmdCli';
 import * as config from './config';
 import { Execute } from './execute';
 import { KnAPI } from './kn-api';
 import { registerSchema } from '../editor/knativeSchemaRegister';
+// eslint-disable-next-line import/no-cycle
+import { servingDataProvider } from '../servingTree/servingDataProvider';
 import { Errorable } from '../util/errorable';
+import { getStderrString } from '../util/stderrstring';
 
 export const KN_RESOURCE_SCHEME = 'knmsx';
 export const KN_RESOURCE_AUTHORITY = 'loadknativecore';
@@ -51,53 +43,20 @@ export function vfsUri(
   return Uri.parse(uri);
 }
 
-export async function showWorkspaceFolderPick(): Promise<WorkspaceFolder | undefined> {
-  if (!workspace.workspaceFolders) {
-    await window.showErrorMessage('This command requires an open Workspace folder.', { modal: true }, 'OK');
-    return undefined;
-  }
-  if (workspace.workspaceFolders.length === 1) {
-    return workspace.workspaceFolders[0];
-  }
-  return window.showWorkspaceFolderPick();
-}
+export class VFSFileStat implements FileStat {
+  readonly type = FileType.File;
 
-export async function selectRootFolder(): Promise<string | undefined> {
-  const folder = await showWorkspaceFolderPick();
-  if (!folder) {
-    return undefined;
-  }
-  if (folder.uri.scheme !== 'file') {
-    await window.showErrorMessage('This command requires a filesystem folder'); // TODO: make it not
-    return undefined;
-  }
-  return folder.uri.fsPath;
-}
+  readonly ctime = 0;
 
-export async function saveAsync(uri: Uri, content: Uint8Array, subFolder?: string): Promise<void> {
-  const rootPath = await selectRootFolder();
-  if (!rootPath) {
-    return;
-  }
-  if (!uri.fsPath.startsWith(`${path.sep}revision`)) {
-    const fspath = path.join(rootPath, subFolder || '', uri.fsPath);
-    fs.writeFileSync(fspath, content);
-  }
-}
+  mtime = 0;
 
-/**
- * Build a `path` based on the root folder and the arguments passed in.
- * @param subFolder
- * @param fileName
- * @returns `Promise<string>` of the path generated
- */
-export async function getFilePathAsync(subFolder?: string, fileName?: string): Promise<string> {
-  const rootPath = await selectRootFolder();
-  if (!rootPath) {
-    return;
+  size = 65536;
+
+  changeStat(size: number): void {
+    // eslint-disable-next-line no-plusplus
+    this.mtime++;
+    this.size = size;
   }
-  const fspath = path.join(rootPath, subFolder || '', fileName || '');
-  return fspath;
 }
 
 export class KnativeResourceVirtualFileSystemProvider implements FileSystemProvider {
@@ -105,103 +64,99 @@ export class KnativeResourceVirtualFileSystemProvider implements FileSystemProvi
 
   onDidChangeFile: Event<FileChangeEvent[]> = this.onDidChangeFileEmitter.event;
 
-  private yamlDirName = '.knative';
+  private fileStats = new Map<string, VFSFileStat>();
 
   public knExecutor = new Execute();
 
   // eslint-disable-next-line class-methods-use-this
-  watch(_uri: Uri, _options: { recursive: boolean; excludes: string[] }): Disposable {
-    // ignore, fires for all changes
-    // eslint-disable-next-line @typescript-eslint/no-empty-function
-    return new Disposable(() => {});
+  watch(): Disposable {
+    return new Disposable(() => true);
   }
 
-  async stat(_uri: Uri): Promise<FileStat> {
-    let fileType: FileType = FileType.File;
-    let createTime = 0;
-    let modifiedTime = 0;
-    let fileSize = 0;
-
-    const pathInWorkSpace: string = await getFilePathAsync(this.yamlDirName, _uri.fsPath);
-    fs.stat(pathInWorkSpace, (err, stats) => {
-      if (err) {
-        throw err;
-      }
-      fileType = FileType.File;
-      createTime = stats.ctimeMs;
-      modifiedTime = stats.mtimeMs;
-      fileSize = stats.size;
-    });
-
-    return {
-      type: fileType,
-      ctime: createTime,
-      mtime: modifiedTime,
-      size: fileSize,
-    };
+  stat(uri: Uri): FileStat | Thenable<FileStat> {
+    return this.ensureStat(uri);
   }
 
-  readDirectory(_uri: Uri): [string, FileType][] | Thenable<[string, FileType][]> {
-    return this.readDirectoryAsync();
-  }
-
-  /**
-   * Add the directory if missing.
-   *
-   * Return an array of the array of `[path, fileType]` for the files in the dir.
-   */
-  async readDirectoryAsync(): Promise<[string, FileType][]> {
-    const files: [string, FileType][] = [];
-    await this.createDirectoryAsync(null);
-    const dir = await getFilePathAsync(this.yamlDirName, null);
-    fs.readdirSync(dir).forEach((localFile) => {
-      files.push([path.join(dir, localFile), FileType.File]);
-    });
-    return files;
-  }
-
-  createDirectory(_uri: Uri): void | Thenable<void> {
-    return this.createDirectoryAsync(_uri);
-  }
-
-  /**
-   * If directory does not already exist, create it.
-   * @param _uri Ignored. May be used in the future.
-   */
-  async createDirectoryAsync(_uri: Uri): Promise<void> {
-    const dir = await getFilePathAsync(this.yamlDirName, null);
-
-    // eslint-disable-next-line no-useless-catch
-    try {
-      if (!fs.existsSync(dir)) {
-        fs.mkdirSync(dir);
-      }
-    } catch (err) {
-      // eslint-disable-next-line no-console
-      // console.log(`Error while createDirectoryAsync() ${err}`);
-      throw err;
+  private ensureStat(uri: Uri): VFSFileStat {
+    if (!this.fileStats.has(uri.toString())) {
+      this.fileStats.set(uri.toString(), new VFSFileStat());
     }
+
+    const stat = this.fileStats.get(uri.toString());
+    stat.changeStat(stat.size + 1);
+
+    return stat;
   }
 
   readFile(uri: Uri): Uint8Array | Thenable<Uint8Array> {
     return this.readFileAsync(uri);
   }
 
-  async readFileAsync(uri: Uri): Promise<Uint8Array> {
-    await this.createDirectory(uri);
-    // Check if there is an edited local version.
-    // TODO: Check if the version on the cluster is newer,
-    // Then if it is, ask the user if they want to replace the edited version.
-    const localFile = await getFilePathAsync(this.yamlDirName, uri.fsPath);
+  async writeFile(uri: Uri, content: Uint8Array): Promise<void> {
+    const tempPath = os.tmpdir();
+    const fsPath = path.join(tempPath, uri.fsPath);
+    await fsx.ensureFile(fsPath);
+    await fsx.writeFile(fsPath, content);
+    await this.updateK8sResource(fsPath);
+    await this.unlinkFsPath(fsPath);
+    servingDataProvider.refresh();
+  }
 
+  // eslint-disable-next-line class-methods-use-this
+  async updateK8sResource(fsPath: string): Promise<void> {
+    try {
+      // push the updated YAML back to the cluster
+      const result: CliExitData = await this.knExecutor.execute(KnAPI.applyYAML(fsPath, { override: false }));
+      // Delete the yaml that was pushed if there was no error
+      if (result.error) {
+        // deal with the error that is passed on but not thrown by the Promise.
+        throw result.error;
+      }
+    } catch (error) {
+      if (typeof error === 'string' && error.search('validation failed') > 0) {
+        // eslint-disable-next-line no-console
+        await window.showErrorMessage(`The YAML file failed validation with the following error. ${getStderrString(error)}`);
+      } else if (
+        typeof error === 'string' &&
+        (error.search(/undefinedWarning/gm) >= 0 || error.search(/undefined.+Warning/gm) >= 0)
+      ) {
+        // eslint-disable-next-line no-console
+        await window.showErrorMessage(`updateServiceFromYaml undefinedWarning; error = ${getStderrString(error)}`);
+        // do nothing it was a warning
+      } else {
+        // eslint-disable-next-line no-console, @typescript-eslint/restrict-template-expressions
+        console.log(`updateServiceFromYaml error = ${getStderrString(error)}`);
+        await window.showErrorMessage(
+          `There was an error while uploading the YAML. error: ${getStderrString(error)}`,
+          { modal: true },
+          'OK',
+        );
+      }
+      await this.unlinkFsPath(fsPath);
+    }
+  }
+
+  // eslint-disable-next-line class-methods-use-this
+  async unlinkFsPath(fsPath: string): Promise<void> {
+    const exists: boolean = await fsx.pathExists(fsPath);
+    if (exists) {
+      await fsx.unlink(fsPath);
+    }
+  }
+
+  // eslint-disable-next-line class-methods-use-this
+  readDirectory(_uri: Uri): [string, FileType][] | Thenable<[string, FileType][]> {
+    return []; // no-op
+  }
+
+  // eslint-disable-next-line class-methods-use-this
+  createDirectory(_uri: Uri): void | Thenable<void> {
+    // no-op
+  }
+
+  async readFileAsync(uri: Uri): Promise<Uint8Array> {
     await registerSchema();
 
-    // (example) localFile = "/home/josh/git/vscode-extension-samples/basic-multi-root-sample/.knative/service-example.yaml"
-    if (fs.existsSync(localFile)) {
-      // use local file
-      const localContent = fs.readFileSync(localFile, { encoding: 'utf8' });
-      return Buffer.from(localContent, 'utf8');
-    }
     const content = await this.loadResource(uri);
     return Buffer.from(content, 'utf8');
   }
@@ -291,36 +246,15 @@ export class KnativeResourceVirtualFileSystemProvider implements FileSystemProvi
     return cleanCED;
   }
 
-  writeFile(uri: Uri, content: Uint8Array, _options: { create: boolean; overwrite: boolean }): void | Thenable<void> {
-    const s = saveAsync(uri, content, this.yamlDirName); // TODO: respect options
-    this.onDidChangeFileEmitter.fire([{ type: FileChangeType.Created, uri }]);
-    return s;
-  }
-
+  // eslint-disable-next-line class-methods-use-this
   delete(uri: Uri, _options: { recursive: boolean }): void | Thenable<void> {
-    if (fs.existsSync(uri.fsPath)) {
-      fs.unlink(uri.fsPath, (err) => {
-        if (err) {
-          throw err;
-        }
-        this.onDidChangeFileEmitter.fire([{ type: FileChangeType.Deleted, uri }]);
-      });
-    }
+    // no-op
   }
 
+  // eslint-disable-next-line class-methods-use-this
   rename(_oldUri: Uri, _newUri: Uri, _options: { overwrite: boolean }): void | Thenable<void> {
-    return this.renameAsync(_oldUri, _newUri, _options);
-  }
-
-  async renameAsync(oldUri: Uri, newUri: Uri, options: { overwrite: boolean }): Promise<void> {
-    const oldLocalFile = await getFilePathAsync(this.yamlDirName, oldUri.fsPath);
-    const newLocalFile = await getFilePathAsync(this.yamlDirName, newUri.fsPath);
-    if (fs.existsSync(oldLocalFile)) {
-      fs.rename(oldLocalFile, newLocalFile, (err) => {
-        if (err) {
-          throw err;
-        }
-      });
-    }
+    // no-op
   }
 }
+
+export const knvfs = new KnativeResourceVirtualFileSystemProvider();

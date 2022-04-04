@@ -2,11 +2,12 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
-import * as path from 'path';
+import * as os from 'os';
 import { URL } from 'url';
 import * as vscode from 'vscode';
 import { expect } from 'chai';
 import * as chai from 'chai';
+import * as fsx from 'fs-extra';
 import { beforeEach } from 'mocha';
 import rewire = require('rewire');
 import * as sinon from 'sinon';
@@ -16,9 +17,10 @@ import * as singleServiceFailedRevisionRevisionList from './singleServiceFailedR
 import * as singleServiceFailedRevisionServiceList from './singleServiceFailedRevisionServiceList.json';
 import * as singleServiceRevisionData from './singleServiceRevisionList.json';
 import * as singleServiceData from './singleServiceServiceList.json';
-import { CliExitData } from '../../src/cli/cmdCli';
+import { CliExitData, execCmdCli } from '../../src/cli/cmdCli';
 import { ServingContextType } from '../../src/cli/config';
 import * as vfs from '../../src/cli/virtualfs';
+import { knvfs } from '../../src/cli/virtualfs';
 import { EventingTreeItem } from '../../src/eventingTree/eventingTreeItem';
 import { KnativeItem } from '../../src/knative/knativeItem';
 import * as revision from '../../src/knative/revision';
@@ -38,59 +40,6 @@ suite('ServingDataProvider', () => {
   const sdp = new rewiredServingDataProvider.ServingDataProvider();
   const servingDataProvider: ServingDataProvider = new ServingDataProvider();
   let serviceTreeItems: ServingTreeItem[];
-  // let revisionTreeItems: ServingTreeItem[];
-  // let service: Service;
-  // let revision: Revision;
-
-  //   const yamlServiceContent = `apiVersion: serving.knative.dev/v1
-  // kind: Service
-  // metadata:
-  //   annotations:
-  //     image.openshift.io/triggers: '[{"from":{"kind":"ImageStreamTag","name":"example:quarkus","namespace":"a-serverless-example"},"fieldPath":"spec.template.spec.containers[?(@.name==\\"example\\")].image","pause":"false"}]'
-  //     kubectl.kubernetes.io/last-applied-configuration: >
-  //       {"apiVersion":"serving.knative.dev/v1","kind":"Service","metadata":{"annotations":{"image.openshift.io/triggers":"[{\\"from\\":{\\"kind\\":\\"ImageStreamTag\\",\\"name\\":\\"example:quarkus\\",\\"namespace\\":\\"a-serverless-example\\"},\\"fieldPath\\":\\"spec.template.spec.containers[?(@.name==\\\\"example\\\\")].image\\",\\"pause\\":\\"false\\"}]","serving.knative.dev/creator":"kube:admin","serving.knative.dev/lastModifier":"system:admin"},"labels":{"app.kubernetes.io/component":"example","app.kubernetes.io/instance":"example","app.kubernetes.io/name":"example","app.kubernetes.io/part-of":"knative-tutorial-greeter-app","app.openshift.io/runtime":"example","app.openshift.io/runtime-namespace":"a-serverless-example","app.openshift.io/runtime-version":"quarkus"},"name":"example","namespace":"a-serverless-example"},"spec":{"template":{"spec":{"containerConcurrency":0,"containers":[{"image":"quay.io/rhdevelopers/knative-tutorial-greeter:quarkus","imagePullPolicy":"Always","name":"user-container","ports":[{"containerPort":8080}],"readinessProbe":{"successThreshold":1,"tcpSocket":{"port":0}},"resources":{}}],"timeoutSeconds":300}},"traffic":[{"latestRevision":true,"percent":100},{"latestRevision":false,"percent":0,"revisionName":"example-2fvz4","tag":"old"}]}}
-  //     serving.knative.dev/creator: kube:admin
-  //     serving.knative.dev/lastModifier: system:admin
-  //   labels:
-  //     app.kubernetes.io/component: example
-  //     app.kubernetes.io/instance: example
-  //     app.kubernetes.io/name: example
-  //     app.kubernetes.io/part-of: knative-tutorial-greeter-app
-  //     app.openshift.io/runtime: example
-  //     app.openshift.io/runtime-namespace: a-serverless-example
-  //     app.openshift.io/runtime-version: quarkus
-  //   name: example
-  //   namespace: a-serverless-example
-  // spec:
-  //   template:
-  //     spec:
-  //       containerConcurrency: 0
-  //       containers:
-  //         - image: quay.io/rhdevelopers/knative-tutorial-greeter:quarkus
-  //           imagePullPolicy: Always
-  //           name: user-container
-  //           ports:
-  //             - containerPort: 8080
-  //           readinessProbe:
-  //             successThreshold: 1
-  //             tcpSocket:
-  //               port: 0
-  //           resources: {}
-  //       timeoutSeconds: 300
-  //   traffic:
-  //     - latestRevision: true
-  //       percent: 100
-  //     - latestRevision: false
-  //       percent: 0
-  //       revisionName: example-2fvz4
-  //       tag: old
-  //     - latestRevision: false
-  //       percent: 0
-  //       revisionName: example-75w7v
-  //       tag: current
-  //   `;
-  //   const jsonServiceContent = yaml.parse(yamlServiceContent);
-
   const yamlServiceContentUnfiltered = `apiVersion: serving.knative.dev/v1
 kind: Service
 metadata:
@@ -213,7 +162,6 @@ status:
     'http://example-a-serverless-example.apps.devcluster.openshift.com',
     jsonServiceContentUnfiltered,
   );
-  testService.modified = false;
   const testServiceTreeItem: ServingTreeItem = new ServingTreeItem(
     null,
     testService,
@@ -718,8 +666,6 @@ status:
     sandbox
       .stub(servingDataProvider.knExecutor, 'execute')
       .resolves({ error: undefined, stdout: JSON.stringify(singleServiceRevisionData) });
-    // revisionTreeItems = await servingDataProvider.getRevisions(serviceTreeItems[0]);
-    // revision = revisionTreeItems[0].getKnativeItem() as Revision;
   });
   teardown(() => {
     sandbox.restore();
@@ -735,25 +681,8 @@ status:
   });
 
   suite('Poll Refresh', () => {
-    // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-    // const sleep = (ms: number) => {
-    //   return new Promise((resolve) => setTimeout(resolve, ms));
-    // };
     test('should fire the refresh every minute', () => {
-      // const spy = sandbox.spy(sdp.onDidChangeTreeDataEmitter, 'fire');
       sdp.pollRefresh();
-      // eslint-disable-next-line no-console
-      // console.log(`ServingDataProviderTest.Poll Refresh before timeout ${Math.round(new Date().getTime() / 1000)}`);
-      // give the poll enough time to call
-      // eslint-disable-next-line @typescript-eslint/await-thenable
-
-      // await sleep(60001);
-      // eslint-disable-next-line no-console
-      // console.log(`ServingDataProviderTest.Poll Refresh after timeout ${Math.round(new Date().getTime() / 1000)}`);
-
-      // turn it off so that it doesn't keep polling
-      // sdp.stopPollRefresh();
-      // sandbox.assert.calledOnce(spy);
     });
   });
 
@@ -912,7 +841,6 @@ status:
       sandbox.stub(vscode.window, 'showErrorMessage').resolves();
       const spy = sandbox.spy(sdp, 'getServicesList');
       sandbox.stub(sdp.knExecutor, 'execute').resolves({ error: undefined, stdout: JSON.stringify(singleServiceData) });
-      sandbox.stub(sdp, 'isNodeModifiedLocally').resolves(false);
       const result: ServingTreeItem = await sdp.getServices();
       sinon.assert.calledOnce(spy);
       expect(result[0]).to.deep.equal(testServiceTreeItem);
@@ -924,29 +852,16 @@ status:
       sandbox
         .stub(sdp.knExecutor, 'execute')
         .resolves({ error: undefined, stdout: JSON.stringify(singleServiceFailedRevisionServiceList) });
-      sandbox.stub(sdp, 'isNodeModifiedLocally').resolves(false);
       const result: ServingTreeItem[] = (await sdp.getServices()) as ServingTreeItem[];
       sinon.assert.calledOnce(spy);
       expect((result[0].item as Service).details.status.conditions[0].status).to.equal('False');
       expect((result[0].item as Service).details.status.conditions[0].reason).to.equal('RevisionFailed');
     });
 
-    test('should return a list of Services, even if they are modified', async () => {
-      sandbox.restore();
-      sandbox.stub(vscode.window, 'showErrorMessage').resolves();
-      const spy = sandbox.spy(sdp, 'getServicesList');
-      sandbox.stub(sdp.knExecutor, 'execute').resolves({ error: undefined, stdout: JSON.stringify(singleServiceData) });
-      sandbox.stub(sdp, 'isNodeModifiedLocally').resolves(true);
-      const result: ServingTreeItem = await sdp.getServices();
-      sinon.assert.calledOnce(spy);
-      expect(result[0]).to.deep.equal(testServiceTreeItemModified);
-    });
-
     test(`should rerun the List command if it does not get complete data, when is no Conditions, then return a list of Services`, async () => {
       sandbox.restore();
       sandbox.stub(vscode.window, 'showErrorMessage').resolves();
       const spy = sandbox.spy(sdp, 'getServicesList');
-      sandbox.stub(sdp, 'isNodeModifiedLocally').resolves(false);
       const stub = sandbox.stub(sdp.knExecutor, 'execute');
       const incompleteData = JSON.parse(JSON.stringify(singleServiceData));
       delete incompleteData.items[0].status.conditions;
@@ -1123,6 +1038,7 @@ status:
   });
 
   suite('Add Service', () => {
+  
     test('should take user input, add Service to cluster, and return it as a tree item', async () => {
       const serviceToCreate: CreateService = {
         name: `knative-tutorial-greeter`,
@@ -1132,25 +1048,19 @@ status:
       const _uriExternalFile = vscode.Uri.parse(
         'knmsx://loadknativecore/service-knative-tutorial-greeter.yaml?contextValue%3Dservice%26name%3Dknative-tutorial-greeter%26_%3D1594328823824',
       );
-      const files: [string, vscode.FileType][] = [
-        [
-          `knmsx://loadknativecore/service-knative-tutorial-greeter.yaml?contextValue%3Dservice%26name%3Dknative-tutorial-greeter%26_%3D1594328823824`,
-          1,
-        ],
-      ];
       sandbox.restore();
       sandbox.stub(vscode.window, 'showErrorMessage').resolves();
       sandbox.stub(sdp, 'getUrl').resolves(`quay.io/test-group/knative-tutorial-greeter:quarkus`);
       sandbox.stub(sdp, 'getName').resolves(serviceToCreate);
       sandbox.stub(sdp.ksvc, 'addService').returns(undefined);
-      sandbox.stub(sdp.knvfs, 'readDirectoryAsync').resolves(files);
       sandbox.stub(vfs, 'vfsUri').returns(_uriExternalFile);
-      sandbox.stub(sdp.knvfs, 'writeFile').returns(undefined);
-      sandbox.stub(vfs, 'getFilePathAsync').resolves('true');
-      sandbox.stub(sdp.knExecutor, 'execute').resolves({ error: undefined, stdout: JSON.stringify(singleServiceData) });
-      const stubDelete = sandbox.stub(sdp.knvfs, 'delete').resolves();
+      sandbox.stub(knvfs, 'writeFile').returns(undefined);
+      sandbox.stub(execCmdCli, 'execute').resolves({ error: undefined, stdout: JSON.stringify(singleServiceData) });
+      sandbox.stub(os, 'tmpdir').returns('fake');
+      sandbox.stub(fsx, 'writeFile').resolves();
+      sandbox.stub(fsx, 'ensureFile').resolves();
+      sandbox.stub(fsx, 'unlink').resolves();
       const result: ServingTreeItem[] = await sdp.addService();
-      sinon.assert.calledOnce(stubDelete);
       // eslint-disable-next-line no-unused-expressions
       expect(result).to.be.undefined;
     });
@@ -1164,27 +1074,21 @@ status:
       const _uriExternalFile = vscode.Uri.parse(
         'knmsx://loadknativecore/service-knative-tutorial-greeter.yaml?contextValue%3Dservice%26name%3Dknative-tutorial-greeter%26_%3D1594328823824',
       );
-      const files: [string, vscode.FileType][] = [
-        [
-          `knmsx://loadknativecore/service-knative-tutorial-greeter.yaml?contextValue%3Dservice%26name%3Dknative-tutorial-greeter%26_%3D1594328823824`,
-          1,
-        ],
-      ];
       sandbox.restore();
       const spyErrorMessage = sandbox.stub(vscode.window, 'showErrorMessage').resolves();
       sandbox.stub(sdp, 'getUrl').resolves(`http://quay.io/test-group/knative-tutorial-greeter:quarkus`);
       sandbox.stub(sdp, 'getName').resolves(serviceToCreate);
       sandbox.stub(sdp.ksvc, 'addService').returns(undefined);
-      sandbox.stub(sdp.knvfs, 'readDirectoryAsync').resolves(files);
       sandbox.stub(vfs, 'vfsUri').returns(_uriExternalFile);
-      sandbox.stub(sdp.knvfs, 'writeFile').returns(undefined);
-      sandbox.stub(vfs, 'getFilePathAsync').resolves('true');
       const errorMessage = `undefinedError: RevisionFailed: Revision "knative-tutorial-greeter-00001" failed with message: Unable to fetch image "http://quay.io/test-group/knative-tutorial-greeter:quarkus": failed to resolve image to digest: HEAD https://quay.io/v2/test-group/manifests/latest: unsupported status code 404.`;
       const ced: CliExitData = { error: errorMessage, stdout: 'foo' };
-      sandbox.stub(sdp.knExecutor, 'execute').resolves(ced);
-      const stubDelete = sandbox.stub(sdp.knvfs, 'delete').resolves();
+      sandbox.stub(execCmdCli, 'execute').resolves(ced);
+      sandbox.stub(os, 'tmpdir').returns('fake');
+      sandbox.stub(fsx, 'writeFile').resolves();
+      sandbox.stub(fsx, 'ensureFile').resolves();
+      sandbox.stub(fsx, 'unlink').resolves();
+      sandbox.stub(fsx, 'stat').resolves();
       const result: ServingTreeItem[] = await sdp.addService();
-      sinon.assert.calledOnce(stubDelete);
       sinon.assert.calledOnce(spyErrorMessage);
       // eslint-disable-next-line no-unused-expressions
       expect(result).to.be.undefined;
@@ -1199,27 +1103,21 @@ status:
       const _uriExternalFile = vscode.Uri.parse(
         'knmsx://loadknativecore/service-knative-tutorial-greeter.yaml?contextValue%3Dservice%26name%3Dknative-tutorial-greeter%26_%3D1594328823824',
       );
-      const files: [string, vscode.FileType][] = [
-        [
-          `knmsx://loadknativecore/service-knative-tutorial-greeter.yaml?contextValue%3Dservice%26name%3Dknative-tutorial-greeter%26_%3D1594328823824`,
-          1,
-        ],
-      ];
       sandbox.restore();
       const spyErrorMessage = sandbox.stub(vscode.window, 'showErrorMessage').resolves();
       sandbox.stub(sdp, 'getUrl').resolves(`brushnet/node-web-app:0.1:`);
       sandbox.stub(sdp, 'getName').resolves(serviceToCreate);
       sandbox.stub(sdp.ksvc, 'addService').returns(undefined);
-      sandbox.stub(sdp.knvfs, 'readDirectoryAsync').resolves(files);
       sandbox.stub(vfs, 'vfsUri').returns(_uriExternalFile);
-      sandbox.stub(sdp.knvfs, 'writeFile').returns(undefined);
-      sandbox.stub(vfs, 'getFilePathAsync').resolves('true');
       const errorMessage = `undefinedError: RevisionFailed: Revision "knative-tutorial-greeter-00001" failed with message: Initial scale was never achieved.`;
       const ced: CliExitData = { error: errorMessage, stdout: 'foo' };
-      sandbox.stub(sdp.knExecutor, 'execute').resolves(ced);
-      const stubDelete = sandbox.stub(sdp.knvfs, 'delete').resolves();
+      sandbox.stub(execCmdCli, 'execute').resolves(ced);
+      sandbox.stub(os, 'tmpdir').returns('fake');
+      sandbox.stub(fsx, 'writeFile').resolves();
+      sandbox.stub(fsx, 'ensureFile').resolves();
+      sandbox.stub(fsx, 'unlink').resolves();
+      sandbox.stub(fsx, 'stat').resolves();
       const result: ServingTreeItem[] = await sdp.addService();
-      sinon.assert.calledOnce(stubDelete);
       sinon.assert.calledOnce(spyErrorMessage);
       // eslint-disable-next-line no-unused-expressions
       expect(result).to.be.undefined;
@@ -1234,27 +1132,21 @@ status:
       const _uriExternalFile = vscode.Uri.parse(
         'knmsx://loadknativecore/service-knative-tutorial-greeter.yaml?contextValue%3Dservice%26name%3Dknative-tutorial-greeter%26_%3D1594328823824',
       );
-      const files: [string, vscode.FileType][] = [
-        [
-          `knmsx://loadknativecore/service-knative-tutorial-greeter.yaml?contextValue%3Dservice%26name%3Dknative-tutorial-greeter%26_%3D1594328823824`,
-          1,
-        ],
-      ];
       sandbox.restore();
       const spyErrorMessage = sandbox.stub(vscode.window, 'showErrorMessage').resolves();
       sandbox.stub(sdp, 'getUrl').resolves(`brushnet/node-web-app:0.1:`);
       sandbox.stub(sdp, 'getName').resolves(serviceToCreate);
       sandbox.stub(sdp.ksvc, 'addService').returns(undefined);
-      sandbox.stub(sdp.knvfs, 'readDirectoryAsync').resolves(files);
       sandbox.stub(vfs, 'vfsUri').returns(_uriExternalFile);
-      sandbox.stub(sdp.knvfs, 'writeFile').returns(undefined);
-      sandbox.stub(vfs, 'getFilePathAsync').resolves('true');
       const errorMessage = `undefinedError: RevisionFailed: Revision "knative-tutorial-greeter-00001" failed with message: Something unknown happened.`;
       const ced: CliExitData = { error: errorMessage, stdout: 'foo' };
-      sandbox.stub(sdp.knExecutor, 'execute').resolves(ced);
-      const stubDelete = sandbox.stub(sdp.knvfs, 'delete').resolves();
+      sandbox.stub(execCmdCli, 'execute').resolves(ced);
+      sandbox.stub(os, 'tmpdir').returns('fake');
+      sandbox.stub(fsx, 'writeFile').resolves();
+      sandbox.stub(fsx, 'ensureFile').resolves();
+      sandbox.stub(fsx, 'unlink').resolves();
+      sandbox.stub(fsx, 'stat').resolves();
       const result: ServingTreeItem[] = await sdp.addService();
-      sinon.assert.calledOnce(stubDelete);
       sinon.assert.calledOnce(spyErrorMessage);
       // eslint-disable-next-line no-unused-expressions
       expect(result).to.be.undefined;
@@ -1269,30 +1161,24 @@ status:
       const _uriExternalFile = vscode.Uri.parse(
         'knmsx://loadknativecore/service-knative-tutorial-greeter.yaml?contextValue%3Dservice%26name%3Dknative-tutorial-greeter%26_%3D1594328823824',
       );
-      const files: [string, vscode.FileType][] = [
-        [
-          `knmsx://loadknativecore/service-knative-tutorial-greeter.yaml?contextValue%3Dservice%26name%3Dknative-tutorial-greeter%26_%3D1594328823824`,
-          1,
-        ],
-      ];
       sandbox.restore();
       sandbox.stub(vscode.window, 'showErrorMessage').resolves();
       sandbox.stub(sdp, 'getUrl').resolves(`quay.io/test-group/knative-tutorial-greeter:quarkus`);
       sandbox.stub(sdp, 'getName').resolves(serviceToCreate);
       sandbox.stub(sdp.ksvc, 'addService').returns(undefined);
-      sandbox.stub(sdp.knvfs, 'readDirectoryAsync').resolves(files);
       sandbox.stub(vfs, 'vfsUri').returns(_uriExternalFile);
-      sandbox.stub(sdp.knvfs, 'writeFile').returns(undefined);
-      sandbox.stub(vfs, 'getFilePathAsync').resolves('true');
-      sandbox.stub(sdp.knExecutor, 'execute').rejects();
-      const stubDelete = sandbox.stub(sdp.knvfs, 'delete').resolves();
+      sandbox.stub(knvfs, 'writeFile').returns(undefined);
+      sandbox.stub(execCmdCli, 'execute').rejects();
+      sandbox.stub(os, 'tmpdir').returns('fake');
+      sandbox.stub(fsx, 'writeFile').resolves();
+      sandbox.stub(fsx, 'ensureFile').resolves();
+      sandbox.stub(fsx, 'unlink').resolves();
       const result: ServingTreeItem[] = await sdp.addService();
-      sinon.assert.calledOnce(stubDelete);
       // eslint-disable-next-line no-unused-expressions
       expect(result).to.be.undefined;
     });
 
-    test('should return null if the new file can not be found', async () => {
+    test('should return undefined if the new file can not be found', async () => {
       const serviceToCreate: CreateService = {
         name: `knative-tutorial-greeter`,
         image: `quay.io/test-group/knative-tutorial-greeter:quarkus`,
@@ -1301,59 +1187,40 @@ status:
       const _uriExternalFile = vscode.Uri.parse(
         'knmsx://loadknativecore/service-knative-tutorial-greeter.yaml?contextValue%3Dservice%26name%3Dknative-tutorial-greeter%26_%3D1594328823824',
       );
-      const files: [string, vscode.FileType][] = [
-        [
-          `knmsx://loadknativecore/service-knative-tutorial-greeter.yaml?contextValue%3Dservice%26name%3Dknative-tutorial-greeter%26_%3D1594328823824`,
-          1,
-        ],
-      ];
       sandbox.restore();
       sandbox.stub(vscode.window, 'showErrorMessage').resolves();
       sandbox.stub(sdp, 'getUrl').resolves(`quay.io/test-group/knative-tutorial-greeter:quarkus`);
       sandbox.stub(sdp, 'getName').resolves(serviceToCreate);
       sandbox.stub(sdp.ksvc, 'addService').returns(undefined);
-      sandbox.stub(sdp.knvfs, 'readDirectoryAsync').resolves(files);
       sandbox.stub(vfs, 'vfsUri').returns(_uriExternalFile);
-      sandbox.stub(sdp.knvfs, 'writeFile').returns(undefined);
-      sandbox.stub(vfs, 'getFilePathAsync').resolves();
-      const stubDelete = sandbox.stub(sdp.knvfs, 'delete').resolves();
+      sandbox.stub(knvfs, 'writeFile').returns(undefined);
+      sandbox.stub(os, 'tmpdir').returns('fake');
+      sandbox.stub(fsx, 'writeFile').resolves();
+      sandbox.stub(fsx, 'ensureFile').resolves();
+      sandbox.stub(fsx, 'unlink').resolves();
+      const stubDelete = sandbox.stub(knvfs, 'delete').resolves();
       const result: ServingTreeItem[] = await sdp.addService();
       sinon.assert.notCalled(stubDelete);
-      expect(result).to.equal(null);
+      expect(result).to.equal(undefined);
     });
-    test('should throw an error if there is no workspace open', async () => {
-      const serviceToCreate: CreateService = {
-        name: `knative-tutorial-greeter`,
-        image: `quay.io/test-group/knative-tutorial-greeter:quarkus`,
-        force: false,
-      };
-      sandbox.restore();
-      sandbox.stub(vscode.window, 'showErrorMessage').resolves();
-      sandbox.stub(sdp, 'getUrl').resolves(`quay.io/test-group/knative-tutorial-greeter:quarkus`);
-      sandbox.stub(sdp, 'getName').resolves(serviceToCreate);
-      sandbox.stub(sdp.ksvc, 'addService').returns(undefined);
-      sandbox.stub(sdp.knvfs, 'readDirectoryAsync').rejects();
-      const stubDelete = sandbox.stub(sdp.knvfs, 'delete').resolves();
-      const result: ServingTreeItem[] = await sdp.addService();
-      sinon.assert.notCalled(stubDelete);
-      expect(result).to.equal(null);
-    });
+
     test('should return undefined if the file being created already exists', async () => {
       const serviceToCreate: CreateService = {
         name: `knative-tutorial-greeter`,
         image: `quay.io/test-group/knative-tutorial-greeter:quarkus`,
         force: false,
       };
-      const files: [string, vscode.FileType][] = [
-        [`knmsx:${path.sep}${path.sep}loadknativecore${path.sep}service-knative-tutorial-greeter.yaml`, 1],
-      ];
       sandbox.restore();
       sandbox.stub(vscode.window, 'showErrorMessage').resolves();
       sandbox.stub(sdp, 'getUrl').resolves(`quay.io/test-group/knative-tutorial-greeter:quarkus`);
       sandbox.stub(sdp, 'getName').resolves(serviceToCreate);
       sandbox.stub(sdp.ksvc, 'addService').returns(undefined);
-      sandbox.stub(sdp.knvfs, 'readDirectoryAsync').resolves(files);
-      const stubDelete = sandbox.stub(sdp.knvfs, 'delete').resolves();
+      sandbox.stub(os, 'tmpdir').returns('fake');
+      sandbox.stub(fsx, 'writeFile').resolves();
+      sandbox.stub(fsx, 'ensureFile').resolves();
+      sandbox.stub(fsx, 'unlink').resolves();
+      sandbox.stub(fsx, 'stat').resolves();
+      const stubDelete = sandbox.stub(knvfs, 'delete').resolves();
       const result: ServingTreeItem[] = await sdp.addService();
       sinon.assert.notCalled(stubDelete);
       // eslint-disable-next-line no-unused-expressions
@@ -1363,7 +1230,11 @@ status:
       sandbox.restore();
       sandbox.stub(vscode.window, 'showErrorMessage').resolves();
       sandbox.stub(sdp, 'getUrl').resolves();
-      const stubDelete = sandbox.stub(sdp.knvfs, 'delete').resolves();
+      sandbox.stub(os, 'tmpdir').returns('fake');
+      sandbox.stub(fsx, 'writeFile').resolves();
+      sandbox.stub(fsx, 'ensureFile').resolves();
+      sandbox.stub(fsx, 'unlink').resolves();
+      const stubDelete = sandbox.stub(knvfs, 'delete').resolves();
       const result: ServingTreeItem[] = await sdp.addService();
       sinon.assert.notCalled(stubDelete);
       expect(result).to.equal(null);
@@ -1378,7 +1249,11 @@ status:
       sandbox.stub(vscode.window, 'showErrorMessage').resolves();
       sandbox.stub(sdp, 'getUrl').resolves(`quay.io/test-group/knative-tutorial-greeter:quarkus`);
       sandbox.stub(sdp, 'getName').resolves(serviceToCreate);
-      const stubDelete = sandbox.stub(sdp.knvfs, 'delete').resolves();
+      sandbox.stub(os, 'tmpdir').returns('fake');
+      sandbox.stub(fsx, 'writeFile').resolves();
+      sandbox.stub(fsx, 'ensureFile').resolves();
+      sandbox.stub(fsx, 'unlink').resolves();
+      const stubDelete = sandbox.stub(knvfs, 'delete').resolves();
       const result: ServingTreeItem[] = await sdp.addService();
       sinon.assert.notCalled(stubDelete);
       expect(result).to.equal(null);
@@ -1411,262 +1286,6 @@ status:
       const result: ServingTreeItem[] = await sdp.addTag(exampleG4hm8TreeItem);
       sinon.assert.calledOnce(stubUpdate);
       expect(result).to.equal(null);
-    });
-  });
-
-  suite('Get local YAML path', () => {
-    test('should return the path for a tree node', async () => {
-      const expectedPath = `${path.sep}home${path.sep}user${path.sep}code${path.sep}service-example.yaml`;
-      const files: [string, vscode.FileType][] = [
-        [`${path.sep}home${path.sep}user${path.sep}code${path.sep}service-example.yaml`, 1],
-      ];
-      sandbox.restore();
-      sandbox.stub(vscode.window, 'showErrorMessage').resolves();
-      sandbox.stub(sdp.knvfs, 'readDirectoryAsync').resolves(files);
-      const result: ServingTreeItem[] = await sdp.getLocalYamlPathForNode(testServiceTreeItemModified);
-      expect(result).to.equal(expectedPath);
-    });
-    test('should return an empty string if file is not found', async () => {
-      const files: [string, vscode.FileType][] = [[`/home/user/code/service-different.yaml`, 1]];
-      sandbox.restore();
-      sandbox.stub(vscode.window, 'showErrorMessage').resolves();
-      sandbox.stub(sdp.knvfs, 'readDirectoryAsync').resolves(files);
-      const result: ServingTreeItem[] = await sdp.getLocalYamlPathForNode(testServiceTreeItemModified);
-      expect(result).to.equal('');
-    });
-    test('should return null if no files are found', async () => {
-      sandbox.restore();
-      sandbox.stub(vscode.window, 'showErrorMessage').resolves();
-      sandbox.stub(sdp.knvfs, 'readDirectoryAsync').rejects();
-      const result: ServingTreeItem[] = await sdp.getLocalYamlPathForNode(testServiceTreeItemModified);
-      expect(result).to.equal(null);
-    });
-  });
-
-  suite('Modified Locally', () => {
-    test('should return true if the file is found locally', async () => {
-      const files: [string, vscode.FileType][] = [
-        [`${path.sep}home${path.sep}user${path.sep}code${path.sep}service-example.yaml`, 1],
-      ];
-      sandbox.restore();
-      sandbox.stub(vscode.window, 'showErrorMessage').resolves();
-      sandbox.stub(sdp.knvfs, 'readDirectoryAsync').resolves(files);
-      const result: boolean = await sdp.isNodeModifiedLocally('example');
-      expect(result).to.equal(true);
-    });
-    test('should return false if file is not found', async () => {
-      const files: [string, vscode.FileType][] = [
-        [`${path.sep}home${path.sep}user${path.sep}code${path.sep}service-different.yaml`, 1],
-      ];
-      sandbox.restore();
-      sandbox.stub(vscode.window, 'showErrorMessage').resolves();
-      sandbox.stub(sdp.knvfs, 'readDirectoryAsync').resolves(files);
-      const result: boolean = await sdp.isNodeModifiedLocally('example');
-      expect(result).to.equal(false);
-    });
-    test('should return null if no files are found', async () => {
-      sandbox.restore();
-      sandbox.stub(vscode.window, 'showErrorMessage').resolves();
-      sandbox.stub(sdp.knvfs, 'readDirectoryAsync').rejects();
-      const result: boolean = await sdp.isNodeModifiedLocally('example');
-      expect(result).to.equal(null);
-    });
-  });
-
-  suite('Update Service from yaml', () => {
-    const workspaceConfigurationMock = {
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      get: function get<T>(section: string): T | undefined {
-        return null;
-      },
-    };
-    // const workspaceMock = {
-    //   getConfiguration: function getConfiguration(
-    //     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    //     section?: string | undefined,
-    //     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    //     scope?: vscode.ConfigurationScope | null,
-    //   ): vscode.WorkspaceConfiguration {
-    //     const get = (string): boolean => {
-    //       return true;
-    //     };
-    //     const has = (): boolean => {
-    //       return true;
-    //     };
-    //     const inspect = (): boolean => {
-    //       return true;
-    //     };
-    //     const update = (): boolean => {
-    //       return true;
-    //     };
-    //     const config = { get, has, inspect, update}
-    //     return config;
-    //   },
-    // };
-
-    // let revertIB: () => void;
-    let revertIB2: () => void;
-    beforeEach(() => {
-      sandbox.restore();
-      // revertIB = rewiredServingDataProvider.__set__('vscode.workspace', workspaceMock);
-      revertIB2 = rewiredServingDataProvider.__set__('vscode.WorkspaceConfiguration', workspaceConfigurationMock);
-    });
-
-    teardown(() => {
-      // revertIB();
-      revertIB2();
-      sandbox.restore();
-    });
-
-    test('should upload the yaml and then delete it', async () => {
-      const file = `/home/loadknativecore/service-example.yaml`;
-      sandbox.restore();
-      sandbox.stub(vscode.window, 'showErrorMessage').resolves();
-      sandbox.stub(sdp, 'getLocalYamlPathForNode').resolves(file);
-      sandbox.stub(sdp.knExecutor, 'execute').resolves({ error: undefined, stdout: JSON.stringify(singleServiceData) });
-      // const stubGetConfig = (sandbox.stub(vscode.workspace, 'getConfiguration') as unknown) as sinon.SinonStub<
-      //   [string?, vscode.ConfigurationScope?],
-      //   vscode.WorkspaceConfiguration
-      // >;
-      // stubGetConfig.returns({
-      //   disableCheckForDeletingLocal: true,
-      //   outputVerbosityLevel: 0,
-      //   pollRefresh: false,
-      //   pollRefreshDelay: 60,
-      //   showChannelOnOutput: false,
-      //   get(section),
-      //   has(section: string),
-      //   inspect(section: string)
-      // });
-      sandbox.stub(workspaceConfigurationMock, 'get').returns(true);
-      const stubShowInformationMessage = (sandbox.stub(vscode.window, 'showInformationMessage') as unknown) as sinon.SinonStub<
-        [string, vscode.MessageOptions, ...string[]],
-        Thenable<string>
-      >;
-      stubShowInformationMessage.resolves('Delete');
-      const stubDelete = sandbox.stub(sdp.knvfs, 'delete').resolves();
-      await sdp.updateServiceFromYaml();
-      sinon.assert.calledOnce(stubDelete);
-    });
-
-    test('should ask to Delete a Service if it was unchanged, then delete when delete is selected', async () => {
-      const file = `/home/loadknativecore/service-example.yaml`;
-      sandbox.restore();
-      sandbox.stub(vscode.window, 'showErrorMessage').resolves();
-      sandbox.stub(sdp, 'getLocalYamlPathForNode').resolves(file);
-      sandbox.stub(sdp.knExecutor, 'execute').resolves({ error: undefined, stdout: 'The Service is unchanged' });
-      const stubShowInformationMessage = (sandbox.stub(vscode.window, 'showInformationMessage') as unknown) as sinon.SinonStub<
-        [string, vscode.MessageOptions, ...string[]],
-        Thenable<string>
-      >;
-      stubShowInformationMessage.resolves('Delete');
-      const stubDelete = sandbox.stub(sdp.knvfs, 'delete').resolves();
-      await sdp.updateServiceFromYaml();
-      sinon.assert.calledOnce(stubDelete);
-    });
-
-    test('should ask to Delete a Service if it was unchanged, then delete when delete is NOT selected', async () => {
-      const file = `/home/loadknativecore/service-example.yaml`;
-      sandbox.restore();
-      sandbox.stub(vscode.window, 'showErrorMessage').resolves();
-      sandbox.stub(sdp, 'getLocalYamlPathForNode').resolves(file);
-      sandbox.stub(sdp.knExecutor, 'execute').resolves({ error: undefined, stdout: 'The Service is unchanged' });
-      const stubShowInformationMessage = (sandbox.stub(vscode.window, 'showInformationMessage') as unknown) as sinon.SinonStub<
-        [string, vscode.MessageOptions, ...string[]],
-        Thenable<string>
-      >;
-      stubShowInformationMessage.resolves(undefined);
-      const stubDelete = sandbox.stub(sdp.knvfs, 'delete').resolves();
-      await sdp.updateServiceFromYaml();
-      sinon.assert.notCalled(stubDelete);
-    });
-
-    test('should catch a validation error, display it, and not update or delete', async () => {
-      const file = `/home/loadknativecore/service-example.yaml`;
-      sandbox.restore();
-      sandbox.stub(sdp, 'getLocalYamlPathForNode').resolves(file);
-      sandbox
-        .stub(sdp.knExecutor, 'execute')
-        .resolves({ error: 'There was a validation failed error xyz should be abc', stdout: undefined });
-      const stubErrorMessage = sandbox.stub(vscode.window, 'showErrorMessage').resolves();
-      const stubDelete = sandbox.stub(sdp.knvfs, 'delete').resolves();
-      await sdp.updateServiceFromYaml();
-      sinon.assert.calledOnce(stubErrorMessage);
-      sinon.assert.notCalled(stubDelete);
-    });
-
-    test('should catch an undefined warning and not delete', async () => {
-      const file = `/home/loadknativecore/service-example.yaml`;
-      sandbox.restore();
-      sandbox.stub(sdp, 'getLocalYamlPathForNode').resolves(file);
-      sandbox
-        .stub(sdp.knExecutor, 'execute')
-        .resolves({ error: 'undefinedWarning: There was something that went wrong', stdout: undefined });
-      const stubErrorMessage = sandbox.stub(vscode.window, 'showErrorMessage').resolves();
-      const stubDelete = sandbox.stub(sdp.knvfs, 'delete').resolves();
-      await sdp.updateServiceFromYaml();
-      sinon.assert.notCalled(stubErrorMessage);
-      sinon.assert.notCalled(stubDelete);
-    });
-
-    test('should catch an undefined warning that is broken in spelling and not delete', async () => {
-      const file = `/home/loadknativecore/service-example.yaml`;
-      sandbox.restore();
-      sandbox.stub(sdp, 'getLocalYamlPathForNode').resolves(file);
-      sandbox
-        .stub(sdp.knExecutor, 'execute')
-        .resolves({ error: 'undefinedThere wasWarning something that went wrong', stdout: undefined });
-      const stubErrorMessage = sandbox.stub(vscode.window, 'showErrorMessage').resolves();
-      const stubDelete = sandbox.stub(sdp.knvfs, 'delete').resolves();
-      await sdp.updateServiceFromYaml();
-      sinon.assert.notCalled(stubErrorMessage);
-      sinon.assert.notCalled(stubDelete);
-    });
-
-    test('should catch any error, display it, and not update or delete', async () => {
-      const file = `/home/loadknativecore/service-example.yaml`;
-      sandbox.restore();
-      sandbox.stub(sdp, 'getLocalYamlPathForNode').resolves(file);
-      sandbox
-        .stub(sdp.knExecutor, 'execute')
-        .resolves({ error: 'There was some error but it was not validation related', stdout: undefined });
-      const stubErrorMessage = sandbox.stub(vscode.window, 'showErrorMessage').resolves();
-      const stubDelete = sandbox.stub(sdp.knvfs, 'delete').resolves();
-      await sdp.updateServiceFromYaml();
-      sinon.assert.calledOnce(stubErrorMessage);
-      sinon.assert.notCalled(stubDelete);
-    });
-  });
-
-  suite('Delete Local yaml', () => {
-    test('should ask to Delete a tree node, then delete when delete is selected', async () => {
-      const file = `/home/loadknativecore/service-example.yaml`;
-      sandbox.restore();
-      sandbox.stub(vscode.window, 'showErrorMessage').resolves();
-      sandbox.stub(sdp, 'getLocalYamlPathForNode').resolves(file);
-      const stubShowInformationMessage = (sandbox.stub(vscode.window, 'showInformationMessage') as unknown) as sinon.SinonStub<
-        [string, vscode.MessageOptions, ...string[]],
-        Thenable<string>
-      >;
-      stubShowInformationMessage.resolves('Delete');
-      const stubDelete = sandbox.stub(sdp.knvfs, 'delete').resolves();
-      await sdp.deleteLocalYaml();
-      sinon.assert.calledOnce(stubDelete);
-    });
-
-    test('should ask to Delete a tree node, then delete when delete is NOT selected', async () => {
-      const file = `/home/loadknativecore/service-example.yaml`;
-      sandbox.restore();
-      sandbox.stub(vscode.window, 'showErrorMessage').resolves();
-      sandbox.stub(sdp, 'getLocalYamlPathForNode').resolves(file);
-      const stubShowInformationMessage = (sandbox.stub(vscode.window, 'showInformationMessage') as unknown) as sinon.SinonStub<
-        [string, vscode.MessageOptions, ...string[]],
-        Thenable<string>
-      >;
-      stubShowInformationMessage.resolves(undefined);
-      const stubDelete = sandbox.stub(sdp.knvfs, 'delete').resolves();
-      await sdp.deleteLocalYaml();
-      sinon.assert.notCalled(stubDelete);
     });
   });
 

@@ -3,19 +3,16 @@
  *  Licensed under the MIT License. See LICENSE file in the project root for license information.
  *-----------------------------------------------------------------------------------------------*/
 
-import * as path from 'path';
 import * as vscode from 'vscode';
 // import * as validator from 'validator';
 import {
   Event,
   EventEmitter,
   FileChangeEvent,
-  FileType,
   ProviderResult,
   TreeDataProvider,
   TreeItem,
   TreeItemCollapsibleState,
-  Uri,
 } from 'vscode';
 import * as yaml from 'yaml';
 import { ServingTreeItem } from './servingTreeItem';
@@ -23,8 +20,8 @@ import { CliExitData } from '../cli/cmdCli';
 import { ServingContextType } from '../cli/config';
 import { Execute, loadItems } from '../cli/execute';
 import { KnAPI } from '../cli/kn-api';
-import { KnativeResourceVirtualFileSystemProvider, KN_RESOURCE_SCHEME } from '../cli/virtualfs';
-import * as vfs from '../cli/virtualfs';
+// eslint-disable-next-line import/no-cycle
+import { knvfs } from '../cli/virtualfs';
 import { EventingTreeItem } from '../eventingTree/eventingTreeItem';
 import { compareNodes } from '../knative/knativeItem';
 import { KnativeServices } from '../knative/knativeServices';
@@ -35,8 +32,6 @@ import { KnOutputChannel, OutputChannel } from '../output/knOutputChannel';
 
 export class ServingDataProvider implements TreeDataProvider<ServingTreeItem | EventingTreeItem> {
   public knExecutor = new Execute();
-
-  public knvfs = new KnativeResourceVirtualFileSystemProvider();
 
   private knOutputChannel: OutputChannel = new KnOutputChannel();
 
@@ -78,8 +73,6 @@ export class ServingDataProvider implements TreeDataProvider<ServingTreeItem | E
     console.log(`ServingDataProvider.vfsListener event ${event[0].type}, ${event[0].uri.path}`);
     this.refresh();
   };
-
-  vfsListenerSubscription = this.knvfs.onDidChangeFile(this.vfsListener);
 
   /**
    * Display info in the Knative Output channel/window
@@ -220,7 +213,7 @@ export class ServingDataProvider implements TreeDataProvider<ServingTreeItem | E
           parentService,
           value,
           {
-            label: `${service.details.status.conditions[0].reason} ${value.details.status.conditions[0].reason} - ${value.name}`,
+            label: value.name,
           },
           context,
           TreeItemCollapsibleState.None,
@@ -312,12 +305,6 @@ export class ServingDataProvider implements TreeDataProvider<ServingTreeItem | E
         ),
       ];
     }
-    const iterator = services.values();
-
-    // eslint-disable-next-line no-restricted-syntax
-    for await (const value of iterator) {
-      value.modified = await this.isNodeModifiedLocally(value.name);
-    }
 
     // Convert the fetch Services into TreeItems
     const children = services
@@ -355,28 +342,7 @@ export class ServingDataProvider implements TreeDataProvider<ServingTreeItem | E
   }
 
   // eslint-disable-next-line class-methods-use-this
-  // validateUrl(message: string, value: string): string | null {
-  //   return validator.default.isURL(value) ? null : message;
-  // }
-
-  // eslint-disable-next-line class-methods-use-this
   async getUrl(): Promise<string | null> {
-    // const createUrl: QuickPickItem = { label: `$(plus) Provide new URL...` };
-    // const clusterItems: QuickPickItem[] = [{ label: 'tag-portal-v1' }];
-    // const choice = await vscode.window.showQuickPick([createUrl, ...clusterItems], {
-    //   placeHolder: 'Provide Image URL to connect',
-    //   ignoreFocusOut: true,
-    // });
-    // if (!choice) {
-    //   return null;
-    // }
-    // return choice.label === createUrl.label
-    //   ? vscode.window.showInputBox({
-    //       ignoreFocusOut: true,
-    //       prompt: 'Enter an Image URL',
-    //       validateInput: (value: string) => servingDataProvider.validateUrl('Invalid URL provided', value),
-    //     })
-    //   : choice.label;
     return vscode.window.showInputBox({
       ignoreFocusOut: true,
       prompt: 'Enter an Image URL',
@@ -421,7 +387,7 @@ export class ServingDataProvider implements TreeDataProvider<ServingTreeItem | E
     return service;
   }
 
-  public async addService(): Promise<ServingTreeItem[]> {
+  public async addService(): Promise<void> {
     const image: string = await this.getUrl();
 
     if (!image) {
@@ -443,95 +409,11 @@ export class ServingDataProvider implements TreeDataProvider<ServingTreeItem | E
     // *** As a hack, make a file for the yaml, use kubectl apply to create, then delete the file
     // Check the local files for the URL for YAML file
     const serviceName = serveObj.name;
-    let files: [string, FileType][];
-    try {
-      // Add the dir if missing or read it and fetch the files in it
-      files = await this.knvfs.readDirectoryAsync();
-    } catch (err) {
-      // eslint-disable-next-line no-console, @typescript-eslint/restrict-template-expressions
-      console.log(`servingDataProvider.addService Error trying to read directory.\n ${err}`);
-      // throw err;
-      return null;
-    }
-    let filePath = '';
-    // Get the name off the end of the path, then check it against the name being added
-    files.forEach((loc): void => {
-      const fileName = loc[0].slice(loc[0].lastIndexOf(path.sep) + 1);
-      if (fileName === `service-${serviceName}.yaml`) {
-        [filePath] = loc;
-      }
-    });
-    // Check if the file exists
-    if (filePath === '') {
-      // The file doesn't exist, make a virtual URI for it.
-      const newUri = vfs.vfsUri(KN_RESOURCE_SCHEME, 'service', serviceName, 'yaml');
-      // Create the base yaml for creating a Service.
-      const stringContent = yaml.parse(
-        `apiVersion: serving.knative.dev/v1\nkind: Service\nmetadata:\n  name: ${serveObj.name}\nspec:\n  template:\n    spec:\n      containers:\n      - image: ${serveObj.image}`,
-      ) as svc.Items;
-      const yamlContent = yaml.stringify(stringContent);
-      // Read the string version of the yaml into a file
-      await this.knvfs.writeFile(newUri, Buffer.from(yamlContent, 'utf8'), {
-        create: true,
-        overwrite: false,
-      });
-      // Get the path for the newly created file.
-      filePath = await vfs.getFilePathAsync('.knative', newUri.path);
-      if (!filePath) {
-        // We couldn't make or find the location to write the temp file.
-        return null;
-      }
-
-      let addResult: CliExitData;
-      // Create the Service with kn apply
-      try {
-        addResult = await this.knExecutor.execute(KnAPI.applyYAML(filePath, { override: true }));
-      } catch (error) {
-        // eslint-disable-next-line no-console, @typescript-eslint/restrict-template-expressions
-        console.log(`Error while using kn apply to create.\n ${error}`);
-        await this.knvfs.delete(Uri.file(filePath), { recursive: false });
-        return undefined;
-      }
-      if (typeof addResult.error === 'string' && addResult.error.search('RevisionFailed') > 0) {
-        if (addResult.error.search('Unable to fetch image') > 0) {
-          // undefinedError: RevisionFailed: Revision "foo-00001" failed with message: Unable to fetch image "foo/bar": failed to resolve image to digest: HEAD https://index.docker.io/v2/foo/bar/manifests/latest: unsupported status code 401.
-          const indexOfErrorMessage = addResult.error.indexOf('Unable to fetch image');
-          const indexOfColon = addResult.error.indexOf(': ', indexOfErrorMessage);
-          const errorMessage = addResult.error.substring(indexOfErrorMessage, indexOfColon);
-          await vscode.window.showErrorMessage(
-            // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-            `The Revision failed to be created.\n${errorMessage}`,
-            { modal: true },
-            'OK',
-          );
-        } else if (addResult.error.search('Initial scale was never achieved') > 0) {
-          // undefinedError: RevisionFailed: Revision "ddd-00001" failed with message: Initial scale was never achieved.
-          await vscode.window.showErrorMessage(
-            // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-            `The Revision failed to be created.\nInitial scale was never achieved.\nPlease confirm the image reference is valid.`,
-            { modal: true },
-            'OK',
-          );
-        } else {
-          await vscode.window.showErrorMessage(
-            // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-            `The Revision failed to be created.\n${addResult.error}`,
-            { modal: true },
-            'OK',
-          );
-        }
-      }
-
-      await this.knvfs.delete(Uri.file(filePath), { recursive: false });
-    }
-    // *** End Hack
-
-    // if (result.error) {
-    //   // TODO: handle the error
-    //   // check the kind of errors we can get back
-    // }
-    this.refresh();
-    // return this.insertAndRevealService(createKnObj(serveObj.name));
+    const stringContent = yaml.parse(
+      `apiVersion: serving.knative.dev/v1\nkind: Service\nmetadata:\n  name: ${serveObj.name}\nspec:\n  template:\n    spec:\n      containers:\n      - image: ${serveObj.image}`,
+    ) as svc.Items;
+    const yamlContent = yaml.stringify(stringContent);
+    await knvfs.writeFile(vscode.Uri.parse(`${serviceName}.yaml`), Buffer.from(yamlContent, 'utf8'));
   }
 
   /**
@@ -567,139 +449,10 @@ export class ServingDataProvider implements TreeDataProvider<ServingTreeItem | E
     return undefined;
   }
 
-  public async getLocalYamlPathForNode(node: ServingTreeItem): Promise<string> {
-    // get local URL for YAML file
-    const serviceName = node.getName();
-    let files: [string, FileType][];
-    try {
-      files = await this.knvfs.readDirectoryAsync();
-    } catch (err) {
-      // eslint-disable-next-line no-console, @typescript-eslint/restrict-template-expressions
-      console.log(`servingDataProvider.getLocalYamlPathForNode Error trying to read directory.\n ${err}`);
-      // throw err;
-      return null;
-    }
-    let fileURI = '';
-    // Find a path with a matching name and set it and return it
-    files.forEach((loc): void => {
-      const fileName = loc[0].slice(loc[0].lastIndexOf(path.sep) + 1);
-      if (fileName === `service-${serviceName}.yaml`) {
-        [fileURI] = loc;
-      }
-    });
-    return fileURI;
-  }
-
-  /**
-   * Check if a given tree node has a matching local file. That indicates that it has been modified.
-   * @param node
-   */
-  public async isNodeModifiedLocally(serviceName: string): Promise<boolean> {
-    // get local URL for YAML file
-    let files: [string, FileType][];
-    try {
-      files = await this.knvfs.readDirectoryAsync();
-    } catch (err) {
-      // eslint-disable-next-line no-console
-      // console.log(`servingDataProvider.isNodeModifiedLocally Error trying to read directory.\n ${err}`);
-      // throw err;
-      return null;
-    }
-    let isFileFound = false;
-    // Look for a path with a matching name and set the flag to true
-    files.forEach((loc): void => {
-      const fileName = loc[0].slice(loc[0].lastIndexOf(path.sep) + 1);
-      if (fileName === `service-${serviceName}.yaml`) {
-        isFileFound = true;
-      }
-    });
-    return isFileFound;
-  }
-
-  /**
-   * Get the local yaml for the node and use Apply to update the cluster
-   * @param node Service ServingTreeItem
-   */
-  public async updateServiceFromYaml(node: ServingTreeItem): Promise<void> {
-    const fileURI = await this.getLocalYamlPathForNode(node);
-
-    try {
-      // push the updated YAML back to the cluster
-      const result: CliExitData = await this.knExecutor.execute(KnAPI.applyYAML(fileURI, { override: false }));
-      // Delete the yaml that was pushed if there was no error
-      if (result.error) {
-        // eslint-disable-next-line no-console, @typescript-eslint/restrict-template-expressions
-        console.log(`updateServiceFromYaml result.error = ${result.error}`);
-        // deal with the error that is passed on but not thrown by the Promise.
-        throw result.error;
-      }
-      if (typeof result.stdout === 'string' && result.stdout.search('unchanged') > 0) {
-        // Delete the local YAML file that was uploaded.
-        const response = await vscode.window.showInformationMessage(
-          `The file is unchanged.\nDo you want to delete the local copy?`,
-          { modal: true },
-          'Delete',
-        );
-        if (response === 'Delete') {
-          await this.knvfs.delete(Uri.file(fileURI), { recursive: false });
-        }
-      } else {
-        // Delete the local YAML file that was uploaded.
-        let response = 'Delete';
-        if (!vscode.workspace.getConfiguration('knative').get<boolean>('disableCheckForDeletingLocal')) {
-          response = await vscode.window.showInformationMessage(
-            `The file was uploaded. Do you want to delete the local copy and download the updated version?`,
-            { modal: true },
-            'Delete',
-          );
-        }
-        if (response === 'Delete') {
-          await this.knvfs.delete(Uri.file(fileURI), { recursive: false });
-        }
-      }
-    } catch (error) {
-      if (typeof error === 'string' && error.search('validation failed') > 0) {
-        // eslint-disable-next-line @typescript-eslint/prefer-string-starts-ends-with
-        const fileName = error.slice(error.lastIndexOf('validation failed:'));
-        await vscode.window.showErrorMessage(
-          `The YAMl file failed validation with the following error.\n\n${fileName}`,
-          { modal: true },
-          'OK',
-        );
-      } else if (
-        typeof error === 'string' &&
-        (error.search(/undefinedWarning/gm) >= 0 || error.search(/undefined.+Warning/gm) >= 0)
-      ) {
-        // eslint-disable-next-line no-console
-        console.log(`updateServiceFromYaml undefinedWarning; error = ${error}`);
-        // do nothing it was a warning
-      } else {
-        // eslint-disable-next-line no-console, @typescript-eslint/restrict-template-expressions
-        console.log(`updateServiceFromYaml error = ${error}`);
-        await vscode.window.showErrorMessage(`There was an error while uploading the YAML. `, { modal: true }, 'OK');
-      }
-    }
-    // Refresh the list to read the update
-    this.refresh();
-  }
-
-  public async deleteLocalYaml(node: ServingTreeItem): Promise<void> {
-    const fileURI = await this.getLocalYamlPathForNode(node);
-
-    // Delete the local YAML file that was uploaded.
-    const response = await vscode.window.showInformationMessage(
-      `Are you sure you want to delete the local copy.`,
-      { modal: true },
-      'Delete',
-    );
-    if (response === 'Delete') {
-      await this.knvfs.delete(Uri.file(fileURI), { recursive: false });
-      this.refresh();
-    }
-  }
-
   public async requireLogin(): Promise<boolean> {
     const result: CliExitData = await this.knExecutor.execute(KnAPI.printKnVersion(), process.cwd(), false);
     return this.knLoginMessages.some((msg) => result.stderr.includes(msg));
   }
 }
+
+export const servingDataProvider = new ServingDataProvider();

@@ -167,15 +167,6 @@ status:
     jsonServiceContentUnfiltered,
   );
   testServiceModified.modified = true;
-  const testServiceTreeItemModified: ServingTreeItem = new ServingTreeItem(
-    null,
-    testServiceModified,
-    { label: 'example' },
-    ServingContextType.SERVICE_MODIFIED,
-    vscode.TreeItemCollapsibleState.Expanded,
-    null,
-    null,
-  );
 
   const example75w7vYaml = `apiVersion: serving.knative.dev/v1
 kind: Revision
@@ -311,7 +302,7 @@ status:
     // giving the extension test enough time to dispose of it. Otherwise we would have 2 registered
     // commands for each one in ServingExplorer.
     servingExplorer = new ServingExplorer();
-    expect(servingExplorer.registeredCommands.length).to.equal(8);
+    expect(servingExplorer.registeredCommands.length).to.equal(6);
   });
 
   test('should connect the output command to showing the knative output channel', async () => {
@@ -338,17 +329,17 @@ status:
     sinon.assert.calledOnce(stub);
   });
 
-  test('should connect the output command to updating a service from yaml', async () => {
-    const stub = sandbox.stub(servingExplorer.treeDataProvider, 'updateServiceFromYaml').resolves();
-    await vscode.commands.executeCommand('service.explorer.apply', testServiceTreeItemModified);
-    sinon.assert.calledOnce(stub);
-  });
+  // test('should connect the output command to updating a service from yaml', async () => {
+  //   const stub = sandbox.stub(servingExplorer.treeDataProvider, 'updateServiceFromYaml').resolves();
+  //   await vscode.commands.executeCommand('service.explorer.apply', testServiceTreeItemModified);
+  //   sinon.assert.calledOnce(stub);
+  // });
 
-  test('should connect the output command to deleting a local Service yaml', async () => {
-    const stub = sandbox.stub(servingExplorer.treeDataProvider, 'deleteLocalYaml').resolves();
-    await vscode.commands.executeCommand('service.explorer.deleteLocal', testServiceTreeItemModified);
-    sinon.assert.calledOnce(stub);
-  });
+  // test('should connect the output command to deleting a local Service yaml', async () => {
+  //   // const stub = sandbox.stub(servingExplorer.treeDataProvider, 'deleteLocalYaml').resolves();
+  //   await vscode.commands.executeCommand('service.explorer.deleteLocal', testServiceTreeItemModified);
+  //   sinon.assert.calledOnce(stub);
+  // });
 
   test('should connect the output command to refreshing the tree', async () => {
     const stub = sandbox.stub(servingExplorer.treeDataProvider, 'refresh').returns(null);
