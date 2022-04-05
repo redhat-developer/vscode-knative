@@ -147,7 +147,7 @@ export class CmdCliConfig {
   static async detectOrDownload(cmd: string): Promise<string> {
     try {
       // If the location of the cli has been set, then read it.
-      let toolLocation: string = (CmdCliConfig.tools[cmd] as CliConfig).location;
+      let toolLocation: string = (CmdCliConfig.tools[cmd] as CliConfig)?.location;
 
       // So if the tool location hasn't been set then we need to figure that out.
       if (toolLocation === undefined) {
