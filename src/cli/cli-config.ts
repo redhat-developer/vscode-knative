@@ -109,6 +109,10 @@ export class CmdCliConfig {
     const reqs = JSON.parse(JSON.stringify(requirements)) as Config;
     Object.keys(requirements).forEach((object) => {
       if ((reqs[object] as CliConfig).platform) {
+        if (object === 'kn' && process.arch === 'arm64' && platformOS === 'darwin') {
+          // eslint-disable-next-line no-param-reassign
+          platformOS = 'arm64';
+        }
         if ((reqs[object] as CliConfig).platform[platformOS]) {
           Object.assign(reqs[object], (reqs[object] as CliConfig).platform[platformOS]);
           delete (reqs[object] as CliConfig).platform;
@@ -143,7 +147,7 @@ export class CmdCliConfig {
   static async detectOrDownload(cmd: string): Promise<string> {
     try {
       // If the location of the cli has been set, then read it.
-      let toolLocation: string = (CmdCliConfig.tools[cmd] as CliConfig).location;
+      let toolLocation: string = (CmdCliConfig.tools[cmd] as CliConfig)?.location;
 
       // So if the tool location hasn't been set then we need to figure that out.
       if (toolLocation === undefined) {
