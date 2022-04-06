@@ -22,34 +22,34 @@ export class FuncAPI {
   static invokeFunction(data: ParametersType): CliCommand {
     const args: string[] = ['invoke'];
     if (data.invokeId?.trim()) {
-      args.push(`--id ${data.invokeId}`);
+      args.push(`--id ${quote}${data.invokeId}${quote}`);
     }
     if (data.invokePath?.trim()) {
-      args.push(`-p ${data.invokePath}`);
+      args.push(`-p ${quote}${data.invokePath}${quote}`);
     }
     if (data.invokeInstance === 'Remote') {
-      args.push(`-t ${data.invokeUrlCheck ? data.invokeUrl : 'remote'}`);
+      args.push(`-t ${data.invokeUrlCheck ? `${quote}${data.invokeUrl}${quote}` : 'remote'}`);
     }
     if (data.invokeNamespace?.trim()) {
-      args.push(`-n ${data.invokeNamespace}`);
+      args.push(`-n ${quote}${data.invokeNamespace}${quote}`);
     }
     if (data.invokeContextType?.trim()) {
-      args.push(`--content-type ${data.invokeContextType}`);
+      args.push(`--content-type ${quote}${data.invokeContextType}${quote}`);
     }
     if (data.invokeFormat?.trim()) {
-      args.push(`-f ${data.invokeFormat}`);
+      args.push(`-f ${quote}${data.invokeFormat}${quote}`);
     }
     if (data.invokeSource?.trim()) {
-      args.push(`--source ${data.invokeSource}`);
+      args.push(`--source ${quote}${data.invokeSource}${quote}`);
     }
     if (data.invokeType?.trim()) {
-      args.push(`--type ${data.invokeType}`);
+      args.push(`--type ${quote}${data.invokeType}${quote}`);
     }
     if (data.invokeDataText?.trim() && data.invokeDataMode === 'Text') {
-      args.push(`--data ${data.invokeDataText}`);
+      args.push(`--data ${quote}${data.invokeDataText}${quote}`);
     }
     if (data.invokeDataFile?.trim() && data.invokeDataMode === 'File') {
-      args.push(`--file ${data.invokeDataFile}`);
+      args.push(`--file ${quote}${data.invokeDataFile}${quote}`);
     }
     return funcCliCommand(args);
   }

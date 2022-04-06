@@ -391,7 +391,7 @@ export const def: WizardDefinition = {
         {
           cancellable: false,
           location: vscode.ProgressLocation.Notification,
-          title: `Function Successfully invoke`,
+          title: `Invoking function ${functionName}`,
         },
         async () => {
           const invokeCommand: CliCommand = FuncAPI.invokeFunction(data);
@@ -403,7 +403,7 @@ export const def: WizardDefinition = {
           }
 
           // eslint-disable-next-line @typescript-eslint/no-floating-promises
-          vscode.window.showInformationMessage(`Function ${functionName} Successfully invoked`);
+          vscode.window.showInformationMessage(`Function ${functionName} successfully invoked.`);
           return true;
         },
       );
@@ -437,6 +437,9 @@ export function invokeFunction(context: vscode.ExtensionContext, funcContext: Fu
 }
 
 export function createInvokeFunction(context: vscode.ExtensionContext, funcContext: FunctionNode): void {
+  if (!funcContext) {
+    return null;
+  }
   if (funcContext) {
     functionName = funcContext.getName();
   }
