@@ -35,11 +35,6 @@ export function cliCommandToString(command: CliCommand): string {
 export class CmdCli implements Cli {
   private static instance: CmdCli;
 
-  /**
-   * Print and Show info in the knative output channel/window.
-   */
-  private knOutputChannel: OutputChannel = new KnOutputChannel();
-
   static getInstance(): CmdCli {
     if (!CmdCli.instance) {
       CmdCli.instance = new CmdCli();
@@ -50,8 +45,9 @@ export class CmdCli implements Cli {
   /**
    * Display info in the Knative Output channel/window
    */
+  // eslint-disable-next-line class-methods-use-this
   showOutputChannel(): void {
-    this.knOutputChannel.show();
+    knOutputChannel.show();
   }
 
   private static clusterErrorNotReported = true;
@@ -80,9 +76,10 @@ export class CmdCli implements Cli {
    * @param cmd
    * @param opts
    */
+  // eslint-disable-next-line class-methods-use-this
   execute(cmd: CliCommand, opts: SpawnOptions = {}): Promise<CliExitData> {
     return new Promise<CliExitData>((resolve, reject) => {
-      this.knOutputChannel.print(cliCommandToString(cmd));
+      knOutputChannel.print(cliCommandToString(cmd));
       if (opts.windowsHide === undefined) {
         // eslint-disable-next-line no-param-reassign
         opts.windowsHide = true;

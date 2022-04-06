@@ -8,8 +8,8 @@ import * as chai from 'chai';
 import * as fsExtra from 'fs-extra';
 import * as sinon from 'sinon';
 import * as sinonChai from 'sinon-chai';
+import { execCmdCli } from '../../../src/cli/cmdCli';
 import { FunctionContextType, FunctionStatus } from '../../../src/cli/config';
-import { knExecutor } from '../../../src/cli/execute';
 import { FuncImpl } from '../../../src/functions/func';
 import { undeployFunction } from '../../../src/functions/function-command/undeploy-function';
 import { TestItem } from '../testFunctionitem';
@@ -19,7 +19,7 @@ chai.use(sinonChai);
 
 suite('Function/undeploy', () => {
   const sandbox = sinon.createSandbox();
-  let executeStub: sinon.SinonStub;
+  let executeExecStub: sinon.SinonStub;
   let showWarningMessageStub: sinon.SinonStub;
   let showErrorMessageStub: sinon.SinonStub;
   const data: Uri = {
@@ -48,7 +48,7 @@ suite('Function/undeploy', () => {
   );
 
   setup(() => {
-    executeStub = sandbox.stub(knExecutor, 'execute');
+    executeExecStub = sandbox.stub(execCmdCli, 'executeExec');
     sandbox.stub(fsExtra, 'remove').resolves();
     showWarningMessageStub = sandbox.stub(window, 'showWarningMessage');
     showErrorMessageStub = sandbox.stub(window, 'showErrorMessage');
@@ -71,17 +71,17 @@ suite('Function/undeploy', () => {
 
   test('undeploy function from tree view', async () => {
     showWarningMessageStub.onFirstCall().resolves('Yes');
-    executeStub.onFirstCall().resolves({ error: null, stdout: 'successful' });
+    executeExecStub.onFirstCall().resolves({ error: null, stdout: 'successful' });
     await undeployFunction(taskRunNode);
     // eslint-disable-next-line no-unused-expressions
-    expect(executeStub).calledOnce;
+    expect(executeExecStub).calledOnce;
     // eslint-disable-next-line no-unused-expressions
     expect(showWarningMessageStub).calledOnce;
   });
 
   test('show error if it fails to undeploy function', async () => {
     showWarningMessageStub.onFirstCall().resolves('Yes');
-    executeStub.onFirstCall().resolves({ error: 'error', stdout: null });
+    executeExecStub.onFirstCall().resolves({ error: 'error', stdout: null });
     await undeployFunction(taskRunNode);
     // eslint-disable-next-line no-unused-expressions
     expect(showErrorMessageStub).calledOnce;

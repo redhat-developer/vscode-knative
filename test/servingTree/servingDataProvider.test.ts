@@ -27,6 +27,7 @@ import * as revision from '../../src/knative/revision';
 import { Revision } from '../../src/knative/revision';
 import * as service from '../../src/knative/service';
 import { Service, CreateService } from '../../src/knative/service';
+import { knOutputChannel } from '../../src/output/knOutputChannel';
 import { ServingDataProvider } from '../../src/servingTree/servingDataProvider';
 import { ServingTreeItem } from '../../src/servingTree/servingTreeItem';
 
@@ -688,7 +689,7 @@ status:
 
   suite('Output Channel', () => {
     test('should show the output channel', () => {
-      const spy = sandbox.spy(sdp.knOutputChannel, 'show');
+      const spy = sandbox.spy(knOutputChannel, 'show');
       sdp.showOutputChannel();
       sinon.assert.calledOnce(spy);
     });

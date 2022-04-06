@@ -68,6 +68,7 @@ export class ServingExplorer implements Disposable {
     this.treeView = window.createTreeView('knativeServingProjectExplorer', { treeDataProvider: this.treeDataProvider });
 
     this.registeredCommands = [
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-return
       vscode.commands.registerCommand('service.output', () => this.treeDataProvider.showOutputChannel()),
       vscode.commands.registerCommand('service.explorer.create', () => this.treeDataProvider.addService()),
       vscode.commands.registerCommand('service.explorer.delete', (treeItem: ServingTreeItem) =>
