@@ -27,17 +27,19 @@ export async function undeployFunction(context: FunctionNode): Promise<string> {
     {
       cancellable: false,
       location: vscode.ProgressLocation.Notification,
-      title: `Undeploy function ${context.getName()}.`,
+      title: `Undeploying function ${context.getName()}.`,
     },
     async () => {
       const result: CliExitData = await execCmdCli.executeExec(FuncAPI.deleteFunc(context.getName()));
       if (result.error) {
         // eslint-disable-next-line @typescript-eslint/no-floating-promises
-        vscode.window.showErrorMessage(`Fail undeploy function: ${getStderrString(result.error)}`);
+        vscode.window.showErrorMessage(
+          `Failed to undeploy function ${context.getName()} - error ${getStderrString(result.error)}`,
+        );
         return null;
       }
       // eslint-disable-next-line @typescript-eslint/no-floating-promises
-      vscode.window.showInformationMessage(`Function ${context.getName()} successfully undeploy`);
+      vscode.window.showInformationMessage(`Function ${context.getName()} successfully undeployed`);
       // eslint-disable-next-line @typescript-eslint/no-floating-promises
       functionExplorer.refresh();
       return null;
