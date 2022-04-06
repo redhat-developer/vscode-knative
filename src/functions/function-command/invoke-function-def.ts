@@ -216,7 +216,7 @@ export const invokeDataText: WizardPageSectionDefinition = {
 
 export const invokeDataFile: WizardPageSectionDefinition = {
   id: invokeFunctionID.invoke_data_desc,
-  label: 'Data to send in the request. (Env: $FUNC_DATA) (default "Hello World")',
+  label: 'Data to send in the request. (default "Hello World")',
   childFields: [
     {
       id: invokeFunctionID.invoke_data_mode,

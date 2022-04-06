@@ -174,9 +174,9 @@ export class CmdCli implements Cli {
       const toolLocation: string = CmdCliConfig.tools.func.location;
       if (toolLocation) {
         // eslint-disable-next-line no-param-reassign
-        cmd.cliCommand = toolLocation
-          ? cmd.cliCommand.replace('func', `"${toolLocation}"`).replace(new RegExp(`&& func`, 'g'), `&& "${toolLocation}"`)
-          : cmd.cliCommand;
+        cmd.cliCommand = cmd.cliCommand
+          .replace('func', `"${toolLocation}"`)
+          .replace(new RegExp(`&& func`, 'g'), `&& "${toolLocation}"`);
       }
     }
     return new Promise<CliExitData>((resolve) => {

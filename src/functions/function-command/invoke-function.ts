@@ -47,6 +47,8 @@ import { invokeFunctionID } from '../webview-id';
 
 export const invokeItemMap = new Map<string, boolean>();
 
+let functionName: string;
+
 export interface ParametersType {
   invokeInstance?: string;
   invokeNamespace?: string;
@@ -138,7 +140,7 @@ const localOnlyInvokeTextDef = [invokeID, invokePath, invokeContextType, invokeF
 const localOnlyInvokeFileDef = [invokeID, invokePath, invokeContextType, invokeFormat, invokeSource, invokeType, invokeDataFile];
 
 export const def: WizardDefinition = {
-  title: `Local Invoke Function`,
+  title: `Invoke Function`,
   showDirtyState: true,
   pages: [
     {
@@ -191,7 +193,7 @@ export const def: WizardDefinition = {
             {
               value: parameters.invokeContextType,
               id: invokeFunctionID.invoke_context_type,
-              message: 'Provide context type',
+              message: 'Provide content type',
             },
             items,
           );
@@ -401,7 +403,7 @@ export const def: WizardDefinition = {
           }
 
           // eslint-disable-next-line @typescript-eslint/no-floating-promises
-          vscode.window.showInformationMessage('Function Successfully invoke');
+          vscode.window.showInformationMessage(`Function ${functionName} Successfully invoked`);
           return true;
         },
       );
@@ -435,6 +437,9 @@ export function invokeFunction(context: vscode.ExtensionContext, funcContext: Fu
 }
 
 export function createInvokeFunction(context: vscode.ExtensionContext, funcContext: FunctionNode): void {
+  if (funcContext) {
+    functionName = funcContext.getName();
+  }
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
   const getEnvFuncId = uuidv4();
   invokeInstance.initialValue = 'Local';
