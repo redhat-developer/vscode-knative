@@ -30,6 +30,9 @@ export class FuncAPI {
     if (data.invokeInstance === 'Remote') {
       args.push(`-t ${data.invokeUrlCheck ? `${quote}${data.invokeUrl}${quote}` : 'remote'}`);
     }
+    if (data.invokeInstance === 'Local') {
+      args.push('-t local');
+    }
     if (data.invokeNamespace?.trim()) {
       args.push(`-n ${quote}${data.invokeNamespace}${quote}`);
     }
