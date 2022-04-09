@@ -224,15 +224,15 @@ export const def: WizardDefinition = {
       }
       let response: string;
       if (vscode.workspace.workspaceFolders && vscode.workspace.workspaceFolders.length > 0) {
-        response = await vscode.window.showWarningMessage(
-          `Function successfully created Name: ${data.functionName}`,
+        response = await vscode.window.showInformationMessage(
+          `Function ${data.functionName} successfully created.`,
           'Add to this workspace',
           'Open in new workspace',
           'Cancel',
         );
       } else {
-        response = await vscode.window.showWarningMessage(
-          `Function successfully created Name: ${data.functionName}. Do you want to open in workspace`,
+        response = await vscode.window.showInformationMessage(
+          `Function ${data.functionName} successfully created. Do you want to open the folder in the workspace?`,
           'Yes',
           'No',
         );
