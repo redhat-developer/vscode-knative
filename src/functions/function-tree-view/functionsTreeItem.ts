@@ -126,7 +126,7 @@ export class FunctionNodeImpl implements FunctionNode {
       this.contextValue === FunctionContextType.NOTCONNECTEDLOCALFUNCTIONS
     ) {
       return format(
-        `Name: ${this.CONTEXT_DATA[this.contextValue].tooltip} RunTime: ${this.runtime} Context: ${this.contextPath.fsPath}`,
+        `Name: ${this.CONTEXT_DATA[this.contextValue].tooltip}\nRuntime: ${this.runtime}\nContext: ${this.contextPath.fsPath}`,
         this,
       );
     }
