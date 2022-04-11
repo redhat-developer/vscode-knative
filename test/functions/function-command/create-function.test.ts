@@ -19,13 +19,13 @@ chai.use(sinonChai);
 suite('Function/Create', () => {
   const sandbox = sinon.createSandbox();
   let executeStub: sinon.SinonStub;
-  let showWarningMessageStub: sinon.SinonStub;
+  let showInformationMessageStub: sinon.SinonStub;
   let showErrorMessageStub: sinon.SinonStub;
 
   setup(() => {
     executeStub = sandbox.stub(knExecutor, 'execute');
     sandbox.stub(fs, 'existsSync').returns(true);
-    showWarningMessageStub = sandbox.stub(window, 'showWarningMessage');
+    showInformationMessageStub = sandbox.stub(window, 'showInformationMessage');
     showErrorMessageStub = sandbox.stub(window, 'showErrorMessage');
   });
 
@@ -125,7 +125,7 @@ suite('Function/Create', () => {
 
   test('open folder in vscode workspace', async () => {
     executeStub.resolves({ error: null, stderr: 'pass' });
-    showWarningMessageStub.resolves('Yes');
+    showInformationMessageStub.resolves('Yes');
     sandbox.stub(commands, 'executeCommand').resolves();
     const result = await def.workflowManager.performFinish(null, {
       functionName: 'l',
@@ -137,7 +137,7 @@ suite('Function/Create', () => {
     // eslint-disable-next-line no-unused-expressions
     expect(executeStub).calledOnce;
     // eslint-disable-next-line no-unused-expressions
-    expect(showWarningMessageStub).calledOnce;
+    expect(showInformationMessageStub).calledOnce;
   });
 
   test('show user how they want to open project in vscode', async () => {
@@ -157,7 +157,7 @@ suite('Function/Create', () => {
         },
       },
     ]);
-    showWarningMessageStub.resolves('Add to this workspace');
+    showInformationMessageStub.resolves('Add to this workspace');
     sandbox.stub(commands, 'executeCommand').resolves();
     sandbox.stub(workspace, 'updateWorkspaceFolders').resolves();
     const result = await def.workflowManager.performFinish(null, {
@@ -170,7 +170,7 @@ suite('Function/Create', () => {
     // eslint-disable-next-line no-unused-expressions
     expect(executeStub).calledOnce;
     // eslint-disable-next-line no-unused-expressions
-    expect(showWarningMessageStub).calledOnce;
+    expect(showInformationMessageStub).calledOnce;
   });
 
   test('return null if there is no next page', () => {
