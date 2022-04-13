@@ -128,7 +128,7 @@ export const def: WizardDefinition = {
         },
         {
           id: createFunctionID.select_location,
-          label: 'Select location',
+          label: 'Select Location',
           type: 'file-picker',
           placeholder: 'Select location to create Function.',
           dialogOptions: {
