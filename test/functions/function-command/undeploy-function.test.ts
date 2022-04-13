@@ -8,7 +8,7 @@ import * as chai from 'chai';
 import * as fsExtra from 'fs-extra';
 import * as sinon from 'sinon';
 import * as sinonChai from 'sinon-chai';
-import { execCmdCli } from '../../../src/cli/cmdCli';
+import { executeCmdCli } from '../../../src/cli/cmdCli';
 import { FunctionContextType, FunctionStatus } from '../../../src/cli/config';
 import { FuncImpl } from '../../../src/functions/func';
 import { undeployFunction } from '../../../src/functions/function-command/undeploy-function';
@@ -48,7 +48,7 @@ suite('Function/undeploy', () => {
   );
 
   setup(() => {
-    executeExecStub = sandbox.stub(execCmdCli, 'executeExec');
+    executeExecStub = sandbox.stub(executeCmdCli, 'executeExec');
     sandbox.stub(fsExtra, 'remove').resolves();
     showWarningMessageStub = sandbox.stub(window, 'showWarningMessage');
     showErrorMessageStub = sandbox.stub(window, 'showErrorMessage');

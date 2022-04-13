@@ -5,7 +5,7 @@
  *-----------------------------------------------------------------------------------------------*/
 
 import * as vscode from 'vscode';
-import { CliExitData, execCmdCli } from '../../cli/cmdCli';
+import { CliExitData, executeCmdCli } from '../../cli/cmdCli';
 import { FuncAPI } from '../../cli/func-api';
 import { getStderrString } from '../../util/stderrstring';
 import { FunctionNode } from '../function-tree-view/functionsTreeItem';
@@ -30,7 +30,7 @@ export async function undeployFunction(context: FunctionNode): Promise<string> {
       title: `Undeploying function ${context.getName()}.`,
     },
     async () => {
-      const result: CliExitData = await execCmdCli.executeExec(FuncAPI.deleteFunc(context.getName()));
+      const result: CliExitData = await executeCmdCli.executeExec(FuncAPI.deleteFunc(context.getName()));
       if (result.error) {
         // eslint-disable-next-line @typescript-eslint/no-floating-promises
         vscode.window.showErrorMessage(

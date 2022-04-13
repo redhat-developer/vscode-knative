@@ -7,7 +7,7 @@ import { SpawnOptions, spawn, ExecException, exec, ExecOptions } from 'child_pro
 import { window } from 'vscode';
 // eslint-disable-next-line import/no-cycle
 import { CmdCliConfig } from './cli-config';
-import { KnOutputChannel, OutputChannel } from '../output/knOutputChannel';
+import { knOutputChannel } from '../output/knOutputChannel';
 
 export interface CliExitData {
   readonly error: string | Error;
@@ -166,6 +166,7 @@ export class CmdCli implements Cli {
     });
   }
 
+  // eslint-disable-next-line class-methods-use-this
   async executeExec(cmd: CliCommand, opts: ExecOptions = {}): Promise<CliExitData> {
     if (cmd.cliCommand.startsWith('func')) {
       const toolLocation: string = CmdCliConfig.tools.func.location;
@@ -177,14 +178,14 @@ export class CmdCli implements Cli {
       }
     }
     return new Promise<CliExitData>((resolve) => {
-      this.knOutputChannel.print(cliCommandToString(cmd));
+      knOutputChannel.print(cliCommandToString(cmd));
       if (opts.maxBuffer === undefined) {
         // eslint-disable-next-line no-param-reassign
         opts.maxBuffer = 2 * 1024 * 1024;
       }
       exec(cliCommandToString(cmd), opts, (error: ExecException, stdout: string, stderr: string) => {
-        this.knOutputChannel.print(stdout);
-        this.knOutputChannel.print(stderr);
+        knOutputChannel.print(stdout);
+        knOutputChannel.print(stderr);
         // do not reject it here, because caller in some cases need the error and the streams
         // to make a decision
         // Filter update message text which starts with `---`
