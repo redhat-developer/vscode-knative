@@ -110,9 +110,13 @@ export class CmdCliConfig {
     const reqs = JSON.parse(JSON.stringify(requirements)) as Config;
     Object.keys(requirements).forEach((object) => {
       if ((reqs[object] as CliConfig).platform) {
-        if (object === 'kn' && process.arch === 'arm64' && platformOS === 'darwin') {
+        if ((object === 'kn' || object === 'func') && process.arch === 'arm64' && platformOS === 'darwin') {
           // eslint-disable-next-line no-param-reassign
-          platformOS = 'arm64';
+          platformOS = `${platformOS}-arm64`;
+        }
+        if (object === 'kubectl' && platformOS === 'darwin-arm64') {
+          // eslint-disable-next-line no-param-reassign
+          platformOS = Platform.OS;
         }
         if ((reqs[object] as CliConfig).platform[platformOS]) {
           Object.assign(reqs[object], (reqs[object] as CliConfig).platform[platformOS]);
