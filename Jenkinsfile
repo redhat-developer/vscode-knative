@@ -54,8 +54,7 @@ node('rhel8'){
 
   if(params.UPLOAD_LOCATION) {
     stage('Snapshot') {
-      def filesToPush = findFiles(glob: '**.vsix')
-      sh "rsync -Pzrlt --rsh=ssh --protocol=28 *.vsix* ${UPLOAD_LOCATION}/snapshots/vscode-knative/"
+      sh "sftp -C ${UPLOAD_LOCATION}/snapshots/vscode-knative/ <<< \$'put -p *.vsix*'"
     }
   }
 
@@ -71,8 +70,8 @@ node('rhel8'){
       }
 
       stage "Promote the build to stable"
-      sh "rsync -Pzrlt --rsh=ssh --protocol=28 *.vsix* ${UPLOAD_LOCATION}/stable/vscode-knative/"
-      sh "rsync -Pzrlt --rsh=ssh --protocol=28 *.tgz* ${UPLOAD_LOCATION}/stable/vscode-knative/"
+      sh "sftp -C ${UPLOAD_LOCATION}/stable/vscode-knative/ <<< \$'put -p *.vsix*'"
+      sh "sftp -C ${UPLOAD_LOCATION}/stable/vscode-knative/ <<< \$'put -p *.tgz*'"
       archive includes:"**.vsix*,**.tgz*"
     }
   }
