@@ -49,7 +49,7 @@
   "dependencies": {
     "@kubernetes/client-node": "^0.14.0",
     "@redhat-developer/vscode-redhat-telemetry": "^0.3.0",
-    "@redhat-developer/vscode-wizard": "^0.2.21",
+    "@redhat-developer/vscode-wizard": "^0.2.30",
     "binary-search": "^1.3.6",
     "byline": "^5.0.0",
     "fs-extra": "^9.1.0",
@@ -70,6 +70,7 @@
     "string-format": "^2.0.0",
     "targz": "^1.0.1",
     "unzip-stream": "^0.3.1",
+    "uuid": "^8.3.2",
     "validator": "^13.5.2",
     "vscode-kubernetes-tools-api": "1.3.0",
     "vscode-test": "^1.5.1",
@@ -141,6 +142,7 @@
     "onCommand:service.explorer.deleteLocal",
     "onCommand:service.output",
     "onCommand:function.undeploy",
+    "onCommand:function.invoke",
     "onCommand:function.OpenInBrowserAction",
     "onCommand:function.explorer.refresh",
     "onCommand:function.explorer.create",
@@ -271,6 +273,11 @@
         "icon": "$(plus)"
       },
       {
+        "command": "function.invoke",
+        "title": "Invoke",
+        "category": "Knative"
+      },
+      {
         "command": "function.build.Palette",
         "title": "Build Function",
         "category": "Knative"
@@ -369,6 +376,10 @@
         },
         {
           "command": "function.undeploy",
+          "when": "false"
+        },
+        {
+          "command": "function.invoke",
           "when": "false"
         },
         {
@@ -498,7 +509,7 @@
         {
           "command": "function.OpenInBrowserAction",
           "when": "view == knativeFunctionProjectExplorer && viewItem =~ /^(localDeployFunctions|deployFunctions)$/",
-          "group": "c1@4"
+          "group": "c1@5"
         },
         {
           "command": "service.explorer.tag",
@@ -521,14 +532,19 @@
           "group": "c1@3"
         },
         {
+          "command": "function.invoke",
+          "when": "view == knativeFunctionProjectExplorer && viewItem =~ /^(localDeployFunctions|localFunctions)$/",
+          "group": "c1@4"
+        },
+        {
           "submenu": "function/addConfig",
           "when": "view == knativeFunctionProjectExplorer && viewItem =~ /^(localFunctions|localDeployFunctions|localFunctionsEnablement)$/",
-          "group": "c1@5"
+          "group": "c1@6"
         },
         {
           "submenu": "function/removeConfig",
           "when": "view == knativeFunctionProjectExplorer && viewItem =~ /^(localFunctions|localDeployFunctions|localFunctionsEnablement)$/",
-          "group": "c1@6"
+          "group": "c1@7"
         }
       ],
       "view/title": [

@@ -4,6 +4,7 @@
  *-----------------------------------------------------------------------------------------------*/
 
 import * as vscode from 'vscode';
+// eslint-disable-next-line import/no-cycle
 import { KnativeResourceVirtualFileSystemProvider } from '../cli/virtualfs';
 
 export const KN_READONLY_SCHEME = 'knreadonly';

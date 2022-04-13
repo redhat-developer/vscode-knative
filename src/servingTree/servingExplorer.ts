@@ -6,6 +6,7 @@
 import * as path from 'path';
 import { Disposable, extensions, TreeView, Uri, version, window, workspace } from 'vscode';
 import * as vscode from 'vscode';
+// eslint-disable-next-line import/no-cycle
 import { ServingDataProvider } from './servingDataProvider';
 import { ServingTreeItem } from './servingTreeItem';
 import { EventingTreeItem } from '../eventingTree/eventingTreeItem';

@@ -4,6 +4,7 @@
  *-----------------------------------------------------------------------------------------------*/
 
 import { commands, Uri, window } from 'vscode';
+// eslint-disable-next-line import/no-cycle
 import { FunctionNode } from '../function-tree-view/functionsTreeItem';
 
 export async function urlFunction(context?: FunctionNode): Promise<unknown> {

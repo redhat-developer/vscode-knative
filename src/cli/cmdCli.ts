@@ -3,8 +3,10 @@
  *  Licensed under the MIT License. See LICENSE file in the project root for license information.
  *-----------------------------------------------------------------------------------------------*/
 
-import { SpawnOptions, spawn } from 'child_process';
+import { SpawnOptions, spawn, ExecException, exec, ExecOptions } from 'child_process';
 import { window } from 'vscode';
+// eslint-disable-next-line import/no-cycle
+import { CmdCliConfig } from './cli-config';
 import { KnOutputChannel, OutputChannel } from '../output/knOutputChannel';
 
 export interface CliExitData {
@@ -19,6 +21,7 @@ export interface CliCommand {
 
 export interface Cli {
   execute(cmd: CliCommand, opts?: SpawnOptions): Promise<CliExitData>;
+  executeExec(cmd: CliCommand, opts?: ExecOptions): Promise<CliExitData>;
 }
 
 export function createCliCommand(cliCommand: string, ...cliArguments: string[]): CliCommand {
@@ -165,6 +168,33 @@ export class CmdCli implements Cli {
       // });
     });
   }
+
+  async executeExec(cmd: CliCommand, opts: ExecOptions = {}): Promise<CliExitData> {
+    if (cmd.cliCommand.startsWith('func')) {
+      const toolLocation: string = CmdCliConfig.tools.func.location;
+      if (toolLocation) {
+        // eslint-disable-next-line no-param-reassign
+        cmd.cliCommand = cmd.cliCommand
+          .replace('func', `"${toolLocation}"`)
+          .replace(new RegExp(`&& func`, 'g'), `&& "${toolLocation}"`);
+      }
+    }
+    return new Promise<CliExitData>((resolve) => {
+      this.knOutputChannel.print(cliCommandToString(cmd));
+      if (opts.maxBuffer === undefined) {
+        // eslint-disable-next-line no-param-reassign
+        opts.maxBuffer = 2 * 1024 * 1024;
+      }
+      exec(cliCommandToString(cmd), opts, (error: ExecException, stdout: string, stderr: string) => {
+        this.knOutputChannel.print(stdout);
+        this.knOutputChannel.print(stderr);
+        // do not reject it here, because caller in some cases need the error and the streams
+        // to make a decision
+        // Filter update message text which starts with `---`
+        resolve({ error, stdout, stderr });
+      });
+    });
+  }
 }
 
-export const execCmdCli = new CmdCli();
+export const executeCmdCli = new CmdCli();

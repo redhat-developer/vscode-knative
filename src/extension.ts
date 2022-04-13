@@ -1,3 +1,4 @@
+/* eslint-disable import/no-cycle */
 /*-----------------------------------------------------------------------------------------------
  *  Copyright (c) Red Hat, Inc. All rights reserved.
  *  Licensed under the MIT License. See LICENSE file in the project root for license information.
@@ -20,6 +21,8 @@ import {
 } from './functions/function-command/configure-function';
 import { createFunction } from './functions/function-command/create-function';
 import { urlFunction } from './functions/function-command/get-url-function';
+// eslint-disable-next-line import/no-cycle
+import { createInvokeFunction } from './functions/function-command/invoke-function';
 import { runFunction } from './functions/function-command/run-function';
 import { undeployFunction } from './functions/function-command/undeploy-function';
 import { functionExplorer } from './functions/functionsExplorer';
@@ -31,6 +34,8 @@ import { startTelemetry } from './telemetry';
 import { functionVersion, knativeVersion } from './version';
 
 let disposable: vscode.Disposable[];
+// eslint-disable-next-line import/no-mutable-exports
+export let contextGlobalState: vscode.ExtensionContext;
 
 /**
  * This method is called when your extension is activated.
@@ -39,6 +44,7 @@ let disposable: vscode.Disposable[];
  * @param extensionContext
  */
 export async function activate(extensionContext: vscode.ExtensionContext): Promise<void> {
+  contextGlobalState = extensionContext;
   // eslint-disable-next-line @typescript-eslint/no-floating-promises
   startTelemetry(extensionContext);
   // eslint-disable-next-line @typescript-eslint/no-floating-promises
@@ -59,6 +65,7 @@ export async function activate(extensionContext: vscode.ExtensionContext): Promi
     vscode.commands.registerCommand('function.version', () => functionVersion()),
     vscode.commands.registerCommand('function.explorer.refresh', () => functionExplorer.refresh()),
     vscode.commands.registerCommand('function.explorer.create', () => createFunction(extensionContext)),
+    vscode.commands.registerCommand('function.invoke', (context) => createInvokeFunction(extensionContext, context)),
     vscode.commands.registerCommand('function.undeploy', (context) => undeployFunction(context)),
     vscode.commands.registerCommand('function.build', (context) => buildFunction(context)),
     vscode.commands.registerCommand('function.deploy', (context) => deployFunction(context)),

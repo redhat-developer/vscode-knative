@@ -17,7 +17,7 @@ import * as singleServiceFailedRevisionRevisionList from './singleServiceFailedR
 import * as singleServiceFailedRevisionServiceList from './singleServiceFailedRevisionServiceList.json';
 import * as singleServiceRevisionData from './singleServiceRevisionList.json';
 import * as singleServiceData from './singleServiceServiceList.json';
-import { CliExitData, execCmdCli } from '../../src/cli/cmdCli';
+import { CliExitData, executeCmdCli } from '../../src/cli/cmdCli';
 import { ServingContextType } from '../../src/cli/config';
 import * as vfs from '../../src/cli/virtualfs';
 import { knvfs } from '../../src/cli/virtualfs';
@@ -1055,7 +1055,7 @@ status:
       sandbox.stub(sdp.ksvc, 'addService').returns(undefined);
       sandbox.stub(vfs, 'vfsUri').returns(_uriExternalFile);
       sandbox.stub(knvfs, 'writeFile').returns(undefined);
-      sandbox.stub(execCmdCli, 'execute').resolves({ error: undefined, stdout: JSON.stringify(singleServiceData) });
+      sandbox.stub(executeCmdCli, 'execute').resolves({ error: undefined, stdout: JSON.stringify(singleServiceData) });
       sandbox.stub(os, 'tmpdir').returns('fake');
       sandbox.stub(fsx, 'writeFile').resolves();
       sandbox.stub(fsx, 'ensureFile').resolves();
@@ -1082,7 +1082,7 @@ status:
       sandbox.stub(vfs, 'vfsUri').returns(_uriExternalFile);
       const errorMessage = `undefinedError: RevisionFailed: Revision "knative-tutorial-greeter-00001" failed with message: Unable to fetch image "http://quay.io/test-group/knative-tutorial-greeter:quarkus": failed to resolve image to digest: HEAD https://quay.io/v2/test-group/manifests/latest: unsupported status code 404.`;
       const ced: CliExitData = { error: errorMessage, stdout: 'foo' };
-      sandbox.stub(execCmdCli, 'execute').resolves(ced);
+      sandbox.stub(executeCmdCli, 'execute').resolves(ced);
       sandbox.stub(os, 'tmpdir').returns('fake');
       sandbox.stub(fsx, 'writeFile').resolves();
       sandbox.stub(fsx, 'ensureFile').resolves();
@@ -1111,7 +1111,7 @@ status:
       sandbox.stub(vfs, 'vfsUri').returns(_uriExternalFile);
       const errorMessage = `undefinedError: RevisionFailed: Revision "knative-tutorial-greeter-00001" failed with message: Initial scale was never achieved.`;
       const ced: CliExitData = { error: errorMessage, stdout: 'foo' };
-      sandbox.stub(execCmdCli, 'execute').resolves(ced);
+      sandbox.stub(executeCmdCli, 'execute').resolves(ced);
       sandbox.stub(os, 'tmpdir').returns('fake');
       sandbox.stub(fsx, 'writeFile').resolves();
       sandbox.stub(fsx, 'ensureFile').resolves();
@@ -1140,7 +1140,7 @@ status:
       sandbox.stub(vfs, 'vfsUri').returns(_uriExternalFile);
       const errorMessage = `undefinedError: RevisionFailed: Revision "knative-tutorial-greeter-00001" failed with message: Something unknown happened.`;
       const ced: CliExitData = { error: errorMessage, stdout: 'foo' };
-      sandbox.stub(execCmdCli, 'execute').resolves(ced);
+      sandbox.stub(executeCmdCli, 'execute').resolves(ced);
       sandbox.stub(os, 'tmpdir').returns('fake');
       sandbox.stub(fsx, 'writeFile').resolves();
       sandbox.stub(fsx, 'ensureFile').resolves();
@@ -1168,7 +1168,7 @@ status:
       sandbox.stub(sdp.ksvc, 'addService').returns(undefined);
       sandbox.stub(vfs, 'vfsUri').returns(_uriExternalFile);
       sandbox.stub(knvfs, 'writeFile').returns(undefined);
-      sandbox.stub(execCmdCli, 'execute').rejects();
+      sandbox.stub(executeCmdCli, 'execute').rejects();
       sandbox.stub(os, 'tmpdir').returns('fake');
       sandbox.stub(fsx, 'writeFile').resolves();
       sandbox.stub(fsx, 'ensureFile').resolves();

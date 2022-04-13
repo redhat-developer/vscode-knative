@@ -4,16 +4,57 @@
  *-----------------------------------------------------------------------------------------------*/
 
 import * as path from 'path';
+// eslint-disable-next-line import/no-cycle
 import { CliCommand, CmdCli, createCliCommand } from './cmdCli';
+// eslint-disable-next-line import/no-cycle
+import { ParametersType } from '../functions/function-command/invoke-function';
 import { quote } from '../util/quote';
 
-function funcCliCommand(cmdArguments: string[]): CliCommand {
+function funcCliCommand(cmdArguments?: string[]): CliCommand {
   return createCliCommand('func', ...cmdArguments);
 }
 
 export class FuncAPI {
   static printFunctionVersion(): CliCommand {
     return funcCliCommand(['version']);
+  }
+
+  static invokeFunction(data: ParametersType): CliCommand {
+    const args: string[] = ['invoke'];
+    if (data.invokeId?.trim()) {
+      args.push(`--id ${quote}${data.invokeId}${quote}`);
+    }
+    if (data.invokePath?.trim()) {
+      args.push(`-p ${quote}${data.invokePath}${quote}`);
+    }
+    if (data.invokeInstance === 'Remote') {
+      args.push(`-t ${data.invokeUrlCheck ? `${quote}${data.invokeUrl}${quote}` : 'remote'}`);
+    }
+    if (data.invokeInstance === 'Local') {
+      args.push('-t local');
+    }
+    if (data.invokeNamespace?.trim()) {
+      args.push(`-n ${quote}${data.invokeNamespace}${quote}`);
+    }
+    if (data.invokeContextType?.trim()) {
+      args.push(`--content-type ${quote}${data.invokeContextType}${quote}`);
+    }
+    if (data.invokeFormat?.trim()) {
+      args.push(`-f ${quote}${data.invokeFormat}${quote}`);
+    }
+    if (data.invokeSource?.trim()) {
+      args.push(`--source ${quote}${data.invokeSource}${quote}`);
+    }
+    if (data.invokeType?.trim()) {
+      args.push(`--type ${quote}${data.invokeType}${quote}`);
+    }
+    if (data.invokeDataText?.trim() && data.invokeDataMode === 'Text') {
+      args.push(`--data ${quote}${data.invokeDataText}${quote}`);
+    }
+    if (data.invokeDataFile?.trim() && data.invokeDataMode === 'File') {
+      args.push(`--file ${quote}${data.invokeDataFile}${quote}`);
+    }
+    return funcCliCommand(args);
   }
 
   static createFunc(name: string, language: string, template: string, location: string): CliCommand {
