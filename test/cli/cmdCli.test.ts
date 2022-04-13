@@ -9,6 +9,7 @@ import rewire = require('rewire');
 import * as sinon from 'sinon';
 import * as sinonChai from 'sinon-chai';
 import { CmdCli, cliCommandToString, createCliCommand, CliCommand, CliExitData } from '../../src/cli/cmdCli';
+import { knOutputChannel } from '../../src/output/knOutputChannel';
 
 const rewiredCLI = rewire('../../src/cli/cmdCli');
 
@@ -48,7 +49,7 @@ suite('Command CLI', () => {
   });
   test('should show the output channel when showOutputChannel is called', () => {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-    const spy = sandbox.spy(rewiredCmdCli.knOutputChannel, 'show');
+    const spy = sandbox.spy(knOutputChannel, 'show');
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
     // eslint-disable-next-line
     rewiredCmdCli.showOutputChannel();

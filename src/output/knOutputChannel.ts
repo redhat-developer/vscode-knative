@@ -52,3 +52,5 @@ export class KnOutputChannel implements OutputChannel {
     }
   }
 }
+
+export const knOutputChannel: OutputChannel = new KnOutputChannel();

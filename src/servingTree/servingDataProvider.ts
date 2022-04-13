@@ -29,12 +29,10 @@ import { KnativeServices } from '../knative/knativeServices';
 import { Revision, Items, Traffic } from '../knative/revision';
 import * as svc from '../knative/service';
 import { Service, CreateService, UpdateService } from '../knative/service';
-import { KnOutputChannel, OutputChannel } from '../output/knOutputChannel';
+import { knOutputChannel } from '../output/knOutputChannel';
 
 export class ServingDataProvider implements TreeDataProvider<ServingTreeItem | EventingTreeItem> {
   public knExecutor = new Execute();
-
-  private knOutputChannel: OutputChannel = new KnOutputChannel();
 
   private onDidChangeTreeDataEmitter: EventEmitter<ServingTreeItem | undefined | null> = new EventEmitter<
     ServingTreeItem | undefined | null
@@ -78,8 +76,9 @@ export class ServingDataProvider implements TreeDataProvider<ServingTreeItem | E
   /**
    * Display info in the Knative Output channel/window
    */
+  // eslint-disable-next-line class-methods-use-this
   showOutputChannel(): void {
-    this.knOutputChannel.show();
+    knOutputChannel.show();
   }
 
   /**
