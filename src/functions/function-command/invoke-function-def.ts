@@ -229,9 +229,9 @@ export const invokeDataFile: WizardPageSectionDefinition = {
     },
     {
       id: invokeFunctionID.invoke_data_file,
-      label: 'data',
+      label: 'Data',
       type: 'file-picker',
-      placeholder: 'Path to a file to use as data.',
+      placeholder: 'Provide a file path to be used as data.',
       dialogOptions: {
         canSelectMany: false,
         canSelectFiles: true,
