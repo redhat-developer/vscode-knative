@@ -54,7 +54,6 @@ node('rhel8'){
 
   if(params.UPLOAD_LOCATION) {
     stage('Snapshot') {
-      def filesToPush = findFiles(glob: '**.vsix')
       sh "sftp -C ${UPLOAD_LOCATION}/snapshots/vscode-knative/ <<< \$'put -p *.vsix*'"
     }
   }
