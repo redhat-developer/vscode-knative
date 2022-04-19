@@ -78,7 +78,7 @@ export class FuncAPI {
   }
 
   static deployFunc(location: string, image: string): CliCommand {
-    const deployCommand = ['deploy', '-p', `${quote}${location}${quote}`, '-i', image];
+    const deployCommand = ['deploy', '-p', `${quote}${location}${quote}`, '-i', image, '-v'];
     return funcCliCommand(deployCommand);
   }
 
