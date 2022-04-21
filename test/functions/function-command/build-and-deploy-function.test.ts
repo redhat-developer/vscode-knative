@@ -8,6 +8,7 @@ import { Uri, window, workspace } from 'vscode';
 import * as chai from 'chai';
 import * as sinon from 'sinon';
 import * as sinonChai from 'sinon-chai';
+import { executeCmdCli } from '../../../src/cli/cmdCli';
 import { knExecutor } from '../../../src/cli/execute';
 import { FuncAPI } from '../../../src/cli/func-api';
 import { buildFunction, deployFunction } from '../../../src/functions/function-command/build-and-deploy-function';
@@ -37,6 +38,7 @@ suite('Build-And-Deploy', () => {
   setup(() => {
     workspaceFoldersStub = sandbox.stub(workspace, 'workspaceFolders').value([funcUri]);
     executeInTerminalStub = sandbox.stub(knExecutor, 'executeInTerminal');
+    sandbox.stub(executeCmdCli, 'executeExec').resolves({ error: 'error', stdout: undefined });
     showInputBoxStub = sandbox.stub(window, 'showInputBox');
   });
 
@@ -66,7 +68,7 @@ suite('Build-And-Deploy', () => {
       },
     ]);
     await deployFunction();
-    expect(executeInTerminalStub).calledOnceWith(FuncAPI.deployFunc(data.fsPath, 'docker.io/test/node-test:latest'));
+    expect(executeInTerminalStub).calledOnceWith(await FuncAPI.deployFunc(data.fsPath, 'docker.io/test/node-test:latest'));
   });
 
   test('return null if image is not provided', async () => {
