@@ -153,7 +153,7 @@ suite('Build-And-Deploy', () => {
     showInputBoxStub.onFirstCall().resolves('docker.io/test/node-test:latest');
     await buildFunction();
     expect(executeInTerminalStub).calledOnceWith(
-      FuncAPI.buildFunc(path.join(fixtureFolder, 'func-test1'), 'docker.io/test/node-test:latest'),
+      await FuncAPI.buildFunc(path.join(fixtureFolder, 'func-test1'), 'docker.io/test/node-test:latest'),
     );
   });
 

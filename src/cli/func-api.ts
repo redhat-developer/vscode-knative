@@ -69,12 +69,15 @@ export class FuncAPI {
     return funcCliCommand(createCommand);
   }
 
-  static buildFunc(location: string, image: string, builder?: string): CliCommand {
+  static async buildFunc(location: string, image: string, builder?: string): Promise<CliCommand> {
     let buildCommand: string[];
     if (builder) {
       buildCommand = ['build', '-p', `${quote}${location}${quote}`, '-i', image, '-b', builder];
     } else {
       buildCommand = ['build', '-p', `${quote}${location}${quote}`, '-i', image];
+    }
+    if (await checkOpenShiftCluster()) {
+      buildCommand.push('-r ""');
     }
     return funcCliCommand(buildCommand);
   }
