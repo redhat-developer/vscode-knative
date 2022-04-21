@@ -152,6 +152,9 @@ export async function deployFunction(context?: FunctionNode): Promise<void> {
   // eslint-disable-next-line @typescript-eslint/no-floating-promises
   functionExplorer.refresh();
   await knExecutor.executeInTerminal(
-    FuncAPI.deployFunc(context ? context.contextPath.fsPath : selectedFolderPick.workspaceFolder.uri.fsPath, funcData.image),
+    await FuncAPI.deployFunc(
+      context ? context.contextPath.fsPath : selectedFolderPick.workspaceFolder.uri.fsPath,
+      funcData.image,
+    ),
   );
 }

@@ -25,6 +25,10 @@ export class KubectlAPI {
     return kubectlCliCommand(a);
   }
 
+  static checkOcpCluster(): CliCommand {
+    return kubectlCliCommand(['get', 'clusterversion']);
+  }
+
   /**
    * Prints the simple version info for kubectl.
    */

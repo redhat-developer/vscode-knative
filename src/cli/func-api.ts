@@ -7,6 +7,8 @@ import * as path from 'path';
 // eslint-disable-next-line import/no-cycle
 import { CliCommand, CmdCli, createCliCommand } from './cmdCli';
 // eslint-disable-next-line import/no-cycle
+import { checkOpenShiftCluster } from '../check-cluster';
+// eslint-disable-next-line import/no-cycle
 import { ParametersType } from '../functions/function-command/invoke-function';
 import { quote } from '../util/quote';
 
@@ -77,8 +79,11 @@ export class FuncAPI {
     return funcCliCommand(buildCommand);
   }
 
-  static deployFunc(location: string, image: string): CliCommand {
+  static async deployFunc(location: string, image: string): Promise<CliCommand> {
     const deployCommand = ['deploy', '-p', `${quote}${location}${quote}`, '-i', image, '-v'];
+    if (await checkOpenShiftCluster()) {
+      deployCommand.push('-r ""');
+    }
     return funcCliCommand(deployCommand);
   }
 
