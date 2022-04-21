@@ -379,6 +379,10 @@
           "when": "false"
         },
         {
+          "command": "function.deploy.Palette",
+          "when": "false"
+        },
+        {
           "command": "function.invoke",
           "when": "false"
         },
