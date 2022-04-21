@@ -147,7 +147,7 @@ export async function buildFunction(context?: FunctionNode): Promise<void> {
   // eslint-disable-next-line @typescript-eslint/no-floating-promises
   functionExplorer.refresh();
   await knExecutor.executeInTerminal(
-    FuncAPI.buildFunc(
+    await FuncAPI.buildFunc(
       context ? context.contextPath.fsPath : selectedFolderPick.workspaceFolder.uri.fsPath,
       funcData.image,
       funcData.builder,
