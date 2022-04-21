@@ -61,7 +61,7 @@ async function functionImage(
     const funcYaml: string = await fs.readFile(path.join(selectedFolderPick.fsPath, 'func.yaml'), 'utf-8');
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     funcData = yaml.safeLoadAll(funcYaml);
-    if (funcData?.[0].namespace !== namespace && funcName) {
+    if (funcData?.[0].namespace.trim() && funcData?.[0].namespace !== namespace && funcName) {
       checkNamespace = await vscode.window.showInformationMessage(
         `Function namespace (declared in func.yaml) is different from the current active namespace. Deploy function ${funcName} to namespace ${namespace}?`,
         'Ok',
