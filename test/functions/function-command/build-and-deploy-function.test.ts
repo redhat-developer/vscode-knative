@@ -9,9 +9,12 @@ import * as chai from 'chai';
 import * as sinon from 'sinon';
 import * as sinonChai from 'sinon-chai';
 import { executeCmdCli } from '../../../src/cli/cmdCli';
+import { FunctionContextType } from '../../../src/cli/config';
 import { knExecutor } from '../../../src/cli/execute';
 import { FuncAPI } from '../../../src/cli/func-api';
+import { FuncImpl } from '../../../src/functions/func';
 import { buildFunction, deployFunction } from '../../../src/functions/function-command/build-and-deploy-function';
+import { TestItem } from '../testFunctionitem';
 
 const { expect } = chai;
 chai.use(sinonChai);
@@ -21,9 +24,10 @@ suite('Build-And-Deploy', () => {
   let workspaceFoldersStub: sinon.SinonStub;
   let executeInTerminalStub: sinon.SinonStub;
   let showInputBoxStub: sinon.SinonStub;
+  let showInformationMessageStub: sinon.SinonStub;
   const fixtureFolder = path.join(__dirname, '..', '..', '..', '..', 'test', 'fixtures').normalize();
   const funcUri = Uri.parse(path.join(fixtureFolder, 'func-test'));
-
+  const contextNode = new TestItem(FuncImpl.ROOT, 'func1', FunctionContextType.FUNCTION, null);
   const data = {
     _formatted: null,
     _fsPath: null,
@@ -37,6 +41,7 @@ suite('Build-And-Deploy', () => {
 
   setup(() => {
     workspaceFoldersStub = sandbox.stub(workspace, 'workspaceFolders').value([funcUri]);
+    showInformationMessageStub = sandbox.stub(window, 'showInformationMessage');
     executeInTerminalStub = sandbox.stub(knExecutor, 'executeInTerminal');
     sandbox.stub(executeCmdCli, 'executeExec').resolves({ error: 'error', stdout: undefined });
     showInputBoxStub = sandbox.stub(window, 'showInputBox');
@@ -67,8 +72,26 @@ suite('Build-And-Deploy', () => {
         },
       },
     ]);
-    await deployFunction();
-    expect(executeInTerminalStub).calledOnceWith(await FuncAPI.deployFunc(data.fsPath, 'docker.io/test/node-test:latest'));
+    contextNode.contextPath = {
+      authority: '',
+      fragment: '',
+      path: path.join(fixtureFolder, 'func-test'),
+      query: '',
+      scheme: 'file',
+      fsPath: path.join(fixtureFolder, 'func-test'),
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      with: (change: { scheme?: string; authority?: string; path?: string; query?: string; fragment?: string }): Uri => {
+        throw new Error('Function not implemented.');
+      },
+      toJSON: () => {
+        throw new Error('Function not implemented.');
+      },
+    };
+    showInformationMessageStub.resolves('Ok');
+    await deployFunction(contextNode);
+    expect(executeInTerminalStub).calledOnceWith(
+      await FuncAPI.deployFunc(data.fsPath, 'docker.io/test/node-test:latest', 'root'),
+    );
   });
 
   test('return null if image is not provided', async () => {
@@ -87,7 +110,8 @@ suite('Build-And-Deploy', () => {
       },
     ]);
     showInputBoxStub.resolves();
-    const result = await deployFunction();
+    showInformationMessageStub.resolves('Cancel');
+    const result = await deployFunction(contextNode);
     expect(result).equal(null);
   });
 

@@ -79,8 +79,8 @@ export class FuncAPI {
     return funcCliCommand(buildCommand);
   }
 
-  static async deployFunc(location: string, image: string): Promise<CliCommand> {
-    const deployCommand = ['deploy', '-p', `${quote}${location}${quote}`, '-i', image, '-v'];
+  static async deployFunc(location: string, image: string, namespace: string): Promise<CliCommand> {
+    const deployCommand = ['deploy', '-p', `${quote}${location}${quote}`, '-i', image, '-v', '-n', namespace];
     if (await checkOpenShiftCluster()) {
       deployCommand.push('-r ""');
     }

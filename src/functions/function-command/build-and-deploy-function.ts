@@ -48,13 +48,29 @@ async function functionBuilder(image: string, name: string): Promise<ImageAndBui
   return { image, builder };
 }
 
-async function functionImage(selectedFolderPick: vscode.Uri, skipBuilder?: boolean): Promise<ImageAndBuild> {
+async function functionImage(
+  selectedFolderPick: vscode.Uri,
+  skipBuilder?: boolean,
+  funcName?: string,
+  namespace?: string,
+): Promise<ImageAndBuild> {
   const imageList: string[] = [];
   let funcData: FuncContent[];
+  let checkNamespace;
   try {
     const funcYaml: string = await fs.readFile(path.join(selectedFolderPick.fsPath, 'func.yaml'), 'utf-8');
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     funcData = yaml.safeLoadAll(funcYaml);
+    if (funcData?.[0].namespace !== namespace && funcName) {
+      checkNamespace = await vscode.window.showInformationMessage(
+        `Function namespace (declared in func.yaml) is different from the current active namespace. Deploy function ${funcName} to namespace ${namespace}?`,
+        'Ok',
+        'Cancel',
+      );
+    }
+    if (checkNamespace === 'Cancel') {
+      return null;
+    }
     if (funcData?.[0]?.image && imageRegex.test(funcData?.[0].image)) {
       imageList.push(funcData[0].image);
     }
@@ -144,7 +160,12 @@ export async function deployFunction(context?: FunctionNode): Promise<void> {
   if (!selectedFolderPick && !context) {
     return null;
   }
-  const funcData = await functionImage(context ? context.contextPath : selectedFolderPick.workspaceFolder.uri, true);
+  const funcData = await functionImage(
+    context ? context.contextPath : selectedFolderPick.workspaceFolder.uri,
+    true,
+    context.getName(),
+    context?.getParent()?.getName(),
+  );
   if (!funcData) {
     return null;
   }
@@ -155,6 +176,7 @@ export async function deployFunction(context?: FunctionNode): Promise<void> {
     await FuncAPI.deployFunc(
       context ? context.contextPath.fsPath : selectedFolderPick.workspaceFolder.uri.fsPath,
       funcData.image,
+      context?.getParent()?.getName(),
     ),
   );
 }
