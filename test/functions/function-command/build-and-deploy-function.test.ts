@@ -109,8 +109,22 @@ suite('Build-And-Deploy', () => {
         },
       },
     ]);
+    contextNode.contextPath = {
+      authority: '',
+      fragment: '',
+      path: path.join(fixtureFolder, 'func-test1'),
+      query: '',
+      scheme: 'file',
+      fsPath: path.join(fixtureFolder, 'func-test1'),
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      with: (change: { scheme?: string; authority?: string; path?: string; query?: string; fragment?: string }): Uri => {
+        throw new Error('Function not implemented.');
+      },
+      toJSON: () => {
+        throw new Error('Function not implemented.');
+      },
+    };
     showInputBoxStub.resolves();
-    showInformationMessageStub.resolves('Cancel');
     const result = await deployFunction(contextNode);
     expect(result).equal(null);
   });
