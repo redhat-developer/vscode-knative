@@ -10,10 +10,10 @@ import { KubectlAPI } from './cli/kubectl-api';
 export async function checkOpenShiftCluster(): Promise<boolean> {
   try {
     const result = await executeCmdCli.executeExec(KubectlAPI.checkOcpCluster());
-    if (result.error) {
-      return false;
+    if (result?.stdout?.trim()) {
+      return true;
     }
-    return true;
+    return false;
   } catch (err) {
     return false;
   }
