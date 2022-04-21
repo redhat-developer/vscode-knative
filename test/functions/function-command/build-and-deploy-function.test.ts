@@ -111,18 +111,13 @@ suite('Build-And-Deploy', () => {
       },
     ]);
     showInputBoxStub.onFirstCall().resolves('docker.io/test/node-test:latest');
-    showInputBoxStub.onSecondCall().resolves('gcr.io/paketo-buildpacks/builder:base');
     await buildFunction();
     expect(executeInTerminalStub).calledOnceWith(
-      FuncAPI.buildFunc(
-        path.join(fixtureFolder, 'func-test1'),
-        'docker.io/test/node-test:latest',
-        'gcr.io/paketo-buildpacks/builder:base',
-      ),
+      FuncAPI.buildFunc(path.join(fixtureFolder, 'func-test1'), 'docker.io/test/node-test:latest'),
     );
   });
 
-  test('return null if builder image not provided', async () => {
+  test('return null if build image not provided', async () => {
     workspaceFoldersStub.onFirstCall().value([
       {
         uri: {
@@ -137,8 +132,7 @@ suite('Build-And-Deploy', () => {
         },
       },
     ]);
-    showInputBoxStub.onFirstCall().resolves('docker.io/test/node-test:latest');
-    showInputBoxStub.onSecondCall().resolves('');
+    showInputBoxStub.onFirstCall().resolves('');
     const result = await buildFunction();
     expect(result).equal(null);
   });

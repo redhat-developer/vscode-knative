@@ -123,7 +123,7 @@ export async function buildFunction(context?: FunctionNode): Promise<void> {
   if (!selectedFolderPick && !context) {
     return null;
   }
-  const funcData = await functionImage(context ? context.contextPath : selectedFolderPick.workspaceFolder.uri);
+  const funcData = await functionImage(context ? context.contextPath : selectedFolderPick.workspaceFolder.uri, true);
   if (!funcData) {
     return null;
   }
