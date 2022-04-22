@@ -8,7 +8,7 @@ There are only a few guidelines that we need contributors to follow.
 ## First Time Setup
 1. Install prerequisites:
    * latest [Visual Studio Code](https://code.visualstudio.com/)
-   * [Node.js](https://nodejs.org/) v12.0.0 or higher
+   * [Node.js](https://nodejs.org/) v16.0.0 or higher
 2. Fork and clone the repository
 3. `cd vscode-knative`
 4. Install the dependencies:
@@ -19,7 +19,7 @@ There are only a few guidelines that we need contributors to follow.
 5. Open the folder in VS Code
 
 ## Developing the extension
-We strongly suggest that you use `esbenp.prettier-vscode` and `dbaeumer.vscode-eslint` to ease the development of the extension. We are using multiple tools to keep codebase clean, maintainable and code readable. 
+We strongly suggest that you use [Prettier](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode) and [Eslint](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint) to ease the development of the extension. We are using multiple tools to keep codebase clean, maintainable and code readable.
 1. Once you have all package dependencies installed (`npm install`) you can compile the extension, so you are sure you have all the dependencies installed correctly:
     ```
     npm run build
@@ -44,6 +44,6 @@ We strongly suggest that you use `esbenp.prettier-vscode` and `dbaeumer.vscode-e
 3. `vscode-knative-<version>.vsix` file is created. Install it by following the instructions [here](https://code.visualstudio.com/docs/editor/extension-gallery#_install-from-a-vsix).
 
 
-4. Once the extension is installed and reloaded, there will be an Knative Icon on the View Container. 
+4. Once the extension is installed and reloaded, there will be an Knative Icon on the View Container.
 
 > If you have any questions or run into any problems, please post an issue - we'll be very happy to help.
