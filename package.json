@@ -2,7 +2,7 @@
   "name": "vscode-knative",
   "displayName": "Knative",
   "description": "Knative & Serverless Functions extension for VSCode",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "license": "MIT",
   "publisher": "redhat",
   "preview": true,
@@ -14,7 +14,7 @@
   "keywords": [
     "knative",
     "serverless",
-    "functions"
+    "functions",
     "eventing",
     "kn",
     "openshift",
