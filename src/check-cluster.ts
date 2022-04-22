@@ -4,16 +4,16 @@
  *  Licensed under the MIT License. See LICENSE file in the project root for license information.
  *-----------------------------------------------------------------------------------------------*/
 
-import { executeCmdCli } from './cli/cmdCli';
+import { knExecutor } from './cli/execute';
 import { KubectlAPI } from './cli/kubectl-api';
 
 export async function checkOpenShiftCluster(): Promise<boolean> {
   try {
-    const result = await executeCmdCli.executeExec(KubectlAPI.checkOcpCluster());
-    if (result.error) {
-      return false;
+    const result = await knExecutor.execute(KubectlAPI.checkOcpCluster(), process.cwd(), false);
+    if (result?.stdout?.trim()) {
+      return true;
     }
-    return true;
+    return false;
   } catch (err) {
     return false;
   }
