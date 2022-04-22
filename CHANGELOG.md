@@ -5,6 +5,29 @@ All notable changes to the "vscode-knative" extension will be documented in this
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 1.1.0 (2022/04/22)
+
+-  [#153](https://github.com/redhat-developer/vscode-knative/issues/153) Add command to see knative version.
+-  [#183](https://github.com/redhat-developer/vscode-knative/pull/183) Update function version.
+-  [#188](https://github.com/redhat-developer/vscode-knative/issues/188) Functions related view should be under Knative next to Serving and Eventing.
+-  [#195](https://github.com/redhat-developer/vscode-knative/issues/195) Functions: icon for a namespace is confusing.
+-  [#208](https://github.com/redhat-developer/vscode-knative/pull/208) Update and fix UI tests failing on GA CI.
+-  [#193](https://github.com/redhat-developer/vscode-knative/issues/193) Functions: The view in VSCode should be named Functions.
+-  [#185](https://github.com/redhat-developer/vscode-knative/issues/185) Functions: error message when creating a duplicated Function is not ideal.
+-  [#215](https://github.com/redhat-developer/vscode-knative/issues/215) Add UI test covering UI elements of Function section and downloading kn func cli.
+-  [#189](https://github.com/redhat-developer/vscode-knative/issues/189) Functions: not able to add Configuration to not yet deployed Function.
+-  [#194](https://github.com/redhat-developer/vscode-knative/issues/194) Knative plugin prompts users to select a Workspace after k8s namespace is being switched with Knative Functions plugin selected.
+-  [#207](https://github.com/redhat-developer/vscode-knative/issues/207) Add support for kn client for mac M1 user.
+-  [#220](https://github.com/redhat-developer/vscode-knative/issues/220) Replace warning message with info message.
+-  [#219](https://github.com/redhat-developer/vscode-knative/issues/219) The tooltip label should have multiple entries in a new line.
+-  [#181](https://github.com/redhat-developer/vscode-knative/issues/181) Allow invoke feature for functions.
+-  [#224](https://github.com/redhat-developer/vscode-knative/issues/224) UI element is broken for invoke function.
+-  [#218](https://github.com/redhat-developer/vscode-knative/issues/218) Update func-cli to 0.23.1.
+-  [#192](https://github.com/redhat-developer/vscode-knative/issues/192) Functions: Undeploy operation log and notifications should be improved.
+-  [#209](https://github.com/redhat-developer/vscode-knative/issues/209) UI elements are broken and not aligned with the layout.
+-  [#225](https://github.com/redhat-developer/vscode-knative/issues/225) Fix Jenkins file rsync issue.
+
+
 ## 1.0.0 (2022/02/21)
 
 - Add support for Knative Functions
