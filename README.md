@@ -3,7 +3,7 @@
 [![Unit Tests Code Coverage](https://codecov.io/gh/redhat-developer/vscode-knative/branch/main/graph/badge.svg)](https://codecov.io/gh/redhat-developer/vscode-knative/branch/main/graph/badge.svg)
 [![License](https://img.shields.io/badge/license-MIT-brightgreen.svg)](https://github.com/redhat-developer/vscode-knative/blob/master/LICENSE)
 
-# Knative Serving & Eventing for Visual Studio Code
+# Knative & Serverless Functions for Visual Studio Code
 
 [Knative](https://knative.tips/intro/knative/) (pronounced kay-native) is a set of open source components for Kubernetes that implements functionality to:
 
@@ -12,27 +12,16 @@
 
 on Kubernetes clusters.
 
-This extension for Knative provides the app developer the tools and experience needed when working with Knative on a Kubernetes cluster. Using this extension, developers can view and deploy their applications in a serverless way.
-
-<!-- ## Features
-
-Describe specific features of your extension including screenshots of your extension in action. Image paths are relative to this README file.
-
-For example if there is an image subfolder under your extension project workspace:
-
-\!\[feature X\]\(images/feature-x.png\)
-
-> Tip: Many popular extensions utilize animations. This is an excellent way to show off your extension! We recommend short, focused animations that are easy to follow. -->
-
+This extension for Knative provides the app developer the tools and experience needed when working with Knative & Serverless Functions on a Kubernetes cluster. Using this extension, developers can view and deploy their applications in a serverless way.
 ## Requirements
 
 * YAML is validated using the [VSCode-YAML](https://marketplace.visualstudio.com/items?itemName=redhat.vscode-yaml)
-  
-* Login in to a Kubernetes cluster is done via the [Kubernetes extension](https://marketplace.visualstudio.com/items?itemName=ms-kubernetes-tools.vscode-kubernetes-tools) (ms-kubernetes-tools.vscode-kubernetes-tools). 
+
+* Login in to a Kubernetes cluster is done via the [Kubernetes extension](https://marketplace.visualstudio.com/items?itemName=ms-kubernetes-tools.vscode-kubernetes-tools) (ms-kubernetes-tools.vscode-kubernetes-tools).
 
   > NOTE: You will need to have the [kubeconfig](https://kubernetes.io/docs/concepts/configuration/organize-cluster-access-kubeconfig/#the-kubeconfig-environment-variable) for the cluster that you are accessing stored locally.
 
-*  Knative uses [kn cli](https://github.com/knative/client) and [func cli](https://github.com/knative-sandbox/kn-plugin-func). The extension will offer to download and install the dependencies if needed.
+*  Knative uses [kn cli](https://github.com/knative/client) `1.3.1` and [func cli](https://github.com/knative-sandbox/kn-plugin-func) `0.23.1`. The extension will offer to download and install the dependencies if needed.
 
 ## Extension Settings
 
@@ -74,54 +63,30 @@ This extension contributes two views (Knative and Functions) and the following s
 * `Knative: Remove Config from Function`: Allow to customize a function by removing an environment variable or a volume
 * `Knative: Open in Browser`: Open the deployed function in your browser
 * `Knative: Refresh View`: Refresh the Function Tree View
-
-## Known Issues
-
-> BUGS: Please check the [issues](https://github.com/redhat-developer/vscode-knative/issues) and report any you find.
-* Limited features due to Alpha level of development.
-
-## Contributing
-
-> To learn how to contribute, please see this [guide](https://github.com/redhat-developer/vscode-knative/blob/main/CONTRIBUTING.md).
-
 ## Release Notes
 
 > See [CHANGELOG](CHANGELOG.md) for details.
 
-### 0.9.0
+## Contributing
 
--  Add Eventing tree and display.
+This is an open source project open to anyone. This project welcomes contributions and suggestions!
 
-### 0.8.0
+For information on getting started, refer to the [CONTRIBUTING instructions](CONTRIBUTING.md).
 
--  Add schema validation for Service YAML files.
+Download the most recent `knative-<version>.vsix` file from the [release](https://github.com/redhat-developer/vscode-knative/releases) and install it by following the instructions [here](https://code.visualstudio.com/docs/editor/extension-gallery#_install-from-a-vsix). Stable releases are archived [here](https://download.jboss.org/jbosstools/adapters/stable/vscode-knative/).
 
-### 0.7.0
+## Feedback & Questions
 
-- Edit Service YAML files and Apply them to the cluster.
+If you discover an issue please file a bug and we will fix it as soon as possible.
+* File a bug in [GitHub Issues](https://github.com/redhat-developer/vscode-knative/issues).
+* Open a [Discussion on GitHub](https://github.com/redhat-developer/vscode-knative/discussions).
 
-### 0.6.0
+## License
 
-- Display and Add Tags to Revisions
+MIT, See [LICENSE](LICENSE) for more information.
 
-### 0.5.0
+## Data and telemetry
 
-- Display Traffic percentage on the Revisions
+The Knative extension for Visual Studio Code collects anonymous [usage data](USAGE_DATA.md) and sends it to Red Hat servers to help improve our products and services. Read our [privacy statement](https://developers.redhat.com/article/tool-data-collection) to learn more. This extension respects the `redhat.telemetry.enabled` setting which you can learn more about at https://github.com/redhat-developer/vscode-commons#how-to-disable-telemetry-reporting
 
-### 0.4.0
 
-- Display yaml file for Services and Revisions when selected
-- Support Deletion of Services and Revisions
-
-### 0.3.0
-
-- Display Revisions for each Service
-
-### 0.2.0
-
-- Create Service (Deploy Container Image)
-
-### 0.1.0
-
-- Initial release of the Knative extension
-- Display a list of Services
