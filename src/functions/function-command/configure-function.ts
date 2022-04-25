@@ -9,6 +9,7 @@ import { selectFunctionFolder } from './build-and-deploy-function';
 import { CliCommand } from '../../cli/cmdCli';
 import { knExecutor } from '../../cli/execute';
 import { FuncAPI } from '../../cli/func-api';
+import { telemetryLog } from '../../telemetry';
 import { FunctionNode } from '../function-tree-view/functionsTreeItem';
 
 export const enum ConfigAction {
@@ -21,15 +22,19 @@ export const VOLUMES = 'Volumes';
 
 function getConfigEnvsCliCommand(action: ConfigAction, funcPath: string) {
   if (action === ConfigAction.Add) {
+    telemetryLog('Function_add_environment_variable', 'Click on add environment variable command');
     return FuncAPI.addEnvironmentVariable(funcPath);
   }
+  telemetryLog('Function_remove_environment_variable', 'Click on remove environment variable command');
   return FuncAPI.removeEnvironmentVariable(funcPath);
 }
 
 function getConfigVolumesCliCommand(action: ConfigAction, funcPath: string) {
   if (action === ConfigAction.Add) {
+    telemetryLog('Function_add_volume', 'Click on add volume command');
     return FuncAPI.addVolumes(funcPath);
   }
+  telemetryLog('Function_remove_volume', 'Click on remove volume command');
   return FuncAPI.removeVolumes(funcPath);
 }
 
