@@ -7,6 +7,7 @@
 import * as vscode from 'vscode';
 import { CliExitData, executeCmdCli } from '../../cli/cmdCli';
 import { FuncAPI } from '../../cli/func-api';
+import { telemetryLog, telemetryLogError } from '../../telemetry';
 import { getStderrString } from '../../util/stderrstring';
 import { FunctionNode } from '../function-tree-view/functionsTreeItem';
 import { functionExplorer } from '../functionsExplorer';
@@ -36,12 +37,14 @@ export async function undeployFunction(context: FunctionNode): Promise<string> {
         vscode.window.showErrorMessage(
           `Failed to undeploy function ${context.getName()} - error ${getStderrString(result.error)}`,
         );
+        telemetryLogError('Function_undeploy_error', getStderrString(result.error));
         return null;
       }
       // eslint-disable-next-line @typescript-eslint/no-floating-promises
       vscode.window.showInformationMessage(`Function ${context.getName()} successfully undeployed`);
       // eslint-disable-next-line @typescript-eslint/no-floating-promises
       functionExplorer.refresh();
+      telemetryLog('Function_successfully_undeploy', context.getName());
       return null;
     },
   );
