@@ -48,8 +48,6 @@ node('rhel8'){
     writeJSON file: 'package.json', json: packageJson, pretty: 4
     sh "vsce package -o knative-${packageJson.version}-${env.BUILD_NUMBER}.vsix"
     sh "sha256sum *.vsix > knative-${packageJson.version}-${env.BUILD_NUMBER}.vsix.sha256"
-    sh "npm pack && mv vscode-knative-${packageJson.version}.tgz knative-${packageJson.version}-${env.BUILD_NUMBER}.tgz"
-    sh "sha256sum *.tgz > knative-${packageJson.version}-${env.BUILD_NUMBER}.tgz.sha256"
   }
 
   if(params.UPLOAD_LOCATION) {
@@ -71,8 +69,7 @@ node('rhel8'){
 
       stage "Promote the build to stable"
       sh "sftp -C ${UPLOAD_LOCATION}/stable/vscode-knative/ <<< \$'put -p *.vsix*'"
-      sh "sftp -C ${UPLOAD_LOCATION}/stable/vscode-knative/ <<< \$'put -p *.tgz*'"
-      archive includes:"**.vsix*,**.tgz*"
+      archive includes:"**.vsix*
     }
   }
 }
