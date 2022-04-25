@@ -39,6 +39,7 @@ import { CliCommand, CliExitData, executeCmdCli } from '../../cli/cmdCli';
 import { FuncAPI } from '../../cli/func-api';
 // eslint-disable-next-line import/no-cycle
 import { contextGlobalState } from '../../extension';
+import { telemetryLog, telemetryLogError } from '../../telemetry';
 import { getStderrString } from '../../util/stderrstring';
 // eslint-disable-next-line import/no-cycle
 import { FunctionNode } from '../function-tree-view/functionsTreeItem';
@@ -399,9 +400,10 @@ export const def: WizardDefinition = {
           if (result.error) {
             // eslint-disable-next-line @typescript-eslint/no-floating-promises
             vscode.window.showErrorMessage(`Fail invoke Function: ${getStderrString(result.error)}`);
+            telemetryLogError('Invoke_error', getStderrString(result.error));
             return false;
           }
-
+          telemetryLog('Successfully_invoked', functionName);
           // eslint-disable-next-line @typescript-eslint/no-floating-promises
           vscode.window.showInformationMessage(`Function ${functionName} successfully invoked.`);
           return true;
