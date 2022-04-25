@@ -69,7 +69,7 @@ node('rhel8'){
 
       stage "Promote the build to stable"
       sh "sftp -C ${UPLOAD_LOCATION}/stable/vscode-knative/ <<< \$'put -p *.vsix*'"
-      archive includes:"**.vsix*
+      archive includes:"**.vsix*"
     }
   }
 }
