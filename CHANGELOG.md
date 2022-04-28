@@ -5,6 +5,12 @@ All notable changes to the "vscode-knative" extension will be documented in this
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+# 1.1.1 (2022/04/25)
+
+- [#247](https://github.com/redhat-developer/vscode-knative/pull/247) Add Telemetry collection information
+- [#248](https://github.com/redhat-developer/vscode-knative/pull/248) Update vscode-redhat-telemetry to 0.4.2
+- [#249](https://github.com/redhat-developer/vscode-knative/pull/249) Remove .tgz file from build
+
 ## 1.1.0 (2022/04/22)
 
 -  [#153](https://github.com/redhat-developer/vscode-knative/issues/153) Add command to see knative version.
@@ -50,13 +56,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 -  Fix Notification pop up for downloading kn cli sometimes does not appear #125
 -  Fix Severing tree not loads when service has a not-existing image #133
 -  Fix Cannot add service from an image URL in latest Knative (0.8.1) #109
--  Fix Error while quickly switching editor between revisions #66 
+-  Fix Error while quickly switching editor between revisions #66
 -  Fix Wrong display of tag #130
--  Fix Add tag on service command failed #129 
--  Fix Create closes tree kind #52 
--  Fix Error/failure report propagation into vscode-knative from cluster #79 
--  Fix When user is not logged in to the current cluster extension shows 'undefinedUnauthorized' error message #68 
--  Fix There is a slightly different behavior between how Kubernetes ext. and Knative ext. search for kubeconfig file #78 
+-  Fix Add tag on service command failed #129
+-  Fix Create closes tree kind #52
+-  Fix Error/failure report propagation into vscode-knative from cluster #79
+-  Fix When user is not logged in to the current cluster extension shows 'undefinedUnauthorized' error message #68
+-  Fix There is a slightly different behavior between how Kubernetes ext. and Knative ext. search for kubeconfig file #78
 -  Fix Import a Service kind/story #86
 -  Fix Error if the connected cluster does not have knative #65
 -  Fix Wrong error reporting if Knative Eventing is not installed #128
@@ -110,7 +116,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Updated version of the `kn` cli to 0.14.0
 - Removed double name displayed in the tree
-- Added support for refresh when kubeconfig ENV changes 
+- Added support for refresh when kubeconfig ENV changes
 
 ## 0.4.0 (2020/05/11)
 

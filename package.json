@@ -2,7 +2,7 @@
   "name": "vscode-knative",
   "displayName": "Knative",
   "description": "Knative & Serverless Functions extension for VSCode",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "license": "MIT",
   "publisher": "redhat",
   "preview": true,
@@ -686,7 +686,7 @@
         },
         "vs-knative": {
           "type": "object",
-          "description": "knative configuration",
+          "description": "Knative configuration",
           "properties": {
             "vs-knative.outputFormat": {
               "enum": [
@@ -694,7 +694,7 @@
                 "yaml"
               ],
               "type": "string",
-              "description": "Output format for knative specs. One of 'json' or 'yaml' (default)."
+              "description": "Output format for Knative specs. One of 'json' or 'yaml' (default)."
             }
           },
           "default": {

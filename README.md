@@ -40,7 +40,7 @@ This extension contributes two views (Knative and Functions) and the following s
 
 ## Commands and features
 
-`vscode-knative` supports a number of commands for interacting with Knative and Knative Functions; these are accessible via the tree context menu and/or the command menu (Ctrl+Shift+P).
+`vscode-knative` supports a number of commands for interacting with Knative and Knative Functions; these are accessible via the tree context menu and/or via the command palette (`Cmd+Shift+P` <kbd>⌘⇧P</kbd> on macOS or `Ctrl+Shift+P` <kbd>⌃⇧P</kbd> on Windows and Linux)
 
 ### Knative
 
