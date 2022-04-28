@@ -135,6 +135,7 @@
     "onCommand:eventing.explorer.openFile",
     "onCommand:knative.service.list",
     "onCommand:service.explorer.delete",
+    "onCommand:service.explorer.create",
     "onCommand:service.explorer.edit",
     "onCommand:service.explorer.openFile",
     "onCommand:service.explorer.refresh",
