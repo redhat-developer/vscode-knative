@@ -41,7 +41,7 @@ suite('Kubectl API commands that will', () => {
   suite('Print version', () => {
     test('should return command for printing the version of Kubectl', () => {
       const command: CliCommand = {
-        cliArguments: ['version', '--short', '--client'],
+        cliArguments: ['version', '-ojson'],
         cliCommand: 'kubectl',
       };
       expect(KubectlAPI.printVersion().cliArguments).to.deep.equal(command.cliArguments);
