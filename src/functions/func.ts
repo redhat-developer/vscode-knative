@@ -35,7 +35,7 @@ export class FuncImpl implements Func {
   }
 
   public async _getFunctionsNodes(): Promise<FunctionNode[]> {
-    if (!CmdCliConfig.tools.func.location) {
+    if (!CmdCliConfig.getCliLocation('func')) {
       return null;
     }
     const functionsTree: FunctionNode[] = [];

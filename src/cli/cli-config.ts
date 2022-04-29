@@ -129,6 +129,10 @@ export class CmdCliConfig {
     return reqs;
   }
 
+  static getCliLocation(cmd: string): string {
+    return (CmdCliConfig.tools[cmd] as CliConfig)?.location;
+  }
+
   /**
    * This contains the knative cli config data needed to access and run the commands.
    */
