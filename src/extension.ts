@@ -62,6 +62,7 @@ export async function activate(extensionContext: vscode.ExtensionContext): Promi
   if (funcLocation) {
     // eslint-disable-next-line no-use-before-define
     sendVersionToTelemetry('knative.func.version', funcLocation);
+    functionExplorer.refresh();
   }
   const servingExplorer = new ServingExplorer();
   // register a content provider for the knative readonly scheme
