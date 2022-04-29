@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## 1.1.2 (2022/04/29)
 
-- [#251](https://github.com/redhat-developer/vscode-knative/pull/251) Fix service.explorer.create command.
+- [#251](https://github.com/redhat-developer/vscode-knative/pull/251) Fix create service activation command.
 
 ## 1.1.1 (2022/04/25)
 
