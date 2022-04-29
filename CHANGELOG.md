@@ -5,6 +5,10 @@ All notable changes to the "vscode-knative" extension will be documented in this
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 1.1.2 (2022/04/29)
+
+- [#251](https://github.com/redhat-developer/vscode-knative/pull/251) Fix service.explorer.create command.
+
 ## 1.1.1 (2022/04/25)
 
 - [#247](https://github.com/redhat-developer/vscode-knative/pull/247) Add Telemetry collection information
