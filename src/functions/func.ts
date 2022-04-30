@@ -13,7 +13,6 @@ import { getFunctionInfo } from './func-info';
 import { FunctionNode, FunctionNodeImpl } from './function-tree-view/functionsTreeItem';
 import { FuncContent, FunctionList } from './function-type';
 import { functionExplorer } from './functionsExplorer';
-import { CmdCliConfig } from '../cli/cli-config';
 import { CliExitData } from '../cli/cmdCli';
 import { FunctionContextType, FunctionStatus } from '../cli/config';
 import { knExecutor } from '../cli/execute';
@@ -35,9 +34,6 @@ export class FuncImpl implements Func {
   }
 
   public async _getFunctionsNodes(): Promise<FunctionNode[]> {
-    if (!CmdCliConfig.getCliLocation('func')) {
-      return null;
-    }
     const functionsTree: FunctionNode[] = [];
     const currentNamespace: string = await activeNamespace();
     let functionsNode: FunctionNode;

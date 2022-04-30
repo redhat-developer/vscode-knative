@@ -10,7 +10,6 @@ import * as fs from 'fs-extra';
 import * as sinon from 'sinon';
 import * as sinonChai from 'sinon-chai';
 import { TestItem } from './testFunctionitem';
-import { CmdCliConfig } from '../../src/cli/cli-config';
 import { FunctionContextType } from '../../src/cli/config';
 import { knExecutor } from '../../src/cli/execute';
 import { func, FuncImpl } from '../../src/functions/func';
@@ -36,7 +35,6 @@ suite('Function/Func', () => {
   });
 
   test('return function node tree view for namespace', async () => {
-    sandbox.stub(CmdCliConfig, 'getCliLocation').returns('testpath');
     executeStub.onFirstCall().resolves({
       stdout: JSON.stringify({
         contexts: [
