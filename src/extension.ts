@@ -164,7 +164,7 @@ async function checkClusterVersion(): Promise<void> {
       telemetryLog(
         'kubernetes_version',
         // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-        `kubernetes version: ${JSON.parse(result?.stdout).serverVersion.gitVersion}`,
+        `kubernetes version: ${JSON.parse(result?.stdout).serverVersion?.gitVersion}`,
       );
     }
   }
