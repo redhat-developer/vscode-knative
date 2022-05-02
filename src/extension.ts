@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-use-before-define */
 /* eslint-disable @typescript-eslint/no-floating-promises */
 /* eslint-disable import/no-cycle */
@@ -7,8 +8,12 @@
  *-----------------------------------------------------------------------------------------------*/
 
 import * as vscode from 'vscode';
+import * as k8s from 'vscode-kubernetes-tools-api';
+import { checkOpenShiftCluster } from './check-cluster';
 import { CmdCliConfig } from './cli/cli-config';
 import { createCliCommand, executeCmdCli } from './cli/cmdCli';
+import { knExecutor } from './cli/execute';
+import { KubectlAPI } from './cli/kubectl-api';
 import { knvfs, KN_RESOURCE_SCHEME } from './cli/virtualfs';
 import { CommandContext, setCommandContext } from './commands';
 import { openTreeItemInEditor } from './editor/knativeOpenTextDocument';
@@ -134,9 +139,35 @@ export async function activate(extensionContext: vscode.ExtensionContext): Promi
     eventingExplorer,
     functionExplorer,
   ];
+  // eslint-disable-next-line no-use-before-define
+  await checkClusterVersion();
+  const configurationApi = await k8s.extension.configuration.v1_1;
+  if (configurationApi.available) {
+    const confApi = configurationApi.api;
+    confApi.onDidChangeContext(async () => {
+      // eslint-disable-next-line no-use-before-define
+      await checkClusterVersion();
+    });
+  }
 
   // extensionContext.subscriptions.push(disposable);
   disposable.forEach((value) => extensionContext.subscriptions.push(value));
+}
+
+async function checkClusterVersion(): Promise<void> {
+  const ocpCluster = await checkOpenShiftCluster();
+  if (ocpCluster) {
+    telemetryLog('openshift_version', ocpCluster.items[0].status.desired.version);
+  } else {
+    const result = await knExecutor.execute(KubectlAPI.printVersion(), process.cwd(), false);
+    if (result?.stdout?.trim()) {
+      telemetryLog(
+        'kubernetes_version',
+        // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+        `kubernetes version: ${JSON.parse(result?.stdout).serverVersion.gitVersion}`,
+      );
+    }
+  }
 }
 
 async function sendVersionToTelemetry(commandId: string, cmd: string): Promise<void> {

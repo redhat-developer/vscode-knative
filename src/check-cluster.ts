@@ -7,23 +7,28 @@
 
 import { knExecutor } from './cli/execute';
 import { KubectlAPI } from './cli/kubectl-api';
-import { telemetryLog } from './telemetry';
 
-export async function checkOpenShiftCluster(checkClusterVersion?: boolean): Promise<boolean> {
+interface clusterVersion {
+  items: [
+    {
+      status: {
+        desired: {
+          version: string;
+        };
+      };
+    },
+  ];
+}
+
+export async function checkOpenShiftCluster(): Promise<clusterVersion> {
   try {
     const result = await knExecutor.execute(KubectlAPI.checkOcpCluster(), process.cwd(), false);
     if (result?.stdout?.trim()) {
-      if (checkClusterVersion) {
-        telemetryLog(
-          'openshift_version_on_deploy',
-          // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-          `openshift version: ${JSON.parse(result?.stdout).items[0].status.desired.version}`,
-        );
-      }
-      return true;
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+      return JSON.parse(result?.stdout);
     }
-    return false;
+    return null;
   } catch (err) {
-    return false;
+    return null;
   }
 }

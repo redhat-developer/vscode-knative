@@ -8,13 +8,9 @@
 import * as path from 'path';
 // eslint-disable-next-line import/no-cycle
 import { CliCommand, CmdCli, createCliCommand } from './cmdCli';
-// eslint-disable-next-line import/no-cycle
-import { knExecutor } from './execute';
-import { KubectlAPI } from './kubectl-api';
 import { checkOpenShiftCluster } from '../check-cluster';
 // eslint-disable-next-line import/no-cycle
 import { ParametersType } from '../functions/function-command/invoke-function';
-import { telemetryLog } from '../telemetry';
 import { quote } from '../util/quote';
 
 function funcCliCommand(cmdArguments?: string[]): CliCommand {
@@ -89,17 +85,8 @@ export class FuncAPI {
 
   static async deployFunc(location: string, image: string, namespace: string): Promise<CliCommand> {
     const deployCommand = ['deploy', '-p', `${quote}${location}${quote}`, '-i', image, '-v', '-n', namespace];
-    if (await checkOpenShiftCluster(true)) {
+    if (await checkOpenShiftCluster()) {
       deployCommand.push('-r ""');
-    } else {
-      const result = await knExecutor.execute(KubectlAPI.printVersion(), process.cwd(), false);
-      if (result?.stdout?.trim()) {
-        telemetryLog(
-          'kubernetes_version_on_deploy',
-          // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-          `kubernetes version: ${JSON.parse(result?.stdout).serverVersion.gitVersion}`,
-        );
-      }
     }
     return funcCliCommand(deployCommand);
   }
