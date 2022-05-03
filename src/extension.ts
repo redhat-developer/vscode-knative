@@ -175,9 +175,9 @@ async function sendVersionToTelemetry(commandId: string, cmd: string): Promise<v
   if (result.error) {
     telemetryLogError(commandId, result.error);
   }
-  if (commandId === 'knative.kn.version') {
+  if (commandId === 'knative.kn.version' && result.stdout) {
     telemetryLog(commandId, result.stdout);
-  } else {
+  } else if (result.stdout && commandId === 'knative.func.version') {
     telemetryLog(commandId, `Function Version: ${result.stdout}`);
   }
 }
