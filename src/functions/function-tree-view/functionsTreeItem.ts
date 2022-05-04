@@ -4,7 +4,7 @@
  *-----------------------------------------------------------------------------------------------*/
 
 import * as path from 'path';
-import { ProviderResult, QuickPickItem, TreeItemCollapsibleState, Uri } from 'vscode';
+import { ProviderResult, QuickPickItem, TreeItemCollapsibleState, Uri, Command as vsCommand } from 'vscode';
 import format = require('string-format');
 import { FunctionContextType, FunctionStatus } from '../../cli/config';
 // eslint-disable-next-line import/no-cycle
@@ -134,6 +134,19 @@ export class FunctionNodeImpl implements FunctionNode {
       return format(`Cluster is active?`, this);
     }
     return format(this.CONTEXT_DATA[this.contextValue].tooltip, this);
+  }
+
+  get command(): vsCommand | undefined {
+    const arrName = [
+      'localDeployFunctions',
+      'localFunctions',
+      'localFunctionsEnablement',
+      'notConnectedLocalFunctions',
+      'notConnectedLocalFunctionsEnablement',
+    ];
+    if (arrName.includes(this.contextValue)) {
+      return { command: 'function.openInEditor', title: 'Open In Editor', arguments: [this] };
+    }
   }
 
   get label(): string {

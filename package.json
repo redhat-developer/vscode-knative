@@ -138,6 +138,7 @@
     "onCommand:service.explorer.create",
     "onCommand:service.explorer.edit",
     "onCommand:service.explorer.openFile",
+    "onCommand:function.openInEditor",
     "onCommand:service.explorer.refresh",
     "onCommand:service.explorer.reportIssue",
     "onCommand:service.explorer.apply",
@@ -239,6 +240,11 @@
       {
         "command": "service.explorer.openFile",
         "title": "Describe",
+        "category": "Knative"
+      },
+      {
+        "command": "function.openInEditor",
+        "title": "Open In Editor",
         "category": "Knative"
       },
       {
@@ -434,6 +440,10 @@
         },
         {
           "command": "service.explorer.openFile",
+          "when": "false"
+        },
+        {
+          "command": "function.openInEditor",
           "when": "false"
         },
         {
