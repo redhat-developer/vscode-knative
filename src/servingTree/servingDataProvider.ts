@@ -372,16 +372,6 @@ export class ServingDataProvider implements TreeDataProvider<ServingTreeItem | E
       ignoreFocusOut: true,
       prompt: 'Enter a Name for the Service',
       validateInput: async (nameUsed: string) => {
-        if (validator.isEmpty(nameUsed)) {
-          return 'Provide name for service.';
-        }
-        const validateNameUsed = this.validateName(
-          "Not a valid service name. Please enter name that starts with an alphanumeric character, use lower case alphanumeric characters or '-' and end with an alphanumeric character",
-          nameUsed,
-        );
-        if (validateNameUsed) {
-          return validateNameUsed;
-        }
         const found: Service = this.ksvc.findService(nameUsed);
         if (found) {
           const response = await vscode.window.showInformationMessage(
@@ -395,6 +385,16 @@ export class ServingDataProvider implements TreeDataProvider<ServingTreeItem | E
             return null;
           }
           return 'Please use a unique name.';
+        }
+        if (validator.isEmpty(nameUsed)) {
+          return 'Provide name for service.';
+        }
+        const validateNameUsed = this.validateName(
+          "Not a valid service name. Please enter name that starts with an alphanumeric character, use lower case alphanumeric characters or '-' and end with an alphanumeric character",
+          nameUsed,
+        );
+        if (validateNameUsed) {
+          return validateNameUsed;
         }
         return null;
       },

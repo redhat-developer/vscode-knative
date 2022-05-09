@@ -12,6 +12,7 @@ import { beforeEach } from 'mocha';
 import rewire = require('rewire');
 import * as sinon from 'sinon';
 import * as sinonChai from 'sinon-chai';
+import validator from 'validator';
 import * as yaml from 'yaml';
 import * as singleServiceFailedRevisionRevisionList from './singleServiceFailedRevisionRevisionList.json';
 import * as singleServiceFailedRevisionServiceList from './singleServiceFailedRevisionServiceList.json';
@@ -715,6 +716,8 @@ status:
   suite('Getting Tree Children', () => {
     test('should return the No Services node when KN execute returns "No Services found"', async () => {
       sandbox.restore();
+      sandbox.stub(vscode.window, 'showInputBox').resolves('test');
+      sandbox.stub(validator, 'isEmpty').returns(true);
       sandbox.stub(vscode.window, 'showErrorMessage').resolves();
       sandbox.stub(servingDataProvider.knExecutor, 'execute').resolves({ error: undefined, stdout: 'No services found.' });
       const result = await servingDataProvider.getChildren();
@@ -725,6 +728,8 @@ status:
     });
     test('should return the No Services node when there is an error', async () => {
       sandbox.restore();
+      sandbox.stub(validator, 'isEmpty').returns(true);
+      sandbox.stub(vscode.window, 'showInputBox').resolves('test');
       sandbox.stub(vscode.window, 'showErrorMessage').resolves();
       sandbox.stub(servingDataProvider.knExecutor, 'execute').rejects();
       const result = await servingDataProvider.getChildren();
@@ -736,6 +741,8 @@ status:
     test('should return a single Service tree node when called from root with one Service', async () => {
       sandbox.restore();
       sandbox.stub(vscode.window, 'showErrorMessage').resolves();
+      sandbox.stub(validator, 'isEmpty').returns(true);
+      sandbox.stub(vscode.window, 'showInputBox').resolves('test');
       sandbox
         .stub(servingDataProvider.knExecutor, 'execute')
         .resolves({ error: undefined, stdout: JSON.stringify(singleServiceData) });
@@ -748,6 +755,8 @@ status:
     });
     test('should return multiple Revision tree nodes', async () => {
       sandbox.restore();
+      sandbox.stub(validator, 'isEmpty').returns(true);
+      sandbox.stub(vscode.window, 'showInputBox').resolves('test');
       sandbox.stub(vscode.window, 'showErrorMessage').resolves();
       sandbox.stub(servingDataProvider, `getRevisions`).resolves(exampleRevisionTreeItems);
       const result = await servingDataProvider.getChildren(testServiceTreeItem);
@@ -759,6 +768,8 @@ status:
     });
     test('should return multiple Revision tree nodes when the Service is modified', async () => {
       sandbox.restore();
+      sandbox.stub(validator, 'isEmpty').returns(true);
+      sandbox.stub(vscode.window, 'showInputBox').resolves('test');
       sandbox.stub(vscode.window, 'showErrorMessage').resolves();
       sandbox.stub(servingDataProvider, `getRevisions`).resolves(exampleRevisionTreeItems);
       const result = await servingDataProvider.getChildren(testServiceTreeItemModified);
@@ -999,6 +1010,7 @@ status:
         image: `quay.io/test-group/knative-tutorial-greeter:quarkus`,
         force: false,
       };
+      sandbox.stub(vscode.window, 'showInputBox').resolves('knative-tutorial-greeter:quarkus');
       sandbox.stub(sdp.ksvc, 'findService').returns(undefined);
       showInformationMessageIndex = 0;
       const result: CreateService = await sdp.getName(`quay.io/test-group/knative-tutorial-greeter:quarkus`);
@@ -1023,6 +1035,7 @@ status:
         image: `quay.io/test-group/knative-tutorial-greeter:quarkus`,
         force: false,
       };
+      sandbox.stub(vscode.window, 'showInputBox').resolves('knative-tutorial-greeter:quarkus');
       sandbox.stub(sdp.ksvc, 'findService').returns(true);
       showInformationMessageIndex = 1;
       const result: CreateService = await sdp.getName(`quay.io/test-group/knative-tutorial-greeter:quarkus`);
@@ -1050,6 +1063,8 @@ status:
         'knmsx://loadknativecore/service-knative-tutorial-greeter.yaml?contextValue%3Dservice%26name%3Dknative-tutorial-greeter%26_%3D1594328823824',
       );
       sandbox.restore();
+      sandbox.stub(vscode.window, 'showInputBox').resolves('test');
+      sandbox.stub(validator, 'isEmpty').returns(true);
       sandbox.stub(vscode.window, 'showErrorMessage').resolves();
       sandbox.stub(sdp, 'getUrl').resolves(`quay.io/test-group/knative-tutorial-greeter:quarkus`);
       sandbox.stub(sdp, 'getName').resolves(serviceToCreate);
@@ -1076,6 +1091,7 @@ status:
         'knmsx://loadknativecore/service-knative-tutorial-greeter.yaml?contextValue%3Dservice%26name%3Dknative-tutorial-greeter%26_%3D1594328823824',
       );
       sandbox.restore();
+      sandbox.stub(vscode.window, 'showInputBox').resolves('test');
       const spyErrorMessage = sandbox.stub(vscode.window, 'showErrorMessage').resolves();
       sandbox.stub(sdp, 'getUrl').resolves(`http://quay.io/test-group/knative-tutorial-greeter:quarkus`);
       sandbox.stub(sdp, 'getName').resolves(serviceToCreate);
@@ -1105,6 +1121,7 @@ status:
         'knmsx://loadknativecore/service-knative-tutorial-greeter.yaml?contextValue%3Dservice%26name%3Dknative-tutorial-greeter%26_%3D1594328823824',
       );
       sandbox.restore();
+      sandbox.stub(vscode.window, 'showInputBox').resolves('test');
       const spyErrorMessage = sandbox.stub(vscode.window, 'showErrorMessage').resolves();
       sandbox.stub(sdp, 'getUrl').resolves(`brushnet/node-web-app:0.1:`);
       sandbox.stub(sdp, 'getName').resolves(serviceToCreate);
@@ -1134,6 +1151,7 @@ status:
         'knmsx://loadknativecore/service-knative-tutorial-greeter.yaml?contextValue%3Dservice%26name%3Dknative-tutorial-greeter%26_%3D1594328823824',
       );
       sandbox.restore();
+      sandbox.stub(vscode.window, 'showInputBox').resolves('test');
       const spyErrorMessage = sandbox.stub(vscode.window, 'showErrorMessage').resolves();
       sandbox.stub(sdp, 'getUrl').resolves(`brushnet/node-web-app:0.1:`);
       sandbox.stub(sdp, 'getName').resolves(serviceToCreate);
@@ -1163,6 +1181,7 @@ status:
         'knmsx://loadknativecore/service-knative-tutorial-greeter.yaml?contextValue%3Dservice%26name%3Dknative-tutorial-greeter%26_%3D1594328823824',
       );
       sandbox.restore();
+      sandbox.stub(vscode.window, 'showInputBox').resolves('test');
       sandbox.stub(vscode.window, 'showErrorMessage').resolves();
       sandbox.stub(sdp, 'getUrl').resolves(`quay.io/test-group/knative-tutorial-greeter:quarkus`);
       sandbox.stub(sdp, 'getName').resolves(serviceToCreate);
@@ -1189,6 +1208,7 @@ status:
         'knmsx://loadknativecore/service-knative-tutorial-greeter.yaml?contextValue%3Dservice%26name%3Dknative-tutorial-greeter%26_%3D1594328823824',
       );
       sandbox.restore();
+      sandbox.stub(vscode.window, 'showInputBox').resolves('test');
       sandbox.stub(vscode.window, 'showErrorMessage').resolves();
       sandbox.stub(sdp, 'getUrl').resolves(`quay.io/test-group/knative-tutorial-greeter:quarkus`);
       sandbox.stub(sdp, 'getName').resolves(serviceToCreate);
@@ -1212,6 +1232,7 @@ status:
         force: false,
       };
       sandbox.restore();
+      sandbox.stub(vscode.window, 'showInputBox').resolves('test');
       sandbox.stub(vscode.window, 'showErrorMessage').resolves();
       sandbox.stub(sdp, 'getUrl').resolves(`quay.io/test-group/knative-tutorial-greeter:quarkus`);
       sandbox.stub(sdp, 'getName').resolves(serviceToCreate);
@@ -1247,6 +1268,7 @@ status:
         force: false,
       };
       sandbox.restore();
+      sandbox.stub(vscode.window, 'showInputBox').resolves('test');
       sandbox.stub(vscode.window, 'showErrorMessage').resolves();
       sandbox.stub(sdp, 'getUrl').resolves(`quay.io/test-group/knative-tutorial-greeter:quarkus`);
       sandbox.stub(sdp, 'getName').resolves(serviceToCreate);
