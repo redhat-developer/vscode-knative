@@ -5,7 +5,6 @@
  *-----------------------------------------------------------------------------------------------*/
 
 import * as vscode from 'vscode';
-// import * as validator from 'validator';
 import {
   Event,
   EventEmitter,
@@ -15,6 +14,7 @@ import {
   TreeItem,
   TreeItemCollapsibleState,
 } from 'vscode';
+import validator from 'validator';
 import * as yaml from 'yaml';
 import { ServingTreeItem } from './servingTreeItem';
 import { CliExitData } from '../cli/cmdCli';
@@ -346,8 +346,18 @@ export class ServingDataProvider implements TreeDataProvider<ServingTreeItem | E
     return vscode.window.showInputBox({
       ignoreFocusOut: true,
       prompt: 'Enter an Image URL',
-      // validateInput: (value: string) => servingDataProvider.validateUrl('Invalid URL provided', value),
+      validateInput: (value: string) => {
+        if (validator.isEmpty(value)) {
+          return 'Provide an image url.';
+        }
+        return null;
+      },
     });
+  }
+
+  // eslint-disable-next-line class-methods-use-this
+  validateName(message: string, value: string): string | null {
+    return validator.matches(value, '^[a-z0-9]([-a-z0-9]*[a-z0-9])*$') ? null : message;
   }
 
   // eslint-disable-next-line class-methods-use-this
@@ -362,6 +372,16 @@ export class ServingDataProvider implements TreeDataProvider<ServingTreeItem | E
       ignoreFocusOut: true,
       prompt: 'Enter a Name for the Service',
       validateInput: async (nameUsed: string) => {
+        if (validator.isEmpty(nameUsed)) {
+          return 'Provide name for service.';
+        }
+        const validateNameUsed = this.validateName(
+          "Not a valid service name. Please enter name that starts with an alphanumeric character, use lower case alphanumeric characters or '-' and end with an alphanumeric character",
+          nameUsed,
+        );
+        if (validateNameUsed) {
+          return validateNameUsed;
+        }
         const found: Service = this.ksvc.findService(nameUsed);
         if (found) {
           const response = await vscode.window.showInformationMessage(
