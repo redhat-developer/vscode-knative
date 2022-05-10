@@ -33,14 +33,14 @@ suite('Knative extension', () => {
 
   beforeEach(async () => {
     const configurationApi = await k8s.extension.configuration.v1_1;
-    sandbox.stub(configurationApi, 'available');
+    sandbox.stub(configurationApi, 'available').resolves();
     sandbox.stub(vscode.window, 'showErrorMessage').resolves();
-    sandbox.stub(CmdCliConfig, 'detectOrDownload');
+    sandbox.stub(CmdCliConfig, 'detectOrDownload').resolves();
     sandbox.stub(knExecutor, 'execute').resolves();
     sandbox.stub(executeCmdCli, 'execute').resolves();
     sandbox.stub(functionExplorer, 'refresh').resolves();
-    sandbox.stub(telemetry, 'telemetryLog');
-    sandbox.stub(telemetry, 'telemetryLogError');
+    sandbox.stub(telemetry, 'telemetryLog').resolves();
+    sandbox.stub(telemetry, 'telemetryLogError').resolves();
   });
 
   teardown(() => {
@@ -572,7 +572,7 @@ status:
   });
 
   test('should call the command to open a Service when a Service is the treeItem', async () => {
-    const executeCommandStub = sandbox.stub(vscode.commands, 'executeCommand');
+    const executeCommandStub = sandbox.stub(vscode.commands, 'executeCommand').resolves();
     executeCommandStub.withArgs('vscode.open', image).resolves();
     executeCommandStub.callThrough();
     await vscode.commands.executeCommand('knative.service.open-in-browser', testServiceTreeItem);
@@ -580,7 +580,7 @@ status:
   });
 
   test('should call the command to open a Service when a modified Service is the treeItem', async () => {
-    const executeCommandStub = sandbox.stub(vscode.commands, 'executeCommand');
+    const executeCommandStub = sandbox.stub(vscode.commands, 'executeCommand').resolves();
     executeCommandStub.withArgs('vscode.open', image).resolves();
     executeCommandStub.callThrough();
     await vscode.commands.executeCommand('knative.service.open-in-browser', testServiceTreeItemModified);
@@ -588,7 +588,7 @@ status:
   });
 
   test('should call the command to open a Revision when a Revision is the treeItem', async () => {
-    const executeCommandStub = sandbox.stub(vscode.commands, 'executeCommand');
+    const executeCommandStub = sandbox.stub(vscode.commands, 'executeCommand').resolves();
     executeCommandStub.withArgs('vscode.open', imageTagged).resolves();
     executeCommandStub.callThrough();
     await vscode.commands.executeCommand('knative.service.open-in-browser', example75w7vTreeItem);
@@ -596,14 +596,14 @@ status:
   });
 
   test('should NOT call the command to open a Revision when a Revision is the treeItem but does not have Traffic', async () => {
-    const executeCommandStub = sandbox.stub(vscode.commands, 'executeCommand');
+    const executeCommandStub = sandbox.stub(vscode.commands, 'executeCommand').resolves();
     executeCommandStub.callThrough();
     await vscode.commands.executeCommand('knative.service.open-in-browser', serviceTreeItem);
     sinon.assert.calledOnce(executeCommandStub);
   });
 
   test('should NOT call the command to open a Revision when a Revision is the treeItem but does not have a Tag', async () => {
-    const executeCommandStub = sandbox.stub(vscode.commands, 'executeCommand');
+    const executeCommandStub = sandbox.stub(vscode.commands, 'executeCommand').resolves();
     executeCommandStub.callThrough();
     await vscode.commands.executeCommand('knative.service.open-in-browser', serviceTreeViewItem);
     sinon.assert.calledOnce(executeCommandStub);
