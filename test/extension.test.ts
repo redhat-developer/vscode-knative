@@ -31,9 +31,11 @@ import * as telemetry from '../src/telemetry';
 suite('Knative extension', () => {
   const sandbox = sinon.createSandbox();
 
-  beforeEach(async () => {
-    const configurationApi = await k8s.extension.configuration.v1_1;
-    sandbox.stub(configurationApi, 'available').resolves();
+  beforeEach(() => {
+    const configurationApi = k8s.extension.configuration;
+    sandbox.stub(configurationApi, 'v1_1').value({
+      available: false,
+    });
     sandbox.stub(vscode.window, 'showErrorMessage').resolves();
     sandbox.stub(CmdCliConfig, 'detectOrDownload').resolves();
     sandbox.stub(knExecutor, 'execute').resolves();
