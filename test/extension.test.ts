@@ -8,6 +8,7 @@ import * as vscode from 'vscode';
 import { expect } from 'chai';
 import { beforeEach } from 'mocha';
 import * as sinon from 'sinon';
+import * as k8s from 'vscode-kubernetes-tools-api';
 import * as yaml from 'yaml';
 import * as brokerData from './eventingTree/broker.json';
 import { CmdCliConfig } from '../src/cli/cli-config';
@@ -30,7 +31,9 @@ import * as telemetry from '../src/telemetry';
 suite('Knative extension', () => {
   const sandbox = sinon.createSandbox();
 
-  beforeEach(() => {
+  beforeEach(async () => {
+    const configurationApi = await k8s.extension.configuration.v1_1;
+    sandbox.stub(configurationApi, 'available');
     sandbox.stub(vscode.window, 'showErrorMessage').resolves();
     sandbox.stub(CmdCliConfig, 'detectOrDownload');
     sandbox.stub(knExecutor, 'execute').resolves();
