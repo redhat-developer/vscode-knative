@@ -572,7 +572,7 @@ status:
   });
 
   test('should call the command to open a Service when a Service is the treeItem', async () => {
-    const executeCommandStub = sandbox.stub(vscode.commands, 'executeCommand').resolves();
+    const executeCommandStub = sandbox.stub(vscode.commands, 'executeCommand');
     executeCommandStub.withArgs('vscode.open', image).resolves();
     executeCommandStub.callThrough();
     await vscode.commands.executeCommand('knative.service.open-in-browser', testServiceTreeItem);
@@ -580,7 +580,7 @@ status:
   });
 
   test('should call the command to open a Service when a modified Service is the treeItem', async () => {
-    const executeCommandStub = sandbox.stub(vscode.commands, 'executeCommand').resolves();
+    const executeCommandStub = sandbox.stub(vscode.commands, 'executeCommand');
     executeCommandStub.withArgs('vscode.open', image).resolves();
     executeCommandStub.callThrough();
     await vscode.commands.executeCommand('knative.service.open-in-browser', testServiceTreeItemModified);
@@ -588,7 +588,7 @@ status:
   });
 
   test('should call the command to open a Revision when a Revision is the treeItem', async () => {
-    const executeCommandStub = sandbox.stub(vscode.commands, 'executeCommand').resolves();
+    const executeCommandStub = sandbox.stub(vscode.commands, 'executeCommand');
     executeCommandStub.withArgs('vscode.open', imageTagged).resolves();
     executeCommandStub.callThrough();
     await vscode.commands.executeCommand('knative.service.open-in-browser', example75w7vTreeItem);
