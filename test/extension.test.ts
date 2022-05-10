@@ -18,6 +18,7 @@ import * as otd from '../src/editor/knativeOpenTextDocument';
 import { EventingDataProvider } from '../src/eventingTree/eventingDataProvider';
 import { EventingTreeItem } from '../src/eventingTree/eventingTreeItem';
 import { deactivate } from '../src/extension';
+import { functionExplorer } from '../src/functions/functionsExplorer';
 import { Broker } from '../src/knative/broker';
 import * as revision from '../src/knative/revision';
 import { Revision } from '../src/knative/revision';
@@ -34,6 +35,7 @@ suite('Knative extension', () => {
     sandbox.stub(CmdCliConfig, 'detectOrDownload');
     sandbox.stub(knExecutor, 'execute').resolves();
     sandbox.stub(executeCmdCli, 'execute').resolves();
+    sandbox.stub(functionExplorer, 'refresh').resolves();
     sandbox.stub(telemetry, 'telemetryLog');
     sandbox.stub(telemetry, 'telemetryLogError');
   });
