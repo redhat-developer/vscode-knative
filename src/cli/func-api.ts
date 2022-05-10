@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable import/no-cycle */
 /*-----------------------------------------------------------------------------------------------
  *  Copyright (c) Red Hat, Inc. All rights reserved.
  *  Licensed under the MIT License. See LICENSE file in the project root for license information.
@@ -6,7 +8,6 @@
 import * as path from 'path';
 // eslint-disable-next-line import/no-cycle
 import { CliCommand, CmdCli, createCliCommand } from './cmdCli';
-// eslint-disable-next-line import/no-cycle
 import { checkOpenShiftCluster } from '../check-cluster';
 // eslint-disable-next-line import/no-cycle
 import { ParametersType } from '../functions/function-command/invoke-function';

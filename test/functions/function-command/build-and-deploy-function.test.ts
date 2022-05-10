@@ -43,6 +43,7 @@ suite('Build-And-Deploy', () => {
     workspaceFoldersStub = sandbox.stub(workspace, 'workspaceFolders').value([funcUri]);
     showInformationMessageStub = sandbox.stub(window, 'showInformationMessage');
     executeInTerminalStub = sandbox.stub(knExecutor, 'executeInTerminal');
+    sandbox.stub(knExecutor, 'execute').resolves();
     sandbox.stub(executeCmdCli, 'executeExec').resolves({ error: 'error', stdout: undefined });
     showInputBoxStub = sandbox.stub(window, 'showInputBox');
   });

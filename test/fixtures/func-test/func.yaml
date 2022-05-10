@@ -1,5 +1,5 @@
 name: node-test
-namespace: ""
+namespace: "test"
 runtime: go
 image: docker.io/test/node-test:latest
 imageDigest: sha256:6a064d4134d53baebcf11caea45585cd288839646d7ce7a42c8f8d582c6b954a

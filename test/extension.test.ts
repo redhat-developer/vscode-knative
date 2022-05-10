@@ -11,7 +11,9 @@ import * as sinon from 'sinon';
 import * as yaml from 'yaml';
 import * as brokerData from './eventingTree/broker.json';
 import { CmdCliConfig } from '../src/cli/cli-config';
+import { executeCmdCli } from '../src/cli/cmdCli';
 import { EventingContextType, ServingContextType } from '../src/cli/config';
+import { knExecutor } from '../src/cli/execute';
 import * as otd from '../src/editor/knativeOpenTextDocument';
 import { EventingDataProvider } from '../src/eventingTree/eventingDataProvider';
 import { EventingTreeItem } from '../src/eventingTree/eventingTreeItem';
@@ -22,6 +24,7 @@ import { Revision } from '../src/knative/revision';
 import * as service from '../src/knative/service';
 import { Service } from '../src/knative/service';
 import { ServingTreeItem } from '../src/servingTree/servingTreeItem';
+import * as telemetry from '../src/telemetry';
 
 suite('Knative extension', () => {
   const sandbox = sinon.createSandbox();
@@ -29,6 +32,10 @@ suite('Knative extension', () => {
   beforeEach(() => {
     sandbox.stub(vscode.window, 'showErrorMessage').resolves();
     sandbox.stub(CmdCliConfig, 'detectOrDownload');
+    sandbox.stub(knExecutor, 'execute').resolves();
+    sandbox.stub(executeCmdCli, 'execute').resolves();
+    sandbox.stub(telemetry, 'telemetryLog');
+    sandbox.stub(telemetry, 'telemetryLogError');
   });
 
   teardown(() => {

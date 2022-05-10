@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable import/no-cycle */
 /*-----------------------------------------------------------------------------------------------
  *  Copyright (c) Red Hat, Inc. All rights reserved.
@@ -7,14 +8,27 @@
 import { knExecutor } from './cli/execute';
 import { KubectlAPI } from './cli/kubectl-api';
 
-export async function checkOpenShiftCluster(): Promise<boolean> {
+interface clusterVersion {
+  items: [
+    {
+      status: {
+        desired: {
+          version: string;
+        };
+      };
+    },
+  ];
+}
+
+export async function checkOpenShiftCluster(): Promise<clusterVersion> {
   try {
     const result = await knExecutor.execute(KubectlAPI.checkOcpCluster(), process.cwd(), false);
     if (result?.stdout?.trim()) {
-      return true;
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+      return JSON.parse(result?.stdout);
     }
-    return false;
+    return null;
   } catch (err) {
-    return false;
+    return null;
   }
 }

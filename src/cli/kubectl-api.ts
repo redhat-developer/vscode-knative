@@ -26,14 +26,14 @@ export class KubectlAPI {
   }
 
   static checkOcpCluster(): CliCommand {
-    return kubectlCliCommand(['get', 'clusterversion']);
+    return kubectlCliCommand(['get', 'clusterversion', '-ojson']);
   }
 
   /**
    * Prints the simple version info for kubectl.
    */
   static printVersion(): CliCommand {
-    return kubectlCliCommand(['version', '--short', '--client']);
+    return kubectlCliCommand(['version', '-ojson']);
   }
 
   static currentNamespace(): CliCommand {
