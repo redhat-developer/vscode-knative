@@ -357,7 +357,7 @@ export class ServingDataProvider implements TreeDataProvider<ServingTreeItem | E
 
   // eslint-disable-next-line class-methods-use-this
   validateName(message: string, value: string): string | null {
-    return validator.matches(value, '^[a-z0-9]([-a-z0-9]*[a-z0-9])*$') ? null : message;
+    return validator.matches(value, '^[a-z]([-a-z0-9]*[a-z0-9])*$') ? null : message;
   }
 
   // eslint-disable-next-line class-methods-use-this
@@ -390,7 +390,7 @@ export class ServingDataProvider implements TreeDataProvider<ServingTreeItem | E
           return 'Provide name for service.';
         }
         const validateNameUsed = this.validateName(
-          "Not a valid service name. Please enter name that starts with an alphanumeric character, use lower case alphanumeric characters or '-' and end with an alphanumeric character",
+          "Not a valid service name. Please use lower case alphanumeric characters or '-', start with an alphabetic character, and end with an alphanumeric character",
           nameUsed,
         );
         if (validateNameUsed) {
