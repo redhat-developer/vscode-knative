@@ -8,6 +8,7 @@ import * as vscode from 'vscode';
 import { expect } from 'chai';
 import { beforeEach } from 'mocha';
 import * as sinon from 'sinon';
+import * as k8s from 'vscode-kubernetes-tools-api';
 import * as yaml from 'yaml';
 import * as brokerData from './eventingTree/broker.json';
 import { CmdCliConfig } from '../src/cli/cli-config';
@@ -18,6 +19,7 @@ import * as otd from '../src/editor/knativeOpenTextDocument';
 import { EventingDataProvider } from '../src/eventingTree/eventingDataProvider';
 import { EventingTreeItem } from '../src/eventingTree/eventingTreeItem';
 import { deactivate } from '../src/extension';
+import { functionExplorer } from '../src/functions/functionsExplorer';
 import { Broker } from '../src/knative/broker';
 import * as revision from '../src/knative/revision';
 import { Revision } from '../src/knative/revision';
@@ -30,12 +32,17 @@ suite('Knative extension', () => {
   const sandbox = sinon.createSandbox();
 
   beforeEach(() => {
+    const configurationApi = k8s.extension.configuration;
+    sandbox.stub(configurationApi, 'v1_1').value({
+      available: false,
+    });
     sandbox.stub(vscode.window, 'showErrorMessage').resolves();
-    sandbox.stub(CmdCliConfig, 'detectOrDownload');
+    sandbox.stub(CmdCliConfig, 'detectOrDownload').resolves();
     sandbox.stub(knExecutor, 'execute').resolves();
     sandbox.stub(executeCmdCli, 'execute').resolves();
-    sandbox.stub(telemetry, 'telemetryLog');
-    sandbox.stub(telemetry, 'telemetryLogError');
+    sandbox.stub(functionExplorer, 'refresh').resolves();
+    sandbox.stub(telemetry, 'telemetryLog').resolves();
+    sandbox.stub(telemetry, 'telemetryLogError').resolves();
   });
 
   teardown(() => {
@@ -591,14 +598,14 @@ status:
   });
 
   test('should NOT call the command to open a Revision when a Revision is the treeItem but does not have Traffic', async () => {
-    const executeCommandStub = sandbox.stub(vscode.commands, 'executeCommand');
+    const executeCommandStub = sandbox.stub(vscode.commands, 'executeCommand').resolves();
     executeCommandStub.callThrough();
     await vscode.commands.executeCommand('knative.service.open-in-browser', serviceTreeItem);
     sinon.assert.calledOnce(executeCommandStub);
   });
 
   test('should NOT call the command to open a Revision when a Revision is the treeItem but does not have a Tag', async () => {
-    const executeCommandStub = sandbox.stub(vscode.commands, 'executeCommand');
+    const executeCommandStub = sandbox.stub(vscode.commands, 'executeCommand').resolves();
     executeCommandStub.callThrough();
     await vscode.commands.executeCommand('knative.service.open-in-browser', serviceTreeViewItem);
     sinon.assert.calledOnce(executeCommandStub);

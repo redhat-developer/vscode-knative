@@ -159,7 +159,7 @@ export class CmdCliConfig {
         const cliFile = `.vs-${cmd}`;
         // Look in [HOME]/.vs-[CMD]/ for the [CMD] cli executable
         const cliFilePath = path.resolve(Platform.getUserHomePath(), cliFile);
-        const toolCacheLocation = path.resolve(cliFilePath, (CmdCliConfig.tools[cmd] as CliConfig).cmdFileName);
+        const toolCacheLocation = path.resolve(cliFilePath, (CmdCliConfig.tools[cmd] as CliConfig)?.cmdFileName);
         // If [CMD] cli is installed, get it's install location/path
         const whichLocation = shell.which(cmd);
         // Get a list of locations.
