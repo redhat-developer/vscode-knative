@@ -9,8 +9,6 @@ import * as chai from 'chai';
 import * as sinon from 'sinon';
 import * as sinonChai from 'sinon-chai';
 import { FunctionContextType } from '../../../src/cli/config';
-import { knExecutor } from '../../../src/cli/execute';
-import { FuncAPI } from '../../../src/cli/func-api';
 import { FuncImpl } from '../../../src/functions/func';
 import * as buildDeploy from '../../../src/functions/function-command/build-and-deploy-function';
 import {
@@ -29,7 +27,7 @@ chai.use(sinonChai);
 
 suite('Function/Configure Function', () => {
   const sandbox = sinon.createSandbox();
-  let executeInTerminalStub: sinon.SinonStub;
+  let executeTaskStub: sinon.SinonStub;
   const data: Uri = {
     authority: '',
     fragment: '',
@@ -49,7 +47,7 @@ suite('Function/Configure Function', () => {
   const funcNodeWithoutContextPath = new TestItem(FuncImpl.ROOT, 'func1', FunctionContextType.FUNCTION, null, null);
 
   setup(() => {
-    executeInTerminalStub = sandbox.stub(knExecutor, 'executeInTerminal');
+    executeTaskStub = sandbox.stub(vscode.tasks, 'executeTask');
   });
 
   teardown(() => {
@@ -122,51 +120,59 @@ suite('Function/Configure Function', () => {
     const folder = getTestFolderPick();
     sandbox.stub(buildDeploy, 'selectFunctionFolder').resolves(folder);
     ((sandbox.stub(vscode.window, 'showQuickPick') as unknown) as sinon.SinonStub).resolves(ENV_VARIABLES);
-    await configureFunction(ConfigAction.Add);
-    expect(executeInTerminalStub).calledOnceWith(FuncAPI.addEnvironmentVariable(folder.workspaceFolder.uri.fsPath));
+    await configureFunction(ConfigAction.Add, ENV_VARIABLES, funcNode);
+    // eslint-disable-next-line no-unused-expressions
+    expect(executeTaskStub).calledOnce;
   });
 
   test('add environment variable', async () => {
     await configureEnvs(ConfigAction.Add, funcNode);
-    expect(executeInTerminalStub).calledOnceWith(FuncAPI.addEnvironmentVariable(funcNode.contextPath.fsPath));
+    // eslint-disable-next-line no-unused-expressions
+    expect(executeTaskStub).calledOnce;
   });
 
   test('remove environment variable with no initial context', async () => {
     const folder = getTestFolderPick();
     sandbox.stub(buildDeploy, 'selectFunctionFolder').resolves(folder);
     ((sandbox.stub(vscode.window, 'showQuickPick') as unknown) as sinon.SinonStub).resolves(ENV_VARIABLES);
-    await configureFunction(ConfigAction.Remove);
-    expect(executeInTerminalStub).calledOnceWith(FuncAPI.removeEnvironmentVariable(folder.workspaceFolder.uri.fsPath));
+    await configureFunction(ConfigAction.Remove, ENV_VARIABLES, funcNode);
+    // eslint-disable-next-line no-unused-expressions
+    expect(executeTaskStub).calledOnce;
   });
 
   test('remove environment variable', async () => {
     await configureEnvs(ConfigAction.Remove, funcNode);
-    expect(executeInTerminalStub).calledOnceWith(FuncAPI.removeEnvironmentVariable(funcNode.contextPath.fsPath));
+    // eslint-disable-next-line no-unused-expressions
+    expect(executeTaskStub).calledOnce;
   });
 
   test('add volumes with no initial context', async () => {
     const folder = getTestFolderPick();
     sandbox.stub(buildDeploy, 'selectFunctionFolder').resolves(folder);
     ((sandbox.stub(vscode.window, 'showQuickPick') as unknown) as sinon.SinonStub).resolves(VOLUMES);
-    await configureFunction(ConfigAction.Add);
-    expect(executeInTerminalStub).calledOnceWith(FuncAPI.addVolumes(folder.workspaceFolder.uri.fsPath));
+    await configureFunction(ConfigAction.Add, VOLUMES, funcNode);
+    // eslint-disable-next-line no-unused-expressions
+    expect(executeTaskStub).calledOnce;
   });
 
   test('add volume', async () => {
     await configureVolumes(ConfigAction.Add, funcNode);
-    expect(executeInTerminalStub).calledOnceWith(FuncAPI.addVolumes(funcNode.contextPath.fsPath));
+    // eslint-disable-next-line no-unused-expressions
+    expect(executeTaskStub).calledOnce;
   });
 
   test('remove volume with no initial context', async () => {
     const folder = getTestFolderPick();
     sandbox.stub(buildDeploy, 'selectFunctionFolder').resolves(folder);
     ((sandbox.stub(vscode.window, 'showQuickPick') as unknown) as sinon.SinonStub).resolves(VOLUMES);
-    await configureFunction(ConfigAction.Remove);
-    expect(executeInTerminalStub).calledOnceWith(FuncAPI.removeVolumes(folder.workspaceFolder.uri.fsPath));
+    await configureFunction(ConfigAction.Remove, VOLUMES, funcNode);
+    // eslint-disable-next-line no-unused-expressions
+    expect(executeTaskStub).calledOnce;
   });
 
   test('remove volume', async () => {
     await configureVolumes(ConfigAction.Remove, funcNode);
-    expect(executeInTerminalStub).calledOnceWith(FuncAPI.removeVolumes(funcNode.contextPath.fsPath));
+    // eslint-disable-next-line no-unused-expressions
+    expect(executeTaskStub).calledOnce;
   });
 });

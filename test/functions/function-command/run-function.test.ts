@@ -3,13 +3,11 @@
  *  Licensed under the MIT License. See LICENSE file in the project root for license information.
  *-----------------------------------------------------------------------------------------------*/
 
-import { Uri } from 'vscode';
+import { MessageOptions, tasks, Uri, window } from 'vscode';
 import * as chai from 'chai';
 import * as sinon from 'sinon';
 import * as sinonChai from 'sinon-chai';
 import { FunctionContextType } from '../../../src/cli/config';
-import { knExecutor } from '../../../src/cli/execute';
-import { FuncAPI } from '../../../src/cli/func-api';
 import { FuncImpl } from '../../../src/functions/func';
 import { runFunction } from '../../../src/functions/function-command/run-function';
 import { TestItem } from '../testFunctionitem';
@@ -19,7 +17,7 @@ chai.use(sinonChai);
 
 suite('Function/Run', () => {
   const sandbox = sinon.createSandbox();
-  let executeInTerminalStub: sinon.SinonStub;
+  let executeTaskStub: sinon.SinonStub;
   const data: Uri = {
     authority: '',
     fragment: '',
@@ -38,7 +36,12 @@ suite('Function/Run', () => {
   const taskRunNode = new TestItem(FuncImpl.ROOT, 'func1', FunctionContextType.FUNCTION, null, data);
 
   setup(() => {
-    executeInTerminalStub = sandbox.stub(knExecutor, 'executeInTerminal');
+    executeTaskStub = sandbox.stub(tasks, 'executeTask');
+    const stubShowInformationMessage = (sandbox.stub(window, 'showInformationMessage') as unknown) as sinon.SinonStub<
+      [string, MessageOptions, ...string[]],
+      Thenable<string>
+    >;
+    stubShowInformationMessage.resolves('Yes');
   });
 
   teardown(() => {
@@ -50,8 +53,9 @@ suite('Function/Run', () => {
     expect(result).equal(null);
   });
 
-  test('delete function from tree view', async () => {
+  test('run function from tree view', async () => {
     await runFunction(taskRunNode);
-    expect(executeInTerminalStub).calledOnceWith(FuncAPI.runFunc(taskRunNode.contextPath.fsPath));
+    // eslint-disable-next-line no-unused-expressions
+    expect(executeTaskStub).calledOnce;
   });
 });

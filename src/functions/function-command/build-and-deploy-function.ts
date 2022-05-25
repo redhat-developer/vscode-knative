@@ -8,7 +8,7 @@ import * as path from 'path';
 import * as vscode from 'vscode';
 import * as fs from 'fs-extra';
 import * as yaml from 'js-yaml';
-import { knExecutor } from '../../cli/execute';
+import { getFunctionTasks } from './task-provider';
 import { FuncAPI } from '../../cli/func-api';
 import { telemetryLog } from '../../telemetry';
 import { ExistingWorkspaceFolderPick } from '../../util/existing-workspace-folder-pick';
@@ -134,7 +134,7 @@ async function selectedFolder(context?: FunctionNode): Promise<FolderPick> {
   return selectedFolderPick;
 }
 
-export async function buildFunction(context?: FunctionNode): Promise<void> {
+export async function buildFunction(context?: FunctionNode): Promise<vscode.TaskExecution> {
   const selectedFolderPick: FolderPick = await selectedFolder(context);
   if (!selectedFolderPick && !context) {
     return null;
@@ -146,13 +146,17 @@ export async function buildFunction(context?: FunctionNode): Promise<void> {
   telemetryLog('function_build_command', 'Build command execute');
   // eslint-disable-next-line @typescript-eslint/no-floating-promises
   functionExplorer.refresh();
-  await knExecutor.executeInTerminal(
+  const taskToExecute = getFunctionTasks(
+    { name: context?.getName(), uri: context.contextPath, index: null },
+    'build',
     await FuncAPI.buildFunc(
       context ? context.contextPath.fsPath : selectedFolderPick.workspaceFolder.uri.fsPath,
       funcData.image,
       funcData.builder,
     ),
   );
+  // eslint-disable-next-line no-return-await
+  return await vscode.tasks.executeTask(taskToExecute);
 }
 
 export async function deployFunction(context?: FunctionNode): Promise<void> {
@@ -163,7 +167,7 @@ export async function deployFunction(context?: FunctionNode): Promise<void> {
   const funcData = await functionImage(
     context ? context.contextPath : selectedFolderPick.workspaceFolder.uri,
     true,
-    context.getName(),
+    context?.getName(),
     context?.getParent()?.getName(),
   );
   if (!funcData) {
@@ -172,11 +176,14 @@ export async function deployFunction(context?: FunctionNode): Promise<void> {
   telemetryLog('function_deploy_command', 'Deploy command execute');
   // eslint-disable-next-line @typescript-eslint/no-floating-promises
   functionExplorer.refresh();
-  await knExecutor.executeInTerminal(
+  const taskToExecute = getFunctionTasks(
+    { name: context?.getName(), uri: context.contextPath, index: null },
+    'deploy',
     await FuncAPI.deployFunc(
       context ? context.contextPath.fsPath : selectedFolderPick.workspaceFolder.uri.fsPath,
       funcData.image,
       context?.getParent()?.getName(),
     ),
   );
+  await vscode.tasks.executeTask(taskToExecute);
 }

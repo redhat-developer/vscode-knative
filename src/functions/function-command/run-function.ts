@@ -4,10 +4,21 @@
  *  Licensed under the MIT License. See LICENSE file in the project root for license information.
  *-----------------------------------------------------------------------------------------------*/
 
-import { knExecutor } from '../../cli/execute';
+import { tasks, window } from 'vscode';
+import { buildFunction } from './build-and-deploy-function';
+import { getFunctionTasks } from './task-provider';
 import { FuncAPI } from '../../cli/func-api';
 import { telemetryLog } from '../../telemetry';
 import { FunctionNode } from '../function-tree-view/functionsTreeItem';
+
+async function runExecute(context: FunctionNode): Promise<void> {
+  const runTaskToExecute = getFunctionTasks(
+    { name: context.getName(), uri: context.contextPath, index: null },
+    'run',
+    FuncAPI.runFunc(context.contextPath.fsPath),
+  );
+  await tasks.executeTask(runTaskToExecute);
+}
 
 export async function runFunction(context?: FunctionNode): Promise<void> {
   if (!context) {
@@ -15,5 +26,13 @@ export async function runFunction(context?: FunctionNode): Promise<void> {
   }
   telemetryLog('Function_run_command', `Function run command click name: ${context.getName()}`);
   // TO DO
-  await knExecutor.executeInTerminal(FuncAPI.runFunc(context.contextPath.fsPath));
+  const result = await window.showInformationMessage('Do you want to run with build?', 'Yes', 'No');
+  if (result === 'No') {
+    await runExecute(context);
+  } else if (result === 'Yes') {
+    // eslint-disable-next-line @typescript-eslint/no-floating-promises
+    buildFunction(context).then(async () => {
+      await runExecute(context);
+    });
+  }
 }

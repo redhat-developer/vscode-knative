@@ -6,8 +6,8 @@
 
 import * as vscode from 'vscode';
 import { selectFunctionFolder } from './build-and-deploy-function';
+import { getFunctionTasks } from './task-provider';
 import { CliCommand } from '../../cli/cmdCli';
-import { knExecutor } from '../../cli/execute';
 import { FuncAPI } from '../../cli/func-api';
 import { telemetryLog } from '../../telemetry';
 import { FunctionNode } from '../function-tree-view/functionsTreeItem';
@@ -77,8 +77,12 @@ export async function configureFunction(action: ConfigAction, objectToConfigure?
       return null;
     }
   }
-
-  await knExecutor.executeInTerminal(getCliCommand(action, objectToConfigure, funcPath));
+  const taskToExecute = getFunctionTasks(
+    { name: context.getName(), uri: context.contextPath, index: null },
+    `${action === ConfigAction.Add ? 'Add' : 'Remove'} ${objectToConfigure}`,
+    getCliCommand(action, objectToConfigure, funcPath),
+  );
+  await vscode.tasks.executeTask(taskToExecute);
 }
 
 export async function configureEnvs(action: ConfigAction, context?: FunctionNode): Promise<void> {
