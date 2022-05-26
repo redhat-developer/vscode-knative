@@ -41,7 +41,7 @@ suite('Function/Run', () => {
       [string, MessageOptions, ...string[]],
       Thenable<string>
     >;
-    stubShowInformationMessage.resolves('Yes');
+    stubShowInformationMessage.resolves('No');
   });
 
   teardown(() => {
