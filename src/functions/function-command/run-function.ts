@@ -11,10 +11,10 @@ import { FuncAPI } from '../../cli/func-api';
 import { telemetryLog } from '../../telemetry';
 import { FunctionNode } from '../function-tree-view/functionsTreeItem';
 
-async function runExecute(context: FunctionNode): Promise<void> {
+async function runExecute(context: FunctionNode, buildAndRun?: string): Promise<void> {
   const runTaskToExecute = getFunctionTasks(
     { name: context.getName(), uri: context.contextPath, index: null },
-    'run',
+    buildAndRun ?? 'run',
     FuncAPI.runFunc(context.contextPath.fsPath),
   );
   await tasks.executeTask(runTaskToExecute);
@@ -31,8 +31,12 @@ export async function runFunction(context?: FunctionNode): Promise<void> {
     await runExecute(context);
   } else if (result === 'Yes') {
     // eslint-disable-next-line @typescript-eslint/no-floating-promises
-    buildFunction(context).then(async () => {
-      await runExecute(context);
+    const buildAndRun = 'build/run';
+    await buildFunction(context, buildAndRun);
+    tasks.onDidEndTaskProcess(async (value) => {
+      if (value.exitCode === 0 && value.execution.task.name === buildAndRun) {
+        await runExecute(context, buildAndRun);
+      }
     });
   }
 }

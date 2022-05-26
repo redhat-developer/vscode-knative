@@ -134,7 +134,7 @@ async function selectedFolder(context?: FunctionNode): Promise<FolderPick> {
   return selectedFolderPick;
 }
 
-export async function buildFunction(context?: FunctionNode): Promise<vscode.TaskExecution> {
+export async function buildFunction(context?: FunctionNode, buildAndRun?: string): Promise<vscode.TaskExecution> {
   const selectedFolderPick: FolderPick = await selectedFolder(context);
   if (!selectedFolderPick && !context) {
     return null;
@@ -148,7 +148,7 @@ export async function buildFunction(context?: FunctionNode): Promise<vscode.Task
   functionExplorer.refresh();
   const taskToExecute = getFunctionTasks(
     { name: context?.getName(), uri: context.contextPath, index: null },
-    'build',
+    buildAndRun ?? 'build',
     await FuncAPI.buildFunc(
       context ? context.contextPath.fsPath : selectedFolderPick.workspaceFolder.uri.fsPath,
       funcData.image,
