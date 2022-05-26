@@ -21,6 +21,7 @@ async function runExecute(context: FunctionNode, buildAndRun?: string): Promise<
 }
 
 export async function runFunction(context?: FunctionNode): Promise<void> {
+  let runSingleBuildAndRun = true;
   if (!context) {
     return null;
   }
@@ -34,7 +35,8 @@ export async function runFunction(context?: FunctionNode): Promise<void> {
     const buildAndRun = 'build/run';
     await buildFunction(context, buildAndRun);
     tasks.onDidEndTaskProcess(async (value) => {
-      if (value.exitCode === 0 && value.execution.task.name === buildAndRun) {
+      if (value.exitCode === 0 && value.execution.task.name === buildAndRun && runSingleBuildAndRun) {
+        runSingleBuildAndRun = false;
         await runExecute(context, buildAndRun);
       }
     });
