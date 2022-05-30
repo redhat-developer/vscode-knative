@@ -8,6 +8,7 @@ import * as vscode from 'vscode';
 import * as chai from 'chai';
 import * as sinon from 'sinon';
 import * as sinonChai from 'sinon-chai';
+import { CmdCliConfig } from '../../../src/cli/cli-config';
 import { FunctionContextType } from '../../../src/cli/config';
 import { FuncImpl } from '../../../src/functions/func';
 import * as buildDeploy from '../../../src/functions/function-command/build-and-deploy-function';
@@ -47,6 +48,7 @@ suite('Function/Configure Function', () => {
   const funcNodeWithoutContextPath = new TestItem(FuncImpl.ROOT, 'func1', FunctionContextType.FUNCTION, null, null);
 
   setup(() => {
+    sandbox.stub(CmdCliConfig, 'detectOrDownload').resolves();
     executeTaskStub = sandbox.stub(vscode.tasks, 'executeTask');
   });
 

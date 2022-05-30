@@ -8,6 +8,7 @@ import { tasks, Uri, window, workspace } from 'vscode';
 import * as chai from 'chai';
 import * as sinon from 'sinon';
 import * as sinonChai from 'sinon-chai';
+import { CmdCliConfig } from '../../../src/cli/cli-config';
 import { executeCmdCli } from '../../../src/cli/cmdCli';
 import { FunctionContextType } from '../../../src/cli/config';
 import { knExecutor } from '../../../src/cli/execute';
@@ -33,6 +34,7 @@ suite('Build-And-Deploy', () => {
     showInformationMessageStub = sandbox.stub(window, 'showInformationMessage');
     executeTaskStub = sandbox.stub(tasks, 'executeTask');
     sandbox.stub(knExecutor, 'execute').resolves();
+    sandbox.stub(CmdCliConfig, 'detectOrDownload').resolves();
     sandbox.stub(executeCmdCli, 'executeExec').resolves({ error: 'error', stdout: undefined });
     showInputBoxStub = sandbox.stub(window, 'showInputBox');
   });

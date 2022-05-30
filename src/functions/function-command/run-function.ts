@@ -11,17 +11,16 @@ import { FuncAPI } from '../../cli/func-api';
 import { telemetryLog } from '../../telemetry';
 import { FunctionNode } from '../function-tree-view/functionsTreeItem';
 
-async function runExecute(context: FunctionNode, buildAndRun?: string): Promise<void> {
-  const runTaskToExecute = getFunctionTasks(
+async function runExecute(context: FunctionNode): Promise<void> {
+  const runTaskToExecute = await getFunctionTasks(
     { name: context.getName(), uri: context.contextPath, index: null },
-    buildAndRun ?? 'run',
+    'run',
     FuncAPI.runFunc(context.contextPath.fsPath),
   );
   await tasks.executeTask(runTaskToExecute);
 }
 
 export async function runFunction(context?: FunctionNode): Promise<void> {
-  let runSingleBuildAndRun = true;
   if (!context) {
     return null;
   }
@@ -32,12 +31,12 @@ export async function runFunction(context?: FunctionNode): Promise<void> {
     await runExecute(context);
   } else if (result === 'Yes') {
     // eslint-disable-next-line @typescript-eslint/no-floating-promises
-    const buildAndRun = 'build/run';
-    await buildFunction(context, buildAndRun);
+    await buildFunction(context);
+    let runSingleBuildAndRun = true;
     tasks.onDidEndTaskProcess(async (value) => {
-      if (value.exitCode === 0 && value.execution.task.name === buildAndRun && runSingleBuildAndRun) {
+      if (value.exitCode === 0 && runSingleBuildAndRun) {
         runSingleBuildAndRun = false;
-        await runExecute(context, buildAndRun);
+        await runExecute(context);
       }
     });
   }

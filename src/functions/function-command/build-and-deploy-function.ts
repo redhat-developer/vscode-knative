@@ -134,7 +134,7 @@ async function selectedFolder(context?: FunctionNode): Promise<FolderPick> {
   return selectedFolderPick;
 }
 
-export async function buildFunction(context?: FunctionNode, buildAndRun?: string): Promise<vscode.TaskExecution> {
+export async function buildFunction(context?: FunctionNode): Promise<vscode.TaskExecution> {
   const selectedFolderPick: FolderPick = await selectedFolder(context);
   if (!selectedFolderPick && !context) {
     return null;
@@ -146,9 +146,9 @@ export async function buildFunction(context?: FunctionNode, buildAndRun?: string
   telemetryLog('function_build_command', 'Build command execute');
   // eslint-disable-next-line @typescript-eslint/no-floating-promises
   functionExplorer.refresh();
-  const taskToExecute = getFunctionTasks(
+  const taskToExecute = await getFunctionTasks(
     { name: context?.getName(), uri: context.contextPath, index: null },
-    buildAndRun ?? 'build',
+    'build',
     await FuncAPI.buildFunc(
       context ? context.contextPath.fsPath : selectedFolderPick.workspaceFolder.uri.fsPath,
       funcData.image,
@@ -176,7 +176,7 @@ export async function deployFunction(context?: FunctionNode): Promise<void> {
   telemetryLog('function_deploy_command', 'Deploy command execute');
   // eslint-disable-next-line @typescript-eslint/no-floating-promises
   functionExplorer.refresh();
-  const taskToExecute = getFunctionTasks(
+  const taskToExecute = await getFunctionTasks(
     { name: context?.getName(), uri: context.contextPath, index: null },
     'deploy',
     await FuncAPI.deployFunc(

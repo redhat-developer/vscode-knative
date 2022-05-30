@@ -77,7 +77,7 @@ export async function configureFunction(action: ConfigAction, objectToConfigure?
       return null;
     }
   }
-  const taskToExecute = getFunctionTasks(
+  const taskToExecute = await getFunctionTasks(
     { name: context.getName(), uri: context.contextPath, index: null },
     `${action === ConfigAction.Add ? 'Add' : 'Remove'} ${objectToConfigure}`,
     getCliCommand(action, objectToConfigure, funcPath),

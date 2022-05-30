@@ -7,6 +7,7 @@ import { MessageOptions, tasks, Uri, window } from 'vscode';
 import * as chai from 'chai';
 import * as sinon from 'sinon';
 import * as sinonChai from 'sinon-chai';
+import { CmdCliConfig } from '../../../src/cli/cli-config';
 import { FunctionContextType } from '../../../src/cli/config';
 import { FuncImpl } from '../../../src/functions/func';
 import { runFunction } from '../../../src/functions/function-command/run-function';
@@ -41,6 +42,7 @@ suite('Function/Run', () => {
       [string, MessageOptions, ...string[]],
       Thenable<string>
     >;
+    sandbox.stub(CmdCliConfig, 'detectOrDownload').resolves();
     stubShowInformationMessage.resolves('No');
   });
 
