@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable import/no-cycle */
 /*-----------------------------------------------------------------------------------------------
  *  Copyright (c) Red Hat, Inc. All rights reserved.
@@ -12,6 +13,7 @@ import { knExecutor } from '../../cli/execute';
 import { FuncAPI } from '../../cli/func-api';
 import { telemetryLog } from '../../telemetry';
 import { ExistingWorkspaceFolderPick } from '../../util/existing-workspace-folder-pick';
+import { CACHED_CHILDPROCESS, executeCommandInOutputChannels, STILL_EXECUTING_COMMAND } from '../../util/output_channels';
 import { Platform } from '../../util/platform';
 import { FunctionNode } from '../function-tree-view/functionsTreeItem';
 import { FolderPick, FuncContent, ImageAndBuild } from '../function-type';
@@ -146,13 +148,23 @@ export async function buildFunction(context?: FunctionNode): Promise<void> {
   telemetryLog('function_build_command', 'Build command execute');
   // eslint-disable-next-line @typescript-eslint/no-floating-promises
   functionExplorer.refresh();
-  await knExecutor.executeInTerminal(
-    await FuncAPI.buildFunc(
-      context ? context.contextPath.fsPath : selectedFolderPick.workspaceFolder.uri.fsPath,
-      funcData.image,
-      funcData.builder,
-    ),
+  const command = await FuncAPI.buildFunc(
+    context ? context.contextPath.fsPath : selectedFolderPick.workspaceFolder.uri.fsPath,
+    funcData.image,
   );
+  const name = `Function ${command.cliArguments[0]}: ${context.getName()}`;
+  if (!STILL_EXECUTING_COMMAND.get(name)) {
+    await executeCommandInOutputChannels(command, context, name);
+  } else {
+    const status = await vscode.window.showWarningMessage(
+      `The Function ${command.cliArguments[0]}: ${context.getName()} is already active.`,
+      'Terminate',
+      'Restart',
+    );
+    if (status === 'Terminate') {
+      CACHED_CHILDPROCESS.get(name).kill('SIGTERM');
+    }
+  }
 }
 
 export async function deployFunction(context?: FunctionNode): Promise<void> {
