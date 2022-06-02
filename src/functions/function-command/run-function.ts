@@ -23,6 +23,9 @@ async function executeRunCommand(command: CliCommand, context: FunctionNode, nam
     );
     if (status === 'Terminate') {
       CACHED_CHILDPROCESS.get(name).kill('SIGTERM');
+    } else {
+      CACHED_CHILDPROCESS.get(name).kill('SIGTERM');
+      await executeCommandInOutputChannels(command, context, name);
     }
   }
 }
@@ -39,7 +42,26 @@ export async function runFunction(context?: FunctionNode): Promise<void> {
   if (result === 'No') {
     await executeRunCommand(command, context, name);
   } else if (result === 'Yes') {
-    await buildFunction(context);
-    await executeRunCommand(command, context, name);
+    if (!STILL_EXECUTING_COMMAND.get(name)) {
+      const buildResult = await buildFunction(context);
+      if (!buildResult.error) {
+        await executeRunCommand(command, context, name);
+      }
+    } else {
+      const status = await window.showWarningMessage(
+        `The Function ${command.cliArguments[0]}: ${context.getName()} is already active.`,
+        'Terminate',
+        'Restart',
+      );
+      if (status === 'Terminate') {
+        CACHED_CHILDPROCESS.get(name).kill('SIGTERM');
+      } else {
+        CACHED_CHILDPROCESS.get(name).kill('SIGTERM');
+        const buildResult = await buildFunction(context);
+        if (!buildResult.error) {
+          await executeRunCommand(command, context, name);
+        }
+      }
+    }
   }
 }

@@ -8,7 +8,7 @@
 import { ChildProcess, spawn } from 'child_process';
 import * as vscode from 'vscode';
 import { CmdCliConfig } from '../cli/cli-config';
-import { CliCommand, cliCommandToString } from '../cli/cmdCli';
+import { CliCommand, cliCommandToString, CliExitData } from '../cli/cmdCli';
 import { FunctionNode } from '../functions/function-tree-view/functionsTreeItem';
 
 export const CACHED_OUTPUT_CHANNELS = new Map<string, vscode.OutputChannel>();
@@ -39,13 +39,19 @@ export function openNamedOutputChannel(command?: CliCommand, context?: FunctionN
   return channel;
 }
 
-export async function executeCommandInOutputChannels(command: CliCommand, context: FunctionNode, name: string): Promise<void> {
+export async function executeCommandInOutputChannels(
+  command: CliCommand,
+  context: FunctionNode,
+  name: string,
+): Promise<CliExitData> {
   const toolLocation = await CmdCliConfig.detectOrDownload(command.cliCommand);
   const cmd = command;
   if (toolLocation) {
     cmd.cliCommand = toolLocation;
   }
-  return new Promise<void>((resolve, reject) => {
+  return new Promise<CliExitData>((resolve) => {
+    let stdout = '';
+    let error: string | Error;
     let startProcess: ChildProcess;
     STILL_EXECUTING_COMMAND.set(name, true);
     const channel = openNamedOutputChannel(command, context);
@@ -56,12 +62,14 @@ export async function executeCommandInOutputChannels(command: CliCommand, contex
     startProcess.stdout.on('data', (chunk) => {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-call
       channel.append(chunk.toString());
+      stdout += chunk;
     });
     startProcess.stderr.on('data', (chunk) => {
       if (command.cliArguments[0] !== 'run') {
         STILL_EXECUTING_COMMAND.set(name, false);
         CACHED_CHILDPROCESS.delete(name);
       }
+      error += chunk;
       // eslint-disable-next-line @typescript-eslint/no-unsafe-call
       channel.append(chunk.toString());
     });
@@ -70,12 +78,14 @@ export async function executeCommandInOutputChannels(command: CliCommand, contex
       CACHED_CHILDPROCESS.delete(name);
       const message = `'${cliCommandToString(cmd)}' exited with code ${code}`;
       channel.append(message);
-      resolve();
+      resolve({ error, stdout });
     });
     startProcess.on('error', (err) => {
       STILL_EXECUTING_COMMAND.set(name, false);
       CACHED_CHILDPROCESS.delete(name);
       channel.append(err.toString());
+      error = err;
+      resolve({ error, stdout });
     });
   });
 }

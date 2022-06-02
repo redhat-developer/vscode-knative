@@ -9,6 +9,7 @@ import * as path from 'path';
 import * as vscode from 'vscode';
 import * as fs from 'fs-extra';
 import * as yaml from 'js-yaml';
+import { CliExitData } from '../../cli/cmdCli';
 import { knExecutor } from '../../cli/execute';
 import { FuncAPI } from '../../cli/func-api';
 import { telemetryLog } from '../../telemetry';
@@ -136,7 +137,7 @@ async function selectedFolder(context?: FunctionNode): Promise<FolderPick> {
   return selectedFolderPick;
 }
 
-export async function buildFunction(context?: FunctionNode): Promise<void> {
+export async function buildFunction(context?: FunctionNode): Promise<CliExitData> {
   const selectedFolderPick: FolderPick = await selectedFolder(context);
   if (!selectedFolderPick && !context) {
     return null;
@@ -154,16 +155,16 @@ export async function buildFunction(context?: FunctionNode): Promise<void> {
   );
   const name = `Function ${command.cliArguments[0]}: ${context.getName()}`;
   if (!STILL_EXECUTING_COMMAND.get(name)) {
-    await executeCommandInOutputChannels(command, context, name);
-  } else {
-    const status = await vscode.window.showWarningMessage(
-      `The Function ${command.cliArguments[0]}: ${context.getName()} is already active.`,
-      'Terminate',
-      'Restart',
-    );
-    if (status === 'Terminate') {
-      CACHED_CHILDPROCESS.get(name).kill('SIGTERM');
-    }
+    // eslint-disable-next-line no-return-await
+    return await executeCommandInOutputChannels(command, context, name);
+  }
+  const status = await vscode.window.showWarningMessage(
+    `The Function ${command.cliArguments[0]}: ${context.getName()} is already active.`,
+    'Terminate',
+    'Restart',
+  );
+  if (status === 'Terminate') {
+    CACHED_CHILDPROCESS.get(name).kill('SIGTERM');
   }
 }
 
