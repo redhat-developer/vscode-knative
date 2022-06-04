@@ -14,7 +14,7 @@ import { FunctionNode } from '../function-tree-view/functionsTreeItem';
 
 async function executeRunCommand(command: CliCommand, context: FunctionNode, name: string): Promise<void> {
   if (!STILL_EXECUTING_COMMAND.get(name)) {
-    await executeCommandInOutputChannels(command, context, name);
+    await executeCommandInOutputChannels(command, name);
   } else {
     const status = await window.showWarningMessage(
       `The Function ${command.cliArguments[0]}: ${context.getName()} is already active.`,
@@ -25,7 +25,10 @@ async function executeRunCommand(command: CliCommand, context: FunctionNode, nam
       CACHED_CHILDPROCESS.get(name).kill('SIGTERM');
     } else {
       CACHED_CHILDPROCESS.get(name).kill('SIGTERM');
-      await executeCommandInOutputChannels(command, context, name);
+      // eslint-disable-next-line @typescript-eslint/no-misused-promises
+      setTimeout(async () => {
+        await executeCommandInOutputChannels(command, name);
+      }, 4000);
     }
   }
 }

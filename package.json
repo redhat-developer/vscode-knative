@@ -131,6 +131,7 @@
     "onView:knativeServingProjectExplorer",
     "onView:knativeEventingProjectExplorer",
     "onView:knativeFunctionProjectExplorer",
+    "onView:activeTaskFunction",
     "onCommand:eventing.explorer.refresh",
     "onCommand:eventing.explorer.openFile",
     "onCommand:knative.service.list",
@@ -149,8 +150,8 @@
     "onCommand:function.OpenInBrowserAction",
     "onCommand:function.explorer.refresh",
     "onCommand:function.explorer.create",
-    "onCommand:function.build.Palette",
     "onCommand:function.build",
+    "onCommand:activeCommand.exit",
     "onCommand:function.deploy.Palette",
     "onCommand:function.deploy",
     "onCommand:function.run",
@@ -193,6 +194,14 @@
         "icon": {
           "dark": "images/context/versions-dark.svg",
           "light": "images/context/versions-light.svg"
+        }
+      },
+      {
+        "command": "activeCommand.exit",
+        "title": "Exit",
+        "icon": {
+          "light": "images/stop-light.svg",
+          "dark": "images/stop-dark.svg"
         }
       },
       {
@@ -283,11 +292,6 @@
       {
         "command": "function.invoke",
         "title": "Invoke",
-        "category": "Knative"
-      },
-      {
-        "command": "function.build.Palette",
-        "title": "Build Function",
         "category": "Knative"
       },
       {
@@ -478,6 +482,11 @@
           "group": "inline"
         },
         {
+          "command": "activeCommand.exit",
+          "when": "view == activeTaskFunction && viewItem == activecommand",
+          "group": "inline@3"
+        },
+        {
           "command": "knative.service.open-in-browser",
           "when": "view == knativeServingProjectExplorer && viewItem == service || viewItem == revision_tagged",
           "group": "c0"
@@ -658,6 +667,10 @@
         {
           "id": "knativeEventingProjectExplorer",
           "name": "Eventing"
+        },
+        {
+          "id": "activeTaskFunction",
+          "name": "Active Function Command"
         }
       ]
     },

@@ -156,7 +156,7 @@ export async function buildFunction(context?: FunctionNode): Promise<CliExitData
   const name = `Function ${command.cliArguments[0]}: ${context.getName()}`;
   if (!STILL_EXECUTING_COMMAND.get(name)) {
     // eslint-disable-next-line no-return-await
-    return await executeCommandInOutputChannels(command, context, name);
+    return await executeCommandInOutputChannels(command, name);
   }
   const status = await vscode.window.showWarningMessage(
     `The Function ${command.cliArguments[0]}: ${context.getName()} is already active.`,
@@ -165,6 +165,12 @@ export async function buildFunction(context?: FunctionNode): Promise<CliExitData
   );
   if (status === 'Terminate') {
     CACHED_CHILDPROCESS.get(name).kill('SIGTERM');
+  } else {
+    CACHED_CHILDPROCESS.get(name).kill('SIGTERM');
+    // eslint-disable-next-line @typescript-eslint/no-misused-promises
+    setTimeout(async () => {
+      await executeCommandInOutputChannels(command, name);
+    }, 4000);
   }
 }
 

@@ -9,9 +9,10 @@ import { ChildProcess, spawn } from 'child_process';
 import * as vscode from 'vscode';
 import { CmdCliConfig } from '../cli/cli-config';
 import { CliCommand, cliCommandToString, CliExitData } from '../cli/cmdCli';
-import { FunctionNode } from '../functions/function-tree-view/functionsTreeItem';
+import { activeCommandExplorer } from '../functions/active-task-view/activeExplorer';
 
 export const CACHED_OUTPUT_CHANNELS = new Map<string, vscode.OutputChannel>();
+export const SHADOW_CACHED_OUTPUT_CHANNELS = new Map<string, vscode.OutputChannel>();
 export const STILL_EXECUTING_COMMAND = new Map<string, boolean>();
 export const CACHED_CHILDPROCESS = new Map<string, ChildProcess>();
 
@@ -21,14 +22,15 @@ export function clearOutputChannels(): void {
   });
 }
 
-export function openNamedOutputChannel(command?: CliCommand, context?: FunctionNode): vscode.OutputChannel | undefined {
+export function openNamedOutputChannel(name?: string): vscode.OutputChannel | undefined {
   let channel: vscode.OutputChannel | undefined;
-  const name = `Function ${command.cliArguments[0]}: ${context.getName()}`;
   if (!CACHED_OUTPUT_CHANNELS.get(name)) {
     channel = vscode.window.createOutputChannel(name);
     CACHED_OUTPUT_CHANNELS.set(name, channel);
+    SHADOW_CACHED_OUTPUT_CHANNELS.set(name, channel);
   } else {
     channel = CACHED_OUTPUT_CHANNELS.get(name);
+    SHADOW_CACHED_OUTPUT_CHANNELS.set(name, channel);
     if (!channel) {
       channel = vscode.window.createOutputChannel(name);
     }
@@ -36,14 +38,12 @@ export function openNamedOutputChannel(command?: CliCommand, context?: FunctionN
   if (channel) {
     channel.show();
   }
+  // eslint-disable-next-line @typescript-eslint/no-floating-promises
+  activeCommandExplorer.refresh();
   return channel;
 }
 
-export async function executeCommandInOutputChannels(
-  command: CliCommand,
-  context: FunctionNode,
-  name: string,
-): Promise<CliExitData> {
+export async function executeCommandInOutputChannels(command: CliCommand, name: string): Promise<CliExitData> {
   const toolLocation = await CmdCliConfig.detectOrDownload(command.cliCommand);
   const cmd = command;
   if (toolLocation) {
@@ -54,8 +54,11 @@ export async function executeCommandInOutputChannels(
     let error: string | Error;
     let startProcess: ChildProcess;
     STILL_EXECUTING_COMMAND.set(name, true);
-    const channel = openNamedOutputChannel(command, context);
-    channel.append(`${cliCommandToString(cmd)}\n`);
+    const channel = openNamedOutputChannel(name);
+    channel.append(
+      `\n\n------------------------------------------- Starting ${name} -------------------------------------------\n`,
+    );
+    channel.append(`\n${cliCommandToString(cmd)}\n`);
     // eslint-disable-next-line prefer-const
     startProcess = spawn(cmd.cliCommand, cmd.cliArguments);
     CACHED_CHILDPROCESS.set(name, startProcess);
@@ -77,6 +80,9 @@ export async function executeCommandInOutputChannels(
       STILL_EXECUTING_COMMAND.set(name, false);
       CACHED_CHILDPROCESS.delete(name);
       const message = `'${cliCommandToString(cmd)}' exited with code ${code}`;
+      SHADOW_CACHED_OUTPUT_CHANNELS.delete(name);
+      // eslint-disable-next-line @typescript-eslint/no-floating-promises
+      activeCommandExplorer.refresh();
       channel.append(message);
       resolve({ error, stdout });
     });

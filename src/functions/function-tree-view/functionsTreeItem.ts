@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable @typescript-eslint/no-unsafe-return */
 /*-----------------------------------------------------------------------------------------------
  *  Copyright (c) Red Hat, Inc. All rights reserved.
  *  Licensed under the MIT License. See LICENSE file in the project root for license information.
@@ -103,6 +105,7 @@ export class FunctionNodeImpl implements FunctionNode {
   ) {}
 
   get iconPath(): Uri {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     return Uri.file(path.join(__dirname, `../../../../images/context`, this.CONTEXT_DATA[this.contextValue].icon));
   }
 
@@ -133,6 +136,7 @@ export class FunctionNodeImpl implements FunctionNode {
     if (this.contextValue === FunctionContextType.FAILNAMESPACENODE) {
       return format(`Cluster is active?`, this);
     }
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     return format(this.CONTEXT_DATA[this.contextValue].tooltip, this);
   }
 
@@ -158,6 +162,7 @@ export class FunctionNodeImpl implements FunctionNode {
   }
 
   getChildren(): ProviderResult<FunctionNode[]> {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     return this.CONTEXT_DATA[this.contextValue].getChildren();
   }
 

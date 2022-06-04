@@ -22,6 +22,7 @@ export enum FunctionContextType {
   LOCAlFUNCTIONSENABLEMENT = 'localFunctionsEnablement',
   NOTCONNECTEDLOCALFUNCTIONS = 'notConnectedLocalFunctions',
   NOTCONNECTEDLOCALFUNCTIONSENABLEMENT = 'notConnectedLocalFunctionsEnablement',
+  ACTIVECOMMAND = 'activecommand',
 }
 
 export enum FunctionStatus {
