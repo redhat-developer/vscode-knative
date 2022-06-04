@@ -23,7 +23,7 @@ async function executeRunCommand(command: CliCommand, context: FunctionNode, nam
     );
     if (status === 'Terminate') {
       CACHED_CHILDPROCESS.get(name).kill('SIGTERM');
-    } else {
+    } else if (status === 'Restart') {
       CACHED_CHILDPROCESS.get(name).kill('SIGTERM');
       // eslint-disable-next-line @typescript-eslint/no-misused-promises
       setTimeout(async () => {

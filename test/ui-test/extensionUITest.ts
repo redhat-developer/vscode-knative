@@ -79,11 +79,12 @@ export function extensionsUITest(clusterIsAvailable: boolean): void {
       this.timeout(5000);
       const content = sideBar.getContent();
       const sections = await content.getSections();
-      expect(sections.length).to.eq(3);
+      expect(sections.length).to.eq(4);
       expect(await Promise.all(sections.map(async (section) => section.getTitle()))).to.has.members([
         KNativeConstants.SECTION_EVENTING,
         KNativeConstants.SECTION_SERVING,
         KNativeConstants.SECTION_FUNCTION,
+        KNativeConstants.SECTION_ACTIVE_COMMAND,
       ]);
     });
 
