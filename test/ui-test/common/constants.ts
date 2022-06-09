@@ -30,5 +30,5 @@ export class KNativeConstants {
 
   public static readonly SECTION_FUNCTION = 'Functions';
 
-  public static readonly SECTION_ACTIVE_COMMAND = 'Active Function Command';
+  public static readonly SECTION_ACTIVE_COMMAND = 'Function Sessions';
 }
