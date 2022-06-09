@@ -29,8 +29,8 @@ export class ActiveCommandNodeImpl implements CommandNode {
       getChildren: (): undefined[] => [],
     },
     activecommand: {
-      icon: 'pause.svg',
-      tooltip: 'Active command: {label}',
+      icon: 'running.gif',
+      tooltip: 'The function {label} is running locally',
       getChildren: (): undefined[] => [],
     },
   };

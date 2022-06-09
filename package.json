@@ -151,7 +151,7 @@
     "onCommand:function.explorer.refresh",
     "onCommand:function.explorer.create",
     "onCommand:function.build",
-    "onCommand:activeCommand.exit",
+    "onCommand:activeCommand.stop",
     "onCommand:function.deploy.Palette",
     "onCommand:function.deploy",
     "onCommand:function.run",
@@ -197,8 +197,8 @@
         }
       },
       {
-        "command": "activeCommand.exit",
-        "title": "Exit",
+        "command": "activeCommand.stop",
+        "title": "Stop",
         "icon": {
           "light": "images/stop-light.svg",
           "dark": "images/stop-dark.svg"
@@ -482,7 +482,7 @@
           "group": "inline"
         },
         {
-          "command": "activeCommand.exit",
+          "command": "activeCommand.stop",
           "when": "view == activeTaskFunction && viewItem == activecommand",
           "group": "inline@3"
         },
@@ -670,7 +670,7 @@
         },
         {
           "id": "activeTaskFunction",
-          "name": "Active Function Command"
+          "name": "Function Sessions"
         }
       ]
     },

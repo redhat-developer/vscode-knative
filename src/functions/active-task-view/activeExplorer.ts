@@ -19,7 +19,7 @@ export class ActiveCommandExplorer implements TreeDataProvider<CommandNode>, Dis
   readonly onDidChangeTreeData: Event<CommandNode | undefined> = this.onDidChangeTreeDataEmitter.event;
 
   constructor() {
-    this.treeView = window.createTreeView('activeTaskFunction', { treeDataProvider: this, canSelectMany: true });
+    this.treeView = window.createTreeView('activeTaskFunction', { treeDataProvider: this, canSelectMany: false });
   }
 
   getTreeItem(element: CommandNode): TreeItem | Thenable<TreeItem> {

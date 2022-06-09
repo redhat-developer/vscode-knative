@@ -30,7 +30,7 @@ export function activeCommandTreeView(): CommandNode[] {
   } else {
     const obj: ActiveCommandNodeImpl = new ActiveCommandNodeImpl(
       null,
-      'No active function command is running.',
+      'No function is currently being run (or executed).',
       FunctionContextType.NONE,
       TreeItemCollapsibleState.None,
     );

@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable no-console */
 /* eslint-disable import/no-cycle */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /*-----------------------------------------------------------------------------------------------
@@ -44,11 +46,17 @@ export function openNamedOutputChannel(name?: string): vscode.OutputChannel | un
 }
 
 export async function executeCommandInOutputChannels(command: CliCommand, name: string): Promise<CliExitData> {
-  const toolLocation = await CmdCliConfig.detectOrDownload(command.cliCommand);
+  let toolLocation: string;
+  if (command.cliCommand === 'func') {
+    toolLocation = await CmdCliConfig.detectOrDownload(command.cliCommand);
+  }
+
   const cmd = command;
   if (toolLocation) {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     cmd.cliCommand = toolLocation;
   }
+
   return new Promise<CliExitData>((resolve) => {
     let stdout = '';
     let error: string | Error;
@@ -63,8 +71,8 @@ export async function executeCommandInOutputChannels(command: CliCommand, name: 
     startProcess = spawn(cmd.cliCommand, cmd.cliArguments);
     CACHED_CHILDPROCESS.set(name, startProcess);
     startProcess.stdout.on('data', (chunk) => {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-      channel.append(chunk.toString());
+      // eslint-disable-next-line no-control-regex
+      channel.append(chunk.toString().replace(/\[94m|\x1b|\[0m/gi, ''));
       stdout += chunk;
     });
     startProcess.stderr.on('data', (chunk) => {

@@ -9,6 +9,7 @@ import * as path from 'path';
 import * as vscode from 'vscode';
 import * as fs from 'fs-extra';
 import * as yaml from 'js-yaml';
+import { buildAndRun, canceledBuildFromRun, recursive } from './run-function';
 import { CliExitData } from '../../cli/cmdCli';
 import { knExecutor } from '../../cli/execute';
 import { FuncAPI } from '../../cli/func-api';
@@ -137,9 +138,12 @@ async function selectedFolder(context?: FunctionNode): Promise<FolderPick> {
   return selectedFolderPick;
 }
 
-export async function buildFunction(context?: FunctionNode): Promise<CliExitData> {
+export async function buildFunction(context?: FunctionNode, recursiveCall?: boolean): Promise<CliExitData> {
   const selectedFolderPick: FolderPick = await selectedFolder(context);
   if (!selectedFolderPick && !context) {
+    return null;
+  }
+  if (!context) {
     return null;
   }
   const funcData = await functionImage(context ? context.contextPath : selectedFolderPick.workspaceFolder.uri, true);
@@ -153,24 +157,48 @@ export async function buildFunction(context?: FunctionNode): Promise<CliExitData
     context ? context.contextPath.fsPath : selectedFolderPick.workspaceFolder.uri.fsPath,
     funcData.image,
   );
-  const name = `Function ${command.cliArguments[0]}: ${context.getName()}`;
+  const name = `Build: ${context.getName()}`;
+  if (recursiveCall === false) {
+    return null;
+  }
+  if (recursiveCall === true) {
+    recursive.set(name, false);
+    canceledBuildFromRun.set(name, { statusBuildOrRun: false, commandToRun: canceledBuildFromRun.get(name)?.commandToRun });
+    // eslint-disable-next-line no-return-await
+    const result = await executeCommandInOutputChannels(command, name);
+    const getCanceledBuildFromRun = canceledBuildFromRun.get(name);
+    if (getCanceledBuildFromRun?.statusBuildOrRun) {
+      const buildResult = await buildFunction(context, getCanceledBuildFromRun.statusBuildOrRun);
+      if (!buildResult?.error) {
+        await buildAndRun(context, getCanceledBuildFromRun.commandToRun, true);
+      }
+    }
+    if (recursive.get(name)) {
+      await buildFunction(context, recursive.get(name));
+    }
+    return result;
+  }
   if (!STILL_EXECUTING_COMMAND.get(name)) {
     // eslint-disable-next-line no-return-await
-    return await executeCommandInOutputChannels(command, name);
+    const result = await executeCommandInOutputChannels(command, name);
+    const getCanceledBuildFromRun = canceledBuildFromRun.get(name);
+    if (getCanceledBuildFromRun?.statusBuildOrRun) {
+      const buildResult = await buildFunction(context, getCanceledBuildFromRun.statusBuildOrRun);
+      if (!buildResult?.error) {
+        await buildAndRun(context, getCanceledBuildFromRun.commandToRun, true);
+      }
+    } else if (recursive.get(name)) {
+      await buildFunction(context, recursive.get(name));
+    }
+    return result;
   }
   const status = await vscode.window.showWarningMessage(
     `The Function ${command.cliArguments[0]}: ${context.getName()} is already active.`,
-    'Terminate',
     'Restart',
   );
-  if (status === 'Terminate') {
-    CACHED_CHILDPROCESS.get(name).kill('SIGTERM');
-  } else if (status === 'Restart') {
-    CACHED_CHILDPROCESS.get(name).kill('SIGTERM');
-    // eslint-disable-next-line @typescript-eslint/no-misused-promises
-    setTimeout(async () => {
-      await executeCommandInOutputChannels(command, name);
-    }, 4000);
+  if (status === 'Restart') {
+    recursive.set(name, true);
+    CACHED_CHILDPROCESS.get(name)?.kill('SIGTERM');
   }
 }
 
