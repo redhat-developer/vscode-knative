@@ -21,6 +21,7 @@ import { KnativeReadonlyProvider, KN_READONLY_SCHEME } from './editor/knativeRea
 import { EventingExplorer } from './eventingTree/eventingExplorer';
 import { EventingTreeItem } from './eventingTree/eventingTreeItem';
 import { activeCommandExplorer } from './functions/active-task-view/activeExplorer';
+import { focusOnOutputChannel } from './functions/active-task-view/focusOnOutputChannel';
 import { stopCommand } from './functions/active-task-view/stop-command';
 import { buildFunction, deployFunction } from './functions/function-command/build-and-deploy-function';
 import {
@@ -92,10 +93,9 @@ export async function activate(extensionContext: vscode.ExtensionContext): Promi
     vscode.commands.registerCommand('function.build', (context) => buildFunction(context)),
     vscode.commands.registerCommand('function.deploy', (context) => deployFunction(context)),
     vscode.commands.registerCommand('activeCommand.stop', (context) => stopCommand(context)),
+    vscode.commands.registerCommand('activeCommand.focus', (context) => focusOnOutputChannel(context)),
     vscode.commands.registerCommand('function.OpenInBrowserAction', (context) => urlFunction(context)),
     vscode.commands.registerCommand('function.run', (context) => runFunction(context)),
-    vscode.commands.registerCommand('function.build.Palette', () => buildFunction()),
-    vscode.commands.registerCommand('function.deploy.Palette', () => deployFunction()),
     vscode.commands.registerCommand('function.addEnv', (context) => configureEnvs(ConfigAction.Add, context)),
     vscode.commands.registerCommand('function.addVolume', (context) => configureVolumes(ConfigAction.Add, context)),
     vscode.commands.registerCommand('function.addConfig.Palette', () => configureFunction(ConfigAction.Add)),

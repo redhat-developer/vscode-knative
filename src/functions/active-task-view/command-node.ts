@@ -6,7 +6,7 @@
  *-----------------------------------------------------------------------------------------------*/
 
 import * as path from 'path';
-import { ProviderResult, QuickPickItem, TreeItemCollapsibleState, Uri } from 'vscode';
+import { ProviderResult, QuickPickItem, TreeItemCollapsibleState, Uri, Command as vsCommand } from 'vscode';
 import format = require('string-format');
 import { FunctionContextType } from '../../cli/config';
 import { IMAGES } from '../../icon-path';
@@ -49,6 +49,13 @@ export class ActiveCommandNodeImpl implements CommandNode {
 
   get tooltip(): string {
     return format(this.CONTEXT_DATA[this.contextValue].tooltip, this);
+  }
+
+  get command(): vsCommand | undefined {
+    const arrName = ['activecommand'];
+    if (arrName.includes(this.contextValue)) {
+      return { command: 'activeCommand.focus', title: 'Focus', arguments: [this] };
+    }
   }
 
   get label(): string {

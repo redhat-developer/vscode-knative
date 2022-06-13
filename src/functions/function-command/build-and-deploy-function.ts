@@ -9,13 +9,14 @@ import * as path from 'path';
 import * as vscode from 'vscode';
 import * as fs from 'fs-extra';
 import * as yaml from 'js-yaml';
-import { buildAndRun, canceledBuildFromRun, recursive } from './run-function';
+import { executeBuildOrRunOnRestart } from './execute-build-run-output-channel-session';
+import { canceledBuildFromRun, recursive } from './run-function';
 import { CliExitData } from '../../cli/cmdCli';
 import { knExecutor } from '../../cli/execute';
 import { FuncAPI } from '../../cli/func-api';
 import { telemetryLog } from '../../telemetry';
 import { ExistingWorkspaceFolderPick } from '../../util/existing-workspace-folder-pick';
-import { CACHED_CHILDPROCESS, executeCommandInOutputChannels, STILL_EXECUTING_COMMAND } from '../../util/output_channels';
+import { CACHED_CHILDPROCESS, STILL_EXECUTING_COMMAND } from '../../util/output_channels';
 import { Platform } from '../../util/platform';
 import { FunctionNode } from '../function-tree-view/functionsTreeItem';
 import { FolderPick, FuncContent, ImageAndBuild } from '../function-type';
@@ -139,24 +140,17 @@ async function selectedFolder(context?: FunctionNode): Promise<FolderPick> {
 }
 
 export async function buildFunction(context?: FunctionNode, recursiveCall?: boolean): Promise<CliExitData> {
-  const selectedFolderPick: FolderPick = await selectedFolder(context);
-  if (!selectedFolderPick && !context) {
-    return null;
-  }
   if (!context) {
     return null;
   }
-  const funcData = await functionImage(context ? context.contextPath : selectedFolderPick.workspaceFolder.uri, true);
+  const funcData = await functionImage(context.contextPath, true);
   if (!funcData) {
     return null;
   }
   telemetryLog('function_build_command', 'Build command execute');
   // eslint-disable-next-line @typescript-eslint/no-floating-promises
   functionExplorer.refresh();
-  const command = await FuncAPI.buildFunc(
-    context ? context.contextPath.fsPath : selectedFolderPick.workspaceFolder.uri.fsPath,
-    funcData.image,
-  );
+  const command = await FuncAPI.buildFunc(context.contextPath.fsPath, funcData.image);
   const name = `Build: ${context.getName()}`;
   if (recursiveCall === false) {
     return null;
@@ -164,32 +158,11 @@ export async function buildFunction(context?: FunctionNode, recursiveCall?: bool
   if (recursiveCall === true) {
     recursive.set(name, false);
     canceledBuildFromRun.set(name, { statusBuildOrRun: false, commandToRun: canceledBuildFromRun.get(name)?.commandToRun });
-    // eslint-disable-next-line no-return-await
-    const result = await executeCommandInOutputChannels(command, name);
-    const getCanceledBuildFromRun = canceledBuildFromRun.get(name);
-    if (getCanceledBuildFromRun?.statusBuildOrRun) {
-      const buildResult = await buildFunction(context, getCanceledBuildFromRun.statusBuildOrRun);
-      if (!buildResult?.error) {
-        await buildAndRun(context, getCanceledBuildFromRun.commandToRun, true);
-      }
-    }
-    if (recursive.get(name)) {
-      await buildFunction(context, recursive.get(name));
-    }
+    const result = await executeBuildOrRunOnRestart(context, command, name);
     return result;
   }
   if (!STILL_EXECUTING_COMMAND.get(name)) {
-    // eslint-disable-next-line no-return-await
-    const result = await executeCommandInOutputChannels(command, name);
-    const getCanceledBuildFromRun = canceledBuildFromRun.get(name);
-    if (getCanceledBuildFromRun?.statusBuildOrRun) {
-      const buildResult = await buildFunction(context, getCanceledBuildFromRun.statusBuildOrRun);
-      if (!buildResult?.error) {
-        await buildAndRun(context, getCanceledBuildFromRun.commandToRun, true);
-      }
-    } else if (recursive.get(name)) {
-      await buildFunction(context, recursive.get(name));
-    }
+    const result = await executeBuildOrRunOnRestart(context, command, name);
     return result;
   }
   const status = await vscode.window.showWarningMessage(

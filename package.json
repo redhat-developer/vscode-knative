@@ -152,7 +152,7 @@
     "onCommand:function.explorer.create",
     "onCommand:function.build",
     "onCommand:activeCommand.stop",
-    "onCommand:function.deploy.Palette",
+    "onCommand:activeCommand.focus",
     "onCommand:function.deploy",
     "onCommand:function.run",
     "onCommand:function.version",
@@ -257,6 +257,11 @@
         "category": "Knative"
       },
       {
+        "command": "activeCommand.focus",
+        "title": "Focus",
+        "category": "Knative"
+      },
+      {
         "command": "service.explorer.tag",
         "title": "Add a Tag",
         "category": "Knative"
@@ -297,11 +302,6 @@
       {
         "command": "function.build",
         "title": "Build",
-        "category": "Knative"
-      },
-      {
-        "command": "function.deploy.Palette",
-        "title": "Deploy Function",
         "category": "Knative"
       },
       {
@@ -391,10 +391,6 @@
           "when": "false"
         },
         {
-          "command": "function.deploy.Palette",
-          "when": "false"
-        },
-        {
           "command": "function.invoke",
           "when": "false"
         },
@@ -448,6 +444,10 @@
         },
         {
           "command": "function.openInEditor",
+          "when": "false"
+        },
+        {
+          "command": "activeCommand.focus",
           "when": "false"
         },
         {

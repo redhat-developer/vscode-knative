@@ -86,7 +86,8 @@ export async function buildAndRun(context: FunctionNode, command: CliCommand, ru
   } else {
     const status = await window.showWarningMessage(`The Function ${buildOrRunName} is already active.`, 'Restart');
     if (status === 'Restart') {
-      CACHED_CHILDPROCESS.get(buildOrRunName)?.kill('SIGTERM');
+      CACHED_CHILDPROCESS.get(buildName)?.kill('SIGTERM');
+      CACHED_CHILDPROCESS.get(runName)?.kill('SIGTERM');
       if (buildOrRunName === buildName) {
         canceledBuildFromRun.set(buildName, { statusBuildOrRun: true, commandToRun: command });
       }

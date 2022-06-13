@@ -72,7 +72,7 @@ export async function executeCommandInOutputChannels(command: CliCommand, name: 
     CACHED_CHILDPROCESS.set(name, startProcess);
     startProcess.stdout.on('data', (chunk) => {
       // eslint-disable-next-line no-control-regex
-      channel.append(chunk.toString().replace(/\[94m|\x1b|\[0m/gi, ''));
+      channel.append(chunk.toString().replace(/\[94m|\x1b|\[0m|\[90m/gi, ''));
       stdout += chunk;
     });
     startProcess.stderr.on('data', (chunk) => {
