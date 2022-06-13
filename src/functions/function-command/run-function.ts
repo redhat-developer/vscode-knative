@@ -6,54 +6,23 @@
  *-----------------------------------------------------------------------------------------------*/
 
 import { window } from 'vscode';
-import { buildFunction } from './build-and-deploy-function';
+import { buildFunction, restartBuildCommand } from './build-and-deploy-function';
 import { CliCommand, CliExitData } from '../../cli/cmdCli';
 import { FuncAPI } from '../../cli/func-api';
 import { telemetryLog } from '../../telemetry';
 import { CACHED_CHILDPROCESS, executeCommandInOutputChannels, STILL_EXECUTING_COMMAND } from '../../util/output_channels';
 import { FunctionNode } from '../function-tree-view/functionsTreeItem';
 
-interface checkRunAndBuild {
-  statusBuildOrRun?: boolean;
-  commandToRun?: CliCommand;
-}
-export const recursive = new Map<string, boolean>();
-export const canceledBuildFromRun = new Map<string, checkRunAndBuild>();
+export const restartRunCommand = new Map<string, boolean>();
+const delay = (ms) => new Promise((res) => setTimeout(res, ms));
 
-async function executeRunCommand(
-  command: CliCommand,
-  context: FunctionNode,
-  name: string,
-  recursiveCall?: boolean,
-): Promise<void> {
-  if (recursiveCall === false) {
-    return null;
-  }
-
-  if (recursiveCall === true) {
-    recursive.set(name, false);
-    await executeCommandInOutputChannels(command, name);
-    const runStatus = canceledBuildFromRun.get(name);
-    if (runStatus?.statusBuildOrRun) {
-      canceledBuildFromRun.set(name, { statusBuildOrRun: false, commandToRun: command });
-      // eslint-disable-next-line @typescript-eslint/no-use-before-define
-      await buildAndRun(context, command, false);
-      return null;
-    }
-    await executeRunCommand(command, context, name, recursive.get(name) ?? false);
-    return null;
-  }
-
+async function executeRunCommand(command: CliCommand, context: FunctionNode, name: string): Promise<void> {
   if (!STILL_EXECUTING_COMMAND.get(name)) {
     await executeCommandInOutputChannels(command, name);
-    const runStatus = canceledBuildFromRun.get(name);
-    if (runStatus?.statusBuildOrRun) {
-      canceledBuildFromRun.set(name, { statusBuildOrRun: false, commandToRun: command });
-      // eslint-disable-next-line @typescript-eslint/no-use-before-define
-      await buildAndRun(context, command, false);
-      return null;
+    if (restartRunCommand.get(context.getName())) {
+      restartRunCommand.set(context.getName(), false);
+      await executeRunCommand(command, context, name);
     }
-    await executeRunCommand(command, context, name, recursive.get(name) ?? false);
     return null;
   }
   const status = await window.showWarningMessage(
@@ -61,12 +30,12 @@ async function executeRunCommand(
     'Restart',
   );
   if (status === 'Restart') {
-    recursive.set(name, true);
     CACHED_CHILDPROCESS.get(name)?.kill('SIGTERM');
+    restartRunCommand.set(context.getName(), true);
   }
 }
 
-export async function buildAndRun(context: FunctionNode, command: CliCommand, runFromBuild?: boolean): Promise<void> {
+export async function buildAndRun(context: FunctionNode, command: CliCommand): Promise<void> {
   let buildOrRunName: string;
   const runName = `Run: ${context.getName()}`;
   const buildName = `Build: ${context.getName()}`;
@@ -76,26 +45,23 @@ export async function buildAndRun(context: FunctionNode, command: CliCommand, ru
     buildOrRunName = runName;
   }
   if (!STILL_EXECUTING_COMMAND.get(runName) && !STILL_EXECUTING_COMMAND.get(buildName)) {
-    let buildResult: CliExitData;
-    if (!runFromBuild) {
-      buildResult = await buildFunction(context);
-    }
+    const buildResult: CliExitData = await buildFunction(context);
     if (!buildResult?.error) {
       await executeRunCommand(command, context, runName);
     }
-  } else {
-    const status = await window.showWarningMessage(`The Function ${buildOrRunName} is already active.`, 'Restart');
-    if (status === 'Restart') {
-      CACHED_CHILDPROCESS.get(buildName)?.kill('SIGTERM');
-      CACHED_CHILDPROCESS.get(runName)?.kill('SIGTERM');
-      if (buildOrRunName === buildName) {
-        canceledBuildFromRun.set(buildName, { statusBuildOrRun: true, commandToRun: command });
-      }
-      if (buildOrRunName === runName) {
-        canceledBuildFromRun.set(runName, { statusBuildOrRun: true, commandToRun: command });
-      }
+    return null;
+  }
+  const status = await window.showWarningMessage(`The Function ${buildOrRunName} is already active.`, 'Restart');
+  if (status === 'Restart') {
+    CACHED_CHILDPROCESS.get(buildName)?.kill('SIGTERM');
+    CACHED_CHILDPROCESS.get(runName)?.kill('SIGTERM');
+    if (restartBuildCommand.get(context.getName())) {
+      restartBuildCommand.set(context.getName(), false);
     }
   }
+
+  await delay(1000);
+  await buildAndRun(context, command);
 }
 
 export async function runFunction(context?: FunctionNode): Promise<void> {

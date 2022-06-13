@@ -9,20 +9,19 @@ import * as path from 'path';
 import * as vscode from 'vscode';
 import * as fs from 'fs-extra';
 import * as yaml from 'js-yaml';
-import { executeBuildOrRunOnRestart } from './execute-build-run-output-channel-session';
-import { canceledBuildFromRun, recursive } from './run-function';
 import { CliExitData } from '../../cli/cmdCli';
 import { knExecutor } from '../../cli/execute';
 import { FuncAPI } from '../../cli/func-api';
 import { telemetryLog } from '../../telemetry';
 import { ExistingWorkspaceFolderPick } from '../../util/existing-workspace-folder-pick';
-import { CACHED_CHILDPROCESS, STILL_EXECUTING_COMMAND } from '../../util/output_channels';
+import { CACHED_CHILDPROCESS, executeCommandInOutputChannels, STILL_EXECUTING_COMMAND } from '../../util/output_channels';
 import { Platform } from '../../util/platform';
 import { FunctionNode } from '../function-tree-view/functionsTreeItem';
 import { FolderPick, FuncContent, ImageAndBuild } from '../function-type';
 import { functionExplorer } from '../functionsExplorer';
 
 const imageRegex = RegExp('[^/]+\\.[^/.]+\\/([^/.]+)(?:\\/[\\w\\s._-]*([\\w\\s._-]))*(?::[a-z0-9\\.-]+)?$');
+export const restartBuildCommand = new Map<string, boolean>();
 
 async function showInputBox(promptMessage: string, inputValidMessage: string, name?: string): Promise<string> {
   const defaultUsername = Platform.ENV;
@@ -139,7 +138,7 @@ async function selectedFolder(context?: FunctionNode): Promise<FolderPick> {
   return selectedFolderPick;
 }
 
-export async function buildFunction(context?: FunctionNode, recursiveCall?: boolean): Promise<CliExitData> {
+export async function buildFunction(context?: FunctionNode): Promise<CliExitData> {
   if (!context) {
     return null;
   }
@@ -152,17 +151,12 @@ export async function buildFunction(context?: FunctionNode, recursiveCall?: bool
   functionExplorer.refresh();
   const command = await FuncAPI.buildFunc(context.contextPath.fsPath, funcData.image);
   const name = `Build: ${context.getName()}`;
-  if (recursiveCall === false) {
-    return null;
-  }
-  if (recursiveCall === true) {
-    recursive.set(name, false);
-    canceledBuildFromRun.set(name, { statusBuildOrRun: false, commandToRun: canceledBuildFromRun.get(name)?.commandToRun });
-    const result = await executeBuildOrRunOnRestart(context, command, name);
-    return result;
-  }
   if (!STILL_EXECUTING_COMMAND.get(name)) {
-    const result = await executeBuildOrRunOnRestart(context, command, name);
+    const result = await executeCommandInOutputChannels(command, name);
+    if (restartBuildCommand.get(context.getName())) {
+      restartBuildCommand.set(context.getName(), false);
+      await buildFunction(context);
+    }
     return result;
   }
   const status = await vscode.window.showWarningMessage(
@@ -170,8 +164,8 @@ export async function buildFunction(context?: FunctionNode, recursiveCall?: bool
     'Restart',
   );
   if (status === 'Restart') {
-    recursive.set(name, true);
     CACHED_CHILDPROCESS.get(name)?.kill('SIGTERM');
+    restartBuildCommand.set(context.getName(), true);
   }
 }
 

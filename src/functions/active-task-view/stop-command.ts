@@ -5,13 +5,11 @@
  *-----------------------------------------------------------------------------------------------*/
 
 import { CACHED_CHILDPROCESS } from '../../util/output_channels';
-import { canceledBuildFromRun } from '../function-command/run-function';
 import { FunctionNode } from '../function-tree-view/functionsTreeItem';
 
 export function stopCommand(context: FunctionNode): void {
   if (!context) {
     return null;
   }
-  canceledBuildFromRun.delete(context.getName());
   CACHED_CHILDPROCESS.get(context.getName()).kill('SIGTERM');
 }
