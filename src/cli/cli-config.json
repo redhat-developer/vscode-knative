@@ -3,33 +3,33 @@
     "description": "Knative CLI tool",
     "vendor": "Red Hat, Inc.",
     "name": "kn",
-    "version": "1.4.0",
-    "versionRange": "1.4.0",
-    "versionRangeLabel": "v1.4.0",
+    "version": "1.5.0",
+    "versionRange": "1.5.0",
+    "versionRangeLabel": "v1.5.0",
     "versionLocalBuildRange": 20210101,
     "dlFileName": "kn",
     "cmdFileName": "kn",
     "filePrefix": "",
     "platform": {
       "win32": {
-        "url": "https://github.com/knative/client/releases/download/knative-v1.4.0/kn-windows-amd64.exe",
-        "sha256sum": "2f1cf48d3d405824a5347e0ec1c565e90a62db66125b81a1ce2cd9370c8ce5f2",
+        "url": "https://github.com/knative/client/releases/download/knative-v1.5.0/kn-windows-amd64.exe",
+        "sha256sum": "3e687ff8698247ab139039e03a1412042d993fc7b33547c666d929c1560f5636",
         "dlFileName": "kn-windows-amd64.exe",
         "cmdFileName": "kn.exe"
       },
       "darwin": {
-        "url": "https://github.com/knative/client/releases/download/knative-v1.4.0/kn-darwin-amd64",
-        "sha256sum": "797e9996b82cbf92f95e132e69acb0a971b2b22cb5da11386db71d1987a09f29",
+        "url": "https://github.com/knative/client/releases/download/knative-v1.5.0/kn-darwin-amd64",
+        "sha256sum": "4319b9b2a7f0faa3db97acb42a942b2346b115b3bc27b2d950bdf8b7d91311e4",
         "dlFileName": "kn-darwin-amd64"
       },
       "darwin-arm64": {
-        "url": "https://github.com/knative/client/releases/download/knative-v1.4.0/kn-darwin-arm64",
-        "sha256sum": "3caec12253e23bef6211083cffe98de2328b7425c579fbae94929cd1a64de6a1",
+        "url": "https://github.com/knative/client/releases/download/knative-v1.5.0/kn-darwin-arm64",
+        "sha256sum": "7e4ef8856904ccfdd9f07530a313aeed8c5e0a58a03ef4f5ee6f8256679e134b",
         "dlFileName": "kn-darwin-arm64"
       },
       "linux": {
-        "url": "https://github.com/knative/client/releases/download/knative-v1.4.0/kn-linux-amd64",
-        "sha256sum": "85f0d5f11186efbf3659f7d02e3c9d72e0dcc12057d681bbcea1709462bc5740",
+        "url": "https://github.com/knative/client/releases/download/knative-v1.5.0/kn-linux-amd64",
+        "sha256sum": "663af0337985c7a1ea9b339cc0c865dba05bdacbcb8453fd63057e680c921f46",
         "dlFileName": "kn-linux-amd64"
       }
     }
