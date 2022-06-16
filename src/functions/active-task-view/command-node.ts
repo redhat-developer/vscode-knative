@@ -30,7 +30,7 @@ export class ActiveCommandNodeImpl implements CommandNode {
     },
     activecommand: {
       icon: 'running.gif',
-      tooltip: 'The function {label} is running locally',
+      tooltip: '{label}',
       getChildren: (): undefined[] => [],
     },
   };
@@ -48,6 +48,19 @@ export class ActiveCommandNodeImpl implements CommandNode {
   }
 
   get tooltip(): string {
+    if (this.contextValue === FunctionContextType.ACTIVECOMMAND) {
+      let name: string;
+      let state: string;
+      if (this.name.startsWith('Build:')) {
+        state = 'building';
+        name = this.name.replace('Build:', '').trim();
+      }
+      if (this.name.startsWith('Run:')) {
+        state = 'running';
+        name = this.name.replace('Run:', '').trim();
+      }
+      return format(`The function ${name} is ${state} locally`, this);
+    }
     return format(this.CONTEXT_DATA[this.contextValue].tooltip, this);
   }
 

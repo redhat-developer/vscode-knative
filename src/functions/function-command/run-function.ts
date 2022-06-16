@@ -58,10 +58,9 @@ export async function buildAndRun(context: FunctionNode, command: CliCommand): P
     if (restartBuildCommand.get(context.getName())) {
       restartBuildCommand.set(context.getName(), false);
     }
+    await delay(1000);
+    await buildAndRun(context, command);
   }
-
-  await delay(1000);
-  await buildAndRun(context, command);
 }
 
 export async function runFunction(context?: FunctionNode): Promise<void> {
