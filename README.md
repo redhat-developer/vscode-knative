@@ -1,7 +1,8 @@
-[![Visual Studio Marketplace](https://vsmarketplacebadge.apphb.com/version/redhat.vscode-knative.svg)](https://marketplace.visualstudio.com/items?itemName=redhat.vscode-knative)
-![CI](https://github.com/talamer/vscode-knative/workflows/CI/badge.svg)
-[![Unit Tests Code Coverage](https://codecov.io/gh/redhat-developer/vscode-knative/branch/main/graph/badge.svg)](https://codecov.io/gh/redhat-developer/vscode-knative/branch/main/graph/badge.svg)
-[![License](https://img.shields.io/badge/license-MIT-brightgreen.svg)](https://github.com/redhat-developer/vscode-knative/blob/master/LICENSE)
+
+[![Visual Studio Marketplace](https://img.shields.io/visual-studio-marketplace/v/redhat.vscode-knative?style=for-the-badge&label=VS%20Marketplace&logo=visual-studio-code)](https://marketplace.visualstudio.com/items?itemName=redhat.vscode-knative)
+[![Build Status](https://img.shields.io/github/workflow/status/redhat-developer/vscode-knative/CI?logo=github&style=for-the-badge)](https://github.com/redhat-developer/vscode-knative/actions?query=workflow%3ACI)
+[![Unit Tests Code Coverage](https://img.shields.io/codecov/c/github/redhat-developer/vscode-knative?logo=codecov&style=for-the-badge)](https://codecov.io/gh/redhat-developer/vscode-knative/branch/main/graph/badge.svg)
+[![License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=for-the-badge)](https://github.com/redhat-developer/vscode-knative/blob/main/LICENSE)
 
 # Knative & Serverless Functions for Visual Studio Code
 
