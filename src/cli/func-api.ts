@@ -70,13 +70,8 @@ export class FuncAPI {
     return funcCliCommand(createCommand);
   }
 
-  static async buildFunc(location: string, image: string, builder?: string): Promise<CliCommand> {
-    let buildCommand: string[];
-    if (builder) {
-      buildCommand = ['build', '-p', `${quote}${location}${quote}`, '-i', image, '-b', builder];
-    } else {
-      buildCommand = ['build', '-p', `${quote}${location}${quote}`, '-i', image];
-    }
+  static async buildFunc(location: string, image: string): Promise<CliCommand> {
+    const buildCommand: string[] = ['build', `-p=${location}`, `-i=${image}`, '-v'];
     if (await checkOpenShiftCluster()) {
       buildCommand.push('-r ""');
     }
@@ -92,8 +87,8 @@ export class FuncAPI {
   }
 
   static runFunc(location: string): CliCommand {
-    const deployCommand = ['run', '-p', `${quote}${location}${quote}`];
-    return funcCliCommand(deployCommand);
+    const runCommand = ['run', `-p=${location}`];
+    return funcCliCommand(runCommand);
   }
 
   static deleteFunc(name: string): CliCommand {

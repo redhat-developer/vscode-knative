@@ -131,6 +131,7 @@
     "onView:knativeServingProjectExplorer",
     "onView:knativeEventingProjectExplorer",
     "onView:knativeFunctionProjectExplorer",
+    "onView:activeTaskFunction",
     "onCommand:eventing.explorer.refresh",
     "onCommand:eventing.explorer.openFile",
     "onCommand:knative.service.list",
@@ -149,9 +150,9 @@
     "onCommand:function.OpenInBrowserAction",
     "onCommand:function.explorer.refresh",
     "onCommand:function.explorer.create",
-    "onCommand:function.build.Palette",
     "onCommand:function.build",
-    "onCommand:function.deploy.Palette",
+    "onCommand:activeCommand.stop",
+    "onCommand:activeCommand.focus",
     "onCommand:function.deploy",
     "onCommand:function.run",
     "onCommand:function.version",
@@ -193,6 +194,14 @@
         "icon": {
           "dark": "images/context/versions-dark.svg",
           "light": "images/context/versions-light.svg"
+        }
+      },
+      {
+        "command": "activeCommand.stop",
+        "title": "Stop",
+        "icon": {
+          "light": "images/stop-light.svg",
+          "dark": "images/stop-dark.svg"
         }
       },
       {
@@ -248,6 +257,11 @@
         "category": "Knative"
       },
       {
+        "command": "activeCommand.focus",
+        "title": "Focus",
+        "category": "Knative"
+      },
+      {
         "command": "service.explorer.tag",
         "title": "Add a Tag",
         "category": "Knative"
@@ -286,18 +300,8 @@
         "category": "Knative"
       },
       {
-        "command": "function.build.Palette",
-        "title": "Build Function",
-        "category": "Knative"
-      },
-      {
         "command": "function.build",
         "title": "Build",
-        "category": "Knative"
-      },
-      {
-        "command": "function.deploy.Palette",
-        "title": "Deploy Function",
         "category": "Knative"
       },
       {
@@ -387,10 +391,6 @@
           "when": "false"
         },
         {
-          "command": "function.deploy.Palette",
-          "when": "false"
-        },
-        {
           "command": "function.invoke",
           "when": "false"
         },
@@ -447,6 +447,10 @@
           "when": "false"
         },
         {
+          "command": "activeCommand.focus",
+          "when": "false"
+        },
+        {
           "command": "service.explorer.deleteLocal",
           "when": "false"
         },
@@ -476,6 +480,11 @@
           "command": "service.explorer.edit",
           "when": "view == knativeServingProjectExplorer && viewItem == service",
           "group": "inline"
+        },
+        {
+          "command": "activeCommand.stop",
+          "when": "view == activeTaskFunction && viewItem == activecommand",
+          "group": "inline@3"
         },
         {
           "command": "knative.service.open-in-browser",
@@ -658,6 +667,10 @@
         {
           "id": "knativeEventingProjectExplorer",
           "name": "Eventing"
+        },
+        {
+          "id": "activeTaskFunction",
+          "name": "Function Sessions"
         }
       ]
     },

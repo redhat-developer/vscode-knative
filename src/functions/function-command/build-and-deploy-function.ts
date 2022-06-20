@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable import/no-cycle */
 /*-----------------------------------------------------------------------------------------------
  *  Copyright (c) Red Hat, Inc. All rights reserved.
@@ -8,16 +9,19 @@ import * as path from 'path';
 import * as vscode from 'vscode';
 import * as fs from 'fs-extra';
 import * as yaml from 'js-yaml';
+import { CliExitData } from '../../cli/cmdCli';
 import { knExecutor } from '../../cli/execute';
 import { FuncAPI } from '../../cli/func-api';
 import { telemetryLog } from '../../telemetry';
 import { ExistingWorkspaceFolderPick } from '../../util/existing-workspace-folder-pick';
+import { CACHED_CHILDPROCESS, executeCommandInOutputChannels, STILL_EXECUTING_COMMAND } from '../../util/output_channels';
 import { Platform } from '../../util/platform';
 import { FunctionNode } from '../function-tree-view/functionsTreeItem';
 import { FolderPick, FuncContent, ImageAndBuild } from '../function-type';
 import { functionExplorer } from '../functionsExplorer';
 
 const imageRegex = RegExp('[^/]+\\.[^/.]+\\/([^/.]+)(?:\\/[\\w\\s._-]*([\\w\\s._-]))*(?::[a-z0-9\\.-]+)?$');
+export const restartBuildCommand = new Map<string, boolean>();
 
 async function showInputBox(promptMessage: string, inputValidMessage: string, name?: string): Promise<string> {
   const defaultUsername = Platform.ENV;
@@ -134,25 +138,35 @@ async function selectedFolder(context?: FunctionNode): Promise<FolderPick> {
   return selectedFolderPick;
 }
 
-export async function buildFunction(context?: FunctionNode): Promise<void> {
-  const selectedFolderPick: FolderPick = await selectedFolder(context);
-  if (!selectedFolderPick && !context) {
+export async function buildFunction(context?: FunctionNode): Promise<CliExitData> {
+  if (!context) {
     return null;
   }
-  const funcData = await functionImage(context ? context.contextPath : selectedFolderPick.workspaceFolder.uri, true);
+  const funcData = await functionImage(context.contextPath, true);
   if (!funcData) {
     return null;
   }
   telemetryLog('function_build_command', 'Build command execute');
   // eslint-disable-next-line @typescript-eslint/no-floating-promises
   functionExplorer.refresh();
-  await knExecutor.executeInTerminal(
-    await FuncAPI.buildFunc(
-      context ? context.contextPath.fsPath : selectedFolderPick.workspaceFolder.uri.fsPath,
-      funcData.image,
-      funcData.builder,
-    ),
+  const command = await FuncAPI.buildFunc(context.contextPath.fsPath, funcData.image);
+  const name = `Build: ${context.getName()}`;
+  if (!STILL_EXECUTING_COMMAND.get(name)) {
+    const result = await executeCommandInOutputChannels(command, name);
+    if (restartBuildCommand.get(context.getName())) {
+      restartBuildCommand.set(context.getName(), false);
+      await buildFunction(context);
+    }
+    return result;
+  }
+  const status = await vscode.window.showWarningMessage(
+    `The Function ${command.cliArguments[0]}: ${context.getName()} is already active.`,
+    'Restart',
   );
+  if (status === 'Restart') {
+    CACHED_CHILDPROCESS.get(name)?.kill('SIGTERM');
+    restartBuildCommand.set(context.getName(), true);
+  }
 }
 
 export async function deployFunction(context?: FunctionNode): Promise<void> {

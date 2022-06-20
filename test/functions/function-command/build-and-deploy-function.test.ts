@@ -14,6 +14,7 @@ import { knExecutor } from '../../../src/cli/execute';
 import { FuncAPI } from '../../../src/cli/func-api';
 import { FuncImpl } from '../../../src/functions/func';
 import { buildFunction, deployFunction } from '../../../src/functions/function-command/build-and-deploy-function';
+import { STILL_EXECUTING_COMMAND } from '../../../src/util/output_channels';
 import { TestItem } from '../testFunctionitem';
 
 const { expect } = chai;
@@ -22,9 +23,11 @@ chai.use(sinonChai);
 suite('Build-And-Deploy', () => {
   const sandbox = sinon.createSandbox();
   let workspaceFoldersStub: sinon.SinonStub;
+  let stillExecutingCommandStub: sinon.SinonStub<[key: string], boolean>;
   let executeInTerminalStub: sinon.SinonStub;
   let showInputBoxStub: sinon.SinonStub;
   let showInformationMessageStub: sinon.SinonStub;
+  let showWarningMessageStub: sinon.SinonStub;
   const fixtureFolder = path.join(__dirname, '..', '..', '..', '..', 'test', 'fixtures').normalize();
   const funcUri = Uri.parse(path.join(fixtureFolder, 'func-test'));
   const contextNode = new TestItem(FuncImpl.ROOT, 'func1', FunctionContextType.FUNCTION, null);
@@ -41,7 +44,9 @@ suite('Build-And-Deploy', () => {
 
   setup(() => {
     workspaceFoldersStub = sandbox.stub(workspace, 'workspaceFolders').value([funcUri]);
-    showInformationMessageStub = sandbox.stub(window, 'showInformationMessage');
+    showInformationMessageStub = sandbox.stub(window, 'showInformationMessage').resolves();
+    stillExecutingCommandStub = sandbox.stub(STILL_EXECUTING_COMMAND, 'get').returns(true);
+    showWarningMessageStub = sandbox.stub(window, 'showWarningMessage').resolves();
     executeInTerminalStub = sandbox.stub(knExecutor, 'executeInTerminal');
     sandbox.stub(knExecutor, 'execute').resolves();
     sandbox.stub(executeCmdCli, 'executeExec').resolves({ error: 'error', stdout: undefined });
@@ -152,10 +157,11 @@ suite('Build-And-Deploy', () => {
       },
     ]);
     showInputBoxStub.onFirstCall().resolves('docker.io/test/node-test:latest');
-    await buildFunction();
-    expect(executeInTerminalStub).calledOnceWith(
-      await FuncAPI.buildFunc(path.join(fixtureFolder, 'func-test1'), 'docker.io/test/node-test:latest'),
-    );
+    await buildFunction(contextNode);
+    // eslint-disable-next-line no-unused-expressions
+    expect(stillExecutingCommandStub).calledOnce;
+    // eslint-disable-next-line no-unused-expressions
+    expect(showWarningMessageStub).calledOnce;
   });
 
   test('return null if build image not provided', async () => {
