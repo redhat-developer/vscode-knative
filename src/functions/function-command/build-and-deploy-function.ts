@@ -9,19 +9,21 @@ import * as path from 'path';
 import * as vscode from 'vscode';
 import * as fs from 'fs-extra';
 import * as yaml from 'js-yaml';
+import validator from 'validator';
 import { CliExitData } from '../../cli/cmdCli';
-import { knExecutor } from '../../cli/execute';
 import { FuncAPI } from '../../cli/func-api';
 import { telemetryLog } from '../../telemetry';
 import { ExistingWorkspaceFolderPick } from '../../util/existing-workspace-folder-pick';
 import { CACHED_CHILDPROCESS, executeCommandInOutputChannels, STILL_EXECUTING_COMMAND } from '../../util/output_channels';
 import { Platform } from '../../util/platform';
+import { getStderrString } from '../../util/stderrstring';
 import { FunctionNode } from '../function-tree-view/functionsTreeItem';
 import { FolderPick, FuncContent, ImageAndBuild } from '../function-type';
 import { functionExplorer } from '../functionsExplorer';
 
 const imageRegex = RegExp('[^/]+\\.[^/.]+\\/([^/.]+)(?:\\/[\\w\\s._-]*([\\w\\s._-]))*(?::[a-z0-9\\.-]+)?$');
 export const restartBuildCommand = new Map<string, boolean>();
+export const restartDeployCommand = new Map<string, boolean>();
 
 async function showInputBox(promptMessage: string, inputValidMessage: string, name?: string): Promise<string> {
   const defaultUsername = Platform.ENV;
@@ -65,7 +67,7 @@ async function functionImage(
     const funcYaml: string = await fs.readFile(path.join(selectedFolderPick.fsPath, 'func.yaml'), 'utf-8');
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     funcData = yaml.safeLoadAll(funcYaml);
-    if (funcData?.[0].namespace.trim() && funcData?.[0].namespace !== namespace && funcName) {
+    if (funcData?.[0].namespace?.trim() && funcData?.[0].namespace !== namespace && funcName) {
       checkNamespace = await vscode.window.showInformationMessage(
         `Function namespace (declared in func.yaml) is different from the current active namespace. Deploy function ${funcName} to namespace ${namespace}?`,
         'Ok',
@@ -92,7 +94,7 @@ async function functionImage(
   if (!imagePick) {
     return null;
   }
-  if (!funcData?.[0]?.builder.trim() && !skipBuilder) {
+  if (!funcData?.[0]?.builder?.trim() && !skipBuilder) {
     const builder = await functionBuilder(imagePick, funcData?.[0].name);
     return builder;
   }
@@ -127,17 +129,6 @@ export async function selectFunctionFolder(): Promise<FolderPick> {
   return selectedFolderPick;
 }
 
-async function selectedFolder(context?: FunctionNode): Promise<FolderPick> {
-  let selectedFolderPick: FolderPick;
-  if (!context) {
-    selectedFolderPick = await selectFunctionFolder();
-    if (!selectedFolderPick) {
-      return null;
-    }
-  }
-  return selectedFolderPick;
-}
-
 export async function buildFunction(context?: FunctionNode): Promise<CliExitData> {
   if (!context) {
     return null;
@@ -169,28 +160,66 @@ export async function buildFunction(context?: FunctionNode): Promise<CliExitData
   }
 }
 
-export async function deployFunction(context?: FunctionNode): Promise<void> {
-  const selectedFolderPick: FolderPick = await selectedFolder(context);
-  if (!selectedFolderPick && !context) {
+async function getUsernameOrPassword(message: string, passwordType?: boolean): Promise<string | null> {
+  return vscode.window.showInputBox({
+    ignoreFocusOut: true,
+    prompt: message,
+    password: passwordType,
+    validateInput: (value: string) => {
+      if (validator.isEmpty(value)) {
+        return 'Provide an image url.';
+      }
+      return null;
+    },
+  });
+}
+
+export async function deployFunction(context?: FunctionNode, username?: string, password?: string): Promise<CliExitData> {
+  if (!context) {
     return null;
   }
-  const funcData = await functionImage(
-    context ? context.contextPath : selectedFolderPick.workspaceFolder.uri,
-    true,
-    context.getName(),
-    context?.getParent()?.getName(),
-  );
+  const funcData = await functionImage(context.contextPath, true, context.getName(), context?.getParent()?.getName());
   if (!funcData) {
     return null;
   }
   telemetryLog('function_deploy_command', 'Deploy command execute');
   // eslint-disable-next-line @typescript-eslint/no-floating-promises
   functionExplorer.refresh();
-  await knExecutor.executeInTerminal(
-    await FuncAPI.deployFunc(
-      context ? context.contextPath.fsPath : selectedFolderPick.workspaceFolder.uri.fsPath,
-      funcData.image,
-      context?.getParent()?.getName(),
-    ),
+  const command = await FuncAPI.deployFunc(context.contextPath.fsPath, funcData.image, context?.getParent()?.getName());
+  const name = `Deploy: ${context.getName()}`;
+  if (!STILL_EXECUTING_COMMAND.get(name)) {
+    const result = await executeCommandInOutputChannels(command, name, username, password);
+    const checkCredentials = /failed to get credentials/gm;
+    if (
+      (checkCredentials.test(getStderrString(result.error)) && password === undefined && username === undefined) ||
+      (checkCredentials.test(getStderrString(result.error)) &&
+        restartDeployCommand.get(context.getName()) &&
+        password === undefined &&
+        username === undefined)
+    ) {
+      restartDeployCommand.set(context.getName(), false);
+      const userName = await getUsernameOrPassword('Provide Username', false);
+      if (!userName) {
+        return null;
+      }
+      const userPassword = await getUsernameOrPassword('Provide password', true);
+      if (!userPassword) {
+        return null;
+      }
+      await deployFunction(context, userName, userPassword);
+    }
+    if (restartDeployCommand.get(context.getName())) {
+      restartDeployCommand.set(context.getName(), false);
+      await deployFunction(context);
+    }
+    return result;
+  }
+  const status = await vscode.window.showWarningMessage(
+    `The Function ${command.cliArguments[0]}: ${context.getName()} is already active.`,
+    'Restart',
   );
+  if (status === 'Restart') {
+    CACHED_CHILDPROCESS.get(name)?.kill('SIGTERM');
+    restartDeployCommand.set(context.getName(), true);
+  }
 }

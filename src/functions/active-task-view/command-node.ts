@@ -59,6 +59,11 @@ export class ActiveCommandNodeImpl implements CommandNode {
         state = 'running';
         name = this.name.replace('Run:', '').trim();
       }
+      if (this.name.startsWith('Deploy:')) {
+        state = 'Deploying';
+        name = this.name.replace('Deploy:', '').trim();
+        return format(`The function ${name} is ${state}`, this);
+      }
       return format(`The function ${name} is ${state} locally`, this);
     }
     return format(this.CONTEXT_DATA[this.contextValue].tooltip, this);
