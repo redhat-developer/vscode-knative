@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-misused-promises */
 /* eslint-disable no-octal-escape */
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable no-console */
@@ -10,8 +11,8 @@
  *-----------------------------------------------------------------------------------------------*/
 
 import { ChildProcess, spawn } from 'child_process';
-import validator from 'validator';
 import * as vscode from 'vscode';
+import validator from 'validator';
 import { CmdCliConfig } from '../cli/cli-config';
 import { CliCommand, cliCommandToString, CliExitData } from '../cli/cmdCli';
 import { activeCommandExplorer } from '../functions/active-task-view/activeExplorer';
@@ -56,6 +57,10 @@ async function credHelper(startProcess: ChildProcess): Promise<void> {
       placeHolder: 'Choose credentials helper',
     },
   );
+  if (!credentialHelper) {
+    startProcess.stdin.end();
+    return null;
+  }
   if (credentialHelper === 'None') {
     startProcess.stdin.write(`\n`);
   } else {
@@ -63,26 +68,34 @@ async function credHelper(startProcess: ChildProcess): Promise<void> {
   }
 }
 
-async function getUsernameOrPassword(message: string, passwordType?: boolean): Promise<string | null> {
+async function getUsernameOrPassword(message: string, passwordType?: boolean, errorMessage?: string): Promise<string | null> {
   return vscode.window.showInputBox({
-    ignoreFocusOut: true,
     prompt: message,
     password: passwordType,
     validateInput: (value: string) => {
       if (validator.isEmpty(value)) {
-        return 'Provide an image url.';
+        return errorMessage;
       }
       return null;
     },
   });
 }
 
-export async function executeCommandInOutputChannels(
-  command: CliCommand,
-  name: string,
-  userName?: string,
-  password?: string,
-): Promise<CliExitData> {
+async function provideUserNameAndPassword(startProcess: ChildProcess): Promise<void> {
+  const userName = await getUsernameOrPassword('Provide Username', false, 'Provide an username.');
+  if (!userName) {
+    startProcess.stdin.end();
+    return null;
+  }
+  const userPassword = await getUsernameOrPassword('Provide password', true, 'Provide an password.');
+  if (!userPassword) {
+    startProcess.stdin.end();
+    return null;
+  }
+  startProcess.stdin.write(`${userName}\n${userPassword}\n`);
+}
+
+export async function executeCommandInOutputChannels(command: CliCommand, name: string): Promise<CliExitData> {
   let toolLocation: string;
   if (command.cliCommand === 'func') {
     toolLocation = await CmdCliConfig.detectOrDownload(command.cliCommand);
@@ -108,23 +121,12 @@ export async function executeCommandInOutputChannels(
     startProcess = spawn(cmd.cliCommand, cmd.cliArguments);
     CACHED_CHILDPROCESS.set(name, startProcess);
 
-    // if (typeof userName !== 'undefined' && typeof password !== 'undefined') {
-    //   startProcess.stdin.write(`${userName}\n${password}\n\n`);
-    // } else {
-    //   startProcess.stdin.end();
-    // }
-    // eslint-disable-next-line @typescript-eslint/no-misused-promises
     startProcess.stdout.on('data', async (chunk) => {
       if (chunk.toString().includes('Please provide credentials for image registry')) {
-        const user_name = await getUsernameOrPassword('Provide Username', false);
-        if (!user_name) {
-          return null;
-        }
-        const userPassword = await getUsernameOrPassword('Provide password', true);
-        if (!userPassword) {
-          return null;
-        }
-        startProcess.stdin.write(`${user_name}\n${userPassword}\n`);
+        await provideUserNameAndPassword(startProcess);
+      }
+      if (chunk.toString().includes('Incorrect credentials, please try again')) {
+        await provideUserNameAndPassword(startProcess);
       }
       if (chunk.toString().includes('Choose credentials helper')) {
         await credHelper(startProcess);
@@ -135,7 +137,7 @@ export async function executeCommandInOutputChannels(
     });
     // eslint-disable-next-line @typescript-eslint/no-misused-promises
     startProcess.stderr.on('data', async (chunk) => {
-      if (command.cliArguments[0] !== 'run') {
+      if (command.cliArguments[0] !== 'run' && command.cliArguments[0] !== 'deploy') {
         STILL_EXECUTING_COMMAND.set(name, false);
         CACHED_CHILDPROCESS.delete(name);
       }

@@ -9,14 +9,12 @@ import * as path from 'path';
 import * as vscode from 'vscode';
 import * as fs from 'fs-extra';
 import * as yaml from 'js-yaml';
-import validator from 'validator';
 import { CliExitData } from '../../cli/cmdCli';
 import { FuncAPI } from '../../cli/func-api';
 import { telemetryLog } from '../../telemetry';
 import { ExistingWorkspaceFolderPick } from '../../util/existing-workspace-folder-pick';
 import { CACHED_CHILDPROCESS, executeCommandInOutputChannels, STILL_EXECUTING_COMMAND } from '../../util/output_channels';
 import { Platform } from '../../util/platform';
-import { getStderrString } from '../../util/stderrstring';
 import { FunctionNode } from '../function-tree-view/functionsTreeItem';
 import { FolderPick, FuncContent, ImageAndBuild } from '../function-type';
 import { functionExplorer } from '../functionsExplorer';
@@ -160,21 +158,7 @@ export async function buildFunction(context?: FunctionNode): Promise<CliExitData
   }
 }
 
-async function getUsernameOrPassword(message: string, passwordType?: boolean): Promise<string | null> {
-  return vscode.window.showInputBox({
-    ignoreFocusOut: true,
-    prompt: message,
-    password: passwordType,
-    validateInput: (value: string) => {
-      if (validator.isEmpty(value)) {
-        return 'Provide an image url.';
-      }
-      return null;
-    },
-  });
-}
-
-export async function deployFunction(context?: FunctionNode, username?: string, password?: string): Promise<CliExitData> {
+export async function deployFunction(context?: FunctionNode): Promise<CliExitData> {
   if (!context) {
     return null;
   }
@@ -188,26 +172,7 @@ export async function deployFunction(context?: FunctionNode, username?: string, 
   const command = await FuncAPI.deployFunc(context.contextPath.fsPath, funcData.image, context?.getParent()?.getName());
   const name = `Deploy: ${context.getName()}`;
   if (!STILL_EXECUTING_COMMAND.get(name)) {
-    const result = await executeCommandInOutputChannels(command, name, username, password);
-    const checkCredentials = /failed to get credentials/gm;
-    if (
-      (checkCredentials.test(getStderrString(result.error)) && password === undefined && username === undefined) ||
-      (checkCredentials.test(getStderrString(result.error)) &&
-        restartDeployCommand.get(context.getName()) &&
-        password === undefined &&
-        username === undefined)
-    ) {
-      restartDeployCommand.set(context.getName(), false);
-      const userName = await getUsernameOrPassword('Provide Username', false);
-      if (!userName) {
-        return null;
-      }
-      const userPassword = await getUsernameOrPassword('Provide password', true);
-      if (!userPassword) {
-        return null;
-      }
-      await deployFunction(context, userName, userPassword);
-    }
+    const result = await executeCommandInOutputChannels(command, name);
     if (restartDeployCommand.get(context.getName())) {
       restartDeployCommand.set(context.getName(), false);
       await deployFunction(context);
