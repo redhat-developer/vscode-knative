@@ -33,8 +33,16 @@ class MultiStepInput {
         if (activeItem) {
           input.activeItems = [activeItem];
         }
-        // eslint-disable-next-line @typescript-eslint/no-shadow
-        disposables.push(input.onDidChangeSelection((items) => resolve(items[0])));
+        disposables.push(
+          // eslint-disable-next-line @typescript-eslint/no-shadow
+          input.onDidChangeSelection((items) => {
+            resolve(items[0]);
+            this.current.dispose();
+          }),
+          input.onDidHide(() => {
+            resolve(null);
+          }),
+        );
         if (this.current) {
           this.current.dispose();
         }
@@ -77,6 +85,9 @@ class MultiStepInput {
             if (current === validating) {
               input.validationMessage = validationMessage;
             }
+          }),
+          input.onDidHide(() => {
+            resolve(null);
           }),
         );
         if (this.current) {

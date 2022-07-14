@@ -199,6 +199,7 @@ export async function deployFunction(context?: FunctionNode): Promise<CliExitDat
     'Restart',
   );
   if (status === 'Restart') {
+    CACHED_CHILDPROCESS.get(name)?.stdin?.end();
     CACHED_CHILDPROCESS.get(name)?.kill('SIGTERM');
     restartDeployCommand.set(context.getName(), true);
   }
