@@ -1,0 +1,95 @@
+/* eslint-disable no-use-before-define */
+/* eslint-disable max-classes-per-file */
+import { QuickPickItem, window, Disposable, QuickInput, QuickInputButton } from 'vscode';
+
+interface QuickPickParameters<T extends QuickPickItem> {
+  title: string;
+  items: T[];
+  activeItem?: T;
+  placeholder: string;
+  buttons?: QuickInputButton[];
+}
+
+interface InputBoxParameters {
+  title: string;
+  value?: string;
+  prompt: string;
+  password: boolean;
+  validate: (value: string) => string;
+  buttons?: QuickInputButton[];
+}
+
+class MultiStepInput {
+  public current?: QuickInput;
+
+  async showQuickPick<T extends QuickPickItem, P extends QuickPickParameters<T>>({ title, items, activeItem, placeholder }: P) {
+    const disposables: Disposable[] = [];
+    try {
+      return await new Promise<T | (P extends { buttons: (infer I)[] } ? I : never)>((resolve) => {
+        const input = window.createQuickPick<T>();
+        input.title = title;
+        input.placeholder = placeholder;
+        input.items = items;
+        if (activeItem) {
+          input.activeItems = [activeItem];
+        }
+        // eslint-disable-next-line @typescript-eslint/no-shadow
+        disposables.push(input.onDidChangeSelection((items) => resolve(items[0])));
+        if (this.current) {
+          this.current.dispose();
+        }
+        this.current = input;
+        this.current.show();
+      });
+    } finally {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+      disposables.forEach((d) => d.dispose());
+    }
+  }
+
+  async showInputBox<P extends InputBoxParameters>({ title, value, prompt, password, validate }: P) {
+    const disposables: Disposable[] = [];
+    try {
+      return await new Promise<string | (P extends { buttons: (infer I)[] } ? I : never)>((resolve) => {
+        const input = window.createInputBox();
+        input.title = title;
+        input.value = value || '';
+        input.prompt = prompt;
+        input.password = password;
+        input.ignoreFocusOut = true;
+        let validating = validate('');
+        disposables.push(
+          input.onDidAccept(() => {
+            // eslint-disable-next-line @typescript-eslint/no-shadow
+            const { value } = input;
+            input.enabled = false;
+            input.busy = true;
+            if (!validate(value)) {
+              resolve(value);
+            }
+            input.enabled = true;
+            input.busy = false;
+          }),
+          input.onDidChangeValue((text) => {
+            const current = validate(text);
+            validating = current;
+            const validationMessage = current;
+            if (current === validating) {
+              input.validationMessage = validationMessage;
+            }
+          }),
+        );
+        if (this.current) {
+          this.current.dispose();
+        }
+        this.current = input;
+        this.current.show();
+      });
+    } finally {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+      disposables.forEach((d) => d.dispose());
+    }
+  }
+}
+
+export const multiStep = new MultiStepInput();

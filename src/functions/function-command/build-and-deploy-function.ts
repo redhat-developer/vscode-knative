@@ -60,7 +60,7 @@ async function functionImage(
 ): Promise<ImageAndBuild> {
   const imageList: string[] = [];
   let funcData: FuncContent[];
-  let checkNamespace;
+  let checkNamespace: string;
   try {
     const funcYaml: string = await fs.readFile(path.join(selectedFolderPick.fsPath, 'func.yaml'), 'utf-8');
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
@@ -161,6 +161,21 @@ export async function buildFunction(context?: FunctionNode): Promise<CliExitData
 export async function deployFunction(context?: FunctionNode): Promise<CliExitData> {
   if (!context) {
     return null;
+  }
+  const funcYaml: string = await fs.readFile(path.join(context.contextPath.fsPath, 'func.yaml'), 'utf-8');
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+  const getFuncYaml = yaml.safeLoadAll(funcYaml);
+  if (!getFuncYaml?.[0]?.image) {
+    const response: string = await vscode.window.showInformationMessage(
+      'Image not found in func.yaml. Do you want to build before deploy?',
+      'Yes',
+      'No',
+    );
+    if (response === 'Yes') {
+      const result = await buildFunction(context);
+      // eslint-disable-next-line no-console
+      console.log(result);
+    }
   }
   const funcData = await functionImage(context.contextPath, true, context.getName(), context?.getParent()?.getName());
   if (!funcData) {

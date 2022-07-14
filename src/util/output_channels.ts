@@ -13,6 +13,7 @@
 import { ChildProcess, spawn } from 'child_process';
 import * as vscode from 'vscode';
 import validator from 'validator';
+import { multiStep } from './multiStepInput';
 import { CmdCliConfig } from '../cli/cli-config';
 import { CliCommand, cliCommandToString, CliExitData } from '../cli/cmdCli';
 import { activeCommandExplorer } from '../functions/active-task-view/activeExplorer';
@@ -50,34 +51,39 @@ export function openNamedOutputChannel(name?: string): vscode.OutputChannel | un
 }
 
 async function credHelper(startProcess: ChildProcess): Promise<void> {
-  const credentialHelper = await vscode.window.showQuickPick(
-    ['docker-credential-desktop', 'docker-credential-ecr-login', 'docker-credential-osxkeychain', 'None'],
-    {
-      ignoreFocusOut: true,
-      placeHolder: 'Choose credentials helper',
-    },
-  );
+  const resourceGroups: vscode.QuickPickItem[] = [
+    'docker-credential-desktop',
+    'docker-credential-ecr-login',
+    'docker-credential-osxkeychain',
+    'None',
+  ].map((label) => ({ label }));
+  const credentialHelper = await multiStep.showQuickPick({
+    title: 'Select credentials helper',
+    placeholder: 'Choose credentials helper',
+    items: resourceGroups,
+  });
   if (!credentialHelper) {
     startProcess.stdin.end();
     return null;
   }
-  if (credentialHelper === 'None') {
+  if (credentialHelper.label === 'None') {
     startProcess.stdin.write(`\n`);
   } else {
-    startProcess.stdin.write(`${credentialHelper}\n`);
+    startProcess.stdin.write(`${credentialHelper.label}\n`);
   }
 }
 
 async function getUsernameOrPassword(message: string, passwordType?: boolean, errorMessage?: string): Promise<string | null> {
-  return vscode.window.showInputBox({
+  return multiStep.showInputBox({
+    title: message,
     prompt: message,
-    password: passwordType,
-    validateInput: (value: string) => {
+    validate: (value: string) => {
       if (validator.isEmpty(value)) {
         return errorMessage;
       }
       return null;
     },
+    password: passwordType,
   });
 }
 
@@ -149,6 +155,10 @@ export async function executeCommandInOutputChannels(command: CliCommand, name: 
       channel.append(chunk.toString());
     });
     startProcess.on('close', (code) => {
+      if (multiStep.current && command.cliArguments[0] === 'deploy') {
+        startProcess.stdin.end();
+        multiStep.current.dispose();
+      }
       STILL_EXECUTING_COMMAND.set(name, false);
       CACHED_CHILDPROCESS.delete(name);
       const message = `'${cliCommandToString(cmd)}' exited with code ${code}`;
