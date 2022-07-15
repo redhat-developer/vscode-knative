@@ -13,6 +13,7 @@
 import { ChildProcess, spawn } from 'child_process';
 import * as vscode from 'vscode';
 import validator from 'validator';
+import { getHelpers } from './credential-helper';
 import { multiStep } from './multiStepInput';
 import { CmdCliConfig } from '../cli/cli-config';
 import { CliCommand, cliCommandToString, CliExitData } from '../cli/cmdCli';
@@ -28,6 +29,10 @@ export function clearOutputChannels(): void {
     CACHED_OUTPUT_CHANNELS.get(key).dispose();
   });
 }
+
+const credRegex = /Please provide credentials for image registry/gm;
+const incorrectCredReg = /Incorrect credentials, please try again/gm;
+const chooseCredHelper = /Choose credentials helper/gm;
 
 export function openNamedOutputChannel(name?: string): vscode.OutputChannel | undefined {
   let channel: vscode.OutputChannel | undefined;
@@ -51,12 +56,8 @@ export function openNamedOutputChannel(name?: string): vscode.OutputChannel | un
 }
 
 async function credHelper(startProcess: ChildProcess): Promise<void> {
-  const resourceGroups: vscode.QuickPickItem[] = [
-    'docker-credential-desktop',
-    'docker-credential-ecr-login',
-    'docker-credential-osxkeychain',
-    'None',
-  ].map((label) => ({ label }));
+  const cred = await getHelpers();
+  const resourceGroups: vscode.QuickPickItem[] = cred.map((label) => ({ label }));
   const credentialHelper = await multiStep.showQuickPick({
     title: 'Select credentials helper',
     placeholder: 'Choose credentials helper',
@@ -143,7 +144,9 @@ export async function executeCommandInOutputChannels(command: CliCommand, name: 
 
   return new Promise<CliExitData>((resolve) => {
     let stdout = '';
+    let shadowStdout = '';
     let error: string | Error;
+    let shadowError: string | Error;
     let startProcess: ChildProcess;
     const titleMessage = 'Please provide credentials for image registry.';
     STILL_EXECUTING_COMMAND.set(name, true);
@@ -157,14 +160,18 @@ export async function executeCommandInOutputChannels(command: CliCommand, name: 
     CACHED_CHILDPROCESS.set(name, startProcess);
 
     startProcess.stdout.on('data', async (chunk) => {
-      if (chunk.toString().includes('Please provide credentials for image registry')) {
+      shadowStdout += chunk;
+      if (shadowStdout.toString().includes('Please provide credentials for image registry')) {
+        shadowStdout = shadowStdout.replace(credRegex, '');
         await provideUserNameAndPassword(startProcess, titleMessage);
       }
       const incorrectCred = 'Incorrect credentials, please try again';
       if (chunk.toString().includes(incorrectCred)) {
+        shadowStdout = shadowStdout.replace(incorrectCredReg, '');
         await provideUserNameAndPassword(startProcess, titleMessage, true);
       }
-      if (chunk.toString().includes('Choose credentials helper')) {
+      if (shadowStdout.toString().includes('Choose credentials helper')) {
+        shadowStdout = shadowStdout.replace(chooseCredHelper, '');
         await credHelper(startProcess);
       }
       // eslint-disable-next-line no-control-regex
@@ -178,7 +185,9 @@ export async function executeCommandInOutputChannels(command: CliCommand, name: 
         CACHED_CHILDPROCESS.delete(name);
       }
       error += chunk;
-      if (chunk.toString().includes('Choose credentials helper')) {
+      shadowError += chunk;
+      if (shadowError.toString().includes('Choose credentials helper')) {
+        shadowError = shadowError.toString().replace(chooseCredHelper, '');
         await credHelper(startProcess);
       }
       // eslint-disable-next-line @typescript-eslint/no-unsafe-call

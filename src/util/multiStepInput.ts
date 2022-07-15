@@ -32,6 +32,7 @@ class MultiStepInput {
         input.title = title;
         input.placeholder = placeholder;
         input.items = items;
+        input.ignoreFocusOut = true;
         if (activeItem) {
           input.activeItems = [activeItem];
         }
