@@ -73,10 +73,19 @@ async function credHelper(startProcess: ChildProcess): Promise<void> {
   }
 }
 
-async function getUsernameOrPassword(message: string, passwordType?: boolean, errorMessage?: string): Promise<string | null> {
+async function getUsernameOrPassword(
+  message: string,
+  prompt: string,
+  placeholder: string,
+  passwordType?: boolean,
+  errorMessage?: string,
+  reattemptForLogin?: boolean,
+): Promise<string | null> {
   return multiStep.showInputBox({
     title: message,
-    prompt: message,
+    prompt,
+    placeholder,
+    reattemptForLogin,
     validate: (value: string) => {
       if (validator.isEmpty(value)) {
         return errorMessage;
@@ -87,13 +96,32 @@ async function getUsernameOrPassword(message: string, passwordType?: boolean, er
   });
 }
 
-async function provideUserNameAndPassword(startProcess: ChildProcess): Promise<void> {
-  const userName = await getUsernameOrPassword('Provide Username', false, 'Provide an username.');
+async function provideUserNameAndPassword(
+  startProcess: ChildProcess,
+  message: string,
+  reattemptForLogin?: boolean,
+): Promise<void> {
+  const userInfo = 'Provide username for image registry.';
+  const userName = await getUsernameOrPassword(
+    message,
+    userInfo,
+    userInfo,
+    false,
+    'Provide an username for image registry.',
+    reattemptForLogin,
+  );
   if (!userName) {
     startProcess.stdin.end();
     return null;
   }
-  const userPassword = await getUsernameOrPassword('Provide password', true, 'Provide an password.');
+  const passMessage = 'Provide password for image registry.';
+  const userPassword = await getUsernameOrPassword(
+    message,
+    passMessage,
+    passMessage,
+    true,
+    'Provide an password for image registry.',
+  );
   if (!userPassword) {
     startProcess.stdin.end();
     return null;
@@ -117,6 +145,7 @@ export async function executeCommandInOutputChannels(command: CliCommand, name: 
     let stdout = '';
     let error: string | Error;
     let startProcess: ChildProcess;
+    const titleMessage = 'Please provide credentials for image registry.';
     STILL_EXECUTING_COMMAND.set(name, true);
     const channel = openNamedOutputChannel(name);
     channel.append(
@@ -129,10 +158,11 @@ export async function executeCommandInOutputChannels(command: CliCommand, name: 
 
     startProcess.stdout.on('data', async (chunk) => {
       if (chunk.toString().includes('Please provide credentials for image registry')) {
-        await provideUserNameAndPassword(startProcess);
+        await provideUserNameAndPassword(startProcess, titleMessage);
       }
-      if (chunk.toString().includes('Incorrect credentials, please try again')) {
-        await provideUserNameAndPassword(startProcess);
+      const incorrectCred = 'Incorrect credentials, please try again';
+      if (chunk.toString().includes(incorrectCred)) {
+        await provideUserNameAndPassword(startProcess, titleMessage, true);
       }
       if (chunk.toString().includes('Choose credentials helper')) {
         await credHelper(startProcess);

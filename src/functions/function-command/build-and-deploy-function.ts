@@ -168,13 +168,13 @@ export async function deployFunction(context?: FunctionNode): Promise<CliExitDat
   if (!getFuncYaml?.[0]?.image) {
     const response: string = await vscode.window.showInformationMessage(
       'Image not found in func.yaml. Do you want to build before deploy?',
-      'Yes',
-      'No',
+      'Build',
+      'Cancel',
     );
-    if (response === 'Yes') {
-      const result = await buildFunction(context);
-      // eslint-disable-next-line no-console
-      console.log(result);
+    if (response === 'Build') {
+      await buildFunction(context);
+    } else {
+      return null;
     }
   }
   const funcData = await functionImage(context.contextPath, true, context.getName(), context?.getParent()?.getName());
