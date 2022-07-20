@@ -158,7 +158,7 @@ export async function buildFunction(context?: FunctionNode): Promise<CliExitData
   }
 }
 
-async function checkFuncIsBuild(context: FunctionNode) {
+async function checkFuncIsBuild(context: FunctionNode): Promise<CliExitData> {
   const funcYaml: string = await fs.readFile(path.join(context?.contextPath.fsPath, 'func.yaml'), 'utf-8');
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
   const getFuncYaml = yaml.safeLoadAll(funcYaml);
@@ -177,7 +177,6 @@ async function checkFuncIsBuild(context: FunctionNode) {
     }
     return null;
   }
-  return null;
 }
 
 export async function deployFunction(context?: FunctionNode): Promise<CliExitData> {
