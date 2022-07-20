@@ -158,11 +158,8 @@ export async function buildFunction(context?: FunctionNode): Promise<CliExitData
   }
 }
 
-export async function deployFunction(context?: FunctionNode): Promise<CliExitData> {
-  if (!context) {
-    return null;
-  }
-  const funcYaml: string = await fs.readFile(path.join(context.contextPath.fsPath, 'func.yaml'), 'utf-8');
+async function checkFuncIsBuild(context: FunctionNode) {
+  const funcYaml: string = await fs.readFile(path.join(context?.contextPath.fsPath, 'func.yaml'), 'utf-8');
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
   const getFuncYaml = yaml.safeLoadAll(funcYaml);
   if (!getFuncYaml?.[0]?.image) {
@@ -172,10 +169,23 @@ export async function deployFunction(context?: FunctionNode): Promise<CliExitDat
       'Cancel',
     );
     if (response === 'Build') {
-      await buildFunction(context);
-    } else {
-      return null;
+      const result = await buildFunction(context);
+      if (result.error) {
+        return null;
+      }
+      return result;
     }
+    return null;
+  }
+  return null;
+}
+
+export async function deployFunction(context?: FunctionNode): Promise<CliExitData> {
+  if (!context) {
+    return null;
+  }
+  if ((await checkFuncIsBuild(context)) === null) {
+    return null;
   }
   const funcData = await functionImage(context.contextPath, true, context.getName(), context?.getParent()?.getName());
   if (!funcData) {
