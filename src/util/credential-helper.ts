@@ -9,16 +9,15 @@ import { readdir } from 'fs-extra';
 
 export async function getHelpers(): Promise<Array<string>> {
   const isCredHelper = (f: string) => f.startsWith('docker-credential');
-  let helpers: string[] = [];
-  for (const dir of process.env.PATH.split(path.delimiter)) {
-    try {
-      // eslint-disable-next-line no-await-in-loop
-      const files = await readdir(dir);
-      helpers = helpers.concat(files.filter(isCredHelper));
-    } catch (e) {
-      // eslint-disable-next-line no-console
-      console.log(e);
-    }
-  }
-  return helpers;
+
+  return process.env.PATH.split(path.delimiter)
+    .map(async (dir) => {
+      try {
+        return (await readdir(dir)).filter(isCredHelper);
+      } catch (e) {
+        // maybe log error (as warning) via some other facility than `console`
+        return [];
+      }
+    })
+    .reduce(async (a, b) => (await a).concat(await b), Promise.resolve<Array<string>>([]));
 }

@@ -186,21 +186,22 @@ export async function deployFunction(context?: FunctionNode): Promise<CliExitDat
   functionExplorer.refresh();
   const command = await FuncAPI.deployFunc(context.contextPath.fsPath, funcData.image, context?.getParent()?.getName());
   const name = `Deploy: ${context.getName()}`;
-  if (!STILL_EXECUTING_COMMAND.get(name)) {
-    const result = await executeCommandInOutputChannels(command, name);
-    if (restartDeployCommand.get(context.getName())) {
-      restartDeployCommand.set(context.getName(), false);
-      await deployFunction(context);
+  if (STILL_EXECUTING_COMMAND.get(name)) {
+    const status = await vscode.window.showWarningMessage(
+      `The Function ${command.cliArguments[0]}: ${context.getName()} is already active.`,
+      'Restart',
+    );
+    if (status === 'Restart') {
+      CACHED_CHILDPROCESS.get(name)?.stdin?.end();
+      CACHED_CHILDPROCESS.get(name)?.kill('SIGTERM');
+      restartDeployCommand.set(context.getName(), true);
     }
-    return result;
+    return;
   }
-  const status = await vscode.window.showWarningMessage(
-    `The Function ${command.cliArguments[0]}: ${context.getName()} is already active.`,
-    'Restart',
-  );
-  if (status === 'Restart') {
-    CACHED_CHILDPROCESS.get(name)?.stdin?.end();
-    CACHED_CHILDPROCESS.get(name)?.kill('SIGTERM');
-    restartDeployCommand.set(context.getName(), true);
+  const result = await executeCommandInOutputChannels(command, name);
+  if (restartDeployCommand.get(context.getName())) {
+    restartDeployCommand.set(context.getName(), false);
+    await deployFunction(context);
   }
+  return result;
 }

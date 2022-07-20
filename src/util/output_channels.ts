@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-misused-promises */
 /* eslint-disable no-octal-escape */
 /* eslint-disable @typescript-eslint/no-unsafe-call */
@@ -55,8 +56,12 @@ export function openNamedOutputChannel(name?: string): vscode.OutputChannel | un
   return channel;
 }
 
-async function credHelper(startProcess: ChildProcess): Promise<void> {
+async function credHelper(startProcess: ChildProcess, shadowStdoutOrError: string | Error): Promise<string> {
   const cred = await getHelpers();
+  if (cred.length === 0) {
+    startProcess.stdin.write(`\n`);
+    return shadowStdoutOrError.toString().replace(chooseCredHelper, '');
+  }
   const resourceGroups: vscode.QuickPickItem[] = cred.map((label) => ({ label }));
   const credentialHelper = await multiStep.showQuickPick({
     title: 'Select credentials helper',
@@ -65,27 +70,27 @@ async function credHelper(startProcess: ChildProcess): Promise<void> {
   });
   if (!credentialHelper) {
     startProcess.stdin.end();
-    return null;
+    return shadowStdoutOrError.toString().replace(chooseCredHelper, '');
   }
   if (credentialHelper.label === 'None') {
     startProcess.stdin.write(`\n`);
-  } else {
-    startProcess.stdin.write(`${credentialHelper.label}\n`);
+    return shadowStdoutOrError.toString().replace(chooseCredHelper, '');
   }
+  startProcess.stdin.write(`${credentialHelper.label}\n`);
+  return shadowStdoutOrError.toString().replace(chooseCredHelper, '');
 }
 
 async function getUsernameOrPassword(
   message: string,
-  prompt: string,
-  placeholder: string,
+  infoMessage: string,
   passwordType?: boolean,
   errorMessage?: string,
   reattemptForLogin?: boolean,
 ): Promise<string | null> {
   return multiStep.showInputBox({
     title: message,
-    prompt,
-    placeholder,
+    prompt: infoMessage,
+    placeholder: infoMessage,
     reattemptForLogin,
     validate: (value: string) => {
       if (validator.isEmpty(value)) {
@@ -106,7 +111,6 @@ async function provideUserNameAndPassword(
   const userName = await getUsernameOrPassword(
     message,
     userInfo,
-    userInfo,
     false,
     'Provide an username for image registry.',
     reattemptForLogin,
@@ -116,13 +120,7 @@ async function provideUserNameAndPassword(
     return null;
   }
   const passMessage = 'Provide password for image registry.';
-  const userPassword = await getUsernameOrPassword(
-    message,
-    passMessage,
-    passMessage,
-    true,
-    'Provide an password for image registry.',
-  );
+  const userPassword = await getUsernameOrPassword(message, passMessage, true, 'Provide an password for image registry.');
   if (!userPassword) {
     startProcess.stdin.end();
     return null;
@@ -149,6 +147,7 @@ export async function executeCommandInOutputChannels(command: CliCommand, name: 
     let shadowError: string | Error;
     let startProcess: ChildProcess;
     const titleMessage = 'Please provide credentials for image registry.';
+    const selectCredHelper = 'Choose credentials helper';
     STILL_EXECUTING_COMMAND.set(name, true);
     const channel = openNamedOutputChannel(name);
     channel.append(
@@ -161,18 +160,18 @@ export async function executeCommandInOutputChannels(command: CliCommand, name: 
 
     startProcess.stdout.on('data', async (chunk) => {
       shadowStdout += chunk;
-      if (shadowStdout.toString().includes('Please provide credentials for image registry')) {
+      const provideCred = 'Please provide credentials for image registry';
+      if (shadowStdout.toString().includes(provideCred)) {
         shadowStdout = shadowStdout.replace(credRegex, '');
         await provideUserNameAndPassword(startProcess, titleMessage);
       }
       const incorrectCred = 'Incorrect credentials, please try again';
-      if (chunk.toString().includes(incorrectCred)) {
+      if (shadowStdout.toString().includes(incorrectCred)) {
         shadowStdout = shadowStdout.replace(incorrectCredReg, '');
         await provideUserNameAndPassword(startProcess, titleMessage, true);
       }
-      if (shadowStdout.toString().includes('Choose credentials helper')) {
-        shadowStdout = shadowStdout.replace(chooseCredHelper, '');
-        await credHelper(startProcess);
+      if (shadowStdout.toString().includes(selectCredHelper)) {
+        shadowStdout = await credHelper(startProcess, shadowStdout);
       }
       // eslint-disable-next-line no-control-regex
       channel.append(chunk.toString().replace(/\[94m|\x1b|\[0m|\[90m/gi, ''));
@@ -186,9 +185,8 @@ export async function executeCommandInOutputChannels(command: CliCommand, name: 
       }
       error += chunk;
       shadowError += chunk;
-      if (shadowError.toString().includes('Choose credentials helper')) {
-        shadowError = shadowError.toString().replace(chooseCredHelper, '');
-        await credHelper(startProcess);
+      if (shadowError.toString().includes(selectCredHelper)) {
+        shadowError = await credHelper(startProcess, shadowError);
       }
       // eslint-disable-next-line @typescript-eslint/no-unsafe-call
       channel.append(chunk.toString());
