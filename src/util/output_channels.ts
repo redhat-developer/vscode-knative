@@ -120,7 +120,7 @@ async function provideUserNameAndPassword(
     return null;
   }
   const passMessage = 'Provide password for image registry.';
-  const userPassword = await getUsernameOrPassword(message, passMessage, true, 'Provide an password for image registry.');
+  const userPassword = await getUsernameOrPassword(message, passMessage, true, 'Provide a password for image registry.');
   if (!userPassword) {
     startProcess.stdin.end();
     return null;
