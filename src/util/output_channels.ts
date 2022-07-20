@@ -64,8 +64,8 @@ async function credHelper(startProcess: ChildProcess, shadowStdoutOrError: strin
   }
   const resourceGroups: vscode.QuickPickItem[] = cred.map((label) => ({ label }));
   const credentialHelper = await multiStep.showQuickPick({
-    title: 'Select credentials helper',
-    placeholder: 'Choose credentials helper',
+    title: 'Select Credentials Helper',
+    placeholder: 'Please select the Credential Helper',
     items: resourceGroups,
   });
   if (!credentialHelper) {

@@ -164,7 +164,7 @@ async function checkFuncIsBuild(context: FunctionNode): Promise<CliExitData> {
   const getFuncYaml = yaml.safeLoadAll(funcYaml);
   if (!getFuncYaml?.[0]?.image) {
     const response: string = await vscode.window.showInformationMessage(
-      'Image not found in func.yaml. Do you want to build before deploy?',
+      'The image is not present in func.yaml. Please build the function before deploying?',
       'Build',
       'Cancel',
     );
