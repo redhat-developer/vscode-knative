@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
+
 /*-----------------------------------------------------------------------------------------------
  *  Copyright (c) Red Hat, Inc. All rights reserved.
  *  Licensed under the MIT License. See LICENSE file in the project root for license information.
@@ -58,6 +59,11 @@ export class ActiveCommandNodeImpl implements CommandNode {
       if (this.name.startsWith('Run:')) {
         state = 'running';
         name = this.name.replace('Run:', '').trim();
+      }
+      if (this.name.startsWith('Deploy:')) {
+        state = 'Deploying';
+        name = this.name.replace('Deploy:', '').trim();
+        return format(`The function ${name} is ${state}`, this);
       }
       return format(`The function ${name} is ${state} locally`, this);
     }

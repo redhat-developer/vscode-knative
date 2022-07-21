@@ -10,7 +10,6 @@ import * as vscode from 'vscode';
 import * as fs from 'fs-extra';
 import * as yaml from 'js-yaml';
 import { CliExitData } from '../../cli/cmdCli';
-import { knExecutor } from '../../cli/execute';
 import { FuncAPI } from '../../cli/func-api';
 import { telemetryLog } from '../../telemetry';
 import { ExistingWorkspaceFolderPick } from '../../util/existing-workspace-folder-pick';
@@ -22,6 +21,7 @@ import { functionExplorer } from '../functionsExplorer';
 
 const imageRegex = RegExp('[^/]+\\.[^/.]+\\/([^/.]+)(?:\\/[\\w\\s._-]*([\\w\\s._-]))*(?::[a-z0-9\\.-]+)?$');
 export const restartBuildCommand = new Map<string, boolean>();
+export const restartDeployCommand = new Map<string, boolean>();
 
 async function showInputBox(promptMessage: string, inputValidMessage: string, name?: string): Promise<string> {
   const defaultUsername = Platform.ENV;
@@ -60,12 +60,12 @@ async function functionImage(
 ): Promise<ImageAndBuild> {
   const imageList: string[] = [];
   let funcData: FuncContent[];
-  let checkNamespace;
+  let checkNamespace: string;
   try {
     const funcYaml: string = await fs.readFile(path.join(selectedFolderPick.fsPath, 'func.yaml'), 'utf-8');
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     funcData = yaml.safeLoadAll(funcYaml);
-    if (funcData?.[0].namespace.trim() && funcData?.[0].namespace !== namespace && funcName) {
+    if (funcData?.[0].namespace?.trim() && funcData?.[0].namespace !== namespace && funcName) {
       checkNamespace = await vscode.window.showInformationMessage(
         `Function namespace (declared in func.yaml) is different from the current active namespace. Deploy function ${funcName} to namespace ${namespace}?`,
         'Ok',
@@ -92,7 +92,7 @@ async function functionImage(
   if (!imagePick) {
     return null;
   }
-  if (!funcData?.[0]?.builder.trim() && !skipBuilder) {
+  if (!funcData?.[0]?.builder?.trim() && !skipBuilder) {
     const builder = await functionBuilder(imagePick, funcData?.[0].name);
     return builder;
   }
@@ -127,17 +127,6 @@ export async function selectFunctionFolder(): Promise<FolderPick> {
   return selectedFolderPick;
 }
 
-async function selectedFolder(context?: FunctionNode): Promise<FolderPick> {
-  let selectedFolderPick: FolderPick;
-  if (!context) {
-    selectedFolderPick = await selectFunctionFolder();
-    if (!selectedFolderPick) {
-      return null;
-    }
-  }
-  return selectedFolderPick;
-}
-
 export async function buildFunction(context?: FunctionNode): Promise<CliExitData> {
   if (!context) {
     return null;
@@ -169,28 +158,59 @@ export async function buildFunction(context?: FunctionNode): Promise<CliExitData
   }
 }
 
-export async function deployFunction(context?: FunctionNode): Promise<void> {
-  const selectedFolderPick: FolderPick = await selectedFolder(context);
-  if (!selectedFolderPick && !context) {
+async function checkFuncIsBuild(context: FunctionNode): Promise<CliExitData> {
+  const funcYaml: string = await fs.readFile(path.join(context?.contextPath.fsPath, 'func.yaml'), 'utf-8');
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+  const getFuncYaml = yaml.safeLoadAll(funcYaml);
+  if (!getFuncYaml?.[0]?.image) {
+    const response: string = await vscode.window.showInformationMessage(
+      'The image is not present in func.yaml. Please build the function before deploying?',
+      'Build',
+      'Cancel',
+    );
+    if (response === 'Build') {
+      const result = await buildFunction(context);
+      if (result.error) {
+        return null;
+      }
+      return result;
+    }
     return null;
   }
-  const funcData = await functionImage(
-    context ? context.contextPath : selectedFolderPick.workspaceFolder.uri,
-    true,
-    context.getName(),
-    context?.getParent()?.getName(),
-  );
+}
+
+export async function deployFunction(context?: FunctionNode): Promise<CliExitData> {
+  if (!context) {
+    return null;
+  }
+  if ((await checkFuncIsBuild(context)) === null) {
+    return null;
+  }
+  const funcData = await functionImage(context.contextPath, true, context.getName(), context?.getParent()?.getName());
   if (!funcData) {
     return null;
   }
   telemetryLog('function_deploy_command', 'Deploy command execute');
   // eslint-disable-next-line @typescript-eslint/no-floating-promises
   functionExplorer.refresh();
-  await knExecutor.executeInTerminal(
-    await FuncAPI.deployFunc(
-      context ? context.contextPath.fsPath : selectedFolderPick.workspaceFolder.uri.fsPath,
-      funcData.image,
-      context?.getParent()?.getName(),
-    ),
-  );
+  const command = await FuncAPI.deployFunc(context.contextPath.fsPath, funcData.image, context?.getParent()?.getName());
+  const name = `Deploy: ${context.getName()}`;
+  if (STILL_EXECUTING_COMMAND.get(name)) {
+    const status = await vscode.window.showWarningMessage(
+      `The Function ${command.cliArguments[0]}: ${context.getName()} is already active.`,
+      'Restart',
+    );
+    if (status === 'Restart') {
+      CACHED_CHILDPROCESS.get(name)?.stdin?.end();
+      CACHED_CHILDPROCESS.get(name)?.kill('SIGTERM');
+      restartDeployCommand.set(context.getName(), true);
+    }
+    return;
+  }
+  const result = await executeCommandInOutputChannels(command, name);
+  if (restartDeployCommand.get(context.getName())) {
+    restartDeployCommand.set(context.getName(), false);
+    await deployFunction(context);
+  }
+  return result;
 }

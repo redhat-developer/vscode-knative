@@ -38,32 +38,32 @@
     "description": "Function CLI tool",
     "vendor": "Red Hat, Inc.",
     "name": "func",
-    "version": "0.23.1",
-    "versionRange": "0.23.1",
-    "versionRangeLabel": "v0.23.1",
+    "version": "0.25.0",
+    "versionRange": "0.25.0",
+    "versionRangeLabel": "v0.25.0",
     "dlFileName": "func",
     "cmdFileName": "func",
     "filePrefix": "",
     "platform": {
       "win32": {
-        "url": "https://github.com/knative-sandbox/kn-plugin-func/releases/download/v0.23.1/func_windows_amd64.exe",
-        "sha256sum": "7e47e0276d052f1d4dceb466ff3a82dc6740e834f08f28cfeaf4196f9728e93f",
+        "url": "https://github.com/knative-sandbox/kn-plugin-func/releases/download/v0.25.0/func_windows_amd64.exe",
+        "sha256sum": "943750331d8b090b2f0b90212a15a7bca0a82c791b697803edbec0572af112e3",
         "dlFileName": "func_windows_amd64.exe",
         "cmdFileName": "func.exe"
       },
       "darwin": {
-        "url": "https://github.com/knative-sandbox/kn-plugin-func/releases/download/v0.23.1/func_darwin_amd64",
-        "sha256sum": "47424efa16ba064efd8348bf6fb85396d0a3771e648435ba051d466b721111da",
+        "url": "https://github.com/knative-sandbox/kn-plugin-func/releases/download/v0.25.0/func_darwin_amd64",
+        "sha256sum": "f13541b1dc1ff6c1f61c974b6905fbde36846e85f20095ba7d7e4d39ffcb3f05",
         "dlFileName": "func_darwin_amd64"
       },
       "darwin-arm64": {
-        "url": "https://github.com/knative-sandbox/kn-plugin-func/releases/download/v0.23.1/func_darwin_arm64",
-        "sha256sum": "05f20523872f94540be222c1c6ecf7dca86e7c909ae6c7f0a12ff5bbbf064eb9",
+        "url": "https://github.com/knative-sandbox/kn-plugin-func/releases/download/v0.25.0/func_darwin_arm64",
+        "sha256sum": "7fbb8869db3f30eb16e76998e798a6027f410b09e9721136f991afd164bffa68",
         "dlFileName": "func_darwin_arm64"
       },
       "linux": {
-        "url": "https://github.com/knative-sandbox/kn-plugin-func/releases/download/v0.23.1/func_linux_amd64",
-        "sha256sum": "fea929a0d4a29fd1e8fd81c96d7c1b5e96756138077b29459db33772a2e17105",
+        "url": "https://github.com/knative-sandbox/kn-plugin-func/releases/download/v0.25.0/func_linux_amd64",
+        "sha256sum": "b072fa3d18aab0ef281e260bd76263605159ee60589449aec72f8433d55517cf",
         "dlFileName": "func_linux_amd64"
       }
     }
