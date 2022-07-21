@@ -12,9 +12,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [#254](https://github.com/redhat-developer/vscode-knative/issues/254) Support kn CLI 1.4.0.
 - [#257](https://github.com/redhat-developer/vscode-knative/pull/257) check k8s and ocp version for telemetry on deploy and on activation send kn and function version.
 - [#154](https://github.com/redhat-developer/vscode-knative/issues/154) Add validation for showInputBox.
+- [#271](https://github.com/redhat-developer/vscode-knative/pull/271) Bump version of func cli to 0.25.0
 - [#264](https://github.com/redhat-developer/vscode-knative/issues/264) Bump kn client to 1.5.0.
-- [#261](https://github.com/redhat-developer/vscode-knative/pull/261) Run and build in output channel.
-- [#271](https://github.com/redhat-developer/vscode-knative/pull/271) deploy command in output Channel.
+- [#261](https://github.com/redhat-developer/vscode-knative/pull/261) Provide Run and Build command in Output channel and thus reducing number of terminal tabs
+- [#271](https://github.com/redhat-developer/vscode-knative/pull/271) Provide Deploy command in Output channel and option to select Credential Helper to user
 
 ## 1.1.1 (2022/04/25)
 
