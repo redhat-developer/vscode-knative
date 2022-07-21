@@ -18,11 +18,11 @@ This extension for Knative provides the app developer the tools and experience n
 
 * YAML is validated using the [VSCode-YAML](https://marketplace.visualstudio.com/items?itemName=redhat.vscode-yaml)
 
-* Login in to a Kubernetes cluster is done via the [Kubernetes extension](https://marketplace.visualstudio.com/items?itemName=ms-kubernetes-tools.vscode-kubernetes-tools) (ms-kubernetes-tools.vscode-kubernetes-tools).
+* Users can log in to Kubernetes cluster using [VSCode Kubernetes extension](https://marketplace.visualstudio.com/items?itemName=ms-kubernetes-tools.vscode-kubernetes-tools).
 
   > NOTE: You will need to have the [kubeconfig](https://kubernetes.io/docs/concepts/configuration/organize-cluster-access-kubeconfig/#the-kubeconfig-environment-variable) for the cluster that you are accessing stored locally.
 
-*  Knative uses [kn cli](https://github.com/knative/client) `1.3.1` and [func cli](https://github.com/knative-sandbox/kn-plugin-func) `0.23.1`. The extension will offer to download and install the dependencies if needed.
+*  Knative uses [kn cli](https://github.com/knative/client) `1.5.0` and [func cli](https://github.com/knative-sandbox/kn-plugin-func) `0.25.0`. The extension will offer to download and install the dependencies if needed.
 
 ## Extension Settings
 
@@ -64,6 +64,7 @@ This extension contributes two views (Knative and Functions) and the following s
 * `Knative: Remove Config from Function`: Allow to customize a function by removing an environment variable or a volume
 * `Knative: Open in Browser`: Open the deployed function in your browser
 * `Knative: Refresh View`: Refresh the Function Tree View
+
 ## Release Notes
 
 > See [CHANGELOG](CHANGELOG.md) for details.
