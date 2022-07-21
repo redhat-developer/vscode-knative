@@ -5,6 +5,17 @@ All notable changes to the "vscode-knative" extension will be documented in this
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 1.2.0 (2022/07/21)
+
+- [#251](https://github.com/redhat-developer/vscode-knative/pull/251) Fix service.explorer.create command.
+- [#191](https://github.com/redhat-developer/vscode-knative/issues/191) open func.yaml file when clicking on tree view.
+- [#254](https://github.com/redhat-developer/vscode-knative/issues/254) Support kn CLI 1.4.0.
+- [#257](https://github.com/redhat-developer/vscode-knative/pull/257) check k8s and ocp version for telemetry on deploy and on activation send kn and function version.
+- [#154](https://github.com/redhat-developer/vscode-knative/issues/154) Add validation for showInputBox.
+- [#264](https://github.com/redhat-developer/vscode-knative/issues/264) Bump kn client to 1.5.0.
+- [#261](https://github.com/redhat-developer/vscode-knative/pull/261) Run and build in output channel.
+- [#271](https://github.com/redhat-developer/vscode-knative/pull/271) deploy command in output Channel.
+
 ## 1.1.1 (2022/04/25)
 
 - [#247](https://github.com/redhat-developer/vscode-knative/pull/247) Add Telemetry collection information
