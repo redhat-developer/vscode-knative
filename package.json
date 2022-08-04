@@ -162,7 +162,8 @@
     "onCommand:function.removeConfig.Palette",
     "onCommand:function.deploy.functionEnablement",
     "onCommand:function.build.FunctionEnablement",
-    "onCommand:function.run.FunctionEnablement"
+    "onCommand:function.run.FunctionEnablement",
+    "onWalkthrough:knativeWalkthrough"
   ],
   "contributes": {
     "commands": [
@@ -639,12 +640,12 @@
       {
         "id": "knativeWalkthrough",
         "title": "Getting started with Knative",
-        "description": "Start your application development on Serverless Functions",
+        "description": "Start managing serverless applications on OpenShift and Kubernetes",
         "steps": [
           {
             "id": "Create Function",
-            "title": "Create a new Function project",
-            "description": "Create a function by providing Name, selecting language eg:(go, node, python, quarkus, rust, springboot and typescript), selecting template eg:(http or cloudevents), and selecting location where you what to create function.",
+            "title": "Create a new function project",
+            "description": "To create a new function click on \"plus icon(Create Function)\" in Functions view title.\n By providing Name, selecting language eg:(go, node, python, quarkus, rust, springboot and typescript), selecting template eg:(http or cloudevents), selecting location, and click on create function. The new function is now visible in the Function tree view.",
             "media": {
               "image": "https://raw.githubusercontent.com/wiki/redhat-developer/vscode-knative/walkthrough/create-function.gif",
               "altText": "create function"
@@ -652,35 +653,35 @@
           },
           {
             "id": "Build Function",
-            "title": "Build a function project as a container image",
-            "description": "This will build the function project locally. The result will be a container image that is pushed to a registry. The func.yaml file is read to determine the image name. If the project has not already been built image must be provided to build.",
+            "title": "Build function",
+            "description": "Building a function allows to create an image from the source code and being able to run and/or deploy it.\nOnly a function which has the source code opened in the IDE can be built. Right click on the function you want to build (look for the right node in the Functions tree), open the context menu (right-click on the node) and click on \"Build\". The output channel will show up with build command where you can see the logs.",
             "media": {
               "image": "https://raw.githubusercontent.com/wiki/redhat-developer/vscode-knative/walkthrough/build.gif",
               "altText": "build function"
             }
           },
           {
-            "id": "Deploy Function",
-            "title": "Deploy a function",
-            "description": "Build a container image for the function and deploy it to the connected knative enabled cluster. If the function is already deployed, it is updated with a new container image that is pushed to an image registry, and the function Knative service is updated.",
-            "media": {
-              "image": "https://raw.githubusercontent.com/wiki/redhat-developer/vscode-knative/walkthrough/deploy.gif",
-              "altText": "deploy function"
-            }
-          },
-          {
             "id": "Run Function",
             "title": "Run the function locally",
-            "description": "Run the function locally in output channel.",
+            "description": "Run your function to see how it works locally before to push it on your cluster.\nOnly a function which has the source code opened in the IDE can be run. Right click on the function you want to run (look for its node in the Functions tree), open the context menu (right-click on the node) and click on \"Run\". The output channel will show up with run command where you can see the logs.",
             "media": {
               "image": "https://raw.githubusercontent.com/wiki/redhat-developer/vscode-knative/walkthrough/run.gif",
               "altText": "run function"
             }
           },
           {
+            "id": "Deploy Function",
+            "title": "Deploy function",
+            "description": "Deploy your function to your cluster directly from your IDE.\nOnly a function which has the source code opened in the IDE can be pushed. Right click on the function you want to deploy (look for its node in the Functions tree), open the context menu (right-click on the node) and click on \"Deploy\". The output channel will show up with deploy command where you can see the logs.",
+            "media": {
+              "image": "https://raw.githubusercontent.com/wiki/redhat-developer/vscode-knative/walkthrough/deploy.gif",
+              "altText": "deploy function"
+            }
+          },
+          {
             "id": "Invoke Function",
             "title": "Invoke a Function",
-            "description": "Invokes the Function by sending a request to the current running Function instance, either locally or remote. If the Function is running both locally and remote, the local instance will be invoked.",
+            "description": "Invokes the Function by sending a request to the current running Function instance, either locally or remote.\nOnly a function which has the source code opened in the IDE can be invoked. Right click on the function you want to invoke (look for its node in the Functions tree), open the context menu (right-click on the node) and click on \"Invoke\". Provide all necessary details and click on invoke.",
             "media": {
               "image": "https://raw.githubusercontent.com/wiki/redhat-developer/vscode-knative/walkthrough/invoke.gif",
               "altText": "invoke function"
@@ -689,7 +690,7 @@
           {
             "id": "Add environment variable",
             "title": "Add environment variable to the function configuration",
-            "description": "The environment variable can be set directly from a value, from an environment variable on the local machine or from Secrets and ConfigMaps.",
+            "description": "Only a function which has the source code opened in the IDE can be configure to add environment variables.\n Right click on the function you want to add environment variables (look for its node in the Functions tree), open the context menu (right-click on the node) and click on \"Add Config\" and then click on \"Add Environment Variables\". An Interactive prompt will open in terminal to add Environment variables.",
             "media": {
               "image": "https://raw.githubusercontent.com/wiki/redhat-developer/vscode-knative/walkthrough/envs-add.gif",
               "altText": "invoke function"
@@ -697,8 +698,8 @@
           },
           {
             "id": "Add volumes",
-            "title": "Add volume to the function configuration",
-            "description": "Add Secrets and ConfigMaps as Volume mounts to the function project.",
+            "title": "Add volume to the function configuration.",
+            "description": "Only a function which has the source code opened in the IDE can be configure to add volumes.\n Right click on the function you want to add volume (look for its node in the Functions tree), open the context menu (right-click on the node) and click on \"Add Config\" and then click on \"Add volumes\". An Interactive prompt will open in terminal to add Secrets and ConfigMaps as Volume.",
             "media": {
               "image": "https://raw.githubusercontent.com/wiki/redhat-developer/vscode-knative/walkthrough/add-volume.gif",
               "altText": "invoke function"
@@ -707,7 +708,7 @@
           {
             "id": "Remove environment variable",
             "title": "Remove environment variable from the function configuration",
-            "description": "Remove Environment variables from the function project.",
+            "description": "Only a function which has the source code opened in the IDE can be configure to remove environment variables.\n Right click on the function you want to remove environment variables (look for its node in the Functions tree), open the context menu (right-click on the node) and click on \"Remove Config\" and then click on \"Remove Environment Variables\". An Interactive prompt will open in terminal to remove environment variables.",
             "media": {
               "image": "https://raw.githubusercontent.com/wiki/redhat-developer/vscode-knative/walkthrough/envs-remove.gif",
               "altText": "invoke function"
@@ -716,7 +717,7 @@
           {
             "id": "Remove volumes",
             "title": "Remove volume from the function configuration",
-            "description": "Remove Volume mounts from the function project.",
+            "description": "Only a function which has the source code opened in the IDE can be configure to remove volumes.\n Right click on the function you want to remove volume (look for its node in the Functions tree), open the context menu (right-click on the node) and click on \"Remove Config\" and then click on \"Remove volumes\". An Interactive prompt will open in terminal to remove volume mounts from the function.",
             "media": {
               "image": "https://raw.githubusercontent.com/wiki/redhat-developer/vscode-knative/walkthrough/remove-volume.gif",
               "altText": "invoke function"
