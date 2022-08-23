@@ -19,7 +19,7 @@ export function extensionInstallationUITest(): void {
       const viewBar = await new ActivityBar().getViewControl('Extensions');
       const sideBar = await viewBar.openView();
       const section = (await sideBar.getContent().getSection('Installed')) as ExtensionsViewSection;
-      const item = await driver.wait(async () => section.findItem(`@installed ${KNativeConstants.KNATIVE_EXTENSION_NAME}`), 3000);
+      const item = await driver.wait(async () => section.findItem(`@installed ${KNativeConstants.KNATIVE_EXTENSION_NAME}`), 5000);
       expect(item).to.be.an.instanceOf(ExtensionsViewItem);
       expect(await item.getTitle()).to.equal(KNativeConstants.KNATIVE_EXTENSION_NAME);
     });
@@ -31,7 +31,7 @@ export function extensionInstallationUITest(): void {
         const view = await new ActivityBar().getViewControl('Extensions');
         const sideBar = await view.openView();
         const section = (await sideBar.getContent().getSection('Installed')) as ExtensionsViewSection;
-        const item = await driver.wait(async () => section.findItem(`@installed ${KNativeConstants.YAML_EXTENSION_NAME}`), 3000);
+        const item = await driver.wait(async () => section.findItem(`@installed ${KNativeConstants.YAML_EXTENSION_NAME}`), 5000);
         expect(item).to.be.an.instanceOf(ExtensionsViewItem);
         expect(await item.getTitle()).to.equal(KNativeConstants.YAML_EXTENSION_NAME);
       });
