@@ -1,10 +1,10 @@
+/* eslint-disable import/no-cycle */
 /*-----------------------------------------------------------------------------------------------
  *  Copyright (c) Red Hat, Inc. All rights reserved.
  *  Licensed under the MIT License. See LICENSE file in the project root for license information.
  *-----------------------------------------------------------------------------------------------*/
 
 import * as vscode from 'vscode';
-// eslint-disable-next-line import/no-cycle
 import { gitRegex } from './create-function';
 import { knExecutor } from '../../cli/execute';
 import { FuncAPI } from '../../cli/func-api';

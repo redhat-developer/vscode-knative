@@ -1,3 +1,7 @@
+/* eslint-disable no-console */
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable no-use-before-define */
+/* eslint-disable import/no-cycle */
 /*-----------------------------------------------------------------------------------------------
  *  Copyright (c) Red Hat, Inc. All rights reserved.
  *  Licensed under the MIT License. See LICENSE file in the project root for license information.
@@ -7,6 +11,7 @@ import * as path from 'path';
 import * as vscode from 'vscode';
 import {
   BUTTONS,
+  FieldDefinitionState,
   IWizardPage,
   PerformFinishResponse,
   SEVERITY,
@@ -17,18 +22,25 @@ import {
   WizardPageFieldDefinition,
 } from '@redhat-developer/vscode-wizard';
 import * as fs from 'fs-extra';
-import { CliExitData } from '../../cli/cmdCli';
+import { CliExitData, executeCmdCli } from '../../cli/cmdCli';
 import { knExecutor } from '../../cli/execute';
 import { FuncAPI } from '../../cli/func-api';
-// eslint-disable-next-line import/no-cycle
-import { contextGlobalState } from '../../extension';
 import { telemetryLog, telemetryLogError } from '../../telemetry';
 import { getStderrString } from '../../util/stderrstring';
 import { createValidationItem, inputFieldValidation, pathValidation, selectLocationValidation } from '../validate-item';
 import { createFunctionID } from '../webview-id';
 
+interface FuncTemplate {
+  [key: string]: string[];
+}
+
 export const folderStatus = new Map<string, boolean>();
+export const languageChangeCheck = new Map<string, string>();
+export const storeLanguageInput = new Map<string, string>();
 export const gitRegexStatus = new Map<string, boolean>();
+export const storeLanguage = new Map<string, string[]>();
+export const storeTemplate = new Map<string, FuncTemplate>();
+export const storeRepositoryList = new Map<string, { [key: string]: string }>();
 
 export interface Select {
   key: string;
@@ -39,8 +51,6 @@ export const gitRegex = RegExp('((git@|https://)([\\w\\.@]+)(/|:))([\\w,\\-,\\_]
 
 export interface ParametersType {
   functionName: string;
-  languageName?: string;
-  templateInputText?: string;
   repositoryInputText?: string;
   selectLanguage: string;
   selectLocation: string;
@@ -51,27 +61,6 @@ export interface ValidatorResponseItem {
   template: Template;
   severity: SEVERITY;
 }
-
-const provideLanguage = { key: 'Provide language', label: 'Provide Language' };
-
-export const languageSelect: Array<Select> = [
-  provideLanguage,
-  { key: 'node', label: 'node' },
-  { key: 'go', label: 'go' },
-  { key: 'python', label: 'python' },
-  { key: 'quarkus', label: 'quarkus' },
-  { key: 'rust', label: 'rust' },
-  { key: 'springboot', label: 'springboot' },
-  { key: 'typescript', label: 'typescript' },
-];
-
-const provideTemplate = { key: 'Provide template and repository', label: 'Provide template and repository' };
-
-export const templateSelect: Array<Select> = [
-  provideTemplate,
-  { key: 'http', label: 'http' },
-  { key: 'cloudevents', label: 'cloudevents' },
-];
 
 export function validateInputField(
   pathValue: string,
@@ -87,73 +76,48 @@ export function validateInputField(
   folderStatus.set('folder_present', false);
 }
 
-const functionName = {
+const functionName: WizardPageFieldDefinition = {
   id: createFunctionID.function_name,
   label: 'Name',
   type: 'textbox',
   placeholder: 'Provide function name',
 };
 
-const selectLanguage: WizardPageFieldDefinition = {
+export const selectLanguage: WizardPageFieldDefinition = {
   id: createFunctionID.select_language,
-  label: 'Select Language',
-  type: 'select',
-  optionProvider: {
-    getItems(): Array<Select> {
-      return languageSelect;
-    },
-
-    getValueItem(language: Select): string {
-      return language.key;
-    },
-
-    getLabelItem(language: Select): string {
-      return language.label;
-    },
-  },
-};
-
-const languageName: WizardPageFieldDefinition = {
-  id: createFunctionID.language_name,
   label: 'Language',
-  type: 'textbox',
-  placeholder: 'Provide language name',
-};
-
-const selectTemplate: WizardPageFieldDefinition = {
-  id: createFunctionID.select_template,
-  label: 'Select Template',
-  type: 'select',
-  optionProvider: {
-    getItems(): Array<Select> {
-      return templateSelect;
-    },
-
-    getValueItem(template: Select): string {
-      return template.key;
-    },
-
-    getLabelItem(template: Select): string {
-      return template.label;
-    },
+  placeholder: 'Language Runtime.',
+  type: 'combo',
+  optionProvider: () => {
+    const ret: string[] = storeLanguage.get('language');
+    return ret;
   },
 };
 
-const templateInputText = {
-  id: createFunctionID.template_inputText,
+export const selectTemplate: WizardPageFieldDefinition = {
+  id: createFunctionID.select_template,
   label: 'Template',
-  type: 'textbox',
-  placeholder: 'Provide template',
+  placeholder: 'Provide template.',
+  type: 'combo',
+  optionProvider: (parameters: ParametersType) => {
+    const template = storeTemplate.get('template');
+    const ret: string[] = template[parameters?.selectLanguage];
+    if (ret) {
+      return ret;
+    }
+    return [];
+  },
 };
 
-const repositoryInputText = {
+export const repositoryField: WizardPageFieldDefinition = {
   id: createFunctionID.repository_inputText,
   label: 'Repository',
-  type: 'textbox',
-  placeholder: 'Provide repository',
+  placeholder: 'Provide repository.',
+  type: 'combo',
+  optionProvider: () => [],
 };
 
-const selectLocation = {
+const selectLocation: WizardPageFieldDefinition = {
   id: createFunctionID.select_location,
   label: 'Select location',
   type: 'file-picker',
@@ -166,21 +130,7 @@ const selectLocation = {
   },
 };
 
-const defaultField = [functionName, selectLanguage, selectTemplate, selectLocation];
-
-const languageTemplateField = [
-  functionName,
-  selectLanguage,
-  languageName,
-  selectTemplate,
-  templateInputText,
-  repositoryInputText,
-  selectLocation,
-];
-
-const languageField = [functionName, selectLanguage, languageName, selectTemplate, selectLocation];
-
-const templateField = [functionName, selectLanguage, selectTemplate, templateInputText, repositoryInputText, selectLocation];
+const defaultField = [functionName, selectLanguage, selectTemplate, repositoryField, selectLocation];
 
 export const def: WizardDefinition = {
   title: `Create Function`,
@@ -194,36 +144,19 @@ export const def: WizardDefinition = {
       // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
       validator: (parameters: ParametersType) => {
         const items: ValidatorResponseItem[] = [];
+        if (parameters.selectLanguage !== languageChangeCheck?.get('checkLanguageChange')) {
+          languageChangeCheck.set('checkLanguageChange', parameters.selectLanguage);
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+          const m: Map<string, FieldDefinitionState> = new Map();
+          m.set(createFunctionID.select_template, { forceRefresh: true });
+          return { items: [], fieldRefresh: m };
+        }
         if (parameters.functionName !== undefined && !Number.isNaN(parameters.functionName) && !parameters.functionName?.trim()) {
           inputFieldValidation(
             {
               value: parameters.functionName,
               id: createFunctionID.function_name,
               message: 'Provide name for function',
-            },
-            items,
-          );
-        }
-        if (parameters.languageName !== undefined && !Number.isNaN(parameters.languageName) && !parameters.languageName?.trim()) {
-          inputFieldValidation(
-            {
-              value: parameters.languageName,
-              id: createFunctionID.language_name,
-              message: 'Provide language name',
-            },
-            items,
-          );
-        }
-        if (
-          parameters.templateInputText !== undefined &&
-          !Number.isNaN(parameters.templateInputText) &&
-          !parameters.templateInputText?.trim()
-        ) {
-          inputFieldValidation(
-            {
-              value: parameters.templateInputText,
-              id: createFunctionID.template_inputText,
-              message: 'Provide template',
             },
             items,
           );
@@ -284,7 +217,7 @@ export const def: WizardDefinition = {
         ) {
           validateInputField(
             path.join(parameters.selectLocation, parameters.functionName),
-            'A folder with this name already exists. Please use a different name.',
+            'Chose other name it is already exit as folder.',
             createFunctionID.function_name,
             items,
           );
@@ -304,67 +237,7 @@ export const def: WizardDefinition = {
       selectLanguage.initialValue = data.selectLanguage;
       selectTemplate.initialValue = data.selectTemplate;
       functionName.initialValue = data.functionName;
-      languageName.initialValue = data.languageName;
       selectLocation.initialValue = data.selectLocation;
-      const findTemplateInputText = wizard
-        ?.getCurrentPage()
-        .getPageDefinition()
-        .fields.find((element) => element.id === createFunctionID.template_inputText);
-      const findRepositoryInputText = wizard
-        ?.getCurrentPage()
-        .getPageDefinition()
-        .fields.find((element) => element.id === createFunctionID.repository_inputText);
-      const findLanguageNameField = wizard
-        ?.getCurrentPage()
-        .getPageDefinition()
-        .fields.find((element) => element.id === createFunctionID.language_name);
-      if (
-        data.selectTemplate === provideTemplate.key &&
-        data.selectLanguage === provideLanguage.key &&
-        (!findTemplateInputText || !findLanguageNameField)
-      ) {
-        setValue(data);
-        const newDef = def;
-        newDef.pages[0].fields = languageTemplateField;
-        // eslint-disable-next-line @typescript-eslint/no-use-before-define
-        createFunction(contextGlobalState);
-      } else if (data.selectTemplate === provideTemplate.key && !findTemplateInputText) {
-        setValue(data);
-        const newDef = def;
-        newDef.pages[0].fields = templateField;
-        // eslint-disable-next-line @typescript-eslint/no-use-before-define
-        createFunction(contextGlobalState);
-      } else if (data.selectLanguage === provideLanguage.key && !findLanguageNameField) {
-        setValue(data);
-        const newDef = def;
-        newDef.pages[0].fields = languageField;
-        // eslint-disable-next-line @typescript-eslint/no-use-before-define
-        createFunction(contextGlobalState);
-      }
-      if (
-        data.selectTemplate !== provideTemplate.key &&
-        data.selectLanguage !== provideLanguage.key &&
-        (findTemplateInputText || findLanguageNameField)
-      ) {
-        selectLanguage.initialValue = data.selectLanguage;
-        selectTemplate.initialValue = data.selectTemplate;
-        const newDef = def;
-        newDef.pages[0].fields = defaultField;
-        // eslint-disable-next-line @typescript-eslint/no-use-before-define
-        createFunction(contextGlobalState);
-      } else if (data.selectTemplate !== provideTemplate.key && findTemplateInputText) {
-        selectTemplate.initialValue = data.selectTemplate;
-        const newDef = def;
-        newDef.pages[0].fields = languageField;
-        // eslint-disable-next-line @typescript-eslint/no-use-before-define
-        createFunction(contextGlobalState);
-      } else if (data.selectLanguage !== provideLanguage.key && findLanguageNameField) {
-        selectLanguage.initialValue = data.selectLanguage;
-        const newDef = def;
-        newDef.pages[0].fields = templateField;
-        // eslint-disable-next-line @typescript-eslint/no-use-before-define
-        createFunction(contextGlobalState);
-      }
       const validatePath = pathValidation?.get('path_validation');
       const getFolderStatus = folderStatus?.get('folder_present');
       const getGitRegexStatus = gitRegexStatus?.get('invalid_git_url');
@@ -375,10 +248,7 @@ export const def: WizardDefinition = {
         data.selectLocation?.trim() &&
         validatePath &&
         !getFolderStatus &&
-        (findLanguageNameField?.id ? Boolean(data.languageName?.trim()) : true) &&
-        (findTemplateInputText?.id ? Boolean(data.templateInputText?.trim()) : true) &&
-        (findRepositoryInputText?.id ? Boolean(data.repositoryInputText?.trim()) : true) &&
-        (data.selectTemplate === 'Provide template and repository' ? getGitRegexStatus : true)
+        getGitRegexStatus
       );
     },
     async performFinish(wizard: WebviewWizard, data: ParametersType): Promise<PerformFinishResponse | null> {
@@ -389,26 +259,11 @@ export const def: WizardDefinition = {
           title: `Function Successfully created`,
         },
         async () => {
-          let result: CliExitData;
-          if (data.templateInputText) {
-            result = await knExecutor.execute(
-              FuncAPI.createFuncWithRepository(
-                data.functionName,
-                data.languageName ?? data.selectLanguage,
-                data.templateInputText,
-                data.selectLocation,
-                data.repositoryInputText,
-              ),
-              process.cwd(),
-              false,
-            );
-          } else {
-            result = await knExecutor.execute(
-              FuncAPI.createFunc(data.functionName, data.selectLanguage, data.selectTemplate, data.selectLocation),
-              process.cwd(),
-              false,
-            );
-          }
+          const result: CliExitData = await knExecutor.execute(
+            FuncAPI.createFunc(data.functionName, data.selectLanguage, data.selectTemplate, data.selectLocation),
+            process.cwd(),
+            false,
+          );
           if (result.error) {
             telemetryLogError('Fail_to_create_function', result.error);
             // eslint-disable-next-line @typescript-eslint/no-floating-promises
@@ -466,9 +321,23 @@ function createFunction(context: vscode.ExtensionContext): void {
   wiz.open();
 }
 
-export function createFunctionPage(context: vscode.ExtensionContext): void {
-  selectLanguage.initialValue = languageSelect[1].key;
-  selectTemplate.initialValue = templateSelect[1].key;
+export async function createFunctionPage(context: vscode.ExtensionContext): Promise<void> {
+  const language = await executeCmdCli.executeExec(FuncAPI.listLanguages());
+  const template = await executeCmdCli.executeExec(FuncAPI.listTemplate());
+  const repository = await executeCmdCli.executeExec(FuncAPI.listRepository());
+  storeTemplate.set('template', JSON.parse(template.stdout));
+  storeLanguage.set('language', JSON.parse(language.stdout));
+  const repositoryListTemplate: { [key: string]: string } = {};
+  repository.stdout.split(/\n/).map((item: string) => {
+    const repositoryList: string[] = item.split(/\t/);
+    if (repositoryList[0].trim() && repositoryList[1].trim()) {
+      // eslint-disable-next-line prefer-destructuring
+      repositoryListTemplate[repositoryList[0]] = repositoryList[1];
+    }
+    // eslint-disable-next-line no-useless-return
+    return;
+  });
+  storeRepositoryList.set('repositoryList', repositoryListTemplate);
   delete functionName.initialValue;
   delete selectLocation.initialValue;
   def.pages[0].fields = defaultField;

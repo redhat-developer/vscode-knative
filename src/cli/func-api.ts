@@ -65,6 +65,16 @@ export class FuncAPI {
     return funcCliCommand(createCommand);
   }
 
+  static listTemplate(): CliCommand {
+    const listTemplate = ['templates', '--json'];
+    return funcCliCommand(listTemplate);
+  }
+
+  static listLanguages(): CliCommand {
+    const listLanguages = ['languages', '--json'];
+    return funcCliCommand(listLanguages);
+  }
+
   static createFuncWithRepository(
     name: string,
     language: string,
@@ -108,7 +118,7 @@ export class FuncAPI {
   }
 
   static listRepository(): CliCommand {
-    const listRepositoryCommand = ['repository', 'list'];
+    const listRepositoryCommand = ['repository', 'list', '-v'];
     return funcCliCommand(listRepositoryCommand);
   }
 

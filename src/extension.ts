@@ -30,9 +30,11 @@ import {
   configureFunction,
   configureVolumes,
 } from './functions/function-command/configure-function';
-// eslint-disable-next-line import/no-cycle
 import { createFunctionPage } from './functions/function-command/create-function';
 import { urlFunction } from './functions/function-command/get-url-function';
+// eslint-disable-next-line import/no-cycle
+import { createInvokeFunction } from './functions/function-command/invoke-function';
+import { openInEditor } from './functions/function-command/open-yaml-file-in-editor';
 import {
   addRepository,
   listRepository,
@@ -49,8 +51,6 @@ import { ServingTreeItem } from './servingTree/servingTreeItem';
 import { startTelemetry, telemetryLog, telemetryLogError } from './telemetry';
 import { functionVersion, knativeVersion } from './version';
 
-// eslint-disable-next-line import/no-mutable-exports
-export let contextGlobalState: vscode.ExtensionContext;
 let disposable: vscode.Disposable[];
 // eslint-disable-next-line import/no-mutable-exports
 export let contextGlobalState: vscode.ExtensionContext;
@@ -96,7 +96,8 @@ export async function activate(extensionContext: vscode.ExtensionContext): Promi
     vscode.commands.registerCommand('function.repository.remove', () => removeRepository()),
     vscode.commands.registerCommand('function.version', () => functionVersion()),
     vscode.commands.registerCommand('function.explorer.refresh', () => functionExplorer.refresh()),
-    vscode.commands.registerCommand('function.explorer.create', () => createFunction(extensionContext)),
+    vscode.commands.registerCommand('function.explorer.create', () => createFunctionPage(extensionContext)),
+    vscode.commands.registerCommand('function.invoke', (context) => createInvokeFunction(extensionContext, context)),
     vscode.commands.registerCommand('function.undeploy', (context) => undeployFunction(context)),
     vscode.commands.registerCommand('function.openInEditor', (context) => openInEditor(context)),
     vscode.commands.registerCommand('function.build', (context) => buildFunction(context)),

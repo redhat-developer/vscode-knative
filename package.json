@@ -608,8 +608,28 @@
         },
         {
           "submenu": "function/removeConfig",
-          "when": "view == knativeFunctionProjectExplorer && viewItem =~ /^(localFunctions|localDeployFunctions)$/",
-          "group": "c1@6"
+          "when": "view == knativeFunctionProjectExplorer && viewItem =~ /^(localFunctions|localDeployFunctions|localFunctionsEnablement)$/",
+          "group": "c1@7"
+        },
+        {
+          "command": "function.repository.add",
+          "when": "view == knativeFunctionProjectExplorer && viewItem =~ /^(namespaceNode|failNamespaceNode)$/",
+          "group": "c1@1"
+        },
+        {
+          "command": "function.repository.list",
+          "when": "view == knativeFunctionProjectExplorer && viewItem =~ /^(namespaceNode|failNamespaceNode)$/",
+          "group": "c1@2"
+        },
+        {
+          "command": "function.repository.rename",
+          "when": "view == knativeFunctionProjectExplorer && viewItem =~ /^(namespaceNode|failNamespaceNode)$/",
+          "group": "c1@3"
+        },
+        {
+          "command": "function.repository.remove",
+          "when": "view == knativeFunctionProjectExplorer && viewItem =~ /^(namespaceNode|failNamespaceNode)$/",
+          "group": "c1@4"
         }
       ],
       "view/title": [
