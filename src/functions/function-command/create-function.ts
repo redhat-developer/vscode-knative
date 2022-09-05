@@ -1,6 +1,4 @@
-/* eslint-disable no-console */
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-/* eslint-disable no-use-before-define */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable import/no-cycle */
 /*-----------------------------------------------------------------------------------------------
  *  Copyright (c) Red Hat, Inc. All rights reserved.
@@ -20,6 +18,7 @@ import {
   WebviewWizard,
   WizardDefinition,
   WizardPageFieldDefinition,
+  WizardPageSectionDefinition,
 } from '@redhat-developer/vscode-wizard';
 import * as fs from 'fs-extra';
 import { CliExitData, executeCmdCli } from '../../cli/cmdCli';
@@ -38,6 +37,7 @@ export const folderStatus = new Map<string, boolean>();
 export const languageChangeCheck = new Map<string, string>();
 export const storeLanguageInput = new Map<string, string>();
 export const gitRegexStatus = new Map<string, boolean>();
+export const enableOrDisableRepository = new Map<string, boolean>();
 export const storeLanguage = new Map<string, string[]>();
 export const storeTemplate = new Map<string, FuncTemplate>();
 export const storeRepositoryList = new Map<string, { [key: string]: string }>();
@@ -51,7 +51,9 @@ export const gitRegex = RegExp('((git@|https://)([\\w\\.@]+)(/|:))([\\w,\\-,\\_]
 
 export interface ParametersType {
   functionName: string;
-  repositoryInputText?: string;
+  repositoryUrl?: string;
+  repositoryUrlCheck?: boolean;
+  repositoryUrlDef?: string;
   selectLanguage: string;
   selectLocation: string;
   selectTemplate: string;
@@ -108,13 +110,24 @@ export const selectTemplate: WizardPageFieldDefinition = {
     return [];
   },
 };
-
-export const repositoryField: WizardPageFieldDefinition = {
-  id: createFunctionID.repository_inputText,
-  label: 'Repository',
-  placeholder: 'Provide repository.',
-  type: 'combo',
-  optionProvider: () => [],
+export const repositoryField: WizardPageSectionDefinition = {
+  id: createFunctionID.repository_Url_Def,
+  label: 'Git repository url for containing the specified template.',
+  childFields: [
+    {
+      id: createFunctionID.repository_Url_Check,
+      label: 'Select to enable the Repository Field.',
+      type: 'checkbox',
+    },
+    {
+      id: createFunctionID.repository_Url,
+      label: 'Repository',
+      placeholder: 'Provide repository.',
+      type: 'combo',
+      properties: { disabled: true },
+      optionProvider: () => [],
+    },
+  ],
 };
 
 const selectLocation: WizardPageFieldDefinition = {
@@ -130,7 +143,7 @@ const selectLocation: WizardPageFieldDefinition = {
   },
 };
 
-const defaultField = [functionName, selectLanguage, selectTemplate, repositoryField, selectLocation];
+const defaultField = [functionName, selectLanguage, selectTemplate, selectLocation, repositoryField];
 
 export const def: WizardDefinition = {
   title: `Create Function`,
@@ -144,12 +157,12 @@ export const def: WizardDefinition = {
       // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
       validator: (parameters: ParametersType) => {
         const items: ValidatorResponseItem[] = [];
-        if (parameters.selectLanguage !== languageChangeCheck?.get('checkLanguageChange')) {
-          languageChangeCheck.set('checkLanguageChange', parameters.selectLanguage);
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-          const m: Map<string, FieldDefinitionState> = new Map();
-          m.set(createFunctionID.select_template, { forceRefresh: true });
-          return { items: [], fieldRefresh: m };
+        if (
+          parameters.repositoryUrlCheck !== undefined &&
+          parameters.repositoryUrlCheck !== enableOrDisableRepository?.get('repositoryUrlCheck')
+        ) {
+          // eslint-disable-next-line no-param-reassign
+          delete parameters?.repositoryUrl;
         }
         if (parameters.functionName !== undefined && !Number.isNaN(parameters.functionName) && !parameters.functionName?.trim()) {
           inputFieldValidation(
@@ -162,39 +175,31 @@ export const def: WizardDefinition = {
           );
         }
         if (
-          parameters.repositoryInputText !== undefined &&
-          !Number.isNaN(parameters.repositoryInputText) &&
-          !parameters.repositoryInputText?.trim()
-        ) {
-          inputFieldValidation(
-            {
-              value: parameters.repositoryInputText,
-              id: createFunctionID.repository_inputText,
-              message: 'Empty Git repository URL',
-            },
-            items,
-          );
-        }
-        if (
-          parameters.repositoryInputText !== undefined &&
-          parameters.repositoryInputText?.trim() &&
-          !gitRegex.test(parameters.repositoryInputText)
+          parameters.repositoryUrl !== undefined &&
+          parameters.repositoryUrl?.trim() &&
+          !gitRegex.test(parameters.repositoryUrl)
         ) {
           gitRegexStatus.set('invalid_git_url', false);
           inputFieldValidation(
             {
-              value: parameters.repositoryInputText,
-              id: createFunctionID.repository_inputText,
+              value: parameters.repositoryUrl,
+              id: createFunctionID.repository_Url,
               message: 'Invalid URL provided',
             },
             items,
           );
         }
         if (
-          parameters.repositoryInputText !== undefined &&
-          parameters.repositoryInputText?.trim() &&
-          gitRegex.test(parameters.repositoryInputText)
+          parameters.repositoryUrl !== undefined &&
+          parameters.repositoryUrl?.trim() &&
+          gitRegex.test(parameters.repositoryUrl)
         ) {
+          gitRegexStatus.set('invalid_git_url', true);
+        }
+        if (parameters.repositoryUrlCheck && !gitRegex.test(parameters.repositoryUrl)) {
+          gitRegexStatus.set('invalid_git_url', false);
+        }
+        if (parameters.repositoryUrlCheck === false || parameters.repositoryUrlCheck === undefined) {
           gitRegexStatus.set('invalid_git_url', true);
         }
         if (parameters.selectLocation !== undefined && !Number.isNaN(parameters.selectLanguage)) {
@@ -221,6 +226,38 @@ export const def: WizardDefinition = {
             createFunctionID.function_name,
             items,
           );
+        }
+        if (
+          parameters.repositoryUrl !== undefined &&
+          !Number.isNaN(parameters.repositoryUrl) &&
+          !parameters.repositoryUrl?.trim()
+        ) {
+          gitRegexStatus.set('invalid_git_url', false);
+          inputFieldValidation(
+            {
+              value: parameters.repositoryUrl,
+              id: createFunctionID.repository_Url,
+              message: 'Empty Git repository URL',
+            },
+            items,
+          );
+        }
+        if (parameters.selectLanguage !== languageChangeCheck?.get('checkLanguageChange')) {
+          languageChangeCheck.set('checkLanguageChange', parameters.selectLanguage);
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+          const m: Map<string, FieldDefinitionState> = new Map();
+          m.set(createFunctionID.select_template, { forceRefresh: true });
+          return { items, fieldRefresh: m };
+        }
+        if (
+          parameters.repositoryUrlCheck !== undefined &&
+          parameters.repositoryUrlCheck !== enableOrDisableRepository?.get('repositoryUrlCheck')
+        ) {
+          enableOrDisableRepository.set('repositoryUrlCheck', parameters.repositoryUrlCheck);
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+          const m: Map<string, FieldDefinitionState> = new Map();
+          m.set(createFunctionID.repository_Url, { enabled: parameters.repositoryUrlCheck, forceRefresh: true });
+          return { items, fieldRefresh: m };
         }
         return { items };
       },
@@ -340,6 +377,8 @@ export async function createFunctionPage(context: vscode.ExtensionContext): Prom
   storeRepositoryList.set('repositoryList', repositoryListTemplate);
   delete functionName.initialValue;
   delete selectLocation.initialValue;
+  delete selectLanguage.initialValue;
+  delete selectTemplate.initialValue;
   def.pages[0].fields = defaultField;
   createFunction(context);
 }
