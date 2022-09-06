@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable import/no-cycle */
 /*-----------------------------------------------------------------------------------------------
@@ -22,7 +23,6 @@ import {
 } from '@redhat-developer/vscode-wizard';
 import * as fs from 'fs-extra';
 import { CliExitData, executeCmdCli } from '../../cli/cmdCli';
-import { knExecutor } from '../../cli/execute';
 import { FuncAPI } from '../../cli/func-api';
 import { telemetryLog, telemetryLogError } from '../../telemetry';
 import { getStderrString } from '../../util/stderrstring';
@@ -40,7 +40,7 @@ export const gitRegexStatus = new Map<string, boolean>();
 export const enableOrDisableRepository = new Map<string, boolean>();
 export const storeLanguage = new Map<string, string[]>();
 export const storeTemplate = new Map<string, FuncTemplate>();
-export const storeRepositoryList = new Map<string, { [key: string]: string }>();
+export const storeRepositoryList = new Map<string, string[]>();
 
 export interface Select {
   key: string;
@@ -122,10 +122,10 @@ export const repositoryField: WizardPageSectionDefinition = {
     {
       id: createFunctionID.repository_Url,
       label: 'Repository',
-      placeholder: 'Provide repository.',
+      placeholder: 'Provide git repository url.',
       type: 'combo',
       properties: { disabled: true },
-      optionProvider: () => [],
+      optionProvider: () => storeRepositoryList.get('repositoryList'),
     },
   ],
 };
@@ -296,11 +296,22 @@ export const def: WizardDefinition = {
           title: `Function Successfully created`,
         },
         async () => {
-          const result: CliExitData = await knExecutor.execute(
-            FuncAPI.createFunc(data.functionName, data.selectLanguage, data.selectTemplate, data.selectLocation),
-            process.cwd(),
-            false,
-          );
+          let result: CliExitData;
+          if (data.repositoryUrl) {
+            result = await executeCmdCli.executeExec(
+              FuncAPI.createFuncWithRepository(
+                data.functionName,
+                data.selectLanguage,
+                data.selectTemplate,
+                data.selectLocation,
+                data.repositoryUrl,
+              ),
+            );
+          } else {
+            result = await executeCmdCli.executeExec(
+              FuncAPI.createFunc(data.functionName, data.selectLanguage, data.selectTemplate, data.selectLocation),
+            );
+          }
           if (result.error) {
             telemetryLogError('Fail_to_create_function', result.error);
             // eslint-disable-next-line @typescript-eslint/no-floating-promises
@@ -364,15 +375,16 @@ export async function createFunctionPage(context: vscode.ExtensionContext): Prom
   const repository = await executeCmdCli.executeExec(FuncAPI.listRepository());
   storeTemplate.set('template', JSON.parse(template.stdout));
   storeLanguage.set('language', JSON.parse(language.stdout));
-  const repositoryListTemplate: { [key: string]: string } = {};
-  repository.stdout.split(/\n/).map((item: string) => {
+  const cacheRepositoryList = {};
+  const repositoryListTemplate = [];
+  repository.stdout.split(/\n/).forEach((item: string) => {
     const repositoryList: string[] = item.split(/\t/);
     if (repositoryList[0].trim() && repositoryList[1].trim()) {
-      // eslint-disable-next-line prefer-destructuring
-      repositoryListTemplate[repositoryList[0]] = repositoryList[1];
+      if (!cacheRepositoryList[repositoryList[1]]) {
+        cacheRepositoryList[repositoryList[1]] = true;
+        repositoryListTemplate.push(repositoryList[1]);
+      }
     }
-    // eslint-disable-next-line no-useless-return
-    return;
   });
   storeRepositoryList.set('repositoryList', repositoryListTemplate);
   delete functionName.initialValue;
