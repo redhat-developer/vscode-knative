@@ -116,7 +116,7 @@ export const repositoryField: WizardPageSectionDefinition = {
   childFields: [
     {
       id: createFunctionID.repository_Url_Check,
-      label: 'Select to enable the Repository Field.',
+      label: 'Select to enable the repository field.',
       type: 'checkbox',
     },
     {
