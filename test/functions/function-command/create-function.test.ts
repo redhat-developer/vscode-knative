@@ -8,8 +8,13 @@ import * as chai from 'chai';
 import * as fs from 'fs-extra';
 import * as sinon from 'sinon';
 import * as sinonChai from 'sinon-chai';
-import { knExecutor } from '../../../src/cli/execute';
-import { def, folderStatus, validateInputField } from '../../../src/functions/function-command/create-function';
+import { executeCmdCli } from '../../../src/cli/cmdCli';
+import {
+  def,
+  folderStatus,
+  languageChangeCheck,
+  validateInputField,
+} from '../../../src/functions/function-command/create-function';
 import { pathValidation } from '../../../src/functions/validate-item';
 import { Platform } from '../../../src/util/platform';
 
@@ -23,7 +28,7 @@ suite('Function/Create', () => {
   let showErrorMessageStub: sinon.SinonStub;
 
   setup(() => {
-    executeStub = sandbox.stub(knExecutor, 'execute');
+    executeStub = sandbox.stub(executeCmdCli, 'executeExec');
     sandbox.stub(fs, 'existsSync').returns(true);
     showInformationMessageStub = sandbox.stub(window, 'showInformationMessage');
     showErrorMessageStub = sandbox.stub(window, 'showErrorMessage');
@@ -51,6 +56,7 @@ suite('Function/Create', () => {
   });
 
   test('validator path and function name', () => {
+    sandbox.stub(languageChangeCheck, 'get').returns('node');
     const result = def.pages[0].validator({
       functionName: '',
       selectLanguage: 'node',
@@ -76,6 +82,7 @@ suite('Function/Create', () => {
   });
 
   test('validator for function name if there is any duplicate', () => {
+    sandbox.stub(languageChangeCheck, 'get').returns('node');
     const result = def.pages[0].validator({
       functionName: 'test',
       selectLanguage: 'node',
