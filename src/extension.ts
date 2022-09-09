@@ -40,6 +40,7 @@ import {
   listRepository,
   removeRepository,
   renameRepository,
+  repository,
 } from './functions/function-command/repository-command';
 import { runFunction } from './functions/function-command/run-function';
 import { undeployFunction } from './functions/function-command/undeploy-function';
@@ -90,6 +91,7 @@ export async function activate(extensionContext: vscode.ExtensionContext): Promi
   // The commandId parameter must match the command field in package.json.
   disposable = [
     vscode.commands.registerCommand('knative.version', () => knativeVersion()),
+    vscode.commands.registerCommand('function.explorer.repository', () => repository()),
     vscode.commands.registerCommand('function.repository.add', () => addRepository()),
     vscode.commands.registerCommand('function.repository.list', () => listRepository()),
     vscode.commands.registerCommand('function.repository.rename', () => renameRepository()),

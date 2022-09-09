@@ -149,6 +149,7 @@
     "onCommand:function.invoke",
     "onCommand:function.OpenInBrowserAction",
     "onCommand:function.explorer.refresh",
+    "onCommand:function.explorer.repository",
     "onCommand:function.explorer.create",
     "onCommand:function.build",
     "onCommand:activeCommand.stop",
@@ -175,6 +176,15 @@
         "title": "Refresh View",
         "category": "Knative",
         "icon": "$(refresh)"
+      },
+      {
+        "command": "function.explorer.repository",
+        "title": "Repository",
+        "category": "Knative",
+        "icon": {
+          "dark": "images/context/repo-dark.svg",
+          "light": "images/context/repo-light.svg"
+        }
       },
       {
         "command": "eventing.explorer.refresh",
@@ -435,22 +445,6 @@
           "when": "false"
         },
         {
-          "command": "function.repository.add",
-          "when": "false"
-        },
-        {
-          "command": "function.repository.list",
-          "when": "false"
-        },
-        {
-          "command": "function.repository.rename",
-          "when": "false"
-        },
-        {
-          "command": "function.repository.remove",
-          "when": "false"
-        },
-        {
           "command": "function.run.enablement",
           "when": "false"
         },
@@ -610,26 +604,6 @@
           "submenu": "function/removeConfig",
           "when": "view == knativeFunctionProjectExplorer && viewItem =~ /^(localFunctions|localDeployFunctions|localFunctionsEnablement)$/",
           "group": "c1@7"
-        },
-        {
-          "command": "function.repository.add",
-          "when": "view == knativeFunctionProjectExplorer && viewItem =~ /^(namespaceNode|failNamespaceNode)$/",
-          "group": "c1@1"
-        },
-        {
-          "command": "function.repository.list",
-          "when": "view == knativeFunctionProjectExplorer && viewItem =~ /^(namespaceNode|failNamespaceNode)$/",
-          "group": "c1@2"
-        },
-        {
-          "command": "function.repository.rename",
-          "when": "view == knativeFunctionProjectExplorer && viewItem =~ /^(namespaceNode|failNamespaceNode)$/",
-          "group": "c1@3"
-        },
-        {
-          "command": "function.repository.remove",
-          "when": "view == knativeFunctionProjectExplorer && viewItem =~ /^(namespaceNode|failNamespaceNode)$/",
-          "group": "c1@4"
         }
       ],
       "view/title": [
@@ -642,6 +616,11 @@
           "command": "function.explorer.refresh",
           "when": "view == knativeFunctionProjectExplorer",
           "group": "navigation@2"
+        },
+        {
+          "command": "function.explorer.repository",
+          "when": "view == knativeFunctionProjectExplorer",
+          "group": "navigation@1"
         },
         {
           "command": "function.version",

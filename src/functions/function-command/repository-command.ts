@@ -12,6 +12,7 @@ import { FuncAPI } from '../../cli/func-api';
 import { telemetryLogError } from '../../telemetry';
 import { executeCommandInOutputChannels } from '../../util/output_channels';
 import { getStderrString } from '../../util/stderrstring';
+import { activeNamespace } from '../active-namespace';
 
 async function showInputBox(promptMessage: string, inputValidMessage?: string): Promise<string> {
   // eslint-disable-next-line no-return-await
@@ -28,7 +29,7 @@ async function showInputBox(promptMessage: string, inputValidMessage?: string): 
 }
 
 export async function addRepository(): Promise<void> {
-  const name: string = await showInputBox('Provide Name', 'name cannot be empty');
+  const name: string = await showInputBox('Enter new repository name', 'Name cannot be empty');
   if (!name) {
     return null;
   }
@@ -55,7 +56,9 @@ export async function addRepository(): Promise<void> {
       title: `Adding repository....`,
     },
     async () => {
-      const result = await executeCmdCli.executeExec(FuncAPI.addRepository(name, repositoryURL));
+      const result = await executeCmdCli.executeExec(
+        FuncAPI.addRepository(name, repositoryURL, (await activeNamespace()) ?? 'default'),
+      );
       if (result.error) {
         // eslint-disable-next-line @typescript-eslint/no-floating-promises
         vscode.window.showErrorMessage(`Failed to add repository ${name} error: ${getStderrString(result.error)}`);
@@ -63,7 +66,7 @@ export async function addRepository(): Promise<void> {
         return null;
       }
       // eslint-disable-next-line @typescript-eslint/no-floating-promises
-      vscode.window.showInformationMessage(`Repository: ${name} successfully added.`);
+      vscode.window.showInformationMessage('Repository successfully added.');
     },
   );
 }
@@ -78,14 +81,11 @@ async function getRepository(): Promise<string> {
   if (repositoryList && repositoryList.length === 0) {
     return null;
   }
-  const selectedRepository =
-    repositoryList.length === 1
-      ? repositoryList[0]
-      : await vscode.window.showQuickPick(repositoryList, {
-          canPickMany: false,
-          ignoreFocusOut: true,
-          placeHolder: 'Select repository',
-        });
+  const selectedRepository = await vscode.window.showQuickPick(repositoryList, {
+    canPickMany: false,
+    ignoreFocusOut: true,
+    placeHolder: 'Select repository',
+  });
   if (!selectedRepository) {
     return null;
   }
@@ -97,7 +97,7 @@ export async function renameRepository(): Promise<void> {
   if (!selectedRepository) {
     return null;
   }
-  const name: string = await showInputBox('Rename repository name.', 'name cannot be empty');
+  const name: string = await showInputBox('Rename repository name.', 'Name cannot be empty');
   if (!name) {
     return null;
   }
@@ -108,7 +108,9 @@ export async function renameRepository(): Promise<void> {
       title: `Renaming repository....`,
     },
     async () => {
-      const result = await executeCmdCli.executeExec(FuncAPI.renameRepository(selectedRepository, name));
+      const result = await executeCmdCli.executeExec(
+        FuncAPI.renameRepository(selectedRepository, name, (await activeNamespace()) ?? 'default'),
+      );
       if (result.error) {
         // eslint-disable-next-line @typescript-eslint/no-floating-promises
         vscode.window.showErrorMessage(`Failed to rename repository ${name} error: ${getStderrString(result.error)}`);
@@ -133,7 +135,9 @@ export async function removeRepository(): Promise<void> {
       title: `Removing repository....`,
     },
     async () => {
-      const result = await executeCmdCli.executeExec(FuncAPI.removeRepository(selectedRepository));
+      const result = await executeCmdCli.executeExec(
+        FuncAPI.removeRepository(selectedRepository, (await activeNamespace()) ?? 'default'),
+      );
       if (result.error) {
         // eslint-disable-next-line @typescript-eslint/no-floating-promises
         vscode.window.showErrorMessage(
@@ -143,7 +147,33 @@ export async function removeRepository(): Promise<void> {
         return null;
       }
       // eslint-disable-next-line @typescript-eslint/no-floating-promises
-      vscode.window.showInformationMessage(`Repository: ${selectedRepository} successfully removed.`);
+      vscode.window.showInformationMessage('Repository successfully removed.');
     },
   );
+}
+
+export async function repository(): Promise<void> {
+  const selectedRepository = await vscode.window.showQuickPick(
+    ['Add repository', 'List repositories', 'Remove repository', 'Rename repository'],
+    {
+      canPickMany: false,
+      ignoreFocusOut: true,
+      placeHolder: 'Select repository',
+    },
+  );
+  if (!selectedRepository) {
+    return null;
+  }
+  if (selectedRepository === 'Add repository') {
+    await addRepository();
+  }
+  if (selectedRepository === 'List repositories') {
+    await listRepository();
+  }
+  if (selectedRepository === 'Remove repository') {
+    await removeRepository();
+  }
+  if (selectedRepository === 'Rename repository') {
+    await renameRepository();
+  }
 }
