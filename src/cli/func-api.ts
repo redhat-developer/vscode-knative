@@ -70,11 +70,6 @@ export class FuncAPI {
     return funcCliCommand(listTemplate);
   }
 
-  static listLanguages(): CliCommand {
-    const listLanguages = ['languages', '--json'];
-    return funcCliCommand(listLanguages);
-  }
-
   static createFuncWithRepository(
     name: string,
     language: string,
