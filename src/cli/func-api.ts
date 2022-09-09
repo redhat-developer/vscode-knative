@@ -87,7 +87,7 @@ export class FuncAPI {
   }
 
   static runFunc(location: string): CliCommand {
-    const runCommand = ['run', `-p=${location}`];
+    const runCommand = ['run', `-p=${location}`, '-b=false', '-v'];
     return funcCliCommand(runCommand);
   }
 
