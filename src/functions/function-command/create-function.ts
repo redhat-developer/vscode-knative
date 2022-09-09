@@ -35,10 +35,8 @@ interface FuncTemplate {
 export const folderStatus = new Map<string, boolean>();
 export const languageChangeCheck = new Map<string, string>();
 export const storeLanguageInput = new Map<string, string>();
-export const enableOrDisableRepository = new Map<string, boolean>();
 export const storeLanguage = new Map<string, string[]>();
 export const storeTemplate = new Map<string, FuncTemplate>();
-export const storeRepositoryList = new Map<string, string[]>();
 
 export interface Select {
   key: string;
