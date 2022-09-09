@@ -124,13 +124,14 @@ export function extensionsUITest(clusterIsAvailable: boolean): void {
         this.timeout(10000);
         const sectionFunction = await sideBar.getContent().getSection(KNativeConstants.SECTION_FUNCTION);
         const actions = await sectionFunction.getActions();
-        expect(actions.length).to.equal(3);
+        expect(actions.length).to.equal(4);
         // eslint-disable-next-line @typescript-eslint/no-misused-promises
         actions.forEach(async (action) => {
           // eslint-disable-next-line max-nested-callbacks
           expect(await action.getLabel()).to.satisfy((title: string) =>
             [
               KNativeConstants.ACTION_ITEM_CREATE_FUNCTION,
+              KNativeConstants.REPOSITORY,
               KNativeConstants.ACTION_ITEM_REFRESH,
               KNativeConstants.ACTION_ITEM_FUNCTION_VERSION,
               // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call, max-nested-callbacks

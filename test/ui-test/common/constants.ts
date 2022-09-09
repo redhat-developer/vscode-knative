@@ -24,6 +24,8 @@ export class KNativeConstants {
 
   public static readonly ACTION_ITEM_FUNCTION_VERSION = 'Function version';
 
+  public static readonly REPOSITORY = 'Repository';
+
   public static readonly SECTION_SERVING = 'Serving';
 
   public static readonly SECTION_EVENTING = 'Eventing';
