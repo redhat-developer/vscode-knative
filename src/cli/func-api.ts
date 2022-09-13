@@ -112,8 +112,8 @@ export class FuncAPI {
     return funcCliCommand(addRepositoryCommand);
   }
 
-  static listRepository(): CliCommand {
-    const listRepositoryCommand = ['repository', 'list', '-v'];
+  static listRepository(namespace: string): CliCommand {
+    const listRepositoryCommand = ['repository', 'list', '-v', '-n', namespace];
     return funcCliCommand(listRepositoryCommand);
   }
 

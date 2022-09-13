@@ -72,11 +72,14 @@ export async function addRepository(): Promise<void> {
 }
 
 export async function listRepository(): Promise<void> {
-  await executeCommandInOutputChannels(FuncAPI.listRepository(), 'Function: List Repository');
+  await executeCommandInOutputChannels(
+    FuncAPI.listRepository((await activeNamespace()) ?? 'default'),
+    'Function: List Repository',
+  );
 }
 
 async function getRepository(): Promise<string> {
-  const listAllRepository = await knExecutor.execute(FuncAPI.listRepository());
+  const listAllRepository = await knExecutor.execute(FuncAPI.listRepository((await activeNamespace()) ?? 'default'));
   const repositoryList = listAllRepository.stdout.trim().split('\n').slice(1);
   if (repositoryList && repositoryList.length === 0) {
     return null;
