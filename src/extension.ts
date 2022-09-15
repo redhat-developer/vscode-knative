@@ -191,13 +191,13 @@ export async function activate(extensionContext: vscode.ExtensionContext): Promi
 function setKubeConfigPath(confApi: ConfigurationV1_1): void {
   const configPath = confApi.getKubeconfigPath();
   if (configPath?.['hostPath']) {
-    process.env.KUBECONFIG = confApi.getKubeconfigPath()?.['hostPath'];
+    process.env.KUBECONFIG = configPath?.['hostPath'];
     functionExplorer.refresh();
     servingDataProvider.refresh();
     eventingDataProvider.refresh();
   }
   if (configPath?.['wslPath']) {
-    process.env.KUBECONFIG = confApi.getKubeconfigPath()?.['wslPath'];
+    process.env.KUBECONFIG = configPath?.['wslPath'];
     functionExplorer.refresh();
     servingDataProvider.refresh();
     eventingDataProvider.refresh();
