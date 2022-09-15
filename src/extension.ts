@@ -1,3 +1,8 @@
+/* eslint-disable camelcase */
+/* eslint-disable no-use-before-define */
+/* eslint-disable dot-notation */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+/* eslint-disable no-console */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-use-before-define */
 /* eslint-disable @typescript-eslint/no-floating-promises */
@@ -9,6 +14,7 @@
 
 import * as vscode from 'vscode';
 import * as k8s from 'vscode-kubernetes-tools-api';
+import { ConfigurationV1_1 } from 'vscode-kubernetes-tools-api/js/configuration/v1_1';
 import { checkOpenShiftCluster } from './check-cluster';
 import { CmdCliConfig } from './cli/cli-config';
 import { createCliCommand, executeCmdCli } from './cli/cmdCli';
@@ -18,6 +24,7 @@ import { knvfs, KN_RESOURCE_SCHEME } from './cli/virtualfs';
 import { CommandContext, setCommandContext } from './commands';
 import { openTreeItemInEditor } from './editor/knativeOpenTextDocument';
 import { KnativeReadonlyProvider, KN_READONLY_SCHEME } from './editor/knativeReadonlyProvider';
+import { eventingDataProvider } from './eventingTree/eventingDataProvider';
 import { EventingExplorer } from './eventingTree/eventingExplorer';
 import { EventingTreeItem } from './eventingTree/eventingTreeItem';
 import { activeCommandExplorer } from './functions/active-task-view/activeExplorer';
@@ -47,6 +54,7 @@ import { undeployFunction } from './functions/function-command/undeploy-function
 import { functionExplorer } from './functions/functionsExplorer';
 import { Revision } from './knative/revision';
 import { Service } from './knative/service';
+import { servingDataProvider } from './servingTree/servingDataProvider';
 import { ServingExplorer } from './servingTree/servingExplorer';
 import { ServingTreeItem } from './servingTree/servingTreeItem';
 import { startTelemetry, telemetryLog, telemetryLogError } from './telemetry';
@@ -162,14 +170,38 @@ export async function activate(extensionContext: vscode.ExtensionContext): Promi
   const configurationApi = await k8s.extension.configuration.v1_1;
   if (configurationApi.available) {
     const confApi = configurationApi.api;
+    setKubeConfigPath(confApi);
     confApi.onDidChangeContext(async () => {
       // eslint-disable-next-line no-use-before-define
       await checkClusterVersion();
+      setKubeConfigPath(confApi);
+    });
+    confApi.onDidChangeNamespace(() => {
+      setKubeConfigPath(confApi);
+    });
+    confApi.onDidChangeKubeconfigPath(() => {
+      setKubeConfigPath(confApi);
     });
   }
 
   // extensionContext.subscriptions.push(disposable);
   disposable.forEach((value) => extensionContext.subscriptions.push(value));
+}
+
+function setKubeConfigPath(confApi: ConfigurationV1_1): void {
+  const configPath = confApi.getKubeconfigPath();
+  if (configPath?.['hostPath']) {
+    process.env.KUBECONFIG = confApi.getKubeconfigPath()?.['hostPath'];
+    functionExplorer.refresh();
+    servingDataProvider.refresh();
+    eventingDataProvider.refresh();
+  }
+  if (configPath?.['wslPath']) {
+    process.env.KUBECONFIG = confApi.getKubeconfigPath()?.['wslPath'];
+    functionExplorer.refresh();
+    servingDataProvider.refresh();
+    eventingDataProvider.refresh();
+  }
 }
 
 async function checkClusterVersion(): Promise<void> {
