@@ -50,7 +50,7 @@
   "dependencies": {
     "@kubernetes/client-node": "^0.14.0",
     "@redhat-developer/vscode-redhat-telemetry": "^0.4.2",
-    "@redhat-developer/vscode-wizard": "^0.2.30",
+    "@redhat-developer/vscode-wizard": "^0.3.1",
     "binary-search": "^1.3.6",
     "byline": "^5.0.0",
     "fs-extra": "^9.1.0",
@@ -149,12 +149,17 @@
     "onCommand:function.invoke",
     "onCommand:function.OpenInBrowserAction",
     "onCommand:function.explorer.refresh",
+    "onCommand:function.explorer.repository",
     "onCommand:function.explorer.create",
     "onCommand:function.build",
     "onCommand:activeCommand.stop",
     "onCommand:activeCommand.focus",
     "onCommand:function.deploy",
     "onCommand:function.run",
+    "onCommand:function.repository.add",
+    "onCommand:function.repository.list",
+    "onCommand:function.repository.rename",
+    "onCommand:function.repository.remove",
     "onCommand:function.version",
     "onCommand:knative.version",
     "onCommand:function.run.enablement",
@@ -171,6 +176,15 @@
         "title": "Refresh View",
         "category": "Knative",
         "icon": "$(refresh)"
+      },
+      {
+        "command": "function.explorer.repository",
+        "title": "Repository",
+        "category": "Knative",
+        "icon": {
+          "dark": "images/context/repo-dark.svg",
+          "light": "images/context/repo-light.svg"
+        }
       },
       {
         "command": "eventing.explorer.refresh",
@@ -312,6 +326,26 @@
       {
         "command": "function.run",
         "title": "Run",
+        "category": "Knative"
+      },
+      {
+        "command": "function.repository.add",
+        "title": "Add Repository",
+        "category": "Knative"
+      },
+      {
+        "command": "function.repository.list",
+        "title": "List Repository",
+        "category": "Knative"
+      },
+      {
+        "command": "function.repository.rename",
+        "title": "Rename Repository",
+        "category": "Knative"
+      },
+      {
+        "command": "function.repository.remove",
+        "title": "Remove Repository",
         "category": "Knative"
       },
       {
@@ -582,6 +616,11 @@
           "command": "function.explorer.refresh",
           "when": "view == knativeFunctionProjectExplorer",
           "group": "navigation@2"
+        },
+        {
+          "command": "function.explorer.repository",
+          "when": "view == knativeFunctionProjectExplorer",
+          "group": "navigation@1"
         },
         {
           "command": "function.version",

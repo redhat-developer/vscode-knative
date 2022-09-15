@@ -65,6 +65,22 @@ export class FuncAPI {
     return funcCliCommand(createCommand);
   }
 
+  static listTemplate(): CliCommand {
+    const listTemplate = ['templates', '--json'];
+    return funcCliCommand(listTemplate);
+  }
+
+  static createFuncWithRepository(
+    name: string,
+    language: string,
+    template: string,
+    location: string,
+    repository: string,
+  ): CliCommand {
+    const createCommand = ['create', path.join(location, name), '-l', language, '-t', template, '-r', repository];
+    return funcCliCommand(createCommand);
+  }
+
   static functionInfo(location: string): CliCommand {
     const createCommand = ['info', '-p', location, '-o', 'json'];
     return funcCliCommand(createCommand);
@@ -89,6 +105,26 @@ export class FuncAPI {
   static runFunc(location: string): CliCommand {
     const runCommand = ['run', `-p=${location}`, '-b=false', '-v'];
     return funcCliCommand(runCommand);
+  }
+
+  static addRepository(name: string, URL: string, namespace: string): CliCommand {
+    const addRepositoryCommand = ['repository', 'add', name, URL, '-n', namespace];
+    return funcCliCommand(addRepositoryCommand);
+  }
+
+  static listRepository(namespace: string): CliCommand {
+    const listRepositoryCommand = ['repository', 'list', '-v', '-n', namespace];
+    return funcCliCommand(listRepositoryCommand);
+  }
+
+  static renameRepository(name: string, rename: string, namespace: string): CliCommand {
+    const renameRepositoryCommand = ['repository', 'rename', name, rename, '-n', namespace];
+    return funcCliCommand(renameRepositoryCommand);
+  }
+
+  static removeRepository(name: string, namespace: string): CliCommand {
+    const removeRepositoryCommand = ['repository', 'remove', name, '-n', namespace];
+    return funcCliCommand(removeRepositoryCommand);
   }
 
   static deleteFunc(name: string): CliCommand {

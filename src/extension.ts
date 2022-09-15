@@ -30,11 +30,18 @@ import {
   configureFunction,
   configureVolumes,
 } from './functions/function-command/configure-function';
-import { createFunction } from './functions/function-command/create-function';
+import { createFunctionPage } from './functions/function-command/create-function';
 import { urlFunction } from './functions/function-command/get-url-function';
 // eslint-disable-next-line import/no-cycle
 import { createInvokeFunction } from './functions/function-command/invoke-function';
 import { openInEditor } from './functions/function-command/open-yaml-file-in-editor';
+import {
+  addRepository,
+  listRepository,
+  removeRepository,
+  renameRepository,
+  repository,
+} from './functions/function-command/repository-command';
 import { runFunction } from './functions/function-command/run-function';
 import { undeployFunction } from './functions/function-command/undeploy-function';
 import { functionExplorer } from './functions/functionsExplorer';
@@ -84,9 +91,14 @@ export async function activate(extensionContext: vscode.ExtensionContext): Promi
   // The commandId parameter must match the command field in package.json.
   disposable = [
     vscode.commands.registerCommand('knative.version', () => knativeVersion()),
+    vscode.commands.registerCommand('function.explorer.repository', () => repository()),
+    vscode.commands.registerCommand('function.repository.add', () => addRepository()),
+    vscode.commands.registerCommand('function.repository.list', () => listRepository()),
+    vscode.commands.registerCommand('function.repository.rename', () => renameRepository()),
+    vscode.commands.registerCommand('function.repository.remove', () => removeRepository()),
     vscode.commands.registerCommand('function.version', () => functionVersion()),
     vscode.commands.registerCommand('function.explorer.refresh', () => functionExplorer.refresh()),
-    vscode.commands.registerCommand('function.explorer.create', () => createFunction(extensionContext)),
+    vscode.commands.registerCommand('function.explorer.create', () => createFunctionPage(extensionContext)),
     vscode.commands.registerCommand('function.invoke', (context) => createInvokeFunction(extensionContext, context)),
     vscode.commands.registerCommand('function.undeploy', (context) => undeployFunction(context)),
     vscode.commands.registerCommand('function.openInEditor', (context) => openInEditor(context)),
