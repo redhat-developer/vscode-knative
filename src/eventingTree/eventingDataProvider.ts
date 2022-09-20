@@ -234,3 +234,5 @@ export class EventingDataProvider implements TreeDataProvider<EventingTreeItem |
     return eventingFolderNodes;
   }
 }
+
+export const eventingDataProvider = new EventingDataProvider();
