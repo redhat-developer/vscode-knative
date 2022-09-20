@@ -188,19 +188,21 @@ export async function activate(extensionContext: vscode.ExtensionContext): Promi
   disposable.forEach((value) => extensionContext.subscriptions.push(value));
 }
 
+function refreshTreeView(): void {
+  functionExplorer.refresh();
+  servingDataProvider.refresh();
+  eventingDataProvider.refresh();
+}
+
 function setKubeConfigPath(confApi: ConfigurationV1_1): void {
   const configPath = confApi.getKubeconfigPath();
   if (configPath?.['hostPath']) {
     process.env.KUBECONFIG = configPath?.['hostPath'];
-    functionExplorer.refresh();
-    servingDataProvider.refresh();
-    eventingDataProvider.refresh();
+    refreshTreeView();
   }
   if (configPath?.['wslPath']) {
     process.env.KUBECONFIG = configPath?.['wslPath'];
-    functionExplorer.refresh();
-    servingDataProvider.refresh();
-    eventingDataProvider.refresh();
+    refreshTreeView();
   }
 }
 
