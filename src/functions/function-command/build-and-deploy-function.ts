@@ -214,3 +214,37 @@ export async function deployFunction(context?: FunctionNode): Promise<CliExitDat
   }
   return result;
 }
+
+async function getGitUrlInteractively(): Promise<string> {
+  return vscode.window.showInputBox({
+    ignoreFocusOut: true,
+    prompt: 'The git repository to pull the code to be built',
+    validateInput: (value: string) => (value.trim() !== '' ? value : null),
+  });
+}
+
+export async function onClusterBuildFunction(context?: FunctionNode): Promise<CliExitData> {
+  if (!context) {
+    return null;
+  }
+  const gitUrl = await getGitUrlInteractively();
+  if (!gitUrl) {
+    return null;
+  }
+
+  const funcData = await functionImage(context.contextPath, true);
+  if (!funcData) {
+    return null;
+  }
+
+  telemetryLog('function_on_cluste_build_command', 'OnClusterBuild command execute');
+
+  const command = await FuncAPI.onClusterBuildFunc(
+    context.contextPath.fsPath,
+    funcData.image,
+    context?.getParent()?.getName(),
+    gitUrl,
+  );
+  const name = `On Cluster Build: ${context.getName()}`;
+  return executeCommandInOutputChannels(command, name);
+}

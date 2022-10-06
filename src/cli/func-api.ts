@@ -94,11 +94,33 @@ export class FuncAPI {
     return funcCliCommand(buildCommand);
   }
 
+  private static async createDeployCommandArgs(
+    location: string,
+    image: string,
+    namespace: string,
+    gitUrl: string,
+    disableBuild: boolean,
+  ): Promise<string[]> {
+    let args = ['deploy'];
+    /* eslint-disable no-unused-expressions */
+    location ? args.push(`-p=${location}`) : undefined;
+    image ? args.push(`-i=${image}`) : undefined;
+    (await checkOpenShiftCluster()) ? args.push('-r ""') : undefined;
+    namespace ? args.push(`-n=${namespace}`) : undefined;
+    gitUrl ? (args = [...args, '--remote', `--git-url=${gitUrl}`]) : undefined;
+    disableBuild ? args.push('--build=false') : undefined;
+    /* eslint-enable no-unused-expressions */
+    args.push('-v');
+    return args;
+  }
+
   static async deployFunc(location: string, image: string, namespace: string): Promise<CliCommand> {
-    const deployCommand = ['deploy', `-p=${location}`, `-i=${image}`, `-n=${namespace}`, '--build=false', '-v'];
-    if (await checkOpenShiftCluster()) {
-      deployCommand.push('-r ""');
-    }
+    const deployCommand = await this.createDeployCommandArgs(location, image, namespace, undefined, true);
+    return funcCliCommand(deployCommand);
+  }
+
+  static async onClusterBuildFunc(location: string, image: string, namespace: string, gitUrl: string): Promise<CliCommand> {
+    const deployCommand = await this.createDeployCommandArgs(location, image, namespace, gitUrl, false);
     return funcCliCommand(deployCommand);
   }
 

@@ -155,6 +155,7 @@
     "onCommand:activeCommand.stop",
     "onCommand:activeCommand.focus",
     "onCommand:function.deploy",
+    "onCommand:funcion.onClusterBuild",
     "onCommand:function.run",
     "onCommand:function.repository.add",
     "onCommand:function.repository.list",
@@ -325,6 +326,11 @@
         "category": "Knative"
       },
       {
+        "command": "function.onClusterBuild",
+        "title": "On-Cluster Build",
+        "category": "Knative"
+      },
+      {
         "command": "function.run",
         "title": "Run",
         "category": "Knative"
@@ -439,6 +445,10 @@
         },
         {
           "command": "function.deploy",
+          "when": "false"
+        },
+        {
+          "command": "function.onClusterBuild",
           "when": "false"
         },
         {
@@ -563,6 +573,11 @@
         },
         {
           "command": "function.deploy",
+          "when": "view == knativeFunctionProjectExplorer && viewItem =~ /^(localFunctions|localDeployFunctions|localFunctionsEnablement)$/",
+          "group": "c1@3"
+        },
+        {
+          "command": "function.onClusterBuild",
           "when": "view == knativeFunctionProjectExplorer && viewItem =~ /^(localFunctions|localDeployFunctions|localFunctionsEnablement)$/",
           "group": "c1@3"
         },
