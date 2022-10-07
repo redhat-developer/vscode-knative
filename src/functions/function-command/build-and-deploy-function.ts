@@ -40,50 +40,55 @@ async function showInputBox(promptMessage: string, inputValidMessage: string, na
   });
 }
 
-async function functionBuilder(image: string, name: string): Promise<ImageAndBuild> {
-  const builder = await showInputBox(
-    'Provide Buildpack builder (image name or mapping name)',
-    'Provide full image name in the form [registry]/[namespace]/[name]:[tag] (e.g quay.io/boson/image:latest)',
-    name,
-  );
-  if (!builder) {
-    return null;
-  }
-  return { image, builder };
-}
-
-async function functionImage(
-  selectedFolderPick: vscode.Uri,
-  skipBuilder?: boolean,
-  funcName?: string,
-  namespace?: string,
-): Promise<ImageAndBuild> {
-  const imageList: string[] = [];
+async function getFuncYamlContent(dir: string): Promise<FuncContent> {
   let funcData: FuncContent[];
-  let checkNamespace: string;
   try {
-    const funcYaml: string = await fs.readFile(path.join(selectedFolderPick.fsPath, 'func.yaml'), 'utf-8');
+    const funcYaml: string = await fs.readFile(path.join(dir, 'func.yaml'), 'utf-8');
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     funcData = yaml.safeLoadAll(funcYaml);
-    if (funcData?.[0]?.deploy?.namespace.trim() && funcData?.[0].deploy.namespace.trim() !== namespace && funcName) {
-      checkNamespace = await vscode.window.showInformationMessage(
-        `Function namespace (declared in func.yaml) is different from the current active namespace. Are you sure to deploy function:${funcName} to namespace:${namespace}?`,
-        'Ok',
-        'Cancel',
-      );
-    }
-    if (checkNamespace === 'Cancel') {
-      return null;
-    }
-    if (funcData?.[0]?.image && imageRegex.test(funcData?.[0].image)) {
-      imageList.push(funcData[0].image);
-    }
   } catch (error) {
     // ignore
   }
+  return funcData?.[0];
+}
+
+async function getImageAndBuildStrategy(funcData?: FuncContent, forceImageStrategyPicker?: boolean): Promise<ImageAndBuild> {
+  const imageList: string[] = [];
+  if (funcData?.image && imageRegex.test(funcData.image)) {
+    imageList.push(funcData[0].image);
+  }
+
+  if (imageList.length === 1 && !forceImageStrategyPicker) {
+    return { image: imageList[0] };
+  }
+
+  const strategies = [
+    {
+      label: 'Retrieve the image name from func.yaml or provide it',
+      description: 'Retrieve the image name from the func.yaml file. If not found, it asks the user to provide it',
+    },
+    { label: 'Autodiscover a registry and generate an image name using it.' },
+  ];
+  let strategy = strategies[0];
+  if (forceImageStrategyPicker) {
+    strategy = await vscode.window.showQuickPick(strategies, {
+      canPickMany: false,
+      ignoreFocusOut: true,
+      placeHolder: 'Choose how the image name should be created',
+    });
+
+    if (!strategy) {
+      return null;
+    }
+  }
+
+  if (strategy === strategies[1]) {
+    return { autoDetection: true };
+  }
+
   const imagePick =
     imageList.length === 1
-      ? imageList[0]
+      ? imageList[0] // fatto
       : await showInputBox(
           'Provide full image name in the form [registry]/[namespace]/[name]:[tag] (e.g quay.io/boson/image:latest)',
           'Provide full image name in the form [registry]/[namespace]/[name]:[tag] (e.g quay.io/boson/image:latest)',
@@ -92,11 +97,29 @@ async function functionImage(
   if (!imagePick) {
     return null;
   }
-  if (!funcData?.[0]?.builder?.trim() && !skipBuilder) {
-    const builder = await functionBuilder(imagePick, funcData?.[0].name);
-    return builder;
-  }
+
   return { image: imagePick };
+}
+
+async function functionImage(
+  selectedFolderPick: vscode.Uri,
+  forceImageStrategyPicker?: boolean,
+  funcName?: string,
+  namespace?: string,
+): Promise<ImageAndBuild> {
+  const funcData = await getFuncYamlContent(selectedFolderPick.fsPath);
+  if (funcData && funcData.deploy?.namespace?.trim() && funcData.deploy?.namespace !== namespace && funcName) {
+    const checkNamespace = await vscode.window.showInformationMessage(
+      `Function namespace (declared in func.yaml) is different from the current active namespace. Deploy function ${funcName} to namespace ${namespace}?`,
+      'Ok',
+      'Cancel',
+    );
+    if (checkNamespace === 'Cancel') {
+      return null;
+    }
+  }
+
+  return getImageAndBuildStrategy(funcData, forceImageStrategyPicker);
 }
 
 export async function selectFunctionFolder(): Promise<FolderPick> {
@@ -131,7 +154,7 @@ export async function buildFunction(context?: FunctionNode): Promise<CliExitData
   if (!context) {
     return null;
   }
-  const funcData = await functionImage(context.contextPath, true);
+  const funcData = await functionImage(context.contextPath);
   if (!funcData) {
     return null;
   }
@@ -186,14 +209,14 @@ export async function deployFunction(context?: FunctionNode): Promise<CliExitDat
   if ((await checkFuncIsBuild(context)) === null) {
     return null;
   }
-  const funcData = await functionImage(context.contextPath, true, context.getName(), context?.getParent()?.getName());
+  const funcData = await functionImage(context.contextPath, false, context.getName(), context?.getParent()?.getName());
   if (!funcData) {
     return null;
   }
   telemetryLog('function_deploy_command', 'Deploy command execute');
   // eslint-disable-next-line @typescript-eslint/no-floating-promises
   functionExplorer.refresh();
-  const command = await FuncAPI.deployFunc(context.contextPath.fsPath, funcData.image, context?.getParent()?.getName());
+  const command = await FuncAPI.deployFunc(context.contextPath.fsPath, funcData, context?.getParent()?.getName());
   const name = `Deploy: ${context.getName()}`;
   if (STILL_EXECUTING_COMMAND.get(name)) {
     const status = await vscode.window.showWarningMessage(
@@ -219,7 +242,7 @@ async function getGitUrlInteractively(): Promise<string> {
   return vscode.window.showInputBox({
     ignoreFocusOut: true,
     prompt: 'The git repository to pull the code to be built',
-    validateInput: (value: string) => (value.trim() !== '' ? value : null),
+    validateInput: (value: string) => (value.trim() !== '' ? null : 'Please add a valid git repository url'),
   });
 }
 
@@ -232,8 +255,8 @@ export async function onClusterBuildFunction(context?: FunctionNode): Promise<Cl
     return null;
   }
 
-  const funcData = await functionImage(context.contextPath, true);
-  if (!funcData) {
+  const imageAndBuildMode = await functionImage(context.contextPath, true);
+  if (!imageAndBuildMode) {
     return null;
   }
 
@@ -241,7 +264,7 @@ export async function onClusterBuildFunction(context?: FunctionNode): Promise<Cl
 
   const command = await FuncAPI.onClusterBuildFunc(
     context.contextPath.fsPath,
-    funcData.image,
+    imageAndBuildMode,
     context?.getParent()?.getName(),
     gitUrl,
   );
