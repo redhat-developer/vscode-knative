@@ -55,7 +55,7 @@ async function getFuncYamlContent(dir: string): Promise<FuncContent> {
 async function getImageAndBuildStrategy(funcData?: FuncContent, forceImageStrategyPicker?: boolean): Promise<ImageAndBuild> {
   const imageList: string[] = [];
   if (funcData?.image && imageRegex.test(funcData.image)) {
-    imageList.push(funcData[0].image);
+    imageList.push(funcData.image);
   }
 
   if (imageList.length === 1 && !forceImageStrategyPicker) {
@@ -65,7 +65,6 @@ async function getImageAndBuildStrategy(funcData?: FuncContent, forceImageStrate
   const strategies = [
     {
       label: 'Retrieve the image name from func.yaml or provide it',
-      description: 'Retrieve the image name from the func.yaml file. If not found, it asks the user to provide it',
     },
     { label: 'Autodiscover a registry and generate an image name using it.' },
   ];
@@ -83,16 +82,16 @@ async function getImageAndBuildStrategy(funcData?: FuncContent, forceImageStrate
   }
 
   if (strategy === strategies[1]) {
-    return { autoDetection: true };
+    return { autoGenerateImage: true };
   }
 
   const imagePick =
     imageList.length === 1
-      ? imageList[0] // fatto
+      ? imageList[0]
       : await showInputBox(
           'Provide full image name in the form [registry]/[namespace]/[name]:[tag] (e.g quay.io/boson/image:latest)',
           'Provide full image name in the form [registry]/[namespace]/[name]:[tag] (e.g quay.io/boson/image:latest)',
-          funcData?.[0].name,
+          funcData?.name,
         );
   if (!imagePick) {
     return null;
@@ -182,10 +181,8 @@ export async function buildFunction(context?: FunctionNode): Promise<CliExitData
 }
 
 async function checkFuncIsBuild(context: FunctionNode): Promise<CliExitData> {
-  const funcYaml: string = await fs.readFile(path.join(context?.contextPath.fsPath, 'func.yaml'), 'utf-8');
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-  const getFuncYaml = yaml.safeLoadAll(funcYaml);
-  if (!getFuncYaml?.[0]?.image) {
+  const funcData = await getFuncYamlContent(context?.contextPath.fsPath);
+  if (!funcData?.[0]?.image) {
     const response: string = await vscode.window.showInformationMessage(
       'The image is not present in func.yaml. Please build the function before deploying?',
       'Build',
@@ -260,7 +257,7 @@ export async function onClusterBuildFunction(context?: FunctionNode): Promise<Cl
     return null;
   }
 
-  telemetryLog('function_on_cluste_build_command', 'OnClusterBuild command execute');
+  telemetryLog('function_on_cluster_build_command', 'OnClusterBuild command execute');
 
   const command = await FuncAPI.onClusterBuildFunc(
     context.contextPath.fsPath,

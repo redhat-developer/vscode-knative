@@ -33,7 +33,7 @@ export interface FolderPick extends vscode.QuickPickItem {
 export interface ImageAndBuild {
   image?: string;
   builder?: string;
-  autoDetection?: boolean;
+  autoGenerateImage?: boolean;
 }
 
 export interface ContextList {

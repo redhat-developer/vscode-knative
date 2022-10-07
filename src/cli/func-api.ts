@@ -96,7 +96,7 @@ export class FuncAPI {
   }
 
   private static async createImageArgs(imageMode: ImageAndBuild): Promise<string[]> {
-    if (imageMode.autoDetection) {
+    if (imageMode.autoGenerateImage) {
       return [];
     }
 
