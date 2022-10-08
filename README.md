@@ -6,14 +6,10 @@
 
 # Knative & Serverless Functions for Visual Studio Code
 
-[Knative](https://knative.tips/intro/knative/) (pronounced kay-native) is a set of open source components for Kubernetes that implements functionality to:
+[Knative](https://knative.dev/docs/) is an Open-Source Enterprise-level solution to build Serverless and Event Driven Applications. Serverless Containers in Kubernetes environments.
 
-  * run stateless workloads such as micro-services
-  * event subscription, delivery and handling
+This extension for Knative provides the app developer the tools and experience needed when working with `Knative & Serverless Functions` on a Kubernetes cluster. Using this extension, developers can develop and deploy functions in a serverless way through guided IDE workflow.
 
-on Kubernetes clusters.
-
-This extension for Knative provides the app developer the tools and experience needed when working with Knative & Serverless Functions on a Kubernetes cluster. Using this extension, developers can view and deploy their applications in a serverless way.
 ## Requirements
 
 * YAML is validated using the [VSCode-YAML](https://marketplace.visualstudio.com/items?itemName=redhat.vscode-yaml)
