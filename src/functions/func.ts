@@ -7,12 +7,11 @@
 import * as path from 'path';
 import { TreeItemCollapsibleState, Uri, workspace } from 'vscode';
 import * as fs from 'fs-extra';
-import * as yaml from 'js-yaml';
 import { activeNamespace } from './active-namespace';
-import { getFunctionInfo } from './func-info';
 import { FunctionNode, FunctionNodeImpl } from './function-tree-view/functionsTreeItem';
 import { FuncContent, FunctionList } from './function-type';
 import { functionExplorer } from './functionsExplorer';
+import { getFuncYamlContent } from './funcUtils';
 import { CliExitData } from '../cli/cmdCli';
 import { FunctionContextType, FunctionStatus } from '../cli/config';
 import { knExecutor } from '../cli/execute';
@@ -22,7 +21,7 @@ export interface Func {
   getFunctionNodes(): Promise<FunctionNode[]>;
   getTreeFunction(func: FunctionNode): Promise<FunctionNode[]>;
   getDeployedFunction(func: FunctionNode): Promise<Map<string, FunctionNode>>;
-  getLocalFunction(func: FunctionNode, functionTreeView: Map<string, FunctionNode>): Promise<FunctionNode[]>;
+  getLocalFunctions(func: FunctionNode, functionTreeView: Map<string, FunctionNode>): Promise<FunctionNode[]>;
 }
 
 export class FuncImpl implements Func {
@@ -61,13 +60,49 @@ export class FuncImpl implements Func {
 
   async getTreeFunction(func: FunctionNode): Promise<FunctionNode[]> {
     const deployedFunction: Map<string, FunctionNode> = await this.getDeployedFunction(func);
-    const deployedLocalFunction: FunctionNode[] = await this.getLocalFunction(func, deployedFunction);
+    const deployedLocalFunction: FunctionNode[] = await this.getLocalFunctions(func, deployedFunction);
     if (deployedLocalFunction.length === 0) {
       return [
         new FunctionNodeImpl(func, 'No Functions Found', FunctionContextType.NONE, this, TreeItemCollapsibleState.None, null),
       ];
     }
     return deployedLocalFunction;
+  }
+
+  // eslint-disable-next-line class-methods-use-this
+  getAdaptedContextValue(func: FunctionNode, funcData: FuncContent, funcStatus: FunctionStatus): FunctionContextType {
+    const contextValue =
+      funcStatus === FunctionStatus.CLUSTERLOCALBOTH
+        ? FunctionContextType.LOCALDEPLOYFUNCTION
+        : FunctionContextType.LOCAlFUNCTIONS;
+    // eslint-disable-next-line no-use-before-define
+    if (func.contextValue === FunctionContextType.FAILNAMESPACENODE) {
+      return funcData?.image.trim()
+        ? FunctionContextType.NOTCONNECTEDLOCALFUNCTIONS
+        : FunctionContextType.NOTCONNECTEDLOCALFUNCTIONSENABLEMENT;
+    }
+    return funcData?.image.trim() ? contextValue : FunctionContextType.LOCAlFUNCTIONSENABLEMENT;
+  }
+
+  createFunctionNodeImpl(
+    func: FunctionNode,
+    funcData: FuncContent,
+    folderUri: Uri,
+    funcStatus: FunctionStatus,
+    url?: string,
+    context?: FunctionContextType,
+  ): FunctionNodeImpl {
+    return new FunctionNodeImpl(
+      func,
+      funcData.name,
+      context || this.getAdaptedContextValue(func, funcData, funcStatus),
+      this,
+      TreeItemCollapsibleState.None,
+      folderUri,
+      funcData.runtime,
+      funcStatus,
+      url,
+    );
   }
 
   async getDeployedFunction(func: FunctionNode): Promise<Map<string, FunctionNode>> {
@@ -83,16 +118,13 @@ export class FuncImpl implements Func {
     }
     if (functionList && functionList.length !== 0) {
       functionList.forEach((value) => {
-        const obj: FunctionNodeImpl = new FunctionNodeImpl(
+        const obj: FunctionNodeImpl = this.createFunctionNodeImpl(
           func,
-          value.name,
-          FunctionContextType.DEPLOYFUNCTION,
-          this,
-          TreeItemCollapsibleState.None,
+          value,
           null,
-          value.runtime,
           FunctionStatus.CLUSTERONLY,
           value.url,
+          FunctionContextType.DEPLOYFUNCTION,
         );
         functionTreeView.set(value.name, obj);
       });
@@ -100,10 +132,10 @@ export class FuncImpl implements Func {
     return functionTreeView;
   }
 
-  async getLocalFunction(func: FunctionNode, functionTreeView: Map<string, FunctionNode>): Promise<FunctionNode[]> {
+  async getLocalFunctions(func: FunctionNode, functionTreeView: Map<string, FunctionNode>): Promise<FunctionNode[]> {
     const folders: Uri[] = [];
     const functionList: FunctionNode[] = [];
-    if (workspace.workspaceFolders && workspace.workspaceFolders.length > 0) {
+    if (workspace.workspaceFolders) {
       // eslint-disable-next-line no-restricted-syntax
       for (const wf of workspace.workspaceFolders) {
         if (fs.existsSync(path.join(wf.uri.fsPath, 'func.yaml'))) {
@@ -111,102 +143,31 @@ export class FuncImpl implements Func {
         }
       }
     }
-    if (folders.length !== 0) {
-      // eslint-disable-next-line no-restricted-syntax
-      for (const folderUri of folders) {
-        let funcStatus = FunctionStatus.LOCALONLY;
-        try {
-          // eslint-disable-next-line no-await-in-loop
-          const funcYaml: string = await fs.readFile(path.join(folderUri.fsPath, 'func.yaml'), 'utf-8');
-          // eslint-disable-next-line no-await-in-loop
-          const getCurrentNamespace: string = await activeNamespace();
-          // eslint-disable-next-line no-await-in-loop
-          const functionNamespace = await getFunctionInfo(folderUri);
-          const getFunctionNamespace = functionNamespace?.namespace;
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-          const funcData: FuncContent[] = yaml.safeLoadAll(funcYaml);
-          if (getCurrentNamespace === getFunctionNamespace) {
-            funcStatus = FunctionStatus.CLUSTERLOCALBOTH;
-          }
-          // eslint-disable-next-line @typescript-eslint/no-unused-vars
-          fs.watch(folderUri.fsPath, (eventName, filename) => {
-            // eslint-disable-next-line @typescript-eslint/no-floating-promises
-            functionExplorer.refresh();
-          });
-          const contextValue =
-            funcStatus === FunctionStatus.CLUSTERLOCALBOTH
-              ? FunctionContextType.LOCALDEPLOYFUNCTION
-              : FunctionContextType.LOCAlFUNCTIONS;
-          if (func.contextValue === FunctionContextType.FAILNAMESPACENODE && funcData?.[0]?.name && funcData?.[0]?.image.trim()) {
-            functionTreeView.set(
-              funcData?.[0]?.name,
-              new FunctionNodeImpl(
-                func,
-                funcData[0].name,
-                FunctionContextType.NOTCONNECTEDLOCALFUNCTIONS,
-                this,
-                TreeItemCollapsibleState.None,
-                folderUri,
-                funcData[0].runtime,
-                funcStatus,
-              ),
-            );
-          } else if (
-            func.contextValue === FunctionContextType.FAILNAMESPACENODE &&
-            funcData?.[0]?.name &&
-            !funcData?.[0]?.image.trim()
-          ) {
-            functionTreeView.set(
-              funcData?.[0]?.name,
-              new FunctionNodeImpl(
-                func,
-                funcData[0].name,
-                FunctionContextType.NOTCONNECTEDLOCALFUNCTIONSENABLEMENT,
-                this,
-                TreeItemCollapsibleState.None,
-                folderUri,
-                funcData[0].runtime,
-                funcStatus,
-              ),
-            );
-          } else if (funcData && funcData?.[0]?.name && funcData?.[0]?.image.trim()) {
-            const url = functionTreeView.get(funcData?.[0]?.name)?.url;
-            functionTreeView.set(
-              funcData?.[0]?.name,
-              new FunctionNodeImpl(
-                func,
-                funcData[0].name,
-                contextValue,
-                this,
-                TreeItemCollapsibleState.None,
-                folderUri,
-                funcData[0].runtime,
-                funcStatus,
-                url,
-              ),
-            );
-          } else if (funcData && funcData?.[0]?.name && !funcData?.[0]?.image.trim()) {
-            functionTreeView.set(
-              funcData?.[0]?.name,
-              new FunctionNodeImpl(
-                func,
-                funcData[0].name,
-                FunctionContextType.LOCAlFUNCTIONSENABLEMENT,
-                this,
-                TreeItemCollapsibleState.None,
-                folderUri,
-                funcData[0].runtime,
-                funcStatus,
-              ),
-            );
-          }
-        } catch (err) {
-          // ignore
+    const getCurrentNamespace: string = await activeNamespace();
+    // eslint-disable-next-line no-restricted-syntax
+    for (const folderUri of folders) {
+      let funcStatus = FunctionStatus.LOCALONLY;
+      try {
+        // eslint-disable-next-line no-await-in-loop
+        const funcData: FuncContent = await getFuncYamlContent(folderUri.fsPath);
+        if (functionTreeView.has(funcData?.name) && (!funcData?.namespace || getCurrentNamespace === funcData?.namespace)) {
+          funcStatus = FunctionStatus.CLUSTERLOCALBOTH;
         }
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        fs.watch(folderUri.fsPath, (eventName, filename) => {
+          // eslint-disable-next-line @typescript-eslint/no-floating-promises
+          functionExplorer.refresh();
+        });
+        if (funcData?.name) {
+          const url =
+            func.contextValue !== FunctionContextType.FAILNAMESPACENODE && funcData?.image.trim()
+              ? functionTreeView.get(funcData?.name)?.url
+              : undefined;
+          functionTreeView.set(funcData?.name, this.createFunctionNodeImpl(func, funcData, folderUri, funcStatus, url));
+        }
+      } catch (err) {
+        // ignore
       }
-    }
-    if (functionTreeView.size === 0) {
-      return functionList;
     }
     functionTreeView.forEach((value) => {
       functionList.push(value);
