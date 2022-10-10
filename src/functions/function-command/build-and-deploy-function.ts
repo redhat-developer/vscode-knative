@@ -10,6 +10,7 @@ import * as vscode from 'vscode';
 import * as fs from 'fs-extra';
 import * as yaml from 'js-yaml';
 import { CliExitData } from '../../cli/cmdCli';
+import { knExecutor } from '../../cli/execute';
 import { FuncAPI } from '../../cli/func-api';
 import { telemetryLog } from '../../telemetry';
 import { ExistingWorkspaceFolderPick } from '../../util/existing-workspace-folder-pick';
@@ -243,7 +244,7 @@ async function getGitUrlInteractively(): Promise<string> {
   });
 }
 
-export async function onClusterBuildFunction(context?: FunctionNode): Promise<CliExitData> {
+export async function onClusterBuildFunction(context?: FunctionNode): Promise<void> {
   if (!context) {
     return null;
   }
@@ -266,5 +267,5 @@ export async function onClusterBuildFunction(context?: FunctionNode): Promise<Cl
     gitUrl,
   );
   const name = `On Cluster Build: ${context.getName()}`;
-  return executeCommandInOutputChannels(command, name);
+  await knExecutor.executeInTerminal(command, process.cwd(), name);
 }
