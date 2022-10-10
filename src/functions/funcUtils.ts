@@ -6,7 +6,7 @@
 import * as path from 'path';
 import * as fs from 'fs-extra';
 import * as yaml from 'js-yaml';
-import { FuncContent } from "./function-type";
+import { FuncContent } from './function-type';
 
 export async function getFuncYamlContent(dir: string): Promise<FuncContent> {
   let funcData: FuncContent[];
