@@ -18,7 +18,7 @@ This extension for Knative provides the app developer the tools and experience n
 
   > NOTE: You will need to have the [kubeconfig](https://kubernetes.io/docs/concepts/configuration/organize-cluster-access-kubeconfig/#the-kubeconfig-environment-variable) for the cluster that you are accessing stored locally.
 
-*  Knative uses [kn cli](https://github.com/knative/client) `1.5.0` and [func cli](https://github.com/knative-sandbox/kn-plugin-func) `0.25.0`. The extension will offer to download and install the dependencies if needed.
+*  Knative uses [kn cli](https://github.com/knative/client) `1.7.0` and [func cli](https://github.com/knative/func) `1.7.0`. The extension will offer to download and install the dependencies if needed.
 
 ## Extension Settings
 
