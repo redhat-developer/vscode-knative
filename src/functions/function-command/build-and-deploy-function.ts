@@ -24,7 +24,7 @@ export const restartBuildCommand = new Map<string, boolean>();
 export const restartDeployCommand = new Map<string, boolean>();
 
 async function showInputBox(promptMessage: string, inputValidMessage: string, name?: string): Promise<string> {
-  const defaultUsername = Platform.ENV;
+  const defaultUsername = Platform.getEnv();
   const defaultImage = `quay.io/${defaultUsername.USER}/${name}:latest`;
   // eslint-disable-next-line no-return-await
   return await vscode.window.showInputBox({
