@@ -61,13 +61,19 @@ This extension contributes two views (Knative and Functions) and the following s
 * `Knative: Open in Browser`: Open the deployed function in your browser
 * `Knative: Refresh View`: Refresh the Function Tree View
 
+## Documentation
+
+- [What is OpenShift Serverless](https://www.redhat.com/en/technologies/cloud-computing/openshift/serverless)
+- [Setting up OpenShift Serverless Functions - Red Hat Official Documentation](https://docs.openshift.com/container-platform/4.11/serverless/functions/serverless-functions-setup.html)
+- [Serverless Function CLI docs](https://github.com/knative/func)
+- [Knative Docs](https://knative.dev/docs/)
 ## Release Notes
 
 > See [CHANGELOG](CHANGELOG.md) for details.
 
 ## Contributing
 
-This is an open source project open to anyone. This project welcomes contributions and suggestions!
+This is an open source project open to anyone. We are always looking for contributions from the Function Developer community.
 
 For information on getting started, refer to the [CONTRIBUTING instructions](CONTRIBUTING.md).
 
@@ -78,6 +84,8 @@ Download the most recent `knative-<version>.vsix` file from the [release](https:
 If you discover an issue please file a bug and we will fix it as soon as possible.
 * File a bug in [GitHub Issues](https://github.com/redhat-developer/vscode-knative/issues).
 * Open a [Discussion on GitHub](https://github.com/redhat-developer/vscode-knative/discussions).
+
+The func Task Force meets @ 10:30 PST every Tuesday, we'd love to have you! For more information, see the invitation on the [Knative Team Calendar](https://calendar.google.com/calendar/u/0/embed?src=knative.team_9q83bg07qs5b9rrslp5jor4l6s@group.calendar.google.com).
 
 ## License
 

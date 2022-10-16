@@ -218,7 +218,7 @@ export const def: WizardDefinition = {
           if (result.error) {
             telemetryLogError('Fail_to_create_function', result.error);
             // eslint-disable-next-line @typescript-eslint/no-floating-promises
-            vscode.window.showErrorMessage(`Fail create Function: ${getStderrString(result.error)}`);
+            vscode.window.showErrorMessage(`Failed to create Function: ${getStderrString(result.error)}`);
             return false;
           }
           return true;
