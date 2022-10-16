@@ -53,7 +53,7 @@ export async function addRepository(): Promise<void> {
     {
       cancellable: false,
       location: vscode.ProgressLocation.Notification,
-      title: `Adding repository....`,
+      title: `Adding repository...`,
     },
     async () => {
       const result = await executeCmdCli.executeExec(
@@ -61,7 +61,9 @@ export async function addRepository(): Promise<void> {
       );
       if (result.error) {
         // eslint-disable-next-line @typescript-eslint/no-floating-promises
-        vscode.window.showErrorMessage(`Failed to add repository ${name} error: ${getStderrString(result.error)}`);
+        vscode.window.showErrorMessage(
+          `Failed to add ${name} repository with the following error: ${getStderrString(result.error)}`,
+        );
         telemetryLogError('Function_repository_add_error', getStderrString(result.error));
         return null;
       }
@@ -98,9 +100,11 @@ async function getRepository(): Promise<string> {
 export async function renameRepository(): Promise<void> {
   const selectedRepository = await getRepository();
   if (!selectedRepository) {
+    // eslint-disable-next-line no-unused-expressions, no-void
+    void vscode.window.showInformationMessage('There are no repository present.');
     return null;
   }
-  const name: string = await showInputBox('Rename repository name.', 'Name cannot be empty');
+  const name: string = await showInputBox('Edit repository name.', 'Name cannot be empty');
   if (!name) {
     return null;
   }
@@ -108,7 +112,7 @@ export async function renameRepository(): Promise<void> {
     {
       cancellable: false,
       location: vscode.ProgressLocation.Notification,
-      title: `Renaming repository....`,
+      title: `Renaming repository...`,
     },
     async () => {
       const result = await executeCmdCli.executeExec(
@@ -116,7 +120,9 @@ export async function renameRepository(): Promise<void> {
       );
       if (result.error) {
         // eslint-disable-next-line @typescript-eslint/no-floating-promises
-        vscode.window.showErrorMessage(`Failed to rename repository ${name} error: ${getStderrString(result.error)}`);
+        vscode.window.showErrorMessage(
+          `Failed to rename ${name} repository with the following error: ${getStderrString(result.error)}`,
+        );
         telemetryLogError('Function_repository_rename_error', getStderrString(result.error));
         return null;
       }
@@ -129,13 +135,15 @@ export async function renameRepository(): Promise<void> {
 export async function removeRepository(): Promise<void> {
   const selectedRepository = await getRepository();
   if (!selectedRepository) {
+    // eslint-disable-next-line no-void
+    void vscode.window.showInformationMessage('There are no repository present.');
     return null;
   }
   await vscode.window.withProgress(
     {
       cancellable: false,
       location: vscode.ProgressLocation.Notification,
-      title: `Removing repository....`,
+      title: `Removing repository...`,
     },
     async () => {
       const result = await executeCmdCli.executeExec(
@@ -144,7 +152,7 @@ export async function removeRepository(): Promise<void> {
       if (result.error) {
         // eslint-disable-next-line @typescript-eslint/no-floating-promises
         vscode.window.showErrorMessage(
-          `Failed to remove repository ${selectedRepository} error: ${getStderrString(result.error)}`,
+          `Failed to remove ${selectedRepository} repository with the following error: ${getStderrString(result.error)}`,
         );
         telemetryLogError('Function_repository_rename_error', getStderrString(result.error));
         return null;
@@ -155,28 +163,49 @@ export async function removeRepository(): Promise<void> {
   );
 }
 
+const RepositoryActions = [
+  {
+    label: `$(add) Add repository`,
+    description: 'Add a repository and create a new function using a template from it',
+  },
+  {
+    label: `$(list-flat) List repository`,
+    description: 'List all repositories including the URL from which remotes were installed',
+  },
+  {
+    label: `$(remove) Remove repository`,
+    description: 'Remove an installed repository',
+  },
+  {
+    label: `$(pencil) Rename repository`,
+    description: 'Rename an installed repository',
+  },
+];
+
 export async function repository(): Promise<void> {
-  const selectedRepository = await vscode.window.showQuickPick(
-    ['Add repository', 'List repositories', 'Remove repository', 'Rename repository'],
-    {
-      canPickMany: false,
-      ignoreFocusOut: true,
-      placeHolder: 'Select repository',
-    },
-  );
+  const selectedRepository = await vscode.window.showQuickPick(RepositoryActions, {
+    canPickMany: false,
+    ignoreFocusOut: true,
+    placeHolder: 'Manage set of installed repositories.',
+  });
   if (!selectedRepository) {
     return null;
   }
-  if (selectedRepository === 'Add repository') {
-    await addRepository();
-  }
-  if (selectedRepository === 'List repositories') {
-    await listRepository();
-  }
-  if (selectedRepository === 'Remove repository') {
-    await removeRepository();
-  }
-  if (selectedRepository === 'Rename repository') {
-    await renameRepository();
+
+  switch (selectedRepository.label) {
+    case 'Add repository':
+      await addRepository();
+      break;
+    case 'List repository':
+      await listRepository();
+      break;
+    case 'Remove repository':
+      await removeRepository();
+      break;
+    case 'Rename repository':
+      await renameRepository();
+      break;
+    default:
+      break;
   }
 }

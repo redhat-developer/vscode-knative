@@ -173,6 +173,12 @@
   "contributes": {
     "commands": [
       {
+        "command": "function.explorer.create",
+        "title": "Create Function",
+        "category": "Knative",
+        "icon": "$(plus)"
+      },
+      {
         "command": "function.explorer.refresh",
         "title": "Refresh View",
         "category": "Knative",
@@ -180,7 +186,7 @@
       },
       {
         "command": "function.explorer.repository",
-        "title": "Repository",
+        "title": "Manage Repository",
         "category": "Knative",
         "icon": {
           "dark": "images/context/repo-dark.svg",
@@ -302,12 +308,6 @@
         "command": "service.output",
         "title": "Show Output Channel",
         "category": "Knative"
-      },
-      {
-        "command": "function.explorer.create",
-        "title": "Create Function",
-        "category": "Knative",
-        "icon": "$(plus)"
       },
       {
         "command": "function.invoke",
@@ -611,7 +611,7 @@
         {
           "command": "function.explorer.create",
           "when": "view == knativeFunctionProjectExplorer",
-          "group": "navigation@1"
+          "group": "navigation@0"
         },
         {
           "command": "function.explorer.refresh",
