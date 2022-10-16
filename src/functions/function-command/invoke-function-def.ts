@@ -38,7 +38,7 @@ export const invokeNamespace: WizardPageFieldDefinition = {
 export const invokeID: WizardPageFieldDefinition = {
   id: invokeFunctionID.invoke_ID,
   label: 'ID',
-  placeholder: 'Automatically generated. (optional)',
+  placeholder: 'Automatically generated (optional)',
   type: 'textbox',
 };
 
@@ -81,7 +81,7 @@ export const invokePath: WizardPageFieldDefinition = {
 export const invokeContextType: WizardPageFieldDefinition = {
   id: invokeFunctionID.invoke_context_type,
   label: 'Content-Type',
-  placeholder: 'Content Type of the data.',
+  placeholder: 'The MIME type of the value contained in data(content)',
   initialValue: 'text/plain',
   type: 'combo',
   // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
@@ -179,7 +179,7 @@ export const invokeSource: WizardPageFieldDefinition = {
   id: invokeFunctionID.invoke_source,
   label: 'Source',
   initialValue: '/boson/fn',
-  placeholder: 'Source value for the request data.',
+  placeholder: 'A sender name for the request.',
   type: 'textbox',
 };
 
@@ -187,13 +187,13 @@ export const invokeType = {
   id: invokeFunctionID.invoke_type,
   label: 'Type',
   initialValue: 'boson.fn',
-  placeholder: 'Source value for the request data.',
+  placeholder: 'A type for the request.',
   type: 'textbox',
 };
 
 export const invokeDataText: WizardPageSectionDefinition = {
   id: invokeFunctionID.invoke_data_desc,
-  label: 'Data to send in the request. (default "Hello World")',
+  label: 'Data (content) for this request. (default "Hello World")',
   childFields: [
     {
       id: invokeFunctionID.invoke_data_mode,
@@ -236,7 +236,7 @@ export const invokeDataFile: WizardPageSectionDefinition = {
         canSelectMany: false,
         canSelectFiles: true,
         canSelectFolders: false,
-        openLabel: 'Select file',
+        openLabel: 'Select the file',
       },
     },
   ],

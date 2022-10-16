@@ -13,7 +13,7 @@ export async function urlFunction(context?: FunctionNode): Promise<unknown> {
   }
   if (!context.url) {
     // eslint-disable-next-line @typescript-eslint/no-floating-promises
-    window.showErrorMessage('Fail to get URL');
+    window.showErrorMessage('Failed to get URL');
     return null;
   }
   return commands.executeCommand('vscode.open', Uri.parse(context.url));

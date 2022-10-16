@@ -121,7 +121,7 @@ const defaultField = [functionName, selectLanguage, selectTemplate, selectLocati
 
 export const def: WizardDefinition = {
   title: `Create Function`,
-  description: 'This will create new project including func.yaml in it.',
+  description: 'This will create new function project including func.yaml in it.',
   showDirtyState: true,
   pages: [
     {
@@ -146,7 +146,7 @@ export const def: WizardDefinition = {
             {
               value: parameters.selectLocation,
               id: createFunctionID.select_location,
-              message: 'Provide path to create function',
+              message: 'Provide path to create function.',
             },
             items,
           );
@@ -209,7 +209,7 @@ export const def: WizardDefinition = {
         {
           cancellable: false,
           location: vscode.ProgressLocation.Notification,
-          title: `Function Successfully created`,
+          title: `Creating Function ${data.functionName} `,
         },
         async () => {
           const result: CliExitData = await executeCmdCli.executeExec(

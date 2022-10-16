@@ -16,11 +16,7 @@ export async function undeployFunction(context: FunctionNode): Promise<string> {
   if (!context) {
     return null;
   }
-  const response = await vscode.window.showWarningMessage(
-    `Do you want to undeploy Function Name: ${context.getName()}`,
-    'Yes',
-    'No',
-  );
+  const response = await vscode.window.showWarningMessage(`Do you want to undeploy Function: ${context.getName()}`, 'Yes', 'No');
   if (response === 'No') {
     return null;
   }
@@ -28,14 +24,14 @@ export async function undeployFunction(context: FunctionNode): Promise<string> {
     {
       cancellable: false,
       location: vscode.ProgressLocation.Notification,
-      title: `Undeploying function ${context.getName()}.`,
+      title: `Undeploying function ${context.getName()}...`,
     },
     async () => {
       const result: CliExitData = await executeCmdCli.executeExec(FuncAPI.deleteFunc(context.getName()));
       if (result.error) {
         // eslint-disable-next-line @typescript-eslint/no-floating-promises
         vscode.window.showErrorMessage(
-          `Failed to undeploy function ${context.getName()} - error ${getStderrString(result.error)}`,
+          `Failed to undeploy function:${context.getName()} with the following error: ${getStderrString(result.error)}`,
         );
         telemetryLogError('Function_undeploy_error', getStderrString(result.error));
         return null;

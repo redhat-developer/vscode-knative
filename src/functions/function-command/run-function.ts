@@ -25,10 +25,7 @@ async function executeRunCommand(command: CliCommand, context: FunctionNode, nam
     }
     return null;
   }
-  const status = await window.showWarningMessage(
-    `The Function ${command.cliArguments[0]}: ${context.getName()} is already active.`,
-    'Restart',
-  );
+  const status = await window.showWarningMessage(`The Run for function:${context.getName()} is already active.`, 'Restart');
   if (status === 'Restart') {
     CACHED_CHILDPROCESS.get(name)?.kill('SIGTERM');
     restartRunCommand.set(context.getName(), true);
