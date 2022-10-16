@@ -12,17 +12,27 @@ This extension for Knative provides the app developer the tools and experience n
 
 ## Requirements
 
-* YAML is validated using the [VSCode-YAML](https://marketplace.visualstudio.com/items?itemName=redhat.vscode-yaml)
+*  Knative extension uses [kn cli](https://github.com/knative/client) `1.7.1` and [func cli](https://github.com/knative/func) `1.7.1`. The extension will offer to download and install the dependencies if needed.
+
+* YAML is validated using the [VSCode-YAML](https://marketplace.visualstudio.com/items?itemName=redhat.vscode-yaml) extension
 
 * Users can log in to Kubernetes cluster using [VSCode Kubernetes extension](https://marketplace.visualstudio.com/items?itemName=ms-kubernetes-tools.vscode-kubernetes-tools).
 
   > NOTE: You will need to have the [kubeconfig](https://kubernetes.io/docs/concepts/configuration/organize-cluster-access-kubeconfig/#the-kubeconfig-environment-variable) for the cluster that you are accessing stored locally.
 
-*  Knative uses [kn cli](https://github.com/knative/client) `1.7.0` and [func cli](https://github.com/knative/func) `1.7.0`. The extension will offer to download and install the dependencies if needed.
-
 ## Extension Settings
 
 This extension contributes two views (Knative and Functions) and the following settings:
+
+### Functions
+
+* `function.explorer.create`: Create a new Knative Function in the current namespace
+* `function.explorer.refresh`: Refresh the Functions tree view
+* `function.explorer.repository`: Manage installed template repositories. Once added, a template from the repository can be used when creating a new function.
+
+### Function Sessions
+
+* This view is used to showcase Active command for a specified function. This includes Build, Deploy and Run sessions. Once the command is executed for a given function, the node is displayed in the Sessions View. Users can also `Stop` the executing action. The logs can be seen in the `Output Channel`.
 
 ### Knative
 * `service.explorer.create`: Create a new Knative service in the current namespace
@@ -30,16 +40,22 @@ This extension contributes two views (Knative and Functions) and the following s
 * `service.explorer.refresh`: Refresh the Explorer tree view
 * `service.explorer.reportIssue`: Report Extension Issue on GitHub
 
-### Functions
-
-* `function.explorer.create`: Create a new Knative Function in the current namespace
-* `function.explorer.refresh`: Refresh the Functions tree view
-
 ## Commands and features
 
 `vscode-knative` supports a number of commands for interacting with Knative and Knative Functions; these are accessible via the tree context menu and/or via the command palette (`Cmd+Shift+P` <kbd>⌘⇧P</kbd> on macOS or `Ctrl+Shift+P` <kbd>⌃⇧P</kbd> on Windows and Linux)
 
-### Knative
+### Functions
+
+* `Knative: Create Function`: Open up a wizard to create a new Function project
+* `Knative: Build Function`: Build the function project as a container image
+* `Knative: Run`: Runs the function locally in the current directory or in the directory specified
+* `Knative: Deploy Function`: Deploys a function to the currently configured Knative-enabled cluster.
+* `Knative: Undeploy`: Undeploys a function from the cluster.
+* `Knative: Add Config to Function`: Allows configuration of Volume mounts, Environment variables for a function project
+* `Knative: Remove Config from Function`: Remove Volume mounts, Environment variable from the function configuration
+* `Knative: Open in Browser`: Open the deployed function in your browser
+* `Knative: Refresh View`: Refresh the Function Tree View
+### Knative (Serving & Eventing)
 
 * `Knative: Add Service`: Start a workflow to create a new Service
 * `Knative: Focus on Serving View`: Load and Open the Knative Serving view
@@ -48,18 +64,6 @@ This extension contributes two views (Knative and Functions) and the following s
 * `Knative: Add a Tag`: Add a new tag to a Revision
 * `Knative: Delete`: Delete a service or a revision or an eventing resource
 * `Knative: Open in Browser`: Open the service in your browser
-
-### Functions
-
-* `Knative: Create Function`: Open up a wizard to create a new Function
-* `Knative: Build Function`: Build an image from the selected function
-* `Knative: Run`: Run the locally opened function in a local container. It can be executed after a build has been performed.
-* `Knative: Deploy Function`: Build and Deploy a function to the cluster.
-* `Knative: Undeploy`: Undeploy a function from the cluster
-* `Knative: Add Config to Function`: Allow to customize a function by adding an environment variable or a volume
-* `Knative: Remove Config from Function`: Allow to customize a function by removing an environment variable or a volume
-* `Knative: Open in Browser`: Open the deployed function in your browser
-* `Knative: Refresh View`: Refresh the Function Tree View
 
 ## Release Notes
 
