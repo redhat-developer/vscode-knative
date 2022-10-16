@@ -146,7 +146,7 @@ export const def: WizardDefinition = {
             {
               value: parameters.selectLocation,
               id: createFunctionID.select_location,
-              message: 'Provide local directory path to create function',
+              message: 'Provide path to create function.',
             },
             items,
           );

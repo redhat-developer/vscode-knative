@@ -31,7 +31,7 @@ export async function undeployFunction(context: FunctionNode): Promise<string> {
       if (result.error) {
         // eslint-disable-next-line @typescript-eslint/no-floating-promises
         vscode.window.showErrorMessage(
-          `Failed to undeploy function:${context.getName()} with the following error ${getStderrString(result.error)}`,
+          `Failed to undeploy function:${context.getName()} with the following error: ${getStderrString(result.error)}`,
         );
         telemetryLogError('Function_undeploy_error', getStderrString(result.error));
         return null;

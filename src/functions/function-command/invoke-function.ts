@@ -400,7 +400,7 @@ export const def: WizardDefinition = {
           if (result.error) {
             // eslint-disable-next-line @typescript-eslint/no-floating-promises
             vscode.window.showErrorMessage(
-              `Fail invoke Function:${functionName} with the following error:\n ${getStderrString(result.error)}`,
+              `Invoking the Function:${functionName} failed with the following error: ${getStderrString(result.error)}`,
             );
             telemetryLogError('Invoke_error', getStderrString(result.error));
             return false;
