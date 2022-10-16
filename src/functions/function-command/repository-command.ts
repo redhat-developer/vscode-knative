@@ -5,7 +5,6 @@
  *-----------------------------------------------------------------------------------------------*/
 
 import * as vscode from 'vscode';
-import { async } from 'hasha';
 import { gitRegex } from './create-function';
 import { executeCmdCli } from '../../cli/cmdCli';
 import { knExecutor } from '../../cli/execute';
