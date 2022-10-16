@@ -42,7 +42,7 @@ async function showInputBox(promptMessage: string, inputValidMessage: string, na
 
 async function functionBuilder(image: string, name: string): Promise<ImageAndBuild> {
   const builder = await showInputBox(
-    'Provide Buildpack builder, either an as a an image name or a mapping name.',
+    'Provide Buildpack builder (image name or mapping name)',
     'Provide full image name in the form [registry]/[namespace]/[name]:[tag] (e.g quay.io/boson/image:latest)',
     name,
   );
@@ -67,7 +67,7 @@ async function functionImage(
     funcData = yaml.safeLoadAll(funcYaml);
     if (funcData?.[0].namespace?.trim() && funcData?.[0].namespace !== namespace && funcName) {
       checkNamespace = await vscode.window.showInformationMessage(
-        `Function namespace (declared in func.yaml) is different from the current active namespace. Deploy function ${funcName} to namespace ${namespace}?`,
+        `Function namespace (declared in func.yaml) is different from the current active namespace. Are you sure to deploy function:${funcName} to namespace:${namespace}?`,
         'Ok',
         'Cancel',
       );
@@ -149,7 +149,7 @@ export async function buildFunction(context?: FunctionNode): Promise<CliExitData
     return result;
   }
   const status = await vscode.window.showWarningMessage(
-    `The Function ${command.cliArguments[0]}: ${context.getName()} is already active.`,
+    `The Build for function:${context.getName()} is already active.`,
     'Restart',
   );
   if (status === 'Restart') {
@@ -197,7 +197,7 @@ export async function deployFunction(context?: FunctionNode): Promise<CliExitDat
   const name = `Deploy: ${context.getName()}`;
   if (STILL_EXECUTING_COMMAND.get(name)) {
     const status = await vscode.window.showWarningMessage(
-      `The Function ${command.cliArguments[0]}: ${context.getName()} is already active.`,
+      `The Build for function:${context.getName()} is already active`,
       'Restart',
     );
     if (status === 'Restart') {

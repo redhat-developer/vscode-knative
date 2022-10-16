@@ -71,7 +71,7 @@ export async function configureFunction(action: ConfigAction, objectToConfigure?
   if (!objectToConfigure) {
     // eslint-disable-next-line no-param-reassign
     objectToConfigure = await vscode.window.showQuickPick([ENV_VARIABLES, VOLUMES], {
-      placeHolder: 'Select what you want to configure',
+      placeHolder: 'Configure your function',
     });
     if (!objectToConfigure) {
       return null;

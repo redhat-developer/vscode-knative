@@ -399,7 +399,9 @@ export const def: WizardDefinition = {
           const result: CliExitData = await executeCmdCli.executeExec(invokeCommand);
           if (result.error) {
             // eslint-disable-next-line @typescript-eslint/no-floating-promises
-            vscode.window.showErrorMessage(`Fail invoke Function: ${getStderrString(result.error)}`);
+            vscode.window.showErrorMessage(
+              `Fail invoke Function:${functionName} with the following error:\n ${getStderrString(result.error)}`,
+            );
             telemetryLogError('Invoke_error', getStderrString(result.error));
             return false;
           }
