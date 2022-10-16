@@ -91,7 +91,7 @@ suite('Function/Create', () => {
     });
     expect(result).deep.equal({
       items: [
-        { severity: 4, template: { content: 'Provide path to create function', id: 'selectLocation' } },
+        { severity: 4, template: { content: 'Provide path to create function.', id: 'selectLocation' } },
         {
           severity: 4,
           template: { content: 'A folder with this name already exists. Please use a different name.', id: 'functionName' },
