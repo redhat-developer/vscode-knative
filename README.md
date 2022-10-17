@@ -35,10 +35,10 @@ This extension contributes two views (Knative and Functions) and the following s
 * This view is used to showcase Active command for a specified function. This includes Build, Deploy and Run sessions. Once the command is executed for a given function, the node is displayed in the Sessions View. Users can also `Stop` the executing action. The logs can be seen in the `Output Channel`.
 
 ### Knative
+
 * `service.explorer.create`: Create a new Knative service in the current namespace
 * `service.explorer.openFile`: Display yaml for selected item
 * `service.explorer.refresh`: Refresh the Explorer tree view
-* `service.explorer.reportIssue`: Report Extension Issue on GitHub
 
 ## Commands and features
 

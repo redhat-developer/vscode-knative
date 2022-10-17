@@ -4,7 +4,7 @@
  *-----------------------------------------------------------------------------------------------*/
 
 import * as path from 'path';
-import { Disposable, extensions, TreeView, Uri, version, window, workspace } from 'vscode';
+import { Disposable, TreeView, window, workspace } from 'vscode';
 import * as vscode from 'vscode';
 // eslint-disable-next-line import/no-cycle
 import { ServingDataProvider } from './servingDataProvider';
@@ -30,20 +30,6 @@ kubeconfigList.forEach((value): void => {
 
 export class ServingExplorer implements Disposable {
   public treeView: TreeView<ServingTreeItem | EventingTreeItem>;
-
-  // eslint-disable-next-line class-methods-use-this
-  public issueUrl(): string {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-    const { packageJSON } = extensions.getExtension('redhat.vscode-knative');
-    // eslint-disable-next-line @typescript-eslint/restrict-template-expressions, @typescript-eslint/no-unsafe-member-access
-    const body = [`VS Code version: ${version}`, `OS: ${Platform.OS}`, `Extension version: ${packageJSON.version}`].join('\n');
-    // eslint-disable-next-line @typescript-eslint/restrict-template-expressions, @typescript-eslint/no-unsafe-member-access
-    return `${packageJSON.bugs}/new?labels=kind/bug&title=&body=**Environment**\n${body}\n**Description**`;
-  }
-
-  public async reportIssue(): Promise<unknown> {
-    return vscode.commands.executeCommand('vscode.open', Uri.parse(this.issueUrl()));
-  }
 
   public fsw: FileContentChangeNotifier[] = [];
 
@@ -78,7 +64,6 @@ export class ServingExplorer implements Disposable {
         this.treeDataProvider.addTag(treeItem),
       ),
       vscode.commands.registerCommand('service.explorer.refresh', () => this.treeDataProvider.refresh()),
-      vscode.commands.registerCommand('service.explorer.reportIssue', () => this.reportIssue()),
     ];
   }
 
