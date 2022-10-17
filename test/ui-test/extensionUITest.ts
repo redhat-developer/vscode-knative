@@ -101,7 +101,6 @@ export function extensionsUITest(clusterIsAvailable: boolean): void {
             [
               KNativeConstants.ACTION_ITEM_ADD_SERVICE,
               KNativeConstants.ACTION_ITEM_REFRESH,
-              KNativeConstants.ACTION_ITEM_REPORT_ISSUE,
               // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call, max-nested-callbacks
             ].some((expectedTitle) => title.includes(expectedTitle)),
           );
@@ -134,6 +133,7 @@ export function extensionsUITest(clusterIsAvailable: boolean): void {
               KNativeConstants.REPOSITORY,
               KNativeConstants.ACTION_ITEM_REFRESH,
               KNativeConstants.ACTION_ITEM_FUNCTION_VERSION,
+              KNativeConstants.ACTION_ITEM_REPORT_ISSUE,
               // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call, max-nested-callbacks
             ].some((expectedTitle) => title.includes(expectedTitle)),
           );
