@@ -1,6 +1,7 @@
 {
 	"compilerOptions": {
 		"downlevelIteration": true,
+		"skipLibCheck": true,
     "experimentalDecorators": true,
 		"lib": [ "es6" ],
 		"module": "commonjs",
@@ -17,8 +18,8 @@
   },
 	"exclude": [
 		"node_modules",
-    ".vscode-test",
-    "test-resources"
+    	".vscode-test",
+    	"test-resources"
   ],
   "include": [
     "src",
