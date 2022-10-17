@@ -1,3 +1,4 @@
+
 [![Visual Studio Marketplace](https://img.shields.io/visual-studio-marketplace/v/redhat.vscode-knative?style=for-the-badge&label=VS%20Marketplace&logo=visual-studio-code)](https://marketplace.visualstudio.com/items?itemName=redhat.vscode-knative)
 [![Build Status](https://img.shields.io/github/workflow/status/redhat-developer/vscode-knative/CI?logo=github&style=for-the-badge)](https://github.com/redhat-developer/vscode-knative/actions?query=workflow%3ACI)
 [![Unit Tests Code Coverage](https://img.shields.io/codecov/c/github/redhat-developer/vscode-knative?logo=codecov&style=for-the-badge)](https://codecov.io/gh/redhat-developer/vscode-knative/branch/main/graph/badge.svg)
@@ -12,11 +13,12 @@ This extension for Knative provides the app developer the tools and experience n
 ## Requirements
 
 * YAML is validated using the [VSCode-YAML](https://marketplace.visualstudio.com/items?itemName=redhat.vscode-yaml)
+
 * Users can log in to Kubernetes cluster using [VSCode Kubernetes extension](https://marketplace.visualstudio.com/items?itemName=ms-kubernetes-tools.vscode-kubernetes-tools).
 
   > NOTE: You will need to have the [kubeconfig](https://kubernetes.io/docs/concepts/configuration/organize-cluster-access-kubeconfig/#the-kubeconfig-environment-variable) for the cluster that you are accessing stored locally.
 
-* Knative uses [kn cli](https://github.com/knative/client) `1.7.0` and [func cli](https://github.com/knative/func) `1.7.0`. The extension will offer to download and install the dependencies if needed.
+*  Knative uses [kn cli](https://github.com/knative/client) `1.7.0` and [func cli](https://github.com/knative/func) `1.7.0`. The extension will offer to download and install the dependencies if needed.
 
 ## Extension Settings
 
@@ -82,7 +84,6 @@ Download the most recent `knative-<version>.vsix` file from the [release](https:
 ## Feedback & Questions
 
 If you discover an issue please file a bug and we will fix it as soon as possible.
-
 * File a bug in [GitHub Issues](https://github.com/redhat-developer/vscode-knative/issues).
 * Open a [Discussion on GitHub](https://github.com/redhat-developer/vscode-knative/discussions).
 
