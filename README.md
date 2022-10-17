@@ -25,13 +25,14 @@ This extension for Knative provides the app developer the tools and experience n
 This extension contributes two views (Knative and Functions) and the following settings:
 
 ### Knative
+
 * `service.explorer.create`: Create a new Knative service in the current namespace
 * `service.explorer.openFile`: Display yaml for selected item
 * `service.explorer.refresh`: Refresh the Explorer tree view
-* `service.explorer.reportIssue`: Report Extension Issue on GitHub
 
 ### Functions
 
+* `function.explorer.reportIssue`: Report Extension Issue on GitHub
 * `function.explorer.create`: Create a new Knative Function in the current namespace
 * `function.explorer.refresh`: Refresh the Functions tree view
 
@@ -67,6 +68,7 @@ This extension contributes two views (Knative and Functions) and the following s
 - [Setting up OpenShift Serverless Functions - Red Hat Official Documentation](https://docs.openshift.com/container-platform/4.11/serverless/functions/serverless-functions-setup.html)
 - [Serverless Function CLI docs](https://github.com/knative/func)
 - [Knative Docs](https://knative.dev/docs/)
+
 ## Release Notes
 
 > See [CHANGELOG](CHANGELOG.md) for details.

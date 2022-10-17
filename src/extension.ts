@@ -54,6 +54,7 @@ import { undeployFunction } from './functions/function-command/undeploy-function
 import { functionExplorer } from './functions/functionsExplorer';
 import { Revision } from './knative/revision';
 import { Service } from './knative/service';
+import { reportIssue } from './reportIssue';
 import { servingDataProvider } from './servingTree/servingDataProvider';
 import { ServingExplorer } from './servingTree/servingExplorer';
 import { ServingTreeItem } from './servingTree/servingTreeItem';
@@ -113,6 +114,7 @@ export async function activate(extensionContext: vscode.ExtensionContext): Promi
     vscode.commands.registerCommand('function.build', (context) => buildFunction(context)),
     vscode.commands.registerCommand('function.deploy', (context) => deployFunction(context)),
     vscode.commands.registerCommand('activeCommand.stop', (context) => stopCommand(context)),
+    vscode.commands.registerCommand('function.explorer.reportIssue', () => reportIssue()),
     vscode.commands.registerCommand('activeCommand.focus', (context) => focusOnOutputChannel(context)),
     vscode.commands.registerCommand('function.OpenInBrowserAction', (context) => urlFunction(context)),
     vscode.commands.registerCommand('function.run', (context) => runFunction(context)),
