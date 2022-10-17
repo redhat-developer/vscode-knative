@@ -302,7 +302,7 @@ status:
     // giving the extension test enough time to dispose of it. Otherwise we would have 2 registered
     // commands for each one in ServingExplorer.
     servingExplorer = new ServingExplorer();
-    expect(servingExplorer.registeredCommands.length).to.equal(6);
+    expect(servingExplorer.registeredCommands.length).to.equal(5);
   });
 
   test('should connect the output command to showing the knative output channel', async () => {
@@ -345,18 +345,6 @@ status:
     const stub = sandbox.stub(servingExplorer.treeDataProvider, 'refresh').returns(null);
     await vscode.commands.executeCommand('service.explorer.refresh');
     sinon.assert.calledOnce(stub);
-  });
-
-  test('should connect the output command to reporting an issue', async () => {
-    const stub = sandbox.stub(servingExplorer, 'reportIssue').resolves();
-    await vscode.commands.executeCommand('service.explorer.reportIssue');
-    sinon.assert.calledOnce(stub);
-  });
-
-  test('should open a browser with a link to report an issue', async () => {
-    const executeCommandStub = sandbox.stub(vscode.commands, 'executeCommand').resolves();
-    await servingExplorer.reportIssue();
-    sinon.assert.calledOnce(executeCommandStub);
   });
 
   test('should reveal the tree view', async () => {
