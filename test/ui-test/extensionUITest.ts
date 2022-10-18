@@ -1,5 +1,11 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable global-require */
 /* eslint-disable no-console */
 /* eslint-disable @typescript-eslint/await-thenable */
+import fs = require('fs');
+import os = require('os');
+import path = require('path');
 import { expect } from 'chai';
 import {
   ActivityBar,
@@ -13,6 +19,24 @@ import {
 } from 'vscode-extension-tester';
 import { KNativeConstants } from './common/constants';
 import { cleanUpNotifications, findNotification, safeNotificationExists } from './common/testUtils';
+
+/**
+ * Executes a shell command and return it as a Promise.
+ * @param cmd {string}
+ * @return {Promise<string>}
+ */
+function execShellCommand(cmd) {
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
+  const { exec } = require('child_process');
+  return new Promise((resolve, reject) => {
+    exec(cmd, (error, stdout, stderr) => {
+      if (error) {
+        console.warn(error);
+      }
+      resolve(stdout || stderr);
+    });
+  });
+}
 
 /**
  * @author Ondrej Dockal <odockal@redhat.com>
@@ -33,6 +57,25 @@ export function extensionsUITest(clusterIsAvailable: boolean): void {
       const activityBar = new ActivityBar();
       view = await (await activityBar.getViewControl(KNativeConstants.KNATIVE_EXTENSION_NAME)).wait(2000);
       sideBar = await view.openView();
+      // check existence of kubectl on the path or in the home folder
+      const homeDir = os.homedir();
+      const kubectl = await execShellCommand('kubectl version --output json');
+      console.log(`kubectl output from PATH: ${kubectl as string}`);
+      if (fs.existsSync(path.join(homeDir, '.vs-kubectl'))) {
+        console.log('.vs-kubectl exists');
+      } else {
+        console.log('.vs-kubectl does not exist');
+      }
+      if (fs.existsSync(path.join(homeDir, '.vs-kn'))) {
+        console.log('.vs-kn exists');
+      } else {
+        console.log('.vs-kn does not exist');
+      }
+      if (fs.existsSync(path.join(homeDir, '.vs-func'))) {
+        console.log('.vs-func exists');
+      } else {
+        console.log('.vs-func does not exist');
+      }
     });
 
     it('Activity Bar title matches', async function context() {
@@ -61,19 +104,22 @@ export function extensionsUITest(clusterIsAvailable: boolean): void {
       }, 50000);
     });
 
-    it('allows to download missing kubectl binary using notification', async function context() {
-      this.timeout(80000);
-      const notification = await driver.wait(async () => findNotification('Cannot find Kubernetes CLI'), 5000);
-      const actions = await notification.getActions();
-      const actionsTexts = await Promise.all(actions.map(async (item) => item.getText()));
-      const downloadActionText = actionsTexts.find((item) => (item.includes('Download') ? item : undefined));
-      await notification.takeAction(downloadActionText);
-      await driver.wait(async () => findNotification('Downloading Kubernetes CLI'), 10000);
-      await driver.wait(async () => {
-        const exists = await safeNotificationExists('Downloading Kubernetes CLI');
-        return !exists;
-      }, 50000);
-    });
+    (process.platform === 'linux' || process.platform === 'win32' ? it.skip : it)(
+      'allows to download missing kubectl binary using notification',
+      async function context() {
+        this.timeout(80000);
+        const notification = await driver.wait(async () => findNotification('Cannot find Kubernetes CLI'), 10000);
+        const actions = await notification.getActions();
+        const actionsTexts = await Promise.all(actions.map(async (item) => item.getText()));
+        const downloadActionText = actionsTexts.find((item) => (item.includes('Download') ? item : undefined));
+        await notification.takeAction(downloadActionText);
+        await driver.wait(async () => findNotification('Downloading Kubernetes CLI'), 10000);
+        await driver.wait(async () => {
+          const exists = await safeNotificationExists('Downloading Kubernetes CLI');
+          return !exists;
+        }, 50000);
+      },
+    );
 
     it('should contain Serving, Eventing sections and Function sections', async function context() {
       this.timeout(5000);
