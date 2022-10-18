@@ -48,7 +48,7 @@ export function extensionsUITest(clusterIsAvailable: boolean): void {
     });
 
     it('allows to download missing kn cli using notification', async function context() {
-      this.timeout(50000);
+      this.timeout(80000);
       const notification = await driver.wait(async () => findNotification('Cannot find Knative CLI'), 5000);
       const actions = await notification.getActions();
       const actionsTexts = await Promise.all(actions.map(async (item) => item.getText()));
@@ -58,11 +58,11 @@ export function extensionsUITest(clusterIsAvailable: boolean): void {
       await driver.wait(async () => {
         const exists = await safeNotificationExists('Downloading Knative CLI');
         return !exists;
-      }, 30000);
+      }, 50000);
     });
 
     it('allows to download missing kubectl binary using notification', async function context() {
-      this.timeout(50000);
+      this.timeout(80000);
       const notification = await driver.wait(async () => findNotification('Cannot find Kubernetes CLI'), 5000);
       const actions = await notification.getActions();
       const actionsTexts = await Promise.all(actions.map(async (item) => item.getText()));
@@ -72,7 +72,7 @@ export function extensionsUITest(clusterIsAvailable: boolean): void {
       await driver.wait(async () => {
         const exists = await safeNotificationExists('Downloading Kubernetes CLI');
         return !exists;
-      }, 30000);
+      }, 50000);
     });
 
     it('should contain Serving, Eventing sections and Function sections', async function context() {
@@ -143,17 +143,13 @@ export function extensionsUITest(clusterIsAvailable: boolean): void {
       it('Function Section contains default function tree item', async function context() {
         this.timeout(10000);
         const sectionFunction = await sideBar.getContent().getSection(KNativeConstants.SECTION_FUNCTION);
-        // eslint-disable-next-line @typescript-eslint/no-misused-promises
-        (await sectionFunction.getVisibleItems()).forEach(async (item) => {
-          console.log(await item.getText());
-        });
         const defaultItem = await sectionFunction.findItem('default');
         expect(defaultItem).is.instanceOf(ViewItem);
         await (defaultItem as TreeItem).expand();
       });
 
       it('allows to download missing kn func binary using notification', async function context() {
-        this.timeout(50000);
+        this.timeout(80000);
         const notification = await driver.wait(async () => findNotification('Cannot find Function CLI'), 5000);
         const actions = await notification.getActions();
         const actionsTexts = await Promise.all(actions.map(async (item) => item.getText()));
@@ -163,7 +159,7 @@ export function extensionsUITest(clusterIsAvailable: boolean): void {
         await driver.wait(async () => {
           const exists = await safeNotificationExists('Downloading Function CLI');
           return !exists;
-        }, 30000);
+        }, 50000);
       });
     });
 
