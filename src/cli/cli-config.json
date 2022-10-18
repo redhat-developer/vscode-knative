@@ -72,28 +72,28 @@
     "description": "Kubernetes CLI tool",
     "vendor": "Google",
     "name": "kubectl",
-    "version": "1.18.8",
-    "versionRange": "1.17.0 - 1.20.0",
-    "versionRangeLabel": "v1.18.0",
+    "version": "1.25.3",
+    "versionRange": "1.17.0 - 1.25.3",
+    "versionRangeLabel": "v1.25.3",
     "versionLocalBuildRange": 20200501,
     "dlFileName": "kubectl",
     "cmdFileName": "kubectl",
     "filePrefix": "",
     "platform": {
       "win32": {
-        "url": "https://storage.googleapis.com/kubernetes-release/release/v1.18.8/bin/windows/amd64/kubectl.exe",
-        "sha256sum": "4e19391f236d060448e41316119a8b184af7ed120561293cc9642356c3b88233",
+        "url": "https://dl.k8s.io/v1.25.3/bin/windows/amd64/kubectl.exe",
+        "sha256sum": "ff78c3cb3cba7ce397db01ca4ac4769c476efbbccbd5ff007a7d4b976a6e4ac1",
         "dlFileName": "kubectl.exe",
         "cmdFileName": "kubectl.exe"
       },
       "darwin": {
-        "url": "https://storage.googleapis.com/kubernetes-release/release/v1.18.8/bin/darwin/amd64/kubectl",
-        "sha256sum": "13a366761418571311fc539d99888779f2501328ea9c6b2eb17a93b6733412f7",
+        "url": "https://dl.k8s.io/v1.25.3/bin/darwin/amd64/kubectl",
+        "sha256sum": "161e3377f68a4c1184b6224198e34aa93a051c0dc394efe500e3652e245b8723",
         "dlFileName": "kubectl"
       },
       "linux": {
-        "url": "https://storage.googleapis.com/kubernetes-release/release/v1.18.8/bin/linux/amd64/kubectl",
-        "sha256sum": "a076f5eff0710de94d1eb77bee458ea43b8f4d9572bbb3a3aec1edf0dde0a3e7",
+        "url": "https://dl.k8s.io/v1.25.3/bin/linux/amd64/kubectl",
+        "sha256sum": "f57e568495c377407485d3eadc27cda25310694ef4ffc480eeea81dea2b60624",
         "dlFileName": "kubectl"
       }
     }
