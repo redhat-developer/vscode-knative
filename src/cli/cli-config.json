@@ -90,11 +90,6 @@
         "sha256sum": "161e3377f68a4c1184b6224198e34aa93a051c0dc394efe500e3652e245b8723",
         "dlFileName": "kubectl"
       },
-      "darwin-arm64": {
-        "url": "https://dl.k8s.io/v1.25.3/bin/darwin/arm64/kubectl",
-        "sha256sum": "dc95ba99247ead3c8ba0becfcc3877054a045b411eeeca4585f960bd5efce1fe",
-        "dlFileName": "kubectl"
-      },
       "linux": {
         "url": "https://dl.k8s.io/v1.25.3/bin/linux/amd64/kubectl",
         "sha256sum": "f57e568495c377407485d3eadc27cda25310694ef4ffc480eeea81dea2b60624",
