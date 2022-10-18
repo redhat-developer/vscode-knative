@@ -87,7 +87,7 @@
         "cmdFileName": "kubectl.exe"
       },
       "darwin": {
-        "url": "https://dl.k8s.io/v1.25.3/bin/darwin/amd64/kubectl",
+        "url": "https://storage.googleapis.com/kubernetes-release/release/v1.25.3/bin/darwin/amd64/kubectl",
         "sha256sum": "161e3377f68a4c1184b6224198e34aa93a051c0dc394efe500e3652e245b8723",
         "dlFileName": "kubectl"
       },
