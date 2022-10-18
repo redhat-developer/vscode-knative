@@ -33,15 +33,14 @@ jobs:
         uses: GabrielBB/xvfb-action@v1.0
         with:
           run: npm run base-ui-test
-      - name: Archiving test artifacts
-        uses: actions/upload-artifact@v2
+      - name: Upload screenshots
+        uses: actions/upload-artifact@v3
+        if: failure()
         with: 
-          name: my-artifact
-          path: |
-            test-resources/screenshots/*.png
-            test-resources/*.log
-            test-resources/test-report.xml
-          retention-days: 5
+          name: screenshots-${{ matrix.os }}
+          path: ~/**/screenshots/*.png
+          retention-days: 2
+          if-no-files-found: warn
       - uses: codecov/codecov-action@v1
         name: codecov-upload
         with:
