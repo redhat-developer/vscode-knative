@@ -3,33 +3,33 @@
     "description": "Knative CLI tool",
     "vendor": "Red Hat, Inc.",
     "name": "kn",
-    "version": "1.7.1",
-    "versionRange": "1.7.1",
-    "versionRangeLabel": "v1.7.1",
+    "version": "1.5.0",
+    "versionRange": "1.5.0",
+    "versionRangeLabel": "v1.5.0",
     "versionLocalBuildRange": 20210101,
     "dlFileName": "kn",
     "cmdFileName": "kn",
     "filePrefix": "",
     "platform": {
       "win32": {
-        "url": "https://github.com/knative/client/releases/download/knative-v1.7.1/kn-windows-amd64.exe",
-        "sha256sum": "a44d831163c99c3a6533c3f273f9ee566e2b3ffad7247ab9b6c4f9b396f9b793",
+        "url": "https://github.com/knative/client/releases/download/knative-v1.5.0/kn-windows-amd64.exe",
+        "sha256sum": "3e687ff8698247ab139039e03a1412042d993fc7b33547c666d929c1560f5636",
         "dlFileName": "kn-windows-amd64.exe",
         "cmdFileName": "kn.exe"
       },
       "darwin": {
-        "url": "https://github.com/knative/client/releases/download/knative-v1.7.1/kn-darwin-amd64",
-        "sha256sum": "79b52814fe1634ce4cfb748791ed7874df18e41366da11c8819692b4120b3595",
+        "url": "https://github.com/knative/client/releases/download/knative-v1.5.0/kn-darwin-amd64",
+        "sha256sum": "4319b9b2a7f0faa3db97acb42a942b2346b115b3bc27b2d950bdf8b7d91311e4",
         "dlFileName": "kn-darwin-amd64"
       },
       "darwin-arm64": {
-        "url": "https://github.com/knative/client/releases/download/knative-v1.7.1/kn-darwin-arm64",
-        "sha256sum": "0234447ffa8b95466d4f90477a283bae29513ca6a58da3a1eab5007d824004f8",
+        "url": "https://github.com/knative/client/releases/download/knative-v1.5.0/kn-darwin-arm64",
+        "sha256sum": "7e4ef8856904ccfdd9f07530a313aeed8c5e0a58a03ef4f5ee6f8256679e134b",
         "dlFileName": "kn-darwin-arm64"
       },
       "linux": {
-        "url": "https://github.com/knative/client/releases/download/knative-v1.7.1/kn-linux-amd64",
-        "sha256sum": "968a8cf732b0ae22bfb09b3a34ad6433af1b83aadfd72f00e9e3a5d32c7a87fc",
+        "url": "https://github.com/knative/client/releases/download/knative-v1.5.0/kn-linux-amd64",
+        "sha256sum": "663af0337985c7a1ea9b339cc0c865dba05bdacbcb8453fd63057e680c921f46",
         "dlFileName": "kn-linux-amd64"
       }
     }
@@ -38,32 +38,32 @@
     "description": "Function CLI tool",
     "vendor": "Red Hat, Inc.",
     "name": "func",
-    "version": "1.7.1",
-    "versionRange": "1.7.1",
-    "versionRangeLabel": "v1.7.1",
+    "version": "0.26.0",
+    "versionRange": "0.26.0",
+    "versionRangeLabel": "v0.26.0",
     "dlFileName": "func",
     "cmdFileName": "func",
     "filePrefix": "",
     "platform": {
       "win32": {
-        "url": "https://github.com/knative/func/releases/download/knative-v1.7.1/func_windows_amd64.exe",
-        "sha256sum": "7b59de5271ef77532ffc5ebd64ce44de6bafd504021d422bddfbe1983adcc1a2",
+        "url": "https://github.com/knative-sandbox/kn-plugin-func/releases/download/v0.26.0/func_windows_amd64.exe",
+        "sha256sum": "fa15719777ecedd382f8a292ad164093f76d787050fd5bfc1b3428014e6ddbe9",
         "dlFileName": "func_windows_amd64.exe",
         "cmdFileName": "func.exe"
       },
       "darwin": {
-        "url": "https://github.com/knative/func/releases/download/knative-v1.7.1/func_darwin_amd64",
-        "sha256sum": "542b134cba4835fb452546829a84a1c8a3b44ee778c57585bf6d3c19c8ff00d0",
+        "url": "https://github.com/knative-sandbox/kn-plugin-func/releases/download/v0.26.0/func_darwin_amd64",
+        "sha256sum": "f93c7399f314f1872346e64f243c835b0d66b33239eeb1c7844355eb273507d0",
         "dlFileName": "func_darwin_amd64"
       },
       "darwin-arm64": {
-        "url": "https://github.com/knative/func/releases/download/knative-v1.7.1/func_darwin_arm64",
-        "sha256sum": "cffe2b6ed5845651ac62dc8fc72c435e3042bb9b1cd2a94e1d4ef65c59841d8e",
+        "url": "https://github.com/knative-sandbox/kn-plugin-func/releases/download/v0.26.0/func_darwin_arm64",
+        "sha256sum": "dd294b464533ec155046b83a3d661deba4e579b82ec47b578ae41216cea6cf5c",
         "dlFileName": "func_darwin_arm64"
       },
       "linux": {
-        "url": "https://github.com/knative/func/releases/download/knative-v1.7.1/func_linux_amd64",
-        "sha256sum": "c6981cba72ad9265e1290fcdd819ff4017595925554a881bcb53fb8a5ef55eb9",
+        "url": "https://github.com/knative-sandbox/kn-plugin-func/releases/download/v0.26.0/func_linux_amd64",
+        "sha256sum": "7ac64d875bed17a12c95399dd1e7e7aef0da6c2642d3e72550e57ee99646a6d9",
         "dlFileName": "func_linux_amd64"
       }
     }
@@ -72,27 +72,28 @@
     "description": "Kubernetes CLI tool",
     "vendor": "Google",
     "name": "kubectl",
-    "version": "1.25.3",
-    "versionRange": "1.17.0 - 1.25.3",
-    "versionRangeLabel": "v1.25.3",
+    "version": "1.18.8",
+    "versionRange": "1.17.0 - 1.20.0",
+    "versionRangeLabel": "v1.18.0",
+    "versionLocalBuildRange": 20200501,
     "dlFileName": "kubectl",
     "cmdFileName": "kubectl",
     "filePrefix": "",
     "platform": {
       "win32": {
-        "url": "https://dl.k8s.io/v1.25.3/bin/windows/amd64/kubectl.exe",
-        "sha256sum": "ff78c3cb3cba7ce397db01ca4ac4769c476efbbccbd5ff007a7d4b976a6e4ac1",
+        "url": "https://storage.googleapis.com/kubernetes-release/release/v1.18.8/bin/windows/amd64/kubectl.exe",
+        "sha256sum": "4e19391f236d060448e41316119a8b184af7ed120561293cc9642356c3b88233",
         "dlFileName": "kubectl.exe",
         "cmdFileName": "kubectl.exe"
       },
       "darwin": {
-        "url": "https://dl.k8s.io/v1.25.3/bin/darwin/amd64/kubectl",
-        "sha256sum": "161e3377f68a4c1184b6224198e34aa93a051c0dc394efe500e3652e245b8723",
+        "url": "https://storage.googleapis.com/kubernetes-release/release/v1.18.8/bin/darwin/amd64/kubectl",
+        "sha256sum": "13a366761418571311fc539d99888779f2501328ea9c6b2eb17a93b6733412f7",
         "dlFileName": "kubectl"
       },
       "linux": {
-        "url": "https://dl.k8s.io/v1.25.3/bin/linux/amd64/kubectl",
-        "sha256sum": "f57e568495c377407485d3eadc27cda25310694ef4ffc480eeea81dea2b60624",
+        "url": "https://storage.googleapis.com/kubernetes-release/release/v1.18.8/bin/linux/amd64/kubectl",
+        "sha256sum": "a076f5eff0710de94d1eb77bee458ea43b8f4d9572bbb3a3aec1edf0dde0a3e7",
         "dlFileName": "kubectl"
       }
     }
