@@ -72,9 +72,9 @@
     "description": "Kubernetes CLI tool",
     "vendor": "Google",
     "name": "kubectl",
-    "version": "1.25.3",
-    "versionRange": "1.25.3",
-    "versionRangeLabel": "v1.25.3",
+    "version": "1.26.0",
+    "versionRange": "1.17.0 - 1.26.0",
+    "versionRangeLabel": "v1.26.0",
     "dlFileName": "kubectl",
     "cmdFileName": "kubectl",
     "filePrefix": "",
@@ -86,8 +86,13 @@
         "cmdFileName": "kubectl.exe"
       },
       "darwin": {
-        "url": "https://storage.googleapis.com/kubernetes-release/release/v1.25.3/bin/darwin/amd64/kubectl",
+        "url": "https://dl.k8s.io/v1.25.3/bin/darwin/amd64/kubectl",
         "sha256sum": "161e3377f68a4c1184b6224198e34aa93a051c0dc394efe500e3652e245b8723",
+        "dlFileName": "kubectl"
+      },
+      "darwin-arm64": {
+        "url": "https://dl.k8s.io/v1.25.3/bin/darwin/arm64/kubectl",
+        "sha256sum": "dc95ba99247ead3c8ba0becfcc3877054a045b411eeeca4585f960bd5efce1fe",
         "dlFileName": "kubectl"
       },
       "linux": {
