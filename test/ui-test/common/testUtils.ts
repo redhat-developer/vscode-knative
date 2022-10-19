@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 import { Notification, VSBrowser, NotificationType, Workbench, SideBarView, ModalDialog } from 'vscode-extension-tester';
 
 /**

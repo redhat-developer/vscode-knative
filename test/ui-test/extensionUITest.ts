@@ -1,4 +1,6 @@
 /* eslint-disable no-console */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+/* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/await-thenable */
 import { expect } from 'chai';
 import {
@@ -15,13 +17,32 @@ import { KNativeConstants } from './common/constants';
 import { cleanUpNotifications, findNotification, safeNotificationExists } from './common/testUtils';
 
 /**
+ * Executes a shell command and return it as a Promise.
+ * @param cmd {string}
+ * @return {Promise<string>}
+ */
+function execShellCommand(cmd) {
+  // eslint-disable-next-line @typescript-eslint/no-var-requires, global-require
+  const { exec } = require('child_process');
+  return new Promise((resolve, reject) => {
+    exec(cmd, (error, stdout, stderr) => {
+      resolve(stdout || stderr);
+    });
+  });
+}
+
+/**
  * @author Ondrej Dockal <odockal@redhat.com>
  */
 export function extensionsUITest(clusterIsAvailable: boolean): void {
   let driver: WebDriver;
+  let kubectlExists: boolean;
 
-  before(() => {
+  before(async () => {
     driver = VSBrowser.instance.driver;
+    // check existence of kubectl on the path or in the home folder
+    const kubectl = await execShellCommand('kubectl version --output json');
+    kubectlExists = !(kubectl as string).includes('kubectl: command not found');
   });
 
   describe('Knative extension UI', () => {
@@ -29,7 +50,6 @@ export function extensionsUITest(clusterIsAvailable: boolean): void {
     let sideBar: SideBarView;
 
     before(async () => {
-      // eslint-disable-next-line @typescript-eslint/await-thenable
       const activityBar = new ActivityBar();
       view = await (await activityBar.getViewControl(KNativeConstants.KNATIVE_EXTENSION_NAME)).wait(2000);
       sideBar = await view.openView();
@@ -62,8 +82,11 @@ export function extensionsUITest(clusterIsAvailable: boolean): void {
     });
 
     it('allows to download missing kubectl binary using notification', async function context() {
+      if (kubectlExists === true) {
+        this.skip();
+      }
       this.timeout(80000);
-      const notification = await driver.wait(async () => findNotification('Cannot find Kubernetes CLI'), 5000);
+      const notification = await driver.wait(async () => findNotification('Cannot find Kubernetes CLI'), 10000);
       const actions = await notification.getActions();
       const actionsTexts = await Promise.all(actions.map(async (item) => item.getText()));
       const downloadActionText = actionsTexts.find((item) => (item.includes('Download') ? item : undefined));
