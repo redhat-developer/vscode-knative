@@ -12,6 +12,7 @@ import { checkOpenShiftCluster } from '../check-cluster';
 // eslint-disable-next-line import/no-cycle
 import { ParametersType } from '../functions/function-command/invoke-function';
 import { ImageAndBuild } from '../functions/function-type';
+import { GitModel } from '../git/git';
 import { quote } from '../util/quote';
 
 function funcCliCommand(cmdArguments?: string[]): CliCommand {
@@ -112,7 +113,7 @@ export class FuncAPI {
     location: string,
     imageMode: ImageAndBuild,
     namespace: string,
-    gitUrl: string,
+    gitModel: GitModel,
     disableBuild: boolean,
   ): Promise<string[]> {
     let args = ['deploy'];
@@ -120,7 +121,9 @@ export class FuncAPI {
     location ? args.push(`-p=${location}`) : undefined;
     imageMode ? (args = [...args, ...(await this.createImageArgs(imageMode))]) : undefined;
     namespace ? args.push(`-n=${namespace}`) : undefined;
-    gitUrl ? (args = [...args, '--remote', `--git-url=${gitUrl}`]) : undefined;
+    gitModel
+      ? (args = [...args, '--remote', `--git-url=${gitModel.remoteUrl}`, `--git-branch=${gitModel.branchName}`])
+      : undefined;
     disableBuild ? args.push('--build=false') : undefined;
     /* eslint-enable no-unused-expressions */
     args.push('-v');
@@ -136,9 +139,9 @@ export class FuncAPI {
     location: string,
     imageMode: ImageAndBuild,
     namespace: string,
-    gitUrl: string,
+    gitModel: GitModel,
   ): Promise<CliCommand> {
-    const deployCommand = await this.createDeployCommandArgs(location, imageMode, namespace, gitUrl, false);
+    const deployCommand = await this.createDeployCommandArgs(location, imageMode, namespace, gitModel, false);
     return funcCliCommand(deployCommand);
   }
 

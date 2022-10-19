@@ -7,11 +7,14 @@
 
 import * as path from 'path';
 import * as vscode from 'vscode';
+import { QuickPickItem } from 'vscode';
 import * as fs from 'fs-extra';
 import * as yaml from 'js-yaml';
 import { CliExitData } from '../../cli/cmdCli';
 import { knExecutor } from '../../cli/execute';
 import { FuncAPI } from '../../cli/func-api';
+import { getGitAPI, GitState } from '../../git/git';
+import { Branch, Ref, Remote } from '../../git/git.d';
 import { telemetryLog } from '../../telemetry';
 import { ExistingWorkspaceFolderPick } from '../../util/existing-workspace-folder-pick';
 import { CACHED_CHILDPROCESS, executeCommandInOutputChannels, STILL_EXECUTING_COMMAND } from '../../util/output_channels';
@@ -236,20 +239,130 @@ export async function deployFunction(context?: FunctionNode): Promise<CliExitDat
   return result;
 }
 
-async function getGitUrlInteractively(): Promise<string> {
-  return vscode.window.showInputBox({
-    ignoreFocusOut: true,
-    prompt: 'The git repository to pull the code to be built',
-    validateInput: (value: string) => (value.trim() !== '' ? null : 'Please add a valid git repository url'),
+function getGitStateByFolder(rootPath?: string): GitState {
+  const api = getGitAPI();
+  let remotes: Remote[] = [];
+  let refs: Ref[] = [];
+  let remote: Remote;
+  let branch: Branch;
+  let isGit = false;
+  if (api) {
+    const repositories = api.repositories.filter((r) => r.rootUri.fsPath === rootPath);
+    isGit = repositories.length > 0;
+    if (isGit) {
+      const repo = repositories[0];
+      remotes = repo.state.remotes;
+      refs = repo.state.refs;
+      branch = repo.state.HEAD;
+      if (branch.commit) {
+        const refsByCommit = refs
+          .filter((r) => r.commit === branch.commit)
+          .sort((a, b) => {
+            if (!a.remote) {
+              return 1;
+            }
+            if (!b.remote) {
+              return -1;
+            }
+            return a.remote.localeCompare(b.remote);
+          });
+        const remoteNameByCommit = refsByCommit[0]?.remote;
+        if (remoteNameByCommit) {
+          // eslint-disable-next-line prefer-destructuring
+          remote = remotes.filter((r) => r.name === remoteNameByCommit)[0];
+        }
+      }
+    }
+  }
+
+  return {
+    remotes,
+    refs,
+    remote,
+    branch,
+    isGit,
+  };
+}
+
+function showWarningByState(gitState: GitState) {
+  if (!gitState.isGit) {
+    // eslint-disable-next-line @typescript-eslint/no-floating-promises
+    vscode.window.showWarningMessage(
+      'This project is not a git repository. Please git initialise it and then proceed to build it on the cluster.',
+    );
+  }
+
+  if (!gitState.remote && gitState.branch) {
+    // eslint-disable-next-line @typescript-eslint/no-floating-promises
+    vscode.window.showWarningMessage(
+      'The local branch is not present remotely. Push it to remote and then proceed to build it on cluster.',
+    );
+  }
+}
+
+function showQuickPick(gitState: GitState, title: string, value: string, items: QuickPickItem[]): Promise<string | undefined> {
+  showWarningByState(gitState);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  return new Promise<string | undefined>((resolve, _reject) => {
+    const pick = vscode.window.createQuickPick<QuickPickItem>();
+    pick.items = items;
+    pick.value = value;
+    pick.onDidHide(() => {
+      resolve(undefined);
+      pick.dispose();
+    });
+    pick.onDidChangeSelection((e) => {
+      pick.value = e[0].label;
+    });
+    pick.onDidAccept(() => {
+      resolve(pick.value);
+      pick.dispose();
+    });
+    pick.canSelectMany = false;
+    pick.ignoreFocusOut = true;
+    pick.title = title;
+    pick.show();
   });
+}
+
+async function getGitRepoInteractively(gitState: GitState): Promise<string | undefined> {
+  return showQuickPick(
+    gitState,
+    `Provide the git repository with the function source code`,
+    gitState.remote?.name,
+    gitState.remotes.map((r) => ({
+      label: r.name,
+      description: r.fetchUrl,
+    })),
+  );
+}
+
+async function getGitBranchInteractively(gitState: GitState, repository: string): Promise<string | undefined> {
+  return showQuickPick(
+    gitState,
+    `Git revision to be used (branch, tag, commit).`,
+    gitState.branch?.name,
+    gitState.refs
+      .filter((r) => repository === r.remote)
+      .map((r) => ({
+        label: r.name?.replace(`${repository}/`, ''),
+      })),
+  );
 }
 
 export async function onClusterBuildFunction(context?: FunctionNode): Promise<void> {
   if (!context) {
     return null;
   }
-  const gitUrl = await getGitUrlInteractively();
-  if (!gitUrl) {
+  const gitState = getGitStateByFolder(context.contextPath?.fsPath);
+
+  const gitRemote = await getGitRepoInteractively(gitState);
+  if (!gitRemote) {
+    return null;
+  }
+
+  const gitBranch = await getGitBranchInteractively(gitState, gitRemote);
+  if (!gitBranch) {
     return null;
   }
 
@@ -264,7 +377,10 @@ export async function onClusterBuildFunction(context?: FunctionNode): Promise<vo
     context.contextPath.fsPath,
     imageAndBuildMode,
     context?.getParent()?.getName(),
-    gitUrl,
+    {
+      remoteUrl: gitState.remotes.filter((r) => r.name === gitRemote).map((r) => r.fetchUrl)[0],
+      branchName: gitBranch,
+    },
   );
   const name = `On Cluster Build: ${context.getName()}`;
   await knExecutor.executeInTerminal(command, process.cwd(), name);
