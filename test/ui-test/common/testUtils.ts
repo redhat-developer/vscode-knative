@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 import { Notification, VSBrowser, NotificationType, Workbench, SideBarView, ModalDialog } from 'vscode-extension-tester';
 
 /**
@@ -31,7 +30,6 @@ export async function findNotification(text: string): Promise<Notification | und
   for (const notification of notifications) {
     // eslint-disable-next-line no-await-in-loop
     const message = await notification.getMessage();
-    console.log(`Message: ${message}`);
     if (message.includes(text)) {
       return notification;
     }

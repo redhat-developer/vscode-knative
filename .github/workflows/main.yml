@@ -30,7 +30,7 @@ jobs:
           run: npm test
       - name: Run UI tests
         if: runner.os == 'Linux'
-        uses: GabrielBB/xvfb-action@v1.0
+        uses: GabrielBB/xvfb-action@v1.6
         with:
           run: npm run base-ui-test
       - name: Upload screenshots
