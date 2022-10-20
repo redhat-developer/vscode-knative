@@ -112,10 +112,10 @@ export class FunctionNodeImpl implements FunctionNode {
 
   get description(): string {
     if (this.functionStatus === FunctionStatus.CLUSTERLOCALBOTH) {
-      return `(${this.template.toUpperCase()}) Local/Cluster`;
+      return 'Local/Cluster';
     }
     if (this.functionStatus === FunctionStatus.LOCALONLY) {
-      return `(${this.template.toUpperCase()}) Local Only`;
+      return 'Local Only';
     }
     if (this.functionStatus === FunctionStatus.CLUSTERONLY) {
       return 'Cluster Only';
