@@ -84,7 +84,7 @@ async function getRepository(): Promise<string> {
   const listAllRepository = await knExecutor.execute(FuncAPI.listRepository((await activeNamespace()) ?? 'default'));
   const repositoryList = listAllRepository.stdout.trim().split('\n').slice(1);
   if (repositoryList && repositoryList.length === 0) {
-    return null;
+    return undefined;
   }
   const selectedRepository = await vscode.window.showQuickPick(repositoryList, {
     canPickMany: false,
@@ -99,9 +99,12 @@ async function getRepository(): Promise<string> {
 
 export async function renameRepository(): Promise<void> {
   const selectedRepository = await getRepository();
-  if (!selectedRepository) {
+  if (selectedRepository === undefined) {
     // eslint-disable-next-line no-unused-expressions, no-void
     void vscode.window.showInformationMessage('There are no repository present.');
+    return null;
+  }
+  if (selectedRepository === null) {
     return null;
   }
   const name: string = await showInputBox('Edit repository name.', 'Name cannot be empty');
@@ -134,9 +137,12 @@ export async function renameRepository(): Promise<void> {
 
 export async function removeRepository(): Promise<void> {
   const selectedRepository = await getRepository();
-  if (!selectedRepository) {
+  if (selectedRepository === undefined) {
     // eslint-disable-next-line no-void
     void vscode.window.showInformationMessage('There are no repository present.');
+    return null;
+  }
+  if (selectedRepository === null) {
     return null;
   }
   await vscode.window.withProgress(
@@ -193,16 +199,16 @@ export async function repository(): Promise<void> {
   }
 
   switch (selectedRepository.label) {
-    case 'Add repository':
+    case RepositoryActions[0].label:
       await addRepository();
       break;
-    case 'List repository':
+    case RepositoryActions[1].label:
       await listRepository();
       break;
-    case 'Remove repository':
+    case RepositoryActions[2].label:
       await removeRepository();
       break;
-    case 'Rename repository':
+    case RepositoryActions[3].label:
       await renameRepository();
       break;
     default:
