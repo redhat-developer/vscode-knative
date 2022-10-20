@@ -239,13 +239,43 @@ export async function deployFunction(context?: FunctionNode): Promise<CliExitDat
   return result;
 }
 
-function getGitStateByFolder(rootPath?: string): GitState {
-  const api = getGitAPI();
+function getRemoteByCommit(refs: Ref[], remotes: Remote[], branch: Branch): Remote {
+  const refsByCommit = refs
+    .map((r) => {
+      if (r.remote && r.name) {
+        return {
+          ...r,
+          name: r.name.replace(`${r.remote}/`, ''),
+        };
+      }
+      return r;
+    })
+    .filter((r) => r.commit === branch.commit && r.name === branch.name)
+    .sort((a, b) => {
+      if (!a.remote) {
+        return 1;
+      }
+      if (!b.remote) {
+        return -1;
+      }
+      return a.remote.localeCompare(b.remote);
+    });
+  const remoteNameByCommit = refsByCommit[0]?.remote;
+  if (remoteNameByCommit) {
+    // eslint-disable-next-line prefer-destructuring
+    return remotes.filter((r) => r.name === remoteNameByCommit)[0];
+  }
+  return undefined;
+}
+
+function getFunctionGitState(rootPath?: string): GitState {
   let remotes: Remote[] = [];
   let refs: Ref[] = [];
   let remote: Remote;
   let branch: Branch;
   let isGit = false;
+
+  const api = getGitAPI();
   if (api) {
     const repositories = api.repositories.filter((r) => r.rootUri.fsPath === rootPath);
     isGit = repositories.length > 0;
@@ -255,22 +285,7 @@ function getGitStateByFolder(rootPath?: string): GitState {
       refs = repo.state.refs;
       branch = repo.state.HEAD;
       if (branch.commit) {
-        const refsByCommit = refs
-          .filter((r) => r.commit === branch.commit)
-          .sort((a, b) => {
-            if (!a.remote) {
-              return 1;
-            }
-            if (!b.remote) {
-              return -1;
-            }
-            return a.remote.localeCompare(b.remote);
-          });
-        const remoteNameByCommit = refsByCommit[0]?.remote;
-        if (remoteNameByCommit) {
-          // eslint-disable-next-line prefer-destructuring
-          remote = remotes.filter((r) => r.name === remoteNameByCommit)[0];
-        }
+        remote = getRemoteByCommit(refs, remotes, branch);
       }
     }
   }
@@ -300,33 +315,33 @@ function showWarningByState(gitState: GitState) {
   }
 }
 
-function showQuickPick(gitState: GitState, title: string, value: string, items: QuickPickItem[]): Promise<string | undefined> {
+function showGitQuickPick(gitState: GitState, title: string, value: string, items: QuickPickItem[]): Promise<string | undefined> {
   showWarningByState(gitState);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   return new Promise<string | undefined>((resolve, _reject) => {
-    const pick = vscode.window.createQuickPick<QuickPickItem>();
-    pick.items = items;
-    pick.value = value;
-    pick.onDidHide(() => {
+    const quickPick = vscode.window.createQuickPick<QuickPickItem>();
+    quickPick.items = items;
+    quickPick.value = value;
+    quickPick.onDidHide(() => {
       resolve(undefined);
-      pick.dispose();
+      quickPick.dispose();
     });
-    pick.onDidChangeSelection((e) => {
-      pick.value = e[0].label;
+    quickPick.onDidChangeSelection((e) => {
+      quickPick.value = e[0].label;
     });
-    pick.onDidAccept(() => {
-      resolve(pick.value);
-      pick.dispose();
+    quickPick.onDidAccept(() => {
+      resolve(quickPick.value);
+      quickPick.dispose();
     });
-    pick.canSelectMany = false;
-    pick.ignoreFocusOut = true;
-    pick.title = title;
-    pick.show();
+    quickPick.canSelectMany = false;
+    quickPick.ignoreFocusOut = true;
+    quickPick.title = title;
+    quickPick.show();
   });
 }
 
 async function getGitRepoInteractively(gitState: GitState): Promise<string | undefined> {
-  return showQuickPick(
+  return showGitQuickPick(
     gitState,
     `Provide the git repository with the function source code`,
     gitState.remote?.name,
@@ -338,7 +353,7 @@ async function getGitRepoInteractively(gitState: GitState): Promise<string | und
 }
 
 async function getGitBranchInteractively(gitState: GitState, repository: string): Promise<string | undefined> {
-  return showQuickPick(
+  return showGitQuickPick(
     gitState,
     `Git revision to be used (branch, tag, commit).`,
     gitState.branch?.name,
@@ -354,7 +369,7 @@ export async function onClusterBuildFunction(context?: FunctionNode): Promise<vo
   if (!context) {
     return null;
   }
-  const gitState = getGitStateByFolder(context.contextPath?.fsPath);
+  const gitState = getFunctionGitState(context.contextPath?.fsPath);
 
   const gitRemote = await getGitRepoInteractively(gitState);
   if (!gitRemote) {
