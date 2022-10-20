@@ -280,7 +280,7 @@ export async function onClusterBuildFunction(context?: FunctionNode): Promise<vo
   if (!(await isNamespaceValid(context.contextPath, context.getName(), context?.getParent()?.getName()))) {
     return null;
   }
-  const imageAndBuildModel = await getFunctionImageInteractively(context.contextPath, false);
+  const imageAndBuildModel = await getFunctionImageInteractively(context.contextPath, true);
   if (!imageAndBuildModel) {
     return null;
   }
