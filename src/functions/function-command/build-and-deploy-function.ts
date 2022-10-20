@@ -103,12 +103,15 @@ async function getImageAndBuildStrategy(funcData?: FuncContent, forceImageStrate
   return { image: imagePick };
 }
 
-async function functionImage(
+async function getFunctionImageInteractively(
   selectedFolderPick: vscode.Uri,
   forceImageStrategyPicker?: boolean,
-  funcName?: string,
-  namespace?: string,
 ): Promise<ImageAndBuild> {
+  const funcData = await getFuncYamlContent(selectedFolderPick.fsPath);
+  return getImageAndBuildStrategy(funcData, forceImageStrategyPicker);
+}
+
+async function isNamespaceValid(selectedFolderPick: vscode.Uri, funcName?: string, namespace?: string): Promise<boolean> {
   const funcData = await getFuncYamlContent(selectedFolderPick.fsPath);
   if (funcData && funcData.deploy?.namespace?.trim() && funcData.deploy?.namespace !== namespace && funcName) {
     const checkNamespace = await vscode.window.showInformationMessage(
@@ -116,12 +119,9 @@ async function functionImage(
       'Ok',
       'Cancel',
     );
-    if (checkNamespace === 'Cancel') {
-      return null;
-    }
+    return checkNamespace !== 'Cancel';
   }
-
-  return getImageAndBuildStrategy(funcData, forceImageStrategyPicker);
+  return true;
 }
 
 export async function selectFunctionFolder(): Promise<FolderPick> {
@@ -156,14 +156,14 @@ export async function buildFunction(context?: FunctionNode): Promise<CliExitData
   if (!context) {
     return null;
   }
-  const funcData = await functionImage(context.contextPath);
-  if (!funcData) {
+  const imageAndBuildModel = await getFunctionImageInteractively(context.contextPath);
+  if (!imageAndBuildModel) {
     return null;
   }
   telemetryLog('function_build_command', 'Build command execute');
   // eslint-disable-next-line @typescript-eslint/no-floating-promises
   functionExplorer.refresh();
-  const command = await FuncAPI.buildFunc(context.contextPath.fsPath, funcData.image, context?.getParent()?.getName());
+  const command = await FuncAPI.buildFunc(context.contextPath.fsPath, imageAndBuildModel.image, context?.getParent()?.getName());
   const name = `Build: ${context.getName()}`;
   if (!STILL_EXECUTING_COMMAND.get(name)) {
     const result = await executeCommandInOutputChannels(command, name);
@@ -185,7 +185,7 @@ export async function buildFunction(context?: FunctionNode): Promise<CliExitData
 
 async function checkFuncIsBuild(context: FunctionNode): Promise<CliExitData> {
   const funcData = await getFuncYamlContent(context?.contextPath.fsPath);
-  if (!funcData?.[0]?.image) {
+  if (!funcData?.image) {
     const response: string = await vscode.window.showInformationMessage(
       'The image is not present in func.yaml. Please build the function before deploying?',
       'Build',
@@ -209,14 +209,17 @@ export async function deployFunction(context?: FunctionNode): Promise<CliExitDat
   if ((await checkFuncIsBuild(context)) === null) {
     return null;
   }
-  const funcData = await functionImage(context.contextPath, false, context.getName(), context?.getParent()?.getName());
-  if (!funcData) {
+  if (!(await isNamespaceValid(context.contextPath, context.getName(), context?.getParent()?.getName()))) {
+    return null;
+  }
+  const imageAndBuildModel = await getFunctionImageInteractively(context.contextPath, false);
+  if (!imageAndBuildModel) {
     return null;
   }
   telemetryLog('function_deploy_command', 'Deploy command execute');
   // eslint-disable-next-line @typescript-eslint/no-floating-promises
   functionExplorer.refresh();
-  const command = await FuncAPI.deployFunc(context.contextPath.fsPath, funcData, context?.getParent()?.getName());
+  const command = await FuncAPI.deployFunc(context.contextPath.fsPath, imageAndBuildModel, context?.getParent()?.getName());
   const name = `Deploy: ${context.getName()}`;
   if (STILL_EXECUTING_COMMAND.get(name)) {
     const status = await vscode.window.showWarningMessage(
@@ -274,8 +277,11 @@ export async function onClusterBuildFunction(context?: FunctionNode): Promise<vo
     return null;
   }
 
-  const imageAndBuildMode = await functionImage(context.contextPath, true);
-  if (!imageAndBuildMode) {
+  if (!(await isNamespaceValid(context.contextPath, context.getName(), context?.getParent()?.getName()))) {
+    return null;
+  }
+  const imageAndBuildModel = await getFunctionImageInteractively(context.contextPath, false);
+  if (!imageAndBuildModel) {
     return null;
   }
 
@@ -283,7 +289,7 @@ export async function onClusterBuildFunction(context?: FunctionNode): Promise<vo
 
   const command = await FuncAPI.onClusterBuildFunc(
     context.contextPath.fsPath,
-    imageAndBuildMode,
+    imageAndBuildModel,
     context?.getParent()?.getName(),
     gitModel,
   );
