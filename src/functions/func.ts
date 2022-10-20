@@ -102,6 +102,7 @@ export class FuncImpl implements Func {
       funcData.runtime,
       funcStatus,
       url,
+      funcData.invocation?.format,
     );
   }
 
