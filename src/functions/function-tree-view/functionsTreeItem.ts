@@ -102,6 +102,7 @@ export class FunctionNodeImpl implements FunctionNode {
     public readonly runtime?: string,
     public readonly functionStatus?: string,
     public readonly url?: string,
+    public readonly template?: string,
   ) {}
 
   get iconPath(): Uri {
@@ -111,10 +112,10 @@ export class FunctionNodeImpl implements FunctionNode {
 
   get description(): string {
     if (this.functionStatus === FunctionStatus.CLUSTERLOCALBOTH) {
-      return 'Local/Cluster';
+      return `(${this.template.toUpperCase()}) Local/Cluster`;
     }
     if (this.functionStatus === FunctionStatus.LOCALONLY) {
-      return 'Local Only';
+      return `(${this.template.toUpperCase()}) Local Only`;
     }
     if (this.functionStatus === FunctionStatus.CLUSTERONLY) {
       return 'Cluster Only';
@@ -129,7 +130,9 @@ export class FunctionNodeImpl implements FunctionNode {
       this.contextValue === FunctionContextType.NOTCONNECTEDLOCALFUNCTIONS
     ) {
       return format(
-        `Name: ${this.CONTEXT_DATA[this.contextValue].tooltip}\nRuntime: ${this.runtime}\nContext: ${this.contextPath.fsPath}`,
+        `Name: ${this.CONTEXT_DATA[this.contextValue].tooltip}\nRuntime: ${this.runtime}\nTemplate: ${this.template}\nContext: ${
+          this.contextPath.fsPath
+        }`,
         this,
       );
     }

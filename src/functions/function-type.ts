@@ -20,6 +20,7 @@ export interface FuncContent {
   image?: string;
   imageDigest?: string;
   builder?: string;
+  invocation?: { format?: string };
 }
 
 export interface FolderPick extends vscode.QuickPickItem {
