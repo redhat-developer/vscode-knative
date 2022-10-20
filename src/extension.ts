@@ -186,9 +186,19 @@ export async function activate(extensionContext: vscode.ExtensionContext): Promi
       setKubeConfigPath(confApi);
     });
   }
-
+  contextGlobalState.globalState.update('hasTekton', await isTektonAware());
   // extensionContext.subscriptions.push(disposable);
   disposable.forEach((value) => extensionContext.subscriptions.push(value));
+}
+
+async function isTektonAware() {
+  const kubectl = await k8s.extension.kubectl.v1;
+  let isTekton = false;
+  if (kubectl.available) {
+    const sr = await kubectl.api.invokeCommand('api-versions');
+    isTekton = sr && sr.code === 0 && sr.stdout.includes('tekton.dev/v1beta1');
+  }
+  return isTekton;
 }
 
 function refreshTreeView(): void {

@@ -7,14 +7,13 @@
 
 import * as path from 'path';
 import * as vscode from 'vscode';
-import { QuickPickItem } from 'vscode';
 import * as fs from 'fs-extra';
 import * as yaml from 'js-yaml';
 import { CliExitData } from '../../cli/cmdCli';
 import { knExecutor } from '../../cli/execute';
 import { FuncAPI } from '../../cli/func-api';
-import { getGitAPI, GitState } from '../../git/git';
-import { Branch, Ref, Remote } from '../../git/git.d';
+import { contextGlobalState } from '../../extension';
+import { getGitBranchInteractively, getGitRepoInteractively, getGitStateByPath, GitModel } from '../../git/git';
 import { telemetryLog } from '../../telemetry';
 import { ExistingWorkspaceFolderPick } from '../../util/existing-workspace-folder-pick';
 import { CACHED_CHILDPROCESS, executeCommandInOutputChannels, STILL_EXECUTING_COMMAND } from '../../util/output_channels';
@@ -239,137 +238,8 @@ export async function deployFunction(context?: FunctionNode): Promise<CliExitDat
   return result;
 }
 
-function getRemoteByCommit(refs: Ref[], remotes: Remote[], branch: Branch): Remote {
-  const refsByCommit = refs
-    .map((r) => {
-      if (r.remote && r.name) {
-        return {
-          ...r,
-          name: r.name.replace(`${r.remote}/`, ''),
-        };
-      }
-      return r;
-    })
-    .filter((r) => r.commit === branch.commit && r.name === branch.name)
-    .sort((a, b) => {
-      if (!a.remote) {
-        return 1;
-      }
-      if (!b.remote) {
-        return -1;
-      }
-      return a.remote.localeCompare(b.remote);
-    });
-  const remoteNameByCommit = refsByCommit[0]?.remote;
-  if (remoteNameByCommit) {
-    // eslint-disable-next-line prefer-destructuring
-    return remotes.filter((r) => r.name === remoteNameByCommit)[0];
-  }
-  return undefined;
-}
-
-function getFunctionGitState(rootPath?: string): GitState {
-  let remotes: Remote[] = [];
-  let refs: Ref[] = [];
-  let remote: Remote;
-  let branch: Branch;
-  let isGit = false;
-
-  const api = getGitAPI();
-  if (api) {
-    const repositories = api.repositories.filter((r) => r.rootUri.fsPath === rootPath);
-    isGit = repositories.length > 0;
-    if (isGit) {
-      const repo = repositories[0];
-      remotes = repo.state.remotes;
-      refs = repo.state.refs;
-      branch = repo.state.HEAD;
-      if (branch.commit) {
-        remote = getRemoteByCommit(refs, remotes, branch);
-      }
-    }
-  }
-
-  return {
-    remotes,
-    refs,
-    remote,
-    branch,
-    isGit,
-  };
-}
-
-function showWarningByState(gitState: GitState) {
-  if (!gitState.isGit) {
-    // eslint-disable-next-line @typescript-eslint/no-floating-promises
-    vscode.window.showWarningMessage(
-      'This project is not a git repository. Please git initialise it and then proceed to build it on the cluster.',
-    );
-  }
-
-  if (!gitState.remote && gitState.branch) {
-    // eslint-disable-next-line @typescript-eslint/no-floating-promises
-    vscode.window.showWarningMessage(
-      'The local branch is not present remotely. Push it to remote and then proceed to build it on cluster.',
-    );
-  }
-}
-
-function showGitQuickPick(gitState: GitState, title: string, value: string, items: QuickPickItem[]): Promise<string | undefined> {
-  showWarningByState(gitState);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  return new Promise<string | undefined>((resolve, _reject) => {
-    const quickPick = vscode.window.createQuickPick<QuickPickItem>();
-    quickPick.items = items;
-    quickPick.value = value;
-    quickPick.onDidHide(() => {
-      resolve(undefined);
-      quickPick.dispose();
-    });
-    quickPick.onDidChangeSelection((e) => {
-      quickPick.value = e[0].label;
-    });
-    quickPick.onDidAccept(() => {
-      resolve(quickPick.value);
-      quickPick.dispose();
-    });
-    quickPick.canSelectMany = false;
-    quickPick.ignoreFocusOut = true;
-    quickPick.title = title;
-    quickPick.show();
-  });
-}
-
-async function getGitRepoInteractively(gitState: GitState): Promise<string | undefined> {
-  return showGitQuickPick(
-    gitState,
-    `Provide the git repository with the function source code`,
-    gitState.remote?.name,
-    gitState.remotes.map((r) => ({
-      label: r.name,
-      description: r.fetchUrl,
-    })),
-  );
-}
-
-async function getGitBranchInteractively(gitState: GitState, repository: string): Promise<string | undefined> {
-  return showGitQuickPick(
-    gitState,
-    `Git revision to be used (branch, tag, commit).`,
-    gitState.branch?.name,
-    gitState.refs
-      .filter((r) => repository === r.remote)
-      .map((r) => ({
-        label: r.name?.replace(`${repository}/`, ''),
-      })),
-  );
-}
-
-export async function onClusterBuildFunction(context?: FunctionNode): Promise<void> {
-  if (!context) {
-    return null;
-  }
-  const gitState = getFunctionGitState(context.contextPath?.fsPath);
+async function getGitModel(fsPath?: string): Promise<GitModel> {
+  const gitState = getGitStateByPath(fsPath);
 
   const gitRemote = await getGitRepoInteractively(gitState);
   if (!gitRemote) {
@@ -378,6 +248,29 @@ export async function onClusterBuildFunction(context?: FunctionNode): Promise<vo
 
   const gitBranch = await getGitBranchInteractively(gitState, gitRemote);
   if (!gitBranch) {
+    return null;
+  }
+  return {
+    remoteUrl: gitState.remotes.filter((r) => r.name === gitRemote).map((r) => r.fetchUrl)[0],
+    branchName: gitBranch,
+  };
+}
+
+export async function onClusterBuildFunction(context?: FunctionNode): Promise<void> {
+  if (!context) {
+    return null;
+  }
+
+  if (!contextGlobalState.globalState.get('hasTekton')) {
+    // eslint-disable-next-line @typescript-eslint/no-floating-promises
+    await vscode.window.showWarningMessage(
+      'This action requires Tekton to be installed on the cluster. Please install it and then proceed to build the function on the cluster.',
+    );
+    return null;
+  }
+
+  const gitModel = await getGitModel(context.contextPath?.fsPath);
+  if (!gitModel) {
     return null;
   }
 
@@ -392,10 +285,7 @@ export async function onClusterBuildFunction(context?: FunctionNode): Promise<vo
     context.contextPath.fsPath,
     imageAndBuildMode,
     context?.getParent()?.getName(),
-    {
-      remoteUrl: gitState.remotes.filter((r) => r.name === gitRemote).map((r) => r.fetchUrl)[0],
-      branchName: gitBranch,
-    },
+    gitModel,
   );
   const name = `On Cluster Build: ${context.getName()}`;
   await knExecutor.executeInTerminal(command, process.cwd(), name);
