@@ -24,7 +24,7 @@ import { cleanUpNotifications, findNotification, safeNotificationExists } from '
 function execShellCommand(cmd) {
   // eslint-disable-next-line @typescript-eslint/no-var-requires, global-require
   const { exec } = require('child_process');
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve) => {
     exec(cmd, (error, stdout, stderr) => {
       resolve(stdout || stderr);
     });
