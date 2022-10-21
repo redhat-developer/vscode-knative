@@ -65,7 +65,7 @@ exec('git diff --name-only origin/main -- .', async (error, stdout) => {
   console.log('The changed files:');
   console.log(stdout);
   if (fileCheckRegex.test(stdout)) {
-    console.log('tools.json is changed, starting download verification');
+    console.log('cli-config.json is changed, starting download verification');
     try {
       await verifyTools();
     } catch (err) {
@@ -73,6 +73,6 @@ exec('git diff --name-only origin/main -- .', async (error, stdout) => {
       exit(1);
     }
   } else {
-    console.log('tools.json is not changed, skipping download verification');
+    console.log('cli-config.json is not changed, skipping download verification');
   }
 });
