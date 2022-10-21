@@ -21,15 +21,9 @@ import { CliCommand, cliCommandToString, CliExitData } from '../cli/cmdCli';
 import { activeCommandExplorer } from '../functions/active-task-view/activeExplorer';
 
 export const CACHED_OUTPUT_CHANNELS = new Map<string, vscode.OutputChannel>();
-export const SHADOW_CACHED_OUTPUT_CHANNELS = new Map<string, vscode.OutputChannel>();
+export const STATUS_CACHED_OUTPUT_CHANNELS = new Map<string, string>();
 export const STILL_EXECUTING_COMMAND = new Map<string, boolean>();
 export const CACHED_CHILDPROCESS = new Map<string, ChildProcess>();
-
-export function clearOutputChannels(): void {
-  CACHED_OUTPUT_CHANNELS.forEach((value, key) => {
-    CACHED_OUTPUT_CHANNELS.get(key).dispose();
-  });
-}
 
 const credRegex = /Please provide credentials for image registry/gm;
 const incorrectCredReg = /Incorrect credentials, please try again/gm;
@@ -40,10 +34,10 @@ export function openNamedOutputChannel(name?: string): vscode.OutputChannel | un
   if (!CACHED_OUTPUT_CHANNELS.get(name)) {
     channel = vscode.window.createOutputChannel(name);
     CACHED_OUTPUT_CHANNELS.set(name, channel);
-    SHADOW_CACHED_OUTPUT_CHANNELS.set(name, channel);
+    STATUS_CACHED_OUTPUT_CHANNELS.set(name, 'running');
   } else {
     channel = CACHED_OUTPUT_CHANNELS.get(name);
-    SHADOW_CACHED_OUTPUT_CHANNELS.set(name, channel);
+    STATUS_CACHED_OUTPUT_CHANNELS.set(name, 'running');
     if (!channel) {
       channel = vscode.window.createOutputChannel(name);
     }
@@ -199,7 +193,11 @@ export async function executeCommandInOutputChannels(command: CliCommand, name: 
       STILL_EXECUTING_COMMAND.set(name, false);
       CACHED_CHILDPROCESS.delete(name);
       const message = `'${cliCommandToString(cmd)}' exited with code ${code}`;
-      SHADOW_CACHED_OUTPUT_CHANNELS.delete(name);
+      if (code === 0) {
+        STATUS_CACHED_OUTPUT_CHANNELS.set(name, 'successful');
+      } else {
+        STATUS_CACHED_OUTPUT_CHANNELS.set(name, 'error');
+      }
       // eslint-disable-next-line @typescript-eslint/no-floating-promises
       activeCommandExplorer.refresh();
       channel.append(message);

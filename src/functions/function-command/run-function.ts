@@ -43,7 +43,7 @@ export async function buildAndRun(context: FunctionNode, command: CliCommand): P
   }
   if (!STILL_EXECUTING_COMMAND.get(runName) && !STILL_EXECUTING_COMMAND.get(buildName)) {
     const buildResult: CliExitData = await buildFunction(context);
-    if (!buildResult?.error) {
+    if (buildResult?.stdout) {
       await executeRunCommand(command, context, runName);
     }
     return null;

@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 /* eslint-disable import/no-cycle */
 /* eslint-disable @typescript-eslint/no-unsafe-return */
 /*-----------------------------------------------------------------------------------------------
@@ -8,7 +9,7 @@
 import { TreeItemCollapsibleState } from 'vscode';
 import { CommandNode, ActiveCommandNodeImpl } from './command-node';
 import { FunctionContextType } from '../../cli/config';
-import { SHADOW_CACHED_OUTPUT_CHANNELS } from '../../util/output_channels';
+import { CACHED_OUTPUT_CHANNELS, STATUS_CACHED_OUTPUT_CHANNELS } from '../../util/output_channels';
 
 export interface ActiveCommand {
   name?: string;
@@ -16,15 +17,19 @@ export interface ActiveCommand {
 
 export function activeCommandTreeView(): CommandNode[] {
   const children = [];
-  if (SHADOW_CACHED_OUTPUT_CHANNELS && SHADOW_CACHED_OUTPUT_CHANNELS.size !== 0) {
+  if (CACHED_OUTPUT_CHANNELS && CACHED_OUTPUT_CHANNELS.size !== 0) {
     // eslint-disable-next-line no-restricted-syntax
-    for (const [key] of SHADOW_CACHED_OUTPUT_CHANNELS) {
-      const obj: ActiveCommandNodeImpl = new ActiveCommandNodeImpl(
-        null,
-        key,
-        FunctionContextType.ACTIVECOMMAND,
-        TreeItemCollapsibleState.None,
-      );
+    for (const [key] of CACHED_OUTPUT_CHANNELS) {
+      let obj: ActiveCommandNodeImpl;
+      const getStatusCachedOutputChannel: string = STATUS_CACHED_OUTPUT_CHANNELS.get(key);
+      if (getStatusCachedOutputChannel === 'successful') {
+        obj = new ActiveCommandNodeImpl(null, key, FunctionContextType.PASSCOMMAND, TreeItemCollapsibleState.None);
+      } else if (getStatusCachedOutputChannel === 'error') {
+        obj = new ActiveCommandNodeImpl(null, key, FunctionContextType.ERRORCOMMAND, TreeItemCollapsibleState.None);
+      } else {
+        obj = new ActiveCommandNodeImpl(null, key, FunctionContextType.ACTIVECOMMAND, TreeItemCollapsibleState.None);
+      }
+
       children.unshift(obj);
     }
   } else {

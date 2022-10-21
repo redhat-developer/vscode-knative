@@ -23,6 +23,8 @@ export enum FunctionContextType {
   NOTCONNECTEDLOCALFUNCTIONS = 'notConnectedLocalFunctions',
   NOTCONNECTEDLOCALFUNCTIONSENABLEMENT = 'notConnectedLocalFunctionsEnablement',
   ACTIVECOMMAND = 'activecommand',
+  ERRORCOMMAND = 'errorcommand',
+  PASSCOMMAND = 'passcommand',
 }
 
 export enum FunctionStatus {

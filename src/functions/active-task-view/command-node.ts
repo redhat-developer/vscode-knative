@@ -34,6 +34,16 @@ export class ActiveCommandNodeImpl implements CommandNode {
       tooltip: '{label}',
       getChildren: (): undefined[] => [],
     },
+    errorcommand: {
+      icon: 'error.svg',
+      tooltip: '{label}',
+      getChildren: (): undefined[] => [],
+    },
+    passcommand: {
+      icon: 'pass.svg',
+      tooltip: '{label}',
+      getChildren: (): undefined[] => [],
+    },
   };
 
   // eslint-disable-next-line no-useless-constructor
@@ -71,7 +81,7 @@ export class ActiveCommandNodeImpl implements CommandNode {
   }
 
   get command(): vsCommand | undefined {
-    const arrName = ['activecommand'];
+    const arrName = [FunctionContextType.ACTIVECOMMAND, FunctionContextType.ERRORCOMMAND, FunctionContextType.PASSCOMMAND];
     if (arrName.includes(this.contextValue)) {
       return { command: 'activeCommand.focus', title: 'Focus', arguments: [this] };
     }
@@ -83,8 +93,14 @@ export class ActiveCommandNodeImpl implements CommandNode {
 
   // eslint-disable-next-line class-methods-use-this
   get description(): string {
-    if (this.contextValue === 'activecommand') {
+    if (this.contextValue === FunctionContextType.ACTIVECOMMAND) {
       return 'Running.....';
+    }
+    if (this.contextValue === FunctionContextType.ERRORCOMMAND) {
+      return 'Error';
+    }
+    if (this.contextValue === FunctionContextType.PASSCOMMAND) {
+      return 'Successful';
     }
   }
 
