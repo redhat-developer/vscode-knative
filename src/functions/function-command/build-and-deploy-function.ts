@@ -65,7 +65,7 @@ async function functionImage(
     const funcYaml: string = await fs.readFile(path.join(selectedFolderPick.fsPath, 'func.yaml'), 'utf-8');
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     funcData = yaml.safeLoadAll(funcYaml);
-    if (funcData?.[0].namespace?.trim() && funcData?.[0].namespace !== namespace && funcName) {
+    if (funcData?.[0]?.deploy?.namespace.trim() && funcData?.[0].deploy.namespace.trim() !== namespace && funcName) {
       checkNamespace = await vscode.window.showInformationMessage(
         `Function namespace (declared in func.yaml) is different from the current active namespace. Are you sure to deploy function:${funcName} to namespace:${namespace}?`,
         'Ok',
@@ -138,7 +138,7 @@ export async function buildFunction(context?: FunctionNode): Promise<CliExitData
   telemetryLog('function_build_command', 'Build command execute');
   // eslint-disable-next-line @typescript-eslint/no-floating-promises
   functionExplorer.refresh();
-  const command = await FuncAPI.buildFunc(context.contextPath.fsPath, funcData.image);
+  const command = await FuncAPI.buildFunc(context.contextPath.fsPath, funcData.image, context?.getParent()?.getName());
   const name = `Build: ${context.getName()}`;
   if (!STILL_EXECUTING_COMMAND.get(name)) {
     const result = await executeCommandInOutputChannels(command, name);

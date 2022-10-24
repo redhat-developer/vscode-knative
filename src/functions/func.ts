@@ -151,7 +151,10 @@ export class FuncImpl implements Func {
       try {
         // eslint-disable-next-line no-await-in-loop
         const funcData: FuncContent = await getFuncYamlContent(folderUri.fsPath);
-        if (functionTreeView.has(funcData?.name) && (!funcData?.namespace || getCurrentNamespace === funcData?.namespace)) {
+        if (
+          functionTreeView.has(funcData?.name) &&
+          (!funcData?.deploy?.namespace || getCurrentNamespace === funcData?.deploy?.namespace)
+        ) {
           funcStatus = FunctionStatus.CLUSTERLOCALBOTH;
         }
         // eslint-disable-next-line @typescript-eslint/no-unused-vars

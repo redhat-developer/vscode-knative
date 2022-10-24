@@ -86,8 +86,8 @@ export class FuncAPI {
     return funcCliCommand(createCommand);
   }
 
-  static async buildFunc(location: string, image: string): Promise<CliCommand> {
-    const buildCommand: string[] = ['build', `-p=${location}`, `-i=${image}`, '-v'];
+  static async buildFunc(location: string, image: string, namespace: string): Promise<CliCommand> {
+    const buildCommand: string[] = ['build', `-p=${location}`, `-i=${image}`, `-n=${namespace}`, '-v'];
     if (await checkOpenShiftCluster()) {
       buildCommand.push('-r ""');
     }
