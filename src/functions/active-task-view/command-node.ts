@@ -58,24 +58,43 @@ export class ActiveCommandNodeImpl implements CommandNode {
     return Uri.file(path.join(__dirname, IMAGES, this.CONTEXT_DATA[this.contextValue].icon));
   }
 
+  generateNameAndStateInner(command: string): string {
+    if (this.name.startsWith(command)) {
+      return this.name.replace('command', '').trim();
+    }
+    return undefined;
+  }
+
+  // eslint-disable-next-line class-methods-use-this
+  generateNameAndState(): { name: string; state: string; isLocal: boolean } {
+    let name = this.generateNameAndStateInner('Build:');
+    if (name) {
+      return { name, state: 'building', isLocal: true };
+    }
+    name = this.generateNameAndStateInner('Run:');
+    if (name) {
+      return { name, state: 'running', isLocal: true };
+    }
+    name = this.generateNameAndStateInner('Deploy:');
+    if (name) {
+      return { name, state: 'deploying', isLocal: false };
+    }
+    name = this.generateNameAndStateInner('On Cluster Build:');
+    if (name) {
+      return { name, state: 'building on cluster and deploying', isLocal: false };
+    }
+    return undefined;
+  }
+
   get tooltip(): string {
     if (this.contextValue === FunctionContextType.ACTIVECOMMAND) {
-      let name: string;
-      let state: string;
-      if (this.name.startsWith('Build:')) {
-        state = 'building';
-        name = this.name.replace('Build:', '').trim();
+      const nameAndState = this.generateNameAndState();
+      if (nameAndState) {
+        return format(
+          `The function ${nameAndState.name} is ${nameAndState.state} ${nameAndState.isLocal ? 'locally' : ''}`,
+          this,
+        );
       }
-      if (this.name.startsWith('Run:')) {
-        state = 'running';
-        name = this.name.replace('Run:', '').trim();
-      }
-      if (this.name.startsWith('Deploy:')) {
-        state = 'Deploying';
-        name = this.name.replace('Deploy:', '').trim();
-        return format(`The function ${name} is ${state}`, this);
-      }
-      return format(`The function ${name} is ${state} locally`, this);
     }
     return format(this.CONTEXT_DATA[this.contextValue].tooltip, this);
   }

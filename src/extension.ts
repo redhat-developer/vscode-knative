@@ -30,7 +30,7 @@ import { EventingTreeItem } from './eventingTree/eventingTreeItem';
 import { activeCommandExplorer } from './functions/active-task-view/activeExplorer';
 import { focusOnOutputChannel } from './functions/active-task-view/focusOnOutputChannel';
 import { stopCommand } from './functions/active-task-view/stop-command';
-import { buildFunction, deployFunction } from './functions/function-command/build-and-deploy-function';
+import { buildFunction, deployFunction, onClusterBuildFunction } from './functions/function-command/build-and-deploy-function';
 import {
   ConfigAction,
   configureEnvs,
@@ -113,6 +113,7 @@ export async function activate(extensionContext: vscode.ExtensionContext): Promi
     vscode.commands.registerCommand('function.openInEditor', (context) => openInEditor(context)),
     vscode.commands.registerCommand('function.build', (context) => buildFunction(context)),
     vscode.commands.registerCommand('function.deploy', (context) => deployFunction(context)),
+    vscode.commands.registerCommand('function.onClusterBuild', (context) => onClusterBuildFunction(context)),
     vscode.commands.registerCommand('activeCommand.stop', (context) => stopCommand(context)),
     vscode.commands.registerCommand('function.explorer.reportIssue', () => reportIssue()),
     vscode.commands.registerCommand('activeCommand.focus', (context) => focusOnOutputChannel(context)),
@@ -185,9 +186,19 @@ export async function activate(extensionContext: vscode.ExtensionContext): Promi
       setKubeConfigPath(confApi);
     });
   }
-
+  contextGlobalState.globalState.update('hasTekton', await isTektonAware());
   // extensionContext.subscriptions.push(disposable);
   disposable.forEach((value) => extensionContext.subscriptions.push(value));
+}
+
+async function isTektonAware() {
+  const kubectl = await k8s.extension.kubectl.v1;
+  let isTekton = false;
+  if (kubectl.available) {
+    const sr = await kubectl.api.invokeCommand('api-versions');
+    isTekton = sr && sr.code === 0 && sr.stdout.includes('tekton.dev/v1beta1');
+  }
+  return isTekton;
 }
 
 function refreshTreeView(): void {

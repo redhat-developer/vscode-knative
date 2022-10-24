@@ -11,6 +11,8 @@ import { CliCommand, CmdCli, createCliCommand } from './cmdCli';
 import { checkOpenShiftCluster } from '../check-cluster';
 // eslint-disable-next-line import/no-cycle
 import { ParametersType } from '../functions/function-command/invoke-function';
+import { ImageAndBuild } from '../functions/function-type';
+import { GitModel } from '../git/git';
 import { quote } from '../util/quote';
 
 function funcCliCommand(cmdArguments?: string[]): CliCommand {
@@ -94,11 +96,52 @@ export class FuncAPI {
     return funcCliCommand(buildCommand);
   }
 
-  static async deployFunc(location: string, image: string, namespace: string): Promise<CliCommand> {
-    const deployCommand = ['deploy', `-p=${location}`, `-i=${image}`, `-n=${namespace}`, '--build=false', '-v'];
-    if (await checkOpenShiftCluster()) {
-      deployCommand.push('-r ""');
+  private static async createImageArgs(imageMode: ImageAndBuild): Promise<string[]> {
+    if (imageMode.autoGenerateImage) {
+      return [];
     }
+
+    const args: string[] = [];
+    /* eslint-disable no-unused-expressions */
+    imageMode.image ? args.push(`-i=${imageMode.image}`) : undefined;
+    (await checkOpenShiftCluster()) ? args.push('-r ""') : undefined;
+    /* eslint-enable no-unused-expressions */
+    return args;
+  }
+
+  private static async createDeployCommandArgs(
+    location: string,
+    imageMode: ImageAndBuild,
+    namespace: string,
+    gitModel: GitModel,
+    disableBuild: boolean,
+  ): Promise<string[]> {
+    let args = ['deploy'];
+    /* eslint-disable no-unused-expressions */
+    location ? args.push(`-p=${location}`) : undefined;
+    imageMode ? (args = [...args, ...(await this.createImageArgs(imageMode))]) : undefined;
+    namespace ? args.push(`-n=${namespace}`) : undefined;
+    gitModel
+      ? (args = [...args, '--remote', `--git-url=${gitModel.remoteUrl}`, `--git-branch=${gitModel.branchName}`])
+      : undefined;
+    disableBuild ? args.push('--build=false') : undefined;
+    /* eslint-enable no-unused-expressions */
+    args.push('-v');
+    return args;
+  }
+
+  static async deployFunc(location: string, image: ImageAndBuild, namespace: string): Promise<CliCommand> {
+    const deployCommand = await this.createDeployCommandArgs(location, image, namespace, undefined, true);
+    return funcCliCommand(deployCommand);
+  }
+
+  static async onClusterBuildFunc(
+    location: string,
+    imageMode: ImageAndBuild,
+    namespace: string,
+    gitModel: GitModel,
+  ): Promise<CliCommand> {
+    const deployCommand = await this.createDeployCommandArgs(location, imageMode, namespace, gitModel, false);
     return funcCliCommand(deployCommand);
   }
 

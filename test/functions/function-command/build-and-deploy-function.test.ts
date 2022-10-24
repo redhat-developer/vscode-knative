@@ -1,3 +1,6 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /*-----------------------------------------------------------------------------------------------
  *  Copyright (c) Red Hat, Inc. All rights reserved.
  *  Licensed under the MIT License. See LICENSE file in the project root for license information.
@@ -11,8 +14,11 @@ import * as sinonChai from 'sinon-chai';
 import { executeCmdCli } from '../../../src/cli/cmdCli';
 import { FunctionContextType } from '../../../src/cli/config';
 import { knExecutor } from '../../../src/cli/execute';
+import { contextGlobalState } from '../../../src/extension';
 import { FuncImpl } from '../../../src/functions/func';
-import { buildFunction, deployFunction } from '../../../src/functions/function-command/build-and-deploy-function';
+import * as buildAndDeploy from '../../../src/functions/function-command/build-and-deploy-function';
+import * as git from '../../../src/git/git';
+import { Remote } from '../../../src/git/git.d';
 import { STILL_EXECUTING_COMMAND } from '../../../src/util/output_channels';
 import { TestItem } from '../testFunctionitem';
 
@@ -40,14 +46,13 @@ suite('Build-And-Deploy', () => {
     sandbox.stub(executeCmdCli, 'executeExec').resolves({ error: 'error', stdout: undefined });
     showInputBoxStub = sandbox.stub(window, 'showInputBox');
   });
-
   teardown(() => {
     sandbox.restore();
   });
 
   test('return null if no project open in workspace', async () => {
     workspaceFoldersStub.onFirstCall().value([]);
-    const result = await deployFunction();
+    const result = await buildAndDeploy.deployFunction();
     expect(result).equal(null);
   });
 
@@ -82,7 +87,7 @@ suite('Build-And-Deploy', () => {
       },
     };
     showInformationMessageStub.resolves('Ok');
-    await deployFunction(contextNode);
+    await buildAndDeploy.deployFunction(contextNode);
     // eslint-disable-next-line no-unused-expressions
     expect(showWarningMessageStub).calledOnce;
   });
@@ -118,13 +123,13 @@ suite('Build-And-Deploy', () => {
       },
     };
     showInputBoxStub.resolves();
-    const result = await deployFunction(contextNode);
+    const result = await buildAndDeploy.deployFunction(contextNode);
     expect(result).equal(null);
   });
 
   test('return null if no project open in workspace', async () => {
     workspaceFoldersStub.onFirstCall().value([]);
-    const result = await buildFunction();
+    const result = await buildAndDeploy.buildFunction();
     expect(result).equal(null);
   });
 
@@ -144,7 +149,7 @@ suite('Build-And-Deploy', () => {
       },
     ]);
     showInputBoxStub.onFirstCall().resolves('docker.io/test/node-test:latest');
-    await buildFunction(contextNode);
+    await buildAndDeploy.buildFunction(contextNode);
     // eslint-disable-next-line no-unused-expressions
     expect(stillExecutingCommandStub).calledOnce;
     // eslint-disable-next-line no-unused-expressions
@@ -167,7 +172,74 @@ suite('Build-And-Deploy', () => {
       },
     ]);
     showInputBoxStub.onFirstCall().resolves('');
-    const result = await buildFunction();
+    const result = await buildAndDeploy.buildFunction();
     expect(result).equal(null);
+  });
+
+  suite('on-cluster build', () => {
+    test('return null if no context is provided', async () => {
+      const result = await buildAndDeploy.onClusterBuildFunction();
+      expect(result).equal(null);
+    });
+
+    test('return null and show warning if tekton is not installed on cluster', async () => {
+      // eslint-disable-next-line @typescript-eslint/no-floating-promises
+      contextGlobalState.globalState.update('hasTekton', false);
+      const result = await buildAndDeploy.onClusterBuildFunction(contextNode);
+      expect(result).equal(null);
+    });
+
+    test('return null if user does not add valid git remote infos', async () => {
+      const gitState = <git.GitState>{};
+      sandbox.stub(git, 'getGitStateByPath').returns(gitState);
+      sandbox.stub(git, 'getGitRepoInteractively').resolves(null);
+      // eslint-disable-next-line @typescript-eslint/no-floating-promises
+      contextGlobalState.globalState.update('hasTekton', true);
+      const result = await buildAndDeploy.onClusterBuildFunction(contextNode);
+      expect(result).equal(null);
+    });
+
+    test('return null if user does not add valid git branch infos', async () => {
+      const gitState = <git.GitState>{};
+      sandbox.stub(git, 'getGitStateByPath').returns(gitState);
+      sandbox.stub(git, 'getGitRepoInteractively').resolves('remote');
+      sandbox.stub(git, 'getGitBranchInteractively').resolves(null);
+      // eslint-disable-next-line @typescript-eslint/no-floating-promises
+      contextGlobalState.globalState.update('hasTekton', true);
+      const result = await buildAndDeploy.onClusterBuildFunction(contextNode);
+      expect(result).equal(null);
+    });
+
+    test('return null if user does not select a valid image strategy', async () => {
+      workspaceFoldersStub.onFirstCall().value([
+        {
+          uri: {
+            _formatted: null,
+            _fsPath: null,
+            authority: '',
+            fragment: '',
+            path: path.join(fixtureFolder, 'func-test'),
+            query: '',
+            scheme: 'file',
+            fsPath: path.join(fixtureFolder, 'func-test'),
+          },
+        },
+      ]);
+      const remote = <Remote>{
+        name: 'remote',
+        fetchUrl: 'url',
+      };
+      const gitState = <git.GitState>{
+        remotes: [remote],
+      };
+      sandbox.stub(git, 'getGitStateByPath').returns(gitState);
+      sandbox.stub(git, 'getGitRepoInteractively').resolves('remote');
+      sandbox.stub(git, 'getGitBranchInteractively').resolves('branch');
+      sandbox.stub(window, 'showQuickPick' as any).resolves(null);
+      // eslint-disable-next-line @typescript-eslint/no-floating-promises
+      contextGlobalState.globalState.update('hasTekton', true);
+      const result = await buildAndDeploy.onClusterBuildFunction(contextNode);
+      expect(result).equal(null);
+    });
   });
 });
