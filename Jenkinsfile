@@ -26,6 +26,22 @@ node('rhel8'){
     }
   }
 
+  stage('UI Tests') {
+    wrap([$class: 'Xvnc']) {
+      try {
+        sh """
+        if [ -f \$HOME/.vs-kn/kn ]; then
+            rm \$HOME/.vs-kn/kn
+        fi
+        """
+        sh "npm run base-ui-test"
+      }
+      finally {
+        archiveArtifacts artifacts: 'test-resources/*.log,test-resources/**/*.png'
+      }
+    }
+  }
+
   stage('Package') {
     def packageJson = readJSON file: 'package.json'
     packageJson.extensionDependencies = ["ms-kubernetes-tools.vscode-kubernetes-tools"]

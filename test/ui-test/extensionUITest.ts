@@ -2,6 +2,9 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/await-thenable */
+import fs = require('fs');
+import os = require('os');
+import path = require('path');
 import { expect } from 'chai';
 import {
   ActivityBar,
@@ -37,12 +40,29 @@ function execShellCommand(cmd) {
 export function extensionsUITest(clusterIsAvailable: boolean): void {
   let driver: WebDriver;
   let kubectlExists: boolean;
+  const homeDir = os.homedir();
+  const vskn = path.join(homeDir, '.vs-kn');
+  const vsfunc = path.join(homeDir, '.vs-func');
+  const vskubectl = path.join(homeDir, '.vs-kubectl');
 
   before(async () => {
     driver = VSBrowser.instance.driver;
     // check existence of kubectl on the path or in the home folder
     const kubectl = await execShellCommand('kubectl version --output json');
     kubectlExists = !(kubectl as string).includes('kubectl: command not found');
+    if (fs.existsSync(vsfunc)) {
+      console.log(`.vs-func does exist - removing`);
+      fs.rmSync(vsfunc, { recursive: true, force: true });
+    }
+    if (fs.existsSync(vskn)) {
+      console.log(`.vs-kn does exist - removing`);
+      fs.rmSync(vskn, { recursive: true, force: true });
+    }
+    if (fs.existsSync(vskubectl)) {
+      console.log(`.vs-kubectl does exist - removing`);
+      fs.rmSync(vskubectl, { recursive: true, force: true });
+    }
+    console.log(`kubectl is on path: ${kubectlExists === true ? 'true' : 'false'}`);
   });
 
   describe('Knative extension UI', () => {
