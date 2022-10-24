@@ -15,7 +15,9 @@ export interface FunctionList {
 
 export interface FuncContent {
   name?: string;
-  namespace?: string;
+  deploy?: {
+    namespace: string;
+  };
   runtime?: string;
   image?: string;
   imageDigest?: string;
