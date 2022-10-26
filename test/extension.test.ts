@@ -36,6 +36,10 @@ suite('Knative extension', () => {
     sandbox.stub(configurationApi, 'v1_1').value({
       available: false,
     });
+    const { kubectl } = k8s.extension;
+    sandbox.stub(kubectl, 'v1').value({
+      available: false,
+    });
     sandbox.stub(vscode.window, 'showErrorMessage').resolves();
     sandbox.stub(CmdCliConfig, 'detectOrDownload').resolves();
     sandbox.stub(knExecutor, 'execute').resolves();
