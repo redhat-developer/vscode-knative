@@ -6,7 +6,7 @@
 
 # Knative & Serverless Functions for Visual Studio Code
 
-[Knative](https://knative.dev/docs/) is an Open-Source Enterprise-level solution to build Serverless and Event Driven Applications. Serverless Containers in Kubernetes environments.
+[Knative](https://knative.dev/docs/) is an Open-Source Enterprise-level solution to build Serverless and Event Driven Applications. Thus running Serverless Containers in Kubernetes environments.
 
 This extension for Knative provides the app developer the tools and experience needed when working with `Knative & Serverless Functions` on a Kubernetes cluster. Using this extension, developers can develop and deploy functions in a serverless way through guided IDE workflow.
 
