@@ -183,14 +183,6 @@ export function extensionsUITest(clusterIsAvailable: boolean): void {
         });
       });
 
-      it('Function Section contains default function tree item', async function context() {
-        this.timeout(10000);
-        const sectionFunction = await sideBar.getContent().getSection(KNativeConstants.SECTION_FUNCTION);
-        const defaultItem = await sectionFunction.findItem('default');
-        expect(defaultItem).is.instanceOf(ViewItem);
-        await (defaultItem as TreeItem).expand();
-      });
-
       it('allows to download missing kn func binary using notification', async function context() {
         this.timeout(80000);
         const notification = await driver.wait(async () => findNotification('Cannot find Function CLI'), 5000);
@@ -203,6 +195,15 @@ export function extensionsUITest(clusterIsAvailable: boolean): void {
           const exists = await safeNotificationExists('Downloading Function CLI');
           return !exists;
         }, 50000);
+      });
+
+      it('Function Section contains default function tree item', async function context() {
+        this.timeout(100000);
+        const sectionFunction = await sideBar.getContent().getSection(KNativeConstants.SECTION_FUNCTION);
+        await driver.wait(async () => (await sectionFunction.getVisibleItems()).length > 0, 80000);
+        const defaultItem = await sectionFunction.findItem('default');
+        expect(defaultItem).is.instanceOf(ViewItem);
+        await (defaultItem as TreeItem).expand();
       });
     });
 
