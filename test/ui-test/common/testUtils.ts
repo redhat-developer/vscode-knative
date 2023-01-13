@@ -15,16 +15,21 @@ export async function getNotifications(...types: NotificationType[]): Promise<No
 }
 
 export async function cleanUpNotifications(): Promise<void> {
+  await new Workbench().executeCommand('test');
   const nc = await new Workbench().openNotificationsCenter();
+  await nc.getDriver().sleep(1000);
   const notifications = await nc.getNotifications(NotificationType.Any);
   if (notifications.length > 0) {
     await nc.clearAllNotifications();
+    await nc.getDriver().sleep(1000);
   }
   await nc.close();
 }
 
 export async function findNotification(text: string): Promise<Notification | undefined> {
+  await new Workbench().executeCommand('test');
   const center = await new Workbench().openNotificationsCenter();
+  await center.getDriver().sleep(1000);
   const notifications = await center.getNotifications(NotificationType.Any);
   // eslint-disable-next-line no-restricted-syntax
   for (const notification of notifications) {

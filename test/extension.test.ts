@@ -569,7 +569,9 @@ status:
     expect(vscode.extensions.getExtension('redhat.vscode-knative'));
   });
 
-  test('should activate', async () => {
+  test('should activate', async function context() {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+    this.timeout(80000);
     await vscode.extensions.getExtension('redhat.vscode-knative').activate();
   });
 
