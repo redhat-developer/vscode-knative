@@ -12,7 +12,7 @@ This extension for Knative provides the app developer the tools and experience n
 
 ## Requirements
 
-*  Knative extension uses [kn cli](https://github.com/knative/client) `1.7.1` and [func cli](https://github.com/knative/func) `1.7.1`. The extension will offer to download and install the dependencies if needed.
+*  Knative extension uses [kn cli](https://github.com/knative/client) `1.8.1` and [func cli](https://github.com/knative/func) `1.8.2`. The extension will offer to download and install the dependencies if needed.
 
 * YAML is validated using the [VSCode-YAML](https://marketplace.visualstudio.com/items?itemName=redhat.vscode-yaml) extension
 
