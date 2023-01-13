@@ -39,7 +39,6 @@ export interface CliConfig {
   versionRangeLabel: string;
   filePrefix: string;
   cmdFileName: string;
-  versionLocalBuildRange?: number;
   platform?: PlatformOS;
   url?: string;
   sha256sum?: string;
@@ -77,7 +76,7 @@ async function getVersion(location: string): Promise<string> {
  * @param locations
  * @param versionRange
  */
-async function selectTool(locations: string[], versionRange: string, versionLocalBuildRange: number): Promise<string> {
+async function selectTool(locations: string[], versionRange: string): Promise<string> {
   let foundLocation: string;
   // Check the version of the cli to make sure it matches what we coded against.
   try {
@@ -91,7 +90,7 @@ async function selectTool(locations: string[], versionRange: string, versionLoca
         const locationsVersion: string = await getVersion(location);
 
         // Check if the version is a local build after a certain date or matches the given version range for releases version.
-        if (Number(locationsVersion) > versionLocalBuildRange || satisfies(locationsVersion, versionRange)) {
+        if (satisfies(locationsVersion, versionRange)) {
           foundLocation = location;
           break;
         }
@@ -162,11 +161,7 @@ export class CmdCliConfig {
         const toolLocations: string[] = [whichLocation ? whichLocation.stdout : null, toolCacheLocation];
         // Check the list of locations and see if what we need is there.
         // selectTool(toolLocations, KnCliConfig.tools[cmd].versionRange).then((foundToolLocation) => {
-        let foundToolLocation: string = await selectTool(
-          toolLocations,
-          (CmdCliConfig.tools[cmd] as CliConfig).versionRange,
-          (CmdCliConfig.tools[cmd] as CliConfig).versionLocalBuildRange,
-        );
+        let foundToolLocation: string = await selectTool(toolLocations, (CmdCliConfig.tools[cmd] as CliConfig).versionRange);
         // If the cli tool is still not found then we will need to install it.
         if (foundToolLocation === undefined || foundToolLocation === null) {
           // Set the download location for the cli executable.
