@@ -5,29 +5,31 @@
   "version": "1.4.0",
   "license": "MIT",
   "publisher": "redhat",
-  "preview": true,
+  "preview": false,
   "repository": {
     "type": "git",
     "url": "https://github.com/redhat-developer/vscode-knative.git"
   },
   "bugs": "https://github.com/redhat-developer/vscode-knative/issues",
   "keywords": [
-    "knative",
-    "serverless",
-    "functions",
-    "eventing",
+    "Knative",
+    "Serverless",
+    "Functions",
+    "Serving"
+    "Eventing",
     "kn",
-    "openshift",
-    "kubernetes",
+    "OpenShift",
+    "Kubernetes",
     "k8s",
-    "redhat"
+    "RedHat"
   ],
   "icon": "images/knative-logo.png",
   "engines": {
     "vscode": "^1.52.0"
   },
   "categories": [
-    "Other"
+    "Programming Languages",
+    "Debuggers"
   ],
   "main": "./out/src/extension",
   "scripts": {
