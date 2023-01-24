@@ -25,12 +25,12 @@ jobs:
       - run: npm install
       - run: npm run build
       - name: Run headless test
-        uses: GabrielBB/xvfb-action@v1.0
+        uses: GabrielBB/xvfb-action@fe2609f8182a9ed5aee7d53ff3ed04098a904df2 #v1.0
         with:
           run: npm test
       - name: Run UI tests
         if: runner.os == 'Linux'
-        uses: GabrielBB/xvfb-action@v1.6
+        uses: GabrielBB/xvfb-action@86d97bde4a65fe9b290c0b3fb92c2c4ed0e5302d #v1.6
         with:
           run: npm run base-ui-test
       - name: Upload screenshots
@@ -41,7 +41,7 @@ jobs:
           path: 'test-resources/**/screenshots/*.png'
           retention-days: 2
           if-no-files-found: warn
-      - uses: codecov/codecov-action@v1
+      - uses: codecov/codecov-action@29386c70ef20e286228c72b668a06fd0e8399192 #v1
         name: codecov-upload
         with:
           file: ./coverage/coverage-final.json
