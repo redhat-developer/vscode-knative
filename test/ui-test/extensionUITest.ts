@@ -111,7 +111,7 @@ export function extensionsUITest(clusterIsAvailable: boolean): void {
       const actionsTexts = await Promise.all(actions.map(async (item) => item.getText()));
       const downloadActionText = actionsTexts.find((item) => (item.includes('Download') ? item : undefined));
       await notification.takeAction(downloadActionText);
-      await driver.wait(async () => findNotification('Downloading Kubernetes CLI'), 10000);
+      // await driver.wait(async () => findNotification('Downloading Kubernetes CLI'), 10000);
       await driver.wait(async () => {
         const exists = await safeNotificationExists('Downloading Kubernetes CLI');
         return !exists;

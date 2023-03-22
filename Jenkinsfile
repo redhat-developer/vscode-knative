@@ -9,7 +9,7 @@ node('rhel8'){
   stage('Install requirements') {
     def nodeHome = tool 'nodejs-lts'
     env.PATH="${env.PATH}:${nodeHome}/bin"
-    sh "npm install -g typescript vsce"
+    sh "npm install -g typescript vsce ovsx"
   }
 
   stage('Build') {
@@ -56,20 +56,29 @@ node('rhel8'){
     }
   }
 
-  if(publishToMarketPlace.equals('true')){
+  if(publishToMarketPlace.equals('true') || publishToOVSX.equals('true')){
     timeout(time:5, unit:'DAYS') {
       input message:'Approve deployment?', submitter: 'sverma, msuman'
     }
 
-    stage("Publish to Marketplace") {
-      withCredentials([[$class: 'StringBinding', credentialsId: 'vscode_java_marketplace', variable: 'TOKEN']]) {
-          def vsix = findFiles(glob: '**.vsix')
+    stage "Publish to Marketplaces"
+    def vsix = findFiles(glob: '**.vsix')
+    // VS Code Marketplace
+    if (publishToMarketPlace.equals('true')) {
+        withCredentials([[$class: 'StringBinding', credentialsId: 'vscode_java_marketplace', variable: 'TOKEN']]) {
           sh 'vsce publish -p ${TOKEN} --packagePath' + " ${vsix[0].path}"
-      }
-
-      stage "Promote the build to stable"
-      sh "sftp -C ${UPLOAD_LOCATION}/stable/vscode-knative/ <<< \$'put -p *.vsix*'"
-      archive includes:"**.vsix*"
+        }
     }
+    // Open-VSX Marketplace
+    if (publishToOVSX.equals('true')) {
+        withCredentials([[$class: 'StringBinding', credentialsId: 'open-vsx-access-token', variable: 'OVSX_TOKEN']]) {
+          sh 'ovsx publish -p ${OVSX_TOKEN}' + " --packagePath ${vsix[0].path}"
+        }
+    }
+
+    stage "Promote the build to stable"
+    sh "sftp -C ${UPLOAD_LOCATION}/stable/vscode-knative/ <<< \$'put -p *.vsix*'"
+    archive includes:"**.vsix*"
   }
+
 }
