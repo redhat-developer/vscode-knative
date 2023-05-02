@@ -123,7 +123,7 @@
     "source-map-support": "^0.5.19",
     "tmp": "0.2.1",
     "typescript": "4.1.5 - 4.1.9",
-    "vscode-extension-tester": "^5.0.0",
+    "vscode-extension-tester": "^5.5.3",
     "walker": "^1.0.7"
   },
   "extensionDependencies": [
