@@ -58,7 +58,7 @@ node('rhel8'){
 
   if(publishToMarketPlace.equals('true') || publishToOVSX.equals('true')){
     timeout(time:5, unit:'DAYS') {
-      input message:'Approve deployment?', submitter: 'sverma, msuman'
+      input message:'Approve deployment?', submitter: 'rgrunber, msuman'
     }
 
     stage "Publish to Marketplaces"
