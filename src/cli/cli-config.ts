@@ -88,9 +88,9 @@ async function selectTool(locations: string[], versionRange: string): Promise<st
       if (fs.existsSync(location)) {
         // eslint-disable-next-line no-await-in-loop
         const locationsVersion: string = await getVersion(location);
-
+        const funcValue = Platform.OS !== 'win32' ? 'func' : 'func.exe';
         // Check if the version is a local build after a certain date or matches the given version range for releases version.
-        if (satisfies(locationsVersion, versionRange)) {
+        if (location.endsWith(funcValue) || satisfies(locationsVersion, versionRange)) {
           foundLocation = location;
           break;
         }

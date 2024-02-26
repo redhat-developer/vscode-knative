@@ -38,9 +38,6 @@ export class FuncAPI {
     if (data.invokeInstance === 'Local' || !data.invokeInstance) {
       args.push('-t local');
     }
-    if (data.invokeNamespace?.trim()) {
-      args.push(`-n ${quote}${data.invokeNamespace}${quote}`);
-    }
     if (data.invokeContextType?.trim()) {
       args.push(`--content-type ${quote}${data.invokeContextType}${quote}`);
     }
@@ -88,8 +85,8 @@ export class FuncAPI {
     return funcCliCommand(createCommand);
   }
 
-  static async buildFunc(location: string, image: string, namespace: string): Promise<CliCommand> {
-    const buildCommand: string[] = ['build', `-p=${location}`, `-i=${image}`, `-n=${namespace}`, '-v'];
+  static async buildFunc(location: string, image: string): Promise<CliCommand> {
+    const buildCommand: string[] = ['build', `-p=${location}`, `-i=${image}`, '-v'];
     if (await checkOpenShiftCluster()) {
       buildCommand.push('-r ""');
     }
@@ -146,7 +143,7 @@ export class FuncAPI {
   }
 
   static runFunc(location: string): CliCommand {
-    const runCommand = ['run', `-p=${location}`, '-b=false', '-v'];
+    const runCommand = ['run', `-p=${location}`, '-v'];
     return funcCliCommand(runCommand);
   }
 
