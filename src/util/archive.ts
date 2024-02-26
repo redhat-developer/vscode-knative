@@ -9,6 +9,7 @@
 
 import * as fs from 'fs';
 import * as zlib from 'zlib';
+import * as tar from 'tar-fs';
 import targz = require('targz');
 import unzipm = require('unzip-stream');
 
@@ -21,7 +22,7 @@ export class Archive {
             src: zipFile,
             dest: extractTo,
             tar: {
-              map: (header: { name: string }) => {
+              map: (header: tar.Headers) => {
                 // eslint-disable-next-line no-param-reassign
                 prefix && header.name.startsWith(prefix) ? (header.name = header.name.substring(prefix.length)) : header;
                 return header;
