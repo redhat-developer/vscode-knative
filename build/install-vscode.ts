@@ -6,7 +6,7 @@
 import { execSync } from 'child_process';
 import { platform } from 'os';
 import { dirname, join } from 'path';
-import { downloadAndUnzipVSCode } from 'vscode-test';
+import { downloadAndUnzipVSCode } from '@vscode/test-electron';
 
 downloadAndUnzipVSCode()
   .then((executable: string): void => {
