@@ -9,7 +9,13 @@ import { BaseSource, Metadata } from './baseSource';
 export type sourceOptions = Array<Array<string>>;
 
 export class APIServerSource extends BaseSource {
-  constructor(public name: string, public parent: string, public resource: string, public sink: string, public details?: Items) {
+  constructor(
+    public name: string,
+    public parent: string,
+    public resource: string,
+    public sink: string,
+    public details?: Items,
+  ) {
     super(name, parent, details);
   }
 

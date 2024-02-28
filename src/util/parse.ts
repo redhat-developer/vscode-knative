@@ -19,6 +19,7 @@ export function loadJSON<T>(filePath: string): Promise<T> {
         reject(err);
       } else {
         try {
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
           resolve(JSON.parse(data));
         } catch (parseErr) {
           reject(parseErr);

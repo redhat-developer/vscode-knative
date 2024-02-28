@@ -90,7 +90,11 @@ export interface UpdateService {
 }
 
 export class Service extends KnativeItem implements CreateService {
-  constructor(public name: string, public image: string, public details?: Items) {
+  constructor(
+    public name: string,
+    public image: string,
+    public details?: Items,
+  ) {
     super();
   }
 

@@ -7,7 +7,12 @@
 import { KnativeItem } from './knativeItem';
 
 export class Channel extends KnativeItem {
-  constructor(public name: string, public parent: string, public channelType: string, public details?: Items) {
+  constructor(
+    public name: string,
+    public parent: string,
+    public channelType: string,
+    public details?: Items,
+  ) {
     super();
   }
 

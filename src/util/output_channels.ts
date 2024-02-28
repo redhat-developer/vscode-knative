@@ -167,7 +167,7 @@ export async function executeCommandInOutputChannels(command: CliCommand, name: 
       if (shadowStdout.toString().includes(selectCredHelper)) {
         shadowStdout = await credHelper(startProcess, shadowStdout);
       }
-      // eslint-disable-next-line no-control-regex
+      // eslint-disable-next-line no-control-regex, @typescript-eslint/no-unsafe-argument
       channel.append(chunk.toString().replace(/\[94m|\x1b|\[0m|\[90m/gi, ''));
       stdout += chunk;
     });
@@ -177,12 +177,14 @@ export async function executeCommandInOutputChannels(command: CliCommand, name: 
         STILL_EXECUTING_COMMAND.set(name, false);
         CACHED_CHILDPROCESS.delete(name);
       }
+      // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
       error += chunk;
+      // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
       shadowError += chunk;
       if (shadowError.toString().includes(selectCredHelper)) {
         shadowError = await credHelper(startProcess, shadowError);
       }
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-argument
       channel.append(chunk.toString());
     });
     startProcess.on('close', (code) => {

@@ -11,7 +11,11 @@ import { Sink as sinkType } from './sink';
 export type sourceOptions = Array<Array<string>>;
 
 export class BaseSource extends KnativeItem {
-  constructor(public name: string, public parent: string, public details?: Items) {
+  constructor(
+    public name: string,
+    public parent: string,
+    public details?: Items,
+  ) {
     super();
   }
 

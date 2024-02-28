@@ -46,6 +46,7 @@ export class KubectlAPI {
    * @param location The path of the kubectl executable
    */
   static async getKubectlVersion(location: string): Promise<string> {
+    // eslint-disable-next-line prefer-regex-literals
     const version = new RegExp(
       `Client Version:\\s+v(((([0-9]+)\\.([0-9]+)\\.([0-9]+)|(([0-9]+)-([0-9a-zA-Z]+)-([0-9a-zA-Z]+)))(?:-([0-9a-zA-Z-]+(?:\\.[0-9a-zA-Z-]+)*))?)?).*`,
     );

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
 /* eslint-disable camelcase */
 /* eslint-disable no-use-before-define */
 /* eslint-disable dot-notation */

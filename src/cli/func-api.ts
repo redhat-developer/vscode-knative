@@ -198,6 +198,7 @@ export class FuncAPI {
   }
 
   static async getFuncVersion(location: string): Promise<string> {
+    // eslint-disable-next-line prefer-regex-literals
     const version = new RegExp(`[v]?([0-9]+\\.[0-9]+\\.[0-9]+)$`);
     let detectedVersion: string;
 

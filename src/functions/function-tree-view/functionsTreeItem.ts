@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unsafe-enum-comparison */
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-unsafe-return */
 /*-----------------------------------------------------------------------------------------------
@@ -103,6 +105,7 @@ export class FunctionNodeImpl implements FunctionNode {
     public readonly functionStatus?: string,
     public readonly url?: string,
     public readonly template?: string,
+    // eslint-disable-next-line no-empty-function
   ) {}
 
   get iconPath(): Uri {

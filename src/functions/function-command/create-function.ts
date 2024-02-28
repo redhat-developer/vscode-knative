@@ -46,6 +46,7 @@ export interface Select {
   label: string;
 }
 
+// eslint-disable-next-line prefer-regex-literals
 export const gitRegex = RegExp('((git@|https://)([\\w\\.@]+)(/|:))([\\w,\\-,\\_]+)/([\\w,\\-,\\_]+)(.git){0,1}((/){0,1})');
 
 export interface ParametersType {
@@ -290,6 +291,7 @@ export async function createFunctionPage(context: vscode.ExtensionContext): Prom
   Object.keys(templateObject).forEach((item) => {
     languageListTemplate.push(item);
   });
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
   storeLanguage.set('language', languageListTemplate);
   delete functionName.initialValue;
   delete selectLocation.initialValue;

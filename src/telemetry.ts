@@ -28,6 +28,7 @@ export async function startTelemetry(context: ExtensionContext): Promise<void> {
     const redHatService = await getRedHatService(context);
     telemetryService = await redHatService.getTelemetryService();
   } catch (error) {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
     rejects(error);
   }
   return telemetryService?.sendStartupEvent();

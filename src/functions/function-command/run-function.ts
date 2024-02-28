@@ -14,7 +14,11 @@ import { CACHED_CHILDPROCESS, executeCommandInOutputChannels, STILL_EXECUTING_CO
 import { FunctionNode } from '../function-tree-view/functionsTreeItem';
 
 export const restartRunCommand = new Map<string, boolean>();
-const delay = (ms) => new Promise((res) => setTimeout(res, ms));
+const delay = (ms) =>
+  new Promise((res) => {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+    setTimeout(res, ms);
+  });
 
 async function executeRunCommand(command: CliCommand, context: FunctionNode, name: string): Promise<void> {
   if (!STILL_EXECUTING_COMMAND.get(name)) {

@@ -18,6 +18,7 @@ import { convertStringToURI } from '../util/parse';
  * Public methods to control the list of Subscriptions.
  */
 export class KnativeSubscriptions {
+  // eslint-disable-next-line no-use-before-define
   private static instance: KnativeSubscriptions;
 
   // eslint-disable-next-line no-useless-constructor

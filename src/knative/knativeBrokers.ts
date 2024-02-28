@@ -10,6 +10,7 @@ import { Broker } from './broker';
  * Public methods to control the list of Brokers.
  */
 export class KnativeBrokers {
+  // eslint-disable-next-line no-use-before-define
   private static instance: KnativeBrokers;
 
   // eslint-disable-next-line no-useless-constructor

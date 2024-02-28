@@ -43,6 +43,7 @@ export class TriggerDataProvider {
       // eslint-disable-next-line no-console, @typescript-eslint/restrict-template-expressions
       console.log(`Trigger data provider fetch had error.\n ${err}`);
     }
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
     triggers = this.kTriggers.addTriggers(loadItems(result).map((value) => Trigger.JSONToTrigger(value)));
     // If there are no Triggers found then stop looking and we can post 'No Triggers Found`
     if (triggers.length === 0) {

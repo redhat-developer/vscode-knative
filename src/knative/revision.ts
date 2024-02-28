@@ -8,7 +8,12 @@ import { URL } from 'url';
 import { KnativeItem } from './knativeItem';
 
 export class Revision extends KnativeItem {
-  constructor(public name: string, public service: string, public details?: Items, public traffic?: Traffic[] | null) {
+  constructor(
+    public name: string,
+    public service: string,
+    public details?: Items,
+    public traffic?: Traffic[] | null,
+  ) {
     super();
   }
 

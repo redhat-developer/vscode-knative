@@ -62,10 +62,6 @@ export class FunctionExplorer implements TreeDataProvider<FunctionNode>, Disposa
     await this.treeView.reveal(item);
   }
 
-  getSelection(): FunctionNode[] | undefined {
-    return this.treeView.selection;
-  }
-
   isVisible(): boolean {
     return this.treeView.visible;
   }

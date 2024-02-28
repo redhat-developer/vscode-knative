@@ -43,12 +43,6 @@ suite('Function/FunctionExplorer', () => {
     expect(result).equal(element.getParent());
   });
 
-  test('return section', () => {
-    sandbox.stub(functionExplorer.treeView, 'selection').value([element]);
-    const result = functionExplorer.getSelection();
-    expect(result).deep.equal([element]);
-  });
-
   test('tree view is visible', () => {
     sandbox.stub(functionExplorer.treeView, 'visible').value(true);
     const result = functionExplorer.isVisible();

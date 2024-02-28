@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
 /* eslint-disable no-console */
 /* eslint-disable @typescript-eslint/no-misused-promises */
 /* eslint-disable no-await-in-loop */

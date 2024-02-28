@@ -19,6 +19,7 @@ type childEventIndex = { childIndex?: number; eventIndex?: number };
  * Public methods to control the list of Events.
  */
 export class KnativeEvents {
+  // eslint-disable-next-line no-use-before-define
   private static instance: KnativeEvents;
 
   // eslint-disable-next-line no-useless-constructor

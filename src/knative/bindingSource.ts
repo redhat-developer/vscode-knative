@@ -10,7 +10,13 @@ import { Sink as sinkType } from './sink';
 export type sourceOptions = Array<Array<string>>;
 
 export class BindingSource extends BaseSource {
-  constructor(public name: string, public parent: string, public subject: string, public sink: string, public details?: Items) {
+  constructor(
+    public name: string,
+    public parent: string,
+    public subject: string,
+    public sink: string,
+    public details?: Items,
+  ) {
     super(name, parent, details);
   }
 
