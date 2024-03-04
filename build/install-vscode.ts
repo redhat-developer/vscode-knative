@@ -10,8 +10,6 @@ import { downloadAndUnzipVSCode } from '@vscode/test-electron';
 
 downloadAndUnzipVSCode()
   .then((executable: string): void => {
-    // eslint-disable-next-line no-console
-    console.log('Installing message', executable);
     let exe: string = executable;
     if (platform() === 'darwin') {
       exe = `'${join(exe.substring(0, exe.indexOf('.app') + 4), 'Contents', 'Resources', 'app', 'bin', 'code')}'`;
@@ -20,7 +18,7 @@ downloadAndUnzipVSCode()
     }
     const installMsg = execSync(`${exe} --install-extension ms-kubernetes-tools.vscode-kubernetes-tools`);
     // eslint-disable-next-line no-console
-    console.log('Installing message', installMsg);
+    console.log('Installing message', installMsg.toString());
     execSync(`${exe} --install-extension redhat.vscode-yaml`);
   })
   // eslint-disable-next-line no-console, @typescript-eslint/restrict-template-expressions
