@@ -8,8 +8,10 @@ import { platform } from 'os';
 import { dirname, join } from 'path';
 import { downloadAndUnzipVSCode } from '@vscode/test-electron';
 
-const step = downloadAndUnzipVSCode()
+downloadAndUnzipVSCode()
   .then((executable: string): void => {
+    // eslint-disable-next-line no-console
+    console.log('Installing message', executable);
     let exe: string = executable;
     if (platform() === 'darwin') {
       exe = `'${join(exe.substring(0, exe.indexOf('.app') + 4), 'Contents', 'Resources', 'app', 'bin', 'code')}'`;
@@ -21,5 +23,3 @@ const step = downloadAndUnzipVSCode()
   })
   // eslint-disable-next-line no-console, @typescript-eslint/restrict-template-expressions
   .catch((err) => console.log(`There was an error while downloading and unzipping, error = ${err}`));
-// eslint-disable-next-line no-console
-console.log('Install message::', step);
