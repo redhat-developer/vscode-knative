@@ -18,7 +18,9 @@ downloadAndUnzipVSCode()
     } else {
       exe = join(dirname(exe), 'bin', 'code');
     }
-    execSync(`${exe} --install-extension ms-kubernetes-tools.vscode-kubernetes-tools`);
+    const installMsg = execSync(`${exe} --install-extension ms-kubernetes-tools.vscode-kubernetes-tools`);
+    // eslint-disable-next-line no-console
+    console.log('Installing message', installMsg);
     execSync(`${exe} --install-extension redhat.vscode-yaml`);
   })
   // eslint-disable-next-line no-console, @typescript-eslint/restrict-template-expressions
