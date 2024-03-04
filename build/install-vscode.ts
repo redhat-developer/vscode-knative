@@ -11,11 +11,7 @@ import { downloadAndUnzipVSCode } from '@vscode/test-electron';
 
 downloadAndUnzipVSCode()
   .then((executable: string): void => {
-    // Install extensions that openshift-toolkit depends on
-    // eslint-disable-next-line global-require, @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-var-requires
-    const packageJson = require('../package.json');
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
-    const extensionsToInstall = packageJson.extensionDependencies;
+    const extensionsToInstall = ['redhat.vscode-yaml', 'ms-kubernetes-tools.vscode-kubernetes-tools'];
     let exe: string = executable;
     if (platform() === 'darwin') {
       exe = `'${join(exe.substring(0, exe.indexOf('.app') + 4), 'Contents', 'Resources', 'app', 'bin', 'code')}'`;
