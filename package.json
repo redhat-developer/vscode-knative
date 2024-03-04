@@ -128,7 +128,8 @@
     "walker": "^1.0.7"
   },
   "extensionDependencies": [
-    "redhat.vscode-yaml"
+    "redhat.vscode-yaml",
+    "ms-kubernetes-tools.vscode-kubernetes-tools"
   ],
   "activationEvents": [
     "onView:knativeServingProjectExplorer",
