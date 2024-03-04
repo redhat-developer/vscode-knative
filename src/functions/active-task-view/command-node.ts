@@ -52,9 +52,11 @@ export class ActiveCommandNodeImpl implements CommandNode {
     public readonly name: string,
     public readonly contextValue: FunctionContextType,
     public readonly collapsibleState: TreeItemCollapsibleState = TreeItemCollapsibleState.Collapsed,
+    // eslint-disable-next-line no-empty-function
   ) {}
 
   get iconPath(): Uri {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
     return Uri.file(path.join(__dirname, IMAGES, this.CONTEXT_DATA[this.contextValue].icon));
   }
 
@@ -96,6 +98,7 @@ export class ActiveCommandNodeImpl implements CommandNode {
         );
       }
     }
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
     return format(this.CONTEXT_DATA[this.contextValue].tooltip, this);
   }
 

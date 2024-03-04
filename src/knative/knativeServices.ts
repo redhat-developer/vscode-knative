@@ -15,6 +15,7 @@ type revisionServiceIndex = { revisionIndex?: number; serviceIndex?: number };
  * Public methods to control the list of Services.
  */
 export class KnativeServices {
+  // eslint-disable-next-line no-use-before-define
   private static instance: KnativeServices;
 
   // eslint-disable-next-line no-useless-constructor

@@ -15,17 +15,17 @@ jobs:
         node: [16.11.0]
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
       - name: Setup node
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node }}
       - run: npm install
       - run: npm run build
       - name: Run headless test
-        uses: GabrielBB/xvfb-action@fe2609f8182a9ed5aee7d53ff3ed04098a904df2 #v1.0
+        uses: GabrielBB/xvfb-action@86d97bde4a65fe9b290c0b3fb92c2c4ed0e5302d #v1.6
         with:
           run: npm test
       - name: Run UI tests
@@ -36,12 +36,12 @@ jobs:
       - name: Upload screenshots
         uses: actions/upload-artifact@v3
         if: failure()
-        with: 
+        with:
           name: screenshots-${{ matrix.os }}
           path: 'test-resources/**/screenshots/*.png'
           retention-days: 2
           if-no-files-found: warn
-      - uses: codecov/codecov-action@29386c70ef20e286228c72b668a06fd0e8399192 #v1
+      - uses: codecov/codecov-action@54bcd8715eee62d40e33596ef5e8f0f48dbbccab #v4.1.0
         name: codecov-upload
         with:
           file: ./coverage/coverage-final.json

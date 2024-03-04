@@ -18,6 +18,7 @@ import { convertStringToURI } from '../util/parse';
  * Public methods to control the list of Triggers.
  */
 export class KnativeTriggers {
+  // eslint-disable-next-line no-use-before-define
   private static instance: KnativeTriggers;
 
   // eslint-disable-next-line no-useless-constructor

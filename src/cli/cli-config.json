@@ -37,32 +37,32 @@
     "description": "Function CLI tool",
     "vendor": "Red Hat, Inc.",
     "name": "func",
-    "version": "1.9.3",
-    "versionRange": "1.9.3",
-    "versionRangeLabel": "v1.9.3",
+    "version": "1.13.0",
+    "versionRange": "^1.13.0",
+    "versionRangeLabel": "version >= 1.13.0",
     "dlFileName": "func",
     "cmdFileName": "func",
     "filePrefix": "",
     "platform": {
       "win32": {
-        "url": "https://github.com/knative/func/releases/download/knative-v1.9.3/func_windows_amd64.exe",
-        "sha256sum": "0e4ba77c19727105063c6668f28eb3cac05fb2d29f6e3d927e51639e86aceecd",
+        "url": "https://github.com/knative/func/releases/download/knative-v1.13.0/func_windows_amd64.exe",
+        "sha256sum": "dde9113438cb3a861257aba0d2ec9bee78315422024b4e8d9e9350dcb857845a",
         "dlFileName": "func_windows_amd64.exe",
         "cmdFileName": "func.exe"
       },
       "darwin": {
-        "url": "https://github.com/knative/func/releases/download/knative-v1.9.3/func_darwin_amd64",
-        "sha256sum": "ec729160342ee81b619c5ae75605d759181bfa93c10c700c1e371d66ca594389",
+        "url": "https://github.com/knative/func/releases/download/knative-v1.13.0/func_darwin_amd64",
+        "sha256sum": "40532e79235b153f128cbd3bd9a768683b63a5bfcc48c1a17fdca20c1ff7f086",
         "dlFileName": "func_darwin_amd64"
       },
       "darwin-arm64": {
-        "url": "https://github.com/knative/func/releases/download/knative-v1.9.3/func_darwin_arm64",
-        "sha256sum": "01a69f78447b20414b74a13090ec5169087c566e6381118e543312215bd7418d",
+        "url": "https://github.com/knative/func/releases/download/knative-v1.13.0/func_darwin_arm64",
+        "sha256sum": "cd00b1f6961b32f87c301d9c5c99df123097a171784a11ab7f04edcfa5493d03",
         "dlFileName": "func_darwin_arm64"
       },
       "linux": {
-        "url": "https://github.com/knative/func/releases/download/knative-v1.9.3/func_linux_amd64",
-        "sha256sum": "6a585e1f7182f93e6cdeaec1a261aa5bafd8240a3568d40b01382c7059e6013e",
+        "url": "https://github.com/knative/func/releases/download/knative-v1.13.0/func_linux_amd64",
+        "sha256sum": "de01151c542cf4868689dbde561ad2e69e4cdbfe198c4b86e81a139c3537d615",
         "dlFileName": "func_linux_amd64"
       }
     }

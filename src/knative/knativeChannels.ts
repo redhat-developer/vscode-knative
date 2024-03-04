@@ -10,6 +10,7 @@ import { Channel } from './channel';
  * Public methods to control the list of Channels.
  */
 export class KnativeChannels {
+  // eslint-disable-next-line no-use-before-define
   private static instance: KnativeChannels;
 
   // eslint-disable-next-line no-useless-constructor

@@ -6,7 +6,7 @@
 import * as vscode from 'vscode';
 
 export class ExistingWorkspaceFolderPick {
-  // eslint-disable-next-line no-useless-constructor
+  // eslint-disable-next-line no-useless-constructor, no-empty-function
   constructor(public readonly workspaceFolder: vscode.WorkspaceFolder) {}
 
   get label(): string {

@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unsafe-enum-comparison */
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
 /* eslint-disable import/no-cycle */
 /*-----------------------------------------------------------------------------------------------
  *  Copyright (c) Red Hat, Inc. All rights reserved.
@@ -50,11 +52,14 @@ export class ServingDataProvider implements TreeDataProvider<ServingTreeItem | E
    * Start a refresh of the tree that happens every 60 seconds
    */
   pollRefresh = (): void => {
-    this.stopRefresh = setInterval(() => {
-      // eslint-disable-next-line no-console
-      // console.log(`ServingDataProvider.pollRefresh`);
-      this.refresh();
-    }, vscode.workspace.getConfiguration('knative').get<number>('pollRefreshDelay') * 1000);
+    this.stopRefresh = setInterval(
+      () => {
+        // eslint-disable-next-line no-console
+        // console.log(`ServingDataProvider.pollRefresh`);
+        this.refresh();
+      },
+      vscode.workspace.getConfiguration('knative').get<number>('pollRefreshDelay') * 1000,
+    );
   };
 
   /**

@@ -278,6 +278,7 @@ export class KnAPI {
   }
 
   static async getKnVersion(location: string): Promise<string> {
+    // eslint-disable-next-line prefer-regex-literals
     const version = new RegExp(
       `Version:\\s+v(((([0-9]+)\\.([0-9]+)\\.([0-9]+)|(([0-9]+)-([0-9a-zA-Z]+)-([0-9a-zA-Z]+)))(?:-([0-9a-zA-Z-]+(?:\\.[0-9a-zA-Z-]+)*))?)(?:\\+([0-9a-zA-Z-]+(?:\\.[0-9a-zA-Z-]+)*))?).*`,
     );

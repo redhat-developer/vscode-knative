@@ -38,6 +38,7 @@ export class ChannelDataProvider {
       // eslint-disable-next-line no-console, @typescript-eslint/restrict-template-expressions
       console.log(`Channel data provider fetch had error.\n ${err}`);
     }
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
     channels = this.kChannels.addChannels(loadItems(result).map((value) => Channel.JSONToChannel(value)));
     // If there are no Channels found then stop looking and we can post 'No Channels Found`
     if (channels.length === 0) {

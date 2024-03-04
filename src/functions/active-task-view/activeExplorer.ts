@@ -56,10 +56,6 @@ export class ActiveCommandExplorer implements TreeDataProvider<CommandNode>, Dis
     this.treeView.reveal(item);
   }
 
-  getSelection(): CommandNode[] | undefined {
-    return this.treeView.selection;
-  }
-
   isVisible(): boolean {
     return this.treeView.visible;
   }

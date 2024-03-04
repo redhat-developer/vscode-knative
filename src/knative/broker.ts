@@ -7,7 +7,11 @@
 import { KnativeItem } from './knativeItem';
 
 export class Broker extends KnativeItem {
-  constructor(public name: string, public parent: string, public details?: Items) {
+  constructor(
+    public name: string,
+    public parent: string,
+    public details?: Items,
+  ) {
     super();
   }
 

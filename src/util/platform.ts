@@ -4,7 +4,7 @@
  *-----------------------------------------------------------------------------------------------*/
 
 export class Platform {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-redundant-type-constituents
   static identify(map: { [x: string]: () => any; win32?: () => string; default: any }): any | undefined {
     if (map[Platform.OS]) {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-return

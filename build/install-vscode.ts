@@ -6,18 +6,29 @@
 import { execSync } from 'child_process';
 import { platform } from 'os';
 import { dirname, join } from 'path';
-import { downloadAndUnzipVSCode } from 'vscode-test';
+import path = require('path');
+import { downloadAndUnzipVSCode } from '@vscode/test-electron';
 
 downloadAndUnzipVSCode()
   .then((executable: string): void => {
+    const extensionsToInstall = ['redhat.vscode-yaml', 'ms-kubernetes-tools.vscode-kubernetes-tools'];
     let exe: string = executable;
     if (platform() === 'darwin') {
       exe = `'${join(exe.substring(0, exe.indexOf('.app') + 4), 'Contents', 'Resources', 'app', 'bin', 'code')}'`;
     } else {
       exe = join(dirname(exe), 'bin', 'code');
     }
-    execSync(`${exe} --install-extension ms-kubernetes-tools.vscode-kubernetes-tools`);
-    execSync(`${exe} --install-extension redhat.vscode-yaml`);
+    const extensionRootPath = path.resolve(__dirname, '..', '..');
+    const vsCodeTest = path.resolve(path.join(extensionRootPath, '.vscode-test'));
+    const userDataDir = path.join(vsCodeTest, 'user-data');
+    const extDir = path.join(vsCodeTest, 'extensions');
+    // eslint-disable-next-line no-restricted-syntax
+    for (const extension of extensionsToInstall) {
+      // eslint-disable-next-line no-console
+      console.log('Installing extension: ', extension);
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+      execSync(`${exe} --install-extension ${extension} --user-data-dir ${userDataDir} --extensions-dir ${extDir}`);
+    }
   })
   // eslint-disable-next-line no-console, @typescript-eslint/restrict-template-expressions
   .catch((err) => console.log(`There was an error while downloading and unzipping, error = ${err}`));

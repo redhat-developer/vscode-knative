@@ -29,6 +29,7 @@ export class KnativeSources {
 
   private knBroker = KnativeBrokers.Instance;
 
+  // eslint-disable-next-line no-use-before-define
   private static instance: KnativeSources;
 
   // eslint-disable-next-line no-useless-constructor

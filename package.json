@@ -41,8 +41,8 @@
     "lint:fix": "eslint . --ext .ts --fix",
     "pretest": "npm run clean && npm run compile && npm run lint && npm run verify && node ./out/build/install-vscode.js",
     "test": "node ./out/build/unit-tests.js",
-    "ui-test": "npm run compile && extest setup-and-run out/test/ui-test/allTestsSuite.js -e ~/notTestFolder -i -o test/ui-test/custom-settings.json -c max",
-    "base-ui-test": "npm run compile && extest setup-and-run out/test/ui-test/baseTestsSuite.js -e ~/notTestFolder -i -o test/ui-test/custom-settings.json -c max",
+    "ui-test": "npm run compile && extest setup-and-run out/test/ui-test/allTestsSuite.js -e ~/notTestFolder -i -o test/ui-test/custom-settings.json -c max -i",
+    "base-ui-test": "npm run compile && extest setup-and-run out/test/ui-test/baseTestsSuite.js -e ~/notTestFolder -i -o test/ui-test/custom-settings.json -c max -i",
     "install-test": "npm run clean && npm run compile && node ./out/build/unit-tests.js",
     "update-deps": "node_modules/.bin/ncu --upgrade --loglevel verbose --packageFile package.json && npm update",
     "verify": "node ./out/build/verify-tools.js",
@@ -53,6 +53,8 @@
     "@kubernetes/client-node": "^0.16.1",
     "@redhat-developer/vscode-redhat-telemetry": "^0.7.1",
     "@redhat-developer/vscode-wizard": "^0.3.1",
+    "@types/tar-fs": "^2.0.4",
+    "@vscode/test-electron": "^2.3.9",
     "binary-search": "^1.3.6",
     "byline": "^5.0.0",
     "fs-extra": "^9.1.0",
@@ -65,7 +67,6 @@
     "js-yaml": "^3.14.1",
     "mkdirp": "^1.0.4",
     "mocha": "^9.2.2",
-    "request": "^2.88.2",
     "request-progress": "^3.0.0",
     "rxjs": "^6.6.3",
     "semver": "^7.5.2",
@@ -76,7 +77,6 @@
     "uuid": "^8.3.2",
     "validator": "^13.5.2",
     "vscode-kubernetes-tools-api": "1.3.0",
-    "vscode-test": "^1.5.1",
     "yaml": "^2.2.2"
   },
   "devDependencies": {
@@ -100,21 +100,22 @@
     "@types/tmp": "0.2.0",
     "@types/validator": "^13.1.3",
     "@types/vscode": "^1.52.0",
-    "@typescript-eslint/eslint-plugin": "^4.15.1",
-    "@typescript-eslint/parser": "^4.15.1",
+    "@typescript-eslint/eslint-plugin": "^7.0.2",
+    "@typescript-eslint/parser": "^7.0.2",
     "chai": "^4.3.0",
     "codecov": "^3.8.1",
     "decache": "^4.6.0",
-    "eslint": "^7.20.0",
-    "eslint-config-airbnb-base": "^14.2.1",
-    "eslint-config-prettier": "^7.2.0",
+    "eslint": "^8.57.0",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-config-prettier": "^9.1.0",
     "eslint-import-resolver-typescript": "^2.4.0",
-    "eslint-plugin-import": "^2.22.1",
-    "eslint-plugin-json": "^2.1.2",
-    "eslint-plugin-prettier": "^3.3.1",
+    "eslint-plugin-header": "^3.1.1",
+    "eslint-plugin-import": "^2.29.1",
+    "eslint-plugin-json": "^3.1.0",
+    "eslint-plugin-prettier": "^5.1.3",
     "istanbul": "^0.4.5",
     "mocha-jenkins-reporter": "^0.4.7",
-    "prettier": "^2.2.1",
+    "prettier": "^3.2.5",
     "proxyquire": "^2.1.3",
     "remap-istanbul": "^0.13.0",
     "rewire": "^5.0.0",
@@ -122,12 +123,13 @@
     "sinon-chai": "^3.5.0",
     "source-map-support": "^0.5.19",
     "tmp": "0.2.1",
-    "typescript": "4.1.5 - 4.1.9",
-    "vscode-extension-tester": "^5.0.0",
+    "typescript": "^5.3.3",
+    "vscode-extension-tester": "^7.1",
     "walker": "^1.0.7"
   },
   "extensionDependencies": [
-    "redhat.vscode-yaml"
+    "redhat.vscode-yaml",
+    "ms-kubernetes-tools.vscode-kubernetes-tools"
   ],
   "activationEvents": [
     "onView:knativeServingProjectExplorer",
@@ -707,8 +709,8 @@
               "altText": "create function"
             },
             "completionEvents": [
-							"onCommand:function.explorer.create"
-						]
+              "onCommand:function.explorer.create"
+            ]
           },
           {
             "id": "Build Function",

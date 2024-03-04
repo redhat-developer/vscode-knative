@@ -58,11 +58,14 @@ export class EventingDataProvider implements TreeDataProvider<EventingTreeItem |
    * Start a refresh of the tree that happens every 60 seconds
    */
   pollRefresh = (): void => {
-    this.stopRefresh = setInterval(() => {
-      // eslint-disable-next-line no-console
-      // console.log(`ServingDataProvider.pollRefresh`);
-      this.refresh();
-    }, vscode.workspace.getConfiguration('knative').get<number>('pollRefreshDelay') * 1000);
+    this.stopRefresh = setInterval(
+      () => {
+        // eslint-disable-next-line no-console
+        // console.log(`ServingDataProvider.pollRefresh`);
+        this.refresh();
+      },
+      vscode.workspace.getConfiguration('knative').get<number>('pollRefreshDelay') * 1000,
+    );
   };
 
   /**

@@ -38,6 +38,7 @@ export class BrokerDataProvider {
       // eslint-disable-next-line no-console, @typescript-eslint/restrict-template-expressions
       console.log(`broker data provider fetch had error.\n ${err}`);
     }
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
     brokers = this.kBrokers.addBrokers(loadItems(result).map((value) => Broker.JSONToBroker(value)));
     // If there are no Brokers found then stop looking and we can post 'No Brokers Found`
     if (brokers.length === 0) {

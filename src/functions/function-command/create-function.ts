@@ -6,6 +6,7 @@
  *  Licensed under the MIT License. See LICENSE file in the project root for license information.
  *-----------------------------------------------------------------------------------------------*/
 
+import * as fsPrmosise from 'fs/promises';
 import * as path from 'path';
 import * as vscode from 'vscode';
 import {
@@ -21,10 +22,12 @@ import {
   WizardPageFieldDefinition,
 } from '@redhat-developer/vscode-wizard';
 import * as fs from 'fs-extra';
+import * as JSYAML from 'js-yaml';
 import { CliExitData, executeCmdCli } from '../../cli/cmdCli';
 import { FuncAPI } from '../../cli/func-api';
 import { telemetryLog, telemetryLogError } from '../../telemetry';
 import { getStderrString } from '../../util/stderrstring';
+import { getFuncYamlContent } from '../funcUtils';
 import { createValidationItem, inputFieldValidation, pathValidation, selectLocationValidation } from '../validate-item';
 import { createFunctionID } from '../webview-id';
 
@@ -43,6 +46,7 @@ export interface Select {
   label: string;
 }
 
+// eslint-disable-next-line prefer-regex-literals
 export const gitRegex = RegExp('((git@|https://)([\\w\\.@]+)(/|:))([\\w,\\-,\\_]+)/([\\w,\\-,\\_]+)(.git){0,1}((/){0,1})');
 
 export interface ParametersType {
@@ -221,6 +225,13 @@ export const def: WizardDefinition = {
             vscode.window.showErrorMessage(`Failed to create Function: ${getStderrString(result.error)}`);
             return false;
           }
+          const functionPath = path.join(data.selectLocation, data.functionName);
+          const yamlContent = await getFuncYamlContent(functionPath);
+          if (yamlContent) {
+            yamlContent.image = '';
+            await fsPrmosise.rm(path.join(functionPath, 'func.yaml'));
+            await fsPrmosise.writeFile(path.join(functionPath, 'func.yaml'), JSYAML.dump(yamlContent), 'utf-8');
+          }
           return true;
         },
       );
@@ -280,6 +291,7 @@ export async function createFunctionPage(context: vscode.ExtensionContext): Prom
   Object.keys(templateObject).forEach((item) => {
     languageListTemplate.push(item);
   });
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
   storeLanguage.set('language', languageListTemplate);
   delete functionName.initialValue;
   delete selectLocation.initialValue;

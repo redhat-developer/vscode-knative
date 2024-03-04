@@ -33,6 +33,7 @@ export function cliCommandToString(command: CliCommand): string {
 }
 
 export class CmdCli implements Cli {
+  // eslint-disable-next-line no-use-before-define
   private static instance: CmdCli;
 
   static getInstance(): CmdCli {
@@ -95,6 +96,7 @@ export class CmdCli implements Cli {
         stdout += data;
       });
       command.stderr.on('data', (data) => {
+        // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
         error += data;
       });
       command.on('error', (err) => {
@@ -174,6 +176,7 @@ export class CmdCli implements Cli {
         // eslint-disable-next-line no-param-reassign
         cmd.cliCommand = cmd.cliCommand
           .replace('func', `"${toolLocation}"`)
+          // eslint-disable-next-line prefer-regex-literals
           .replace(new RegExp(`&& func`, 'g'), `&& "${toolLocation}"`);
       }
     }

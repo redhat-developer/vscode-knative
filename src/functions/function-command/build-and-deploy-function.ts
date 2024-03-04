@@ -22,6 +22,7 @@ import { FunctionNode } from '../function-tree-view/functionsTreeItem';
 import { FolderPick, FuncContent, ImageAndBuild } from '../function-type';
 import { functionExplorer } from '../functionsExplorer';
 
+// eslint-disable-next-line prefer-regex-literals
 const imageRegex = RegExp('[^/]+\\.[^/.]+\\/([^/.]+)(?:\\/[\\w\\s._-]*([\\w\\s._-]))*(?::[a-z0-9\\.-]+)?$');
 export const restartBuildCommand = new Map<string, boolean>();
 export const restartDeployCommand = new Map<string, boolean>();
@@ -43,7 +44,7 @@ async function showInputBox(promptMessage: string, inputValidMessage: string, na
   });
 }
 
-async function getFuncYamlContent(dir: string): Promise<FuncContent> {
+export async function getFuncYamlContent(dir: string): Promise<FuncContent> {
   let funcData: FuncContent[];
   try {
     const funcYaml: string = await fs.readFile(path.join(dir, 'func.yaml'), 'utf-8');
@@ -163,7 +164,7 @@ export async function buildFunction(context?: FunctionNode): Promise<CliExitData
   telemetryLog('function_build_command', 'Build command execute');
   // eslint-disable-next-line @typescript-eslint/no-floating-promises
   functionExplorer.refresh();
-  const command = await FuncAPI.buildFunc(context.contextPath.fsPath, imageAndBuildModel.image, context?.getParent()?.getName());
+  const command = await FuncAPI.buildFunc(context.contextPath.fsPath, imageAndBuildModel.image);
   const name = `Build: ${context.getName()}`;
   if (!STILL_EXECUTING_COMMAND.get(name)) {
     const result = await executeCommandInOutputChannels(command, name);

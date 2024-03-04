@@ -43,6 +43,7 @@ export class SubscriptionDataProvider {
       // eslint-disable-next-line no-console, @typescript-eslint/restrict-template-expressions
       console.log(`Subscription data provider fetch had error.\n ${err}`);
     }
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
     subscriptions = this.kSubs.addSubscriptions(loadItems(result).map((value) => Subscription.JSONToSubscription(value)));
     // If there are no Subscriptions found then stop looking and we can post 'No Subscriptions Found`
     if (subscriptions.length === 0) {
