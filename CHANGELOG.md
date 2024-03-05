@@ -5,6 +5,12 @@ All notable changes to the "vscode-knative" extension will be documented in this
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 1.4.0 (2024/03/05)
+
+- [#335](https://github.com/redhat-developer/vscode-knative/issues/335) Fix serverless function build
+- [#341](https://github.com/redhat-developer/vscode-knative/pull/341) Update func cli to 1.13.0
+
+
 ## 1.3.1 (2022/01/13)
 
 - [#316](https://github.com/redhat-developer/vscode-knative/pull/322) Update kn cli to 1.8.1 and func cli to 1.8.2
