@@ -51,7 +51,7 @@ suite('Function/Run', () => {
   });
 
   test('delete function from tree view', async () => {
-    await runFunction(taskRunNode);
+    await runFunction(taskRunNode, false);
     // eslint-disable-next-line no-unused-expressions
     expect(showInformationMessageStub).calledOnce;
   });

@@ -6,12 +6,13 @@
  *-----------------------------------------------------------------------------------------------*/
 
 import { window } from 'vscode';
-import { buildFunction, restartBuildCommand } from './build-and-deploy-function';
+import { buildFunction, getFunctionImageInteractively, restartBuildCommand } from './build-and-deploy-function';
 import { CliCommand, CliExitData } from '../../cli/cmdCli';
 import { FuncAPI } from '../../cli/func-api';
 import { telemetryLog } from '../../telemetry';
 import { CACHED_CHILDPROCESS, executeCommandInOutputChannels, STILL_EXECUTING_COMMAND } from '../../util/output_channels';
 import { FunctionNode } from '../function-tree-view/functionsTreeItem';
+import { ImageAndBuild } from '../function-type';
 
 export const restartRunCommand = new Map<string, boolean>();
 const delay = (ms) =>
@@ -22,7 +23,6 @@ const delay = (ms) =>
 
 async function executeRunCommand(command: CliCommand, context: FunctionNode, name: string): Promise<void> {
   if (!STILL_EXECUTING_COMMAND.get(name)) {
-    command.cliArguments.push('--build=false');
     await executeCommandInOutputChannels(command, name);
     if (restartRunCommand.get(context.getName())) {
       restartRunCommand.set(context.getName(), false);
@@ -49,7 +49,6 @@ export async function buildAndRun(context: FunctionNode, command: CliCommand): P
   if (!STILL_EXECUTING_COMMAND.get(runName) && !STILL_EXECUTING_COMMAND.get(buildName)) {
     const buildResult: CliExitData = await buildFunction(context);
     if (buildResult?.stdout) {
-      command.cliArguments.push('--build=true');
       await executeRunCommand(command, context, runName);
     }
     return null;
@@ -66,13 +65,16 @@ export async function buildAndRun(context: FunctionNode, command: CliCommand): P
   }
 }
 
-export async function runFunction(context?: FunctionNode): Promise<void> {
+export async function runFunction(context?: FunctionNode, readImage = true): Promise<void> {
   if (!context) {
     return null;
   }
   telemetryLog('Function_run_command', `Function run command click name: ${context.getName()}`);
   // TO DO
-  const command = FuncAPI.runFunc(context.contextPath.fsPath);
+  const imageAndBuildModel: ImageAndBuild = readImage
+    ? await getFunctionImageInteractively(context?.contextPath)
+    : { image: '', builder: '', autoGenerateImage: false };
+  const command = FuncAPI.runFunc(context.contextPath.fsPath, imageAndBuildModel.image);
   const name = `Run: ${context.getName()}`;
   // const buildName = `Build: ${context.getName()}`;
   const result = await window.showInformationMessage('Do you want to run with build?', 'Yes', 'No');

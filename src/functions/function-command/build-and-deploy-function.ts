@@ -104,7 +104,7 @@ async function getImageAndBuildStrategy(funcData?: FuncContent, forceImageStrate
   return { image: imagePick };
 }
 
-async function getFunctionImageInteractively(
+export async function getFunctionImageInteractively(
   selectedFolderPick: vscode.Uri,
   forceImageStrategyPicker?: boolean,
 ): Promise<ImageAndBuild> {

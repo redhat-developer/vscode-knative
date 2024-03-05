@@ -142,8 +142,11 @@ export class FuncAPI {
     return funcCliCommand(deployCommand);
   }
 
-  static runFunc(location: string): CliCommand {
+  static runFunc(location: string, image: string): CliCommand {
     const runCommand = ['run', `-p=${location}`, '-v'];
+    if (image && image.trim().length > 0) {
+      runCommand.push(`-i=${image}`);
+    }
     return funcCliCommand(runCommand);
   }
 
