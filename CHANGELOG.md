@@ -10,6 +10,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [#335](https://github.com/redhat-developer/vscode-knative/issues/335) Fix serverless function build
 - [#341](https://github.com/redhat-developer/vscode-knative/pull/341) Update func cli to 1.13.0
 
+## 1.4.0 (2023/10/13)
+
+- [#326](https://github.com/redhat-developer/vscode-knative/pull/326) Pin 3rd-party actions to SHA1
+- [#329](https://github.com/redhat-developer/vscode-knative/pull/329) Publish to OpenVSX
+- [#331](https://github.com/redhat-developer/vscode-knative/pull/331) Update func cli to 1.9.3 and kn to 1.9.2
+- [#334](https://github.com/redhat-developer/vscode-knative/pull/334) React to vsce renaming to @vscode/vsce
+
 
 ## 1.3.1 (2022/01/13)
 
