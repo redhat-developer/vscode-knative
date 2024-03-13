@@ -3,14 +3,6 @@ name: release
 on:
   workflow_dispatch:
     inputs:
-      publishPreRelease:
-        description: "Publish a pre-release ?"
-        required: true
-        type: choice
-        options:
-          - "true"
-          - "false"
-        default: "true"
       publishToMarketPlace:
         description: "Publish to VS Code Marketplace ?"
         required: true
@@ -51,18 +43,8 @@ jobs:
           jq --tab '.extensionDependencies += [ "ms-kubernetes-tools.vscode-kubernetes-tools" ]' package.json  > package.json.new
           mv package.json.new package.json
           node ./out/build/update-readme.js
-          declare -A targets
-          targets["win32-x64"]=win32
-          targets["win32-arm64"]=win32
-          targets["linux-x64"]=linux
-          targets["linux-arm64"]=linux-arm64
-          targets["darwin-x64"]=darwin
-          targets["darwin-arm64"]=darwin
-          for target in ${!targets[@]}; do
-            export TARGET=${targets[${target}]}
-            vsce package --target ${target} -o vscode-knative-${{ env.EXT_VERSION }}-${GITHUB_RUN_NUMBER}-${target}.vsix
-            sha256sum *-${target}.vsix > vscode-knative-${{ env.EXT_VERSION }}-${GITHUB_RUN_NUMBER}-${target}.vsix.sha256
-          done
+          vsce package -o vscode-knative-${{ env.EXT_VERSION }}-${GITHUB_RUN_NUMBER}-${target}.vsix
+          sha256sum *-${target}.vsix > vscode-knative-${{ env.EXT_VERSION }}-${GITHUB_RUN_NUMBER}-${target}.vsix.sha256
           ls -lash *.vsix *.sha256
       - name: Upload VSIX Artifacts
         uses: actions/upload-artifact@v4
@@ -92,7 +74,7 @@ jobs:
       - name: Use Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 18
+          node-version: 20
       - name: Install dependencies
         run: |
           npm install -g typescript "vsce" "ovsx"
@@ -100,14 +82,10 @@ jobs:
       - name: Download VSIX Artifacts
         uses: actions/download-artifact@v4
       - name: Publish to VS Code Marketplace
-        if: ${{ github.event_name == 'schedule' || inputs.publishToMarketPlace == 'true' || inputs.publishPreRelease == 'true' }}
+        if: ${{ github.event_name == 'schedule' || inputs.publishToMarketPlace == 'true' }}
         run: |
-          for platform in darwin-x64 darwin-arm64 linux-x64 win32-x64 win32-arm64; do
-            vsce publish -p ${{ secrets.VSCODE_MARKETPLACE_TOKEN }} --packagePath vscode-knative/vscode-knative-${{ env.EXT_VERSION }}-${GITHUB_RUN_NUMBER}-${platform}.vsix
-          done
+          vsce publish -p ${{ secrets.VSCODE_MARKETPLACE_TOKEN }} --packagePath vscode-knative/vscode-knative-${{ env.EXT_VERSION }}-${GITHUB_RUN_NUMBER}.vsix
       - name: Publish to OpenVSX Registry
-        if: ${{ github.event_name == 'schedule' || inputs.publishToOVSX == 'true' || inputs.publishPreRelease == 'true' }}
+        if: ${{ github.event_name == 'schedule' || inputs.publishToOVSX == 'true' }}
         run: |
-          for platform in darwin-x64 darwin-arm64 linux-x64 win32-x64 win32-arm64; do
-            ovsx publish -p ${{ secrets.OVSX_MARKETPLACE_TOKEN }} --packagePath vscode-knative/vscode-knative-${{ env.EXT_VERSION }}-${GITHUB_RUN_NUMBER}-${platform}.vsix
-          done
+          ovsx publish -p ${{ secrets.OVSX_MARKETPLACE_TOKEN }} --packagePath vscode-knative/vscode-knative-${{ env.EXT_VERSION }}-${GITHUB_RUN_NUMBER}.vsix
