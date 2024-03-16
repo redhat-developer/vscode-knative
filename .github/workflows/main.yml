@@ -25,12 +25,12 @@ jobs:
       - run: npm install
       - run: npm run build
       - name: Run headless test
-        uses: GabrielBB/xvfb-action@86d97bde4a65fe9b290c0b3fb92c2c4ed0e5302d #v1.6
+        uses: coactions/setup-xvfb@v1
         with:
           run: npm test
       - name: Run UI tests
         if: runner.os == 'Linux'
-        uses: GabrielBB/xvfb-action@86d97bde4a65fe9b290c0b3fb92c2c4ed0e5302d #v1.6
+        uses: coactions/setup-xvfb@v1
         with:
           run: npm run base-ui-test
       - name: Upload screenshots
