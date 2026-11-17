@@ -28,7 +28,7 @@ jobs:
       - name: Use Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
       - name: Install dependencies
         run: |
           npm install -g typescript "@vscode/vsce" "ovsx"
@@ -72,6 +72,9 @@ jobs:
     if: ${{ inputs.publishToMarketPlace == 'true' || inputs.publishToOVSX == 'true' }}
     environment: ${{ 'release' }}
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
     needs: packaging-job
     steps:
       - name: Checkout vscode-knative
@@ -79,7 +82,7 @@ jobs:
       - name: Use Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
       - name: Install dependencies
         run: |
           npm install -g typescript "@vscode/vsce" "ovsx"
@@ -90,8 +93,8 @@ jobs:
       - name: Publish to VS Code Marketplace
         if: ${{ inputs.publishToMarketPlace == 'true' }}
         run: |
-          vsce publish -p ${{ secrets.VSCODE_MARKETPLACE_TOKEN }} --packagePath vscode-knative/vscode-knative-${{ env.EXT_VERSION }}-${GITHUB_RUN_NUMBER}.vsix
+          vsce publish --oidc --packagePath vscode-knative/vscode-knative-${{ env.EXT_VERSION }}-${GITHUB_RUN_NUMBER}.vsix
       - name: Publish to OpenVSX Registry
         if: ${{ inputs.publishToOVSX == 'true' }}
         run: |
-          ovsx publish -p ${{ secrets.OVSX_MARKETPLACE_TOKEN }} --packagePath vscode-knative/vscode-knative-${{ env.EXT_VERSION }}-${GITHUB_RUN_NUMBER}.vsix
+          ovsx publish --trusted-publishing --packagePath vscode-knative/vscode-knative-${{ env.EXT_VERSION }}-${GITHUB_RUN_NUMBER}.vsix
