@@ -9,6 +9,14 @@ on:
 jobs:
   build:
     runs-on: ${{ matrix.os }}
+
+    # Codecov authenticates uploads with a short-lived OIDC token instead of the
+    # long-lived CODECOV_TOKEN secret. Fork PRs cannot request an id-token, so
+    # they keep using Codecov's tokenless path (owner:branch) as before.
+    permissions:
+      contents: read
+      id-token: write
+
     strategy:
       matrix:
         os: [macos-latest, ubuntu-latest, windows-latest]
@@ -41,7 +49,8 @@ jobs:
           path: 'test-resources/**/screenshots/*.png'
           retention-days: 2
           if-no-files-found: warn
-      - uses: codecov/codecov-action@54bcd8715eee62d40e33596ef5e8f0f48dbbccab #v4.1.0
+      - uses: codecov/codecov-action@b9fd7d16f6d7d1b5d2bec1a2887e65ceed900238 #v4.6.0
         name: codecov-upload
         with:
-          file: ./coverage/coverage-final.json
+          files: ./coverage/coverage-final.json
+          use_oidc: true
